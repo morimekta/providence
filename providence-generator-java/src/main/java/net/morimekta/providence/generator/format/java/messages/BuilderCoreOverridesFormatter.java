@@ -106,14 +106,14 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                         break;
                     case SET:
                         writer.formatln("if (%s == _Field.%s) {", UNION_FIELD, field.fieldEnum())
-                              .formatln("    %s.addAll(from.%s());", field.member(), field.getter())
+                              .formatln("    %s().addAll(from.%s());", field.mutable(), field.getter())
                               .appendln("} else {")
                               .formatln("    %s(from.%s());", field.setter(), field.getter())
                               .appendln('}');
                         break;
                     case MAP:
                         writer.formatln("if (%s == _Field.%s) {", UNION_FIELD, field.fieldEnum())
-                              .formatln("    %s.putAll(from.%s());", field.member(), field.getter())
+                              .formatln("    %s().putAll(from.%s());", field.mutable(), field.getter())
                               .appendln("} else {")
                               .formatln("    %s(from.%s());", field.setter(), field.getter())
                               .appendln('}');
@@ -163,14 +163,10 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                               .appendln('}');
                         break;
                     case SET:
-                        writer.formatln("%s.addAll(from.%s());", field.member(), field.getter());
+                        writer.formatln("%s().addAll(from.%s());", field.mutable(), field.getter());
                         break;
                     case MAP:
-                        writer.formatln("%s.putAll(from.%s());", field.member(), field.getter());
-                        break;
-                    case LIST:
-                        writer.formatln("%s.clear();", field.member());
-                        writer.formatln("%s.addAll(from.%s());", field.member(), field.getter());
+                        writer.formatln("%s().putAll(from.%s());", field.mutable(), field.getter());
                         break;
                     default:
                         writer.formatln("%s = from.%s();", field.member(), field.getter());

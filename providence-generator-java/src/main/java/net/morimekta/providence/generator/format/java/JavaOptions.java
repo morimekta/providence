@@ -47,5 +47,5 @@ public class JavaOptions {
     /**
      * Add the <code>@Generated</code> annotation to each generated class.
      */
-    public boolean generated_annotation = false;
+    public boolean generated_annotation_version = false;
 }

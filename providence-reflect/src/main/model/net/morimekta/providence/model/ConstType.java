@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ConstType
         implements net.morimekta.providence.PMessage<ConstType,ConstType._Field>,
                    Comparable<ConstType>,
@@ -51,7 +52,7 @@ public class ConstType
             mValue = kDefaultValue;
         }
         if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -77,7 +78,7 @@ public class ConstType
             mValue = kDefaultValue;
         }
         if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -410,7 +411,7 @@ public class ConstType
         TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         START_LINE_NO(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_no", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         START_LINE_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_pos", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         ;
@@ -495,7 +496,7 @@ public class ConstType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> {
         public _Descriptor() {
-            super("model", "ConstType", new _Factory(), false);
+            super("model", "ConstType", _Builder::new, false);
         }
 
         @Override
@@ -525,14 +526,6 @@ public class ConstType
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ConstType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a model.ConstType builder.
      * @return The builder instance.
@@ -554,7 +547,7 @@ public class ConstType
         private String mType;
         private String mName;
         private String mValue;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
+        private java.util.Map<String,String> mAnnotations;
         private Integer mStartLineNo;
         private Integer mStartLinePos;
 
@@ -567,7 +560,6 @@ public class ConstType
             mType = kDefaultType;
             mName = kDefaultName;
             mValue = kDefaultValue;
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         /**
@@ -590,7 +582,7 @@ public class ConstType
             mValue = base.mValue;
             if (base.hasAnnotations()) {
                 optionals.set(4);
-                mAnnotations.putAll(base.mAnnotations);
+                mAnnotations = base.mAnnotations;
             }
             if (base.hasStartLineNo()) {
                 optionals.set(5);
@@ -626,7 +618,7 @@ public class ConstType
             if (from.hasAnnotations()) {
                 optionals.set(4);
                 modified.set(4);
-                mAnnotations.putAll(from.getAnnotations());
+                mutableAnnotations().putAll(from.getAnnotations());
             }
 
             if (from.hasStartLineNo()) {
@@ -889,8 +881,7 @@ public class ConstType
 
             optionals.set(4);
             modified.set(4);
-            mAnnotations.clear();
-            mAnnotations.putAll(value);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -905,7 +896,7 @@ public class ConstType
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
             modified.set(4);
-            mAnnotations.put(key, value);
+            mutableAnnotations().put(key, value);
             return this;
         }
 
@@ -936,7 +927,7 @@ public class ConstType
         public _Builder clearAnnotations() {
             optionals.clear(4);
             modified.set(4);
-            mAnnotations.clear();
+            mAnnotations = null;
             return this;
         }
 
@@ -945,9 +936,15 @@ public class ConstType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+        public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
+
+            if (mAnnotations == null) {
+                mAnnotations = new java.util.TreeMap<>();
+            } else if (!(mAnnotations instanceof java.util.TreeMap)) {
+                mAnnotations = new java.util.TreeMap<>(mAnnotations);
+            }
             return mAnnotations;
         }
 
@@ -1257,21 +1254,23 @@ public class ConstType
                     }
                     case 7: {
                         if (type == 13) {
-                            byte t_6 = reader.expectByte();
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_5 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
                             byte t_7 = reader.expectByte();
-                            if (t_6 == 11 && t_7 == 11) {
-                                final int len_5 = reader.expectUInt32();
-                                for (int i_8 = 0; i_8 < len_5; ++i_8) {
-                                    int len_11 = reader.expectUInt32();
-                                    String key_9 = new String(reader.expectBytes(len_11), java.nio.charset.StandardCharsets.UTF_8);
+                            byte t_8 = reader.expectByte();
+                            if (t_7 == 11 && t_8 == 11) {
+                                final int len_6 = reader.expectUInt32();
+                                for (int i_9 = 0; i_9 < len_6; ++i_9) {
                                     int len_12 = reader.expectUInt32();
-                                    String val_10 = new String(reader.expectBytes(len_12), java.nio.charset.StandardCharsets.UTF_8);
-                                    mAnnotations.put(key_9, val_10);
+                                    String key_10 = new String(reader.expectBytes(len_12), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_13 = reader.expectUInt32();
+                                    String val_11 = new String(reader.expectBytes(len_13), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_5.put(key_10, val_11);
                                 }
+                                mAnnotations = b_5.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_6) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_7) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_7) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_8) +
                                         " for model.ConstType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);

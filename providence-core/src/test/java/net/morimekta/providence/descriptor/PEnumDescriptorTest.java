@@ -24,7 +24,7 @@ public class PEnumDescriptorTest {
         assertThat(vd.equals(null), is(false));
         assertThat(vd.equals(new Object()), is(false));
         assertThat(vd.hashCode(), is(not(od.hashCode())));
-        assertThat(vd.getFactoryInternal(), is(notNullValue()));
+        assertThat(vd.getBuilderSupplier(), is(notNullValue()));
         assertThat(vd.equals(vd), is(true));
         assertThat(vd.toString(), is("providence.Value"));
     }
@@ -47,7 +47,7 @@ public class PEnumDescriptorTest {
         private PEnumValue[] values;
 
         Dummy(PEnumValue[] values) {
-            super("package", "Name", Value.kDescriptor.getFactoryInternal());
+            super("package", "Name", Value.kDescriptor.getBuilderSupplier());
             this.values = values;
         }
 

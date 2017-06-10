@@ -21,7 +21,6 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
-import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
 import com.google.common.collect.ImmutableList;
@@ -31,17 +30,18 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Descriptor for a list with item type.
  */
 public class PList<Item> extends PContainer<List<Item>> {
-    private final BuilderFactory<Item> builderFactory;
+    private final Supplier<Builder<Item>> builderSupplier;
 
     public PList(PDescriptorProvider itemType,
-                 BuilderFactory<Item> builderFactory) {
+                 Supplier<Builder<Item>> builderSupplier) {
         super(itemType);
-        this.builderFactory = builderFactory;
+        this.builderSupplier = builderSupplier;
     }
 
     @Nonnull
@@ -83,61 +83,46 @@ public class PList<Item> extends PContainer<List<Item>> {
         return PList.class.hashCode() + itemDescriptor().hashCode();
     }
 
+    /**
+     * Container builder used in serialization.
+     *
+     * @param <I> The item type.
+     */
     public interface Builder<I> extends PBuilder<List<I>> {
         @Nonnull
         Builder<I> add(@Nonnull I value);
         @Nonnull
         Builder<I> addAll(@Nonnull Collection<I> items);
-        @Nonnull
-        Builder<I> clear();
-
-        int size();
 
         @Nonnull
         @Override
         List<I> build();
     }
 
-    private interface BuilderFactory<I> extends PBuilderFactory<List<I>> {
-        @Nonnull
-        @Override
-        Builder<I> builder();
-    }
-
-    public static class ImmutableListBuilder<I> implements Builder<I> {
+    /**
+     * Default builder returning an ImmutableList.
+     *
+     * @param <I> The item type.
+     */
+    public static class DefaultBuilder<I> implements Builder<I> {
         private ImmutableList.Builder<I> builder;
-        private int size;
 
-        public ImmutableListBuilder() {
+        public DefaultBuilder() {
             builder = ImmutableList.builder();
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> add(@Nonnull I value) {
+        public DefaultBuilder<I> add(@Nonnull I value) {
             builder.add(value);
-            ++size;
             return this;
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> addAll(@Nonnull Collection<I> items) {
+        public DefaultBuilder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
-            size += items.size();
             return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableListBuilder<I> clear() {
-            builder = ImmutableList.builder();
-            size = 0;
-            return this;
-        }
-
-        public int size() {
-            return size;
         }
 
         @Nonnull
@@ -149,15 +134,15 @@ public class PList<Item> extends PContainer<List<Item>> {
 
     @Override
     public Builder<Item> builder() {
-        return builderFactory.builder();
+        return builderSupplier.get();
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableListBuilder::new);
+        return provider(itemDesc, DefaultBuilder::new);
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc,
-                                                                     BuilderFactory<I> builderFactory) {
+                                                                     Supplier<Builder<I>> builderFactory) {
         return new PContainerProvider<>(new PList<>(itemDesc, builderFactory));
     }
 }

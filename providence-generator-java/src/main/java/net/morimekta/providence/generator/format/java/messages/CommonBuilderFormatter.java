@@ -119,10 +119,11 @@ public class CommonBuilderFormatter
                     case MAP:
                     case SET:
                         writer.formatln(
-                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
+                                "%s = %s == _Field.%s ? %s : null;",
                                 field.member(),
                                 UNION_FIELD,
                                 field.fieldEnum(),
+                                field.fieldInstanceCopy("builder." + field.member()),
                                 field.member());
                         break;
                     case MESSAGE:
@@ -169,7 +170,7 @@ public class CommonBuilderFormatter
                                   .appendln();
                         }
                         if (field.container()) {
-                            writer.format("builder.%s() ? builder.%s.build() : null", field.isSet(), field.member());
+                            writer.format("builder.%s() ? %s : null", field.isSet(), field.fieldInstanceCopy("builder." + field.member()));
                         } else if (!field.isVoid()) {
                             // Void fields have no value.
                             writer.format("builder.%s", field.member());
@@ -184,7 +185,7 @@ public class CommonBuilderFormatter
             for (JField field : message.declaredOrderFields()) {
                 if (field.container()) {
                     writer.formatln("if (builder.%s()) {", field.isSet())
-                          .formatln("    %s = builder.%s.build();", field.member(), field.member())
+                          .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy("builder." + field.member()))
                           .appendln("} else {");
                     if (field.alwaysPresent()) {
                         writer.formatln("    %s = %s;", field.member(), field.kDefault());

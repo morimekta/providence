@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
                    net.morimekta.providence.serializer.json.JsonCompactible,
@@ -294,7 +295,7 @@ public class CompactFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> implements net.morimekta.providence.serializer.json.JsonCompactibleDescriptor {
         public _Descriptor() {
-            super("providence", "CompactFields", new _Factory(), true);
+            super("providence", "CompactFields", _Builder::new, true);
         }
 
         @Override
@@ -321,14 +322,6 @@ public class CompactFields
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<CompactFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

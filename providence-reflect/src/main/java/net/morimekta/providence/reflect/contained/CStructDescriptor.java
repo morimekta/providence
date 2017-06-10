@@ -21,7 +21,6 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
@@ -34,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Stein Eldar Johnsen
@@ -52,7 +52,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
 
     public CStructDescriptor(String comment, String programName, String name, List<CField> fields, Map<String, String> annotations) {
         super(programName, name, new _Factory(), false);
-        ((_Factory) getFactoryInternal()).setType(this);
+        ((_Factory) getBuilderSupplier()).setType(this);
 
         this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
@@ -137,7 +137,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         return compactible;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CStruct,CField> {
+    private static class _Factory implements Supplier<PMessageBuilder<CStruct,CField>> {
         private CStructDescriptor mType;
 
         public void setType(CStructDescriptor type) {
@@ -146,7 +146,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
 
         @Nonnull
         @Override
-        public PMessageBuilder<CStruct,CField> builder() {
+        public PMessageBuilder<CStruct,CField> get() {
             return new CStruct.Builder(mType);
         }
     }

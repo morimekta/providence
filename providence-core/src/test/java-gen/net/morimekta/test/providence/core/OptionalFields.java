@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class OptionalFields
         implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>,
                    Comparable<OptionalFields>,
@@ -590,7 +591,7 @@ public class OptionalFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<OptionalFields,_Field> {
         public _Descriptor() {
-            super("providence", "OptionalFields", new _Factory(), false);
+            super("providence", "OptionalFields", _Builder::new, false);
         }
 
         @Override
@@ -617,14 +618,6 @@ public class OptionalFields
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<OptionalFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<OptionalFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -1296,8 +1289,8 @@ public class OptionalFields
 
             optionals.set(9);
             modified.set(9);
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

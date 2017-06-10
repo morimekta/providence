@@ -16,7 +16,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kThriftKeywords;
     static {
-        kThriftKeywords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+        kThriftKeywords = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<String>()
                 .add("struct")
                 .add("exception")
                 .add("bool")
@@ -49,7 +49,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kReservedWords;
     static {
-        kReservedWords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+        kReservedWords = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<String>()
                 .add("private")
                 .add("byte")
                 .add("for")

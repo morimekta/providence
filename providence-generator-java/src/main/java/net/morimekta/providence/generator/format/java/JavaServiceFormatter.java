@@ -97,8 +97,10 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")");
-        if (options.generated_annotation) {
+        if (options.generated_annotation_version) {
             writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        } else {
+            writer.formatln("@%s(\"providence java generator\")", Generated.class.getName());
         }
 
         writer.formatln("public class %s %s{", service.className(), inherits)

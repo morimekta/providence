@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class UnionFields
         implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
                    Comparable<UnionFields>,
@@ -607,7 +608,7 @@ public class UnionFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> {
         public _Descriptor() {
-            super("providence", "UnionFields", new _Factory(), false);
+            super("providence", "UnionFields", _Builder::new, false);
         }
 
         @Override
@@ -634,14 +635,6 @@ public class UnionFields
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<UnionFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -1188,8 +1181,8 @@ public class UnionFields
 
             tUnionField = _Field.COMPACT_VALUE;
             modified = true;
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

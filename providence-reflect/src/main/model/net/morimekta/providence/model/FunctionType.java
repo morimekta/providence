@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class FunctionType
         implements net.morimekta.providence.PMessage<FunctionType,FunctionType._Field>,
                    Comparable<FunctionType>,
@@ -13,7 +14,7 @@ public class FunctionType
 
     private final static boolean kDefaultOneWay = false;
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultParams = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType>()
                 .build();
 
     private final String mDocumentation;
@@ -52,7 +53,7 @@ public class FunctionType
             mExceptions = null;
         }
         if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -68,17 +69,17 @@ public class FunctionType
             mName = kDefaultName;
         }
         if (builder.isSetParams()) {
-            mParams = builder.mParams.build();
+            mParams = com.google.common.collect.ImmutableList.copyOf(builder.mParams);
         } else {
             mParams = kDefaultParams;
         }
         if (builder.isSetExceptions()) {
-            mExceptions = builder.mExceptions.build();
+            mExceptions = com.google.common.collect.ImmutableList.copyOf(builder.mExceptions);
         } else {
             mExceptions = null;
         }
         if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -430,7 +431,7 @@ public class FunctionType
         NAME(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         PARAMS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "params", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
         EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -513,7 +514,7 @@ public class FunctionType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> {
         public _Descriptor() {
-            super("model", "FunctionType", new _Factory(), false);
+            super("model", "FunctionType", _Builder::new, false);
         }
 
         @Override
@@ -543,14 +544,6 @@ public class FunctionType
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<FunctionType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a model.FunctionType builder.
      * @return The builder instance.
@@ -572,9 +565,9 @@ public class FunctionType
         private Boolean mOneWay;
         private String mReturnType;
         private String mName;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mParams;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mExceptions;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
+        private java.util.List<net.morimekta.providence.model.FieldType> mParams;
+        private java.util.List<net.morimekta.providence.model.FieldType> mExceptions;
+        private java.util.Map<String,String> mAnnotations;
 
         /**
          * Make a model.FunctionType builder.
@@ -583,9 +576,7 @@ public class FunctionType
             optionals = new java.util.BitSet(7);
             modified = new java.util.BitSet(7);
             mName = kDefaultName;
-            mParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mExceptions = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mParams = kDefaultParams;
         }
 
         /**
@@ -611,14 +602,14 @@ public class FunctionType
             optionals.set(3);
             mName = base.mName;
             optionals.set(4);
-            mParams.addAll(base.mParams);
+            mParams = base.mParams;
             if (base.hasExceptions()) {
                 optionals.set(5);
-                mExceptions.addAll(base.mExceptions);
+                mExceptions = base.mExceptions;
             }
             if (base.hasAnnotations()) {
                 optionals.set(6);
-                mAnnotations.putAll(base.mAnnotations);
+                mAnnotations = base.mAnnotations;
             }
         }
 
@@ -649,20 +640,18 @@ public class FunctionType
 
             optionals.set(4);
             modified.set(4);
-            mParams.clear();
-            mParams.addAll(from.getParams());
+            mParams = from.getParams();
 
             if (from.hasExceptions()) {
                 optionals.set(5);
                 modified.set(5);
-                mExceptions.clear();
-                mExceptions.addAll(from.getExceptions());
+                mExceptions = from.getExceptions();
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(6);
                 modified.set(6);
-                mAnnotations.putAll(from.getAnnotations());
+                mutableAnnotations().putAll(from.getAnnotations());
             }
             return this;
         }
@@ -909,8 +898,7 @@ public class FunctionType
 
             optionals.set(4);
             modified.set(4);
-            mParams.clear();
-            mParams.addAll(value);
+            mParams = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -924,8 +912,9 @@ public class FunctionType
         public _Builder addToParams(net.morimekta.providence.model.FieldType... values) {
             optionals.set(4);
             modified.set(4);
+            java.util.List<net.morimekta.providence.model.FieldType> _container = mutableParams();
             for (net.morimekta.providence.model.FieldType item : values) {
-                mParams.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -957,7 +946,7 @@ public class FunctionType
         public _Builder clearParams() {
             optionals.clear(4);
             modified.set(4);
-            mParams.clear();
+            mParams = kDefaultParams;
             return this;
         }
 
@@ -966,9 +955,15 @@ public class FunctionType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableParams() {
+        public java.util.List<net.morimekta.providence.model.FieldType> mutableParams() {
             optionals.set(4);
             modified.set(4);
+
+            if (mParams == null) {
+                mParams = new java.util.LinkedList<>();
+            } else if (!(mParams instanceof java.util.LinkedList)) {
+                mParams = new java.util.LinkedList<>(mParams);
+            }
             return mParams;
         }
 
@@ -986,8 +981,7 @@ public class FunctionType
 
             optionals.set(5);
             modified.set(5);
-            mExceptions.clear();
-            mExceptions.addAll(value);
+            mExceptions = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -1001,8 +995,9 @@ public class FunctionType
         public _Builder addToExceptions(net.morimekta.providence.model.FieldType... values) {
             optionals.set(5);
             modified.set(5);
+            java.util.List<net.morimekta.providence.model.FieldType> _container = mutableExceptions();
             for (net.morimekta.providence.model.FieldType item : values) {
-                mExceptions.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -1034,7 +1029,7 @@ public class FunctionType
         public _Builder clearExceptions() {
             optionals.clear(5);
             modified.set(5);
-            mExceptions.clear();
+            mExceptions = null;
             return this;
         }
 
@@ -1043,9 +1038,15 @@ public class FunctionType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableExceptions() {
+        public java.util.List<net.morimekta.providence.model.FieldType> mutableExceptions() {
             optionals.set(5);
             modified.set(5);
+
+            if (mExceptions == null) {
+                mExceptions = new java.util.LinkedList<>();
+            } else if (!(mExceptions instanceof java.util.LinkedList)) {
+                mExceptions = new java.util.LinkedList<>(mExceptions);
+            }
             return mExceptions;
         }
 
@@ -1063,8 +1064,7 @@ public class FunctionType
 
             optionals.set(6);
             modified.set(6);
-            mAnnotations.clear();
-            mAnnotations.putAll(value);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -1079,7 +1079,7 @@ public class FunctionType
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
             modified.set(6);
-            mAnnotations.put(key, value);
+            mutableAnnotations().put(key, value);
             return this;
         }
 
@@ -1110,7 +1110,7 @@ public class FunctionType
         public _Builder clearAnnotations() {
             optionals.clear(6);
             modified.set(6);
-            mAnnotations.clear();
+            mAnnotations = null;
             return this;
         }
 
@@ -1119,9 +1119,15 @@ public class FunctionType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+        public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(6);
             modified.set(6);
+
+            if (mAnnotations == null) {
+                mAnnotations = new java.util.TreeMap<>();
+            } else if (!(mAnnotations instanceof java.util.TreeMap)) {
+                mAnnotations = new java.util.TreeMap<>(mAnnotations);
+            }
             return mAnnotations;
         }
 
@@ -1309,15 +1315,17 @@ public class FunctionType
                     }
                     case 5: {
                         if (type == 15) {
-                            byte t_5 = reader.expectByte();
-                            if (t_5 == 12) {
-                                final int len_4 = reader.expectUInt32();
-                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
-                                    net.morimekta.providence.model.FieldType key_7 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
-                                    mParams.add(key_7);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType> b_4 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_6 = reader.expectByte();
+                            if (t_6 == 12) {
+                                final int len_5 = reader.expectUInt32();
+                                for (int i_7 = 0; i_7 < len_5; ++i_7) {
+                                    net.morimekta.providence.model.FieldType key_8 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
+                                    b_4.add(key_8);
                                 }
+                                mParams = b_4.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) + " for model.FunctionType.params, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_6) + " for model.FunctionType.params, should be struct(12)");
                             }
                             optionals.set(4);
                         } else {
@@ -1327,15 +1335,17 @@ public class FunctionType
                     }
                     case 6: {
                         if (type == 15) {
-                            byte t_9 = reader.expectByte();
-                            if (t_9 == 12) {
-                                final int len_8 = reader.expectUInt32();
-                                for (int i_10 = 0; i_10 < len_8; ++i_10) {
-                                    net.morimekta.providence.model.FieldType key_11 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
-                                    mExceptions.add(key_11);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType> b_9 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_11 = reader.expectByte();
+                            if (t_11 == 12) {
+                                final int len_10 = reader.expectUInt32();
+                                for (int i_12 = 0; i_12 < len_10; ++i_12) {
+                                    net.morimekta.providence.model.FieldType key_13 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
+                                    b_9.add(key_13);
                                 }
+                                mExceptions = b_9.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_9) + " for model.FunctionType.exceptions, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_11) + " for model.FunctionType.exceptions, should be struct(12)");
                             }
                             optionals.set(5);
                         } else {
@@ -1345,21 +1355,23 @@ public class FunctionType
                     }
                     case 7: {
                         if (type == 13) {
-                            byte t_13 = reader.expectByte();
-                            byte t_14 = reader.expectByte();
-                            if (t_13 == 11 && t_14 == 11) {
-                                final int len_12 = reader.expectUInt32();
-                                for (int i_15 = 0; i_15 < len_12; ++i_15) {
-                                    int len_18 = reader.expectUInt32();
-                                    String key_16 = new String(reader.expectBytes(len_18), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_19 = reader.expectUInt32();
-                                    String val_17 = new String(reader.expectBytes(len_19), java.nio.charset.StandardCharsets.UTF_8);
-                                    mAnnotations.put(key_16, val_17);
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_14 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_16 = reader.expectByte();
+                            byte t_17 = reader.expectByte();
+                            if (t_16 == 11 && t_17 == 11) {
+                                final int len_15 = reader.expectUInt32();
+                                for (int i_18 = 0; i_18 < len_15; ++i_18) {
+                                    int len_21 = reader.expectUInt32();
+                                    String key_19 = new String(reader.expectBytes(len_21), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_22 = reader.expectUInt32();
+                                    String val_20 = new String(reader.expectBytes(len_22), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_14.put(key_19, val_20);
                                 }
+                                mAnnotations = b_14.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_13) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_14) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_16) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_17) +
                                         " for model.FunctionType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(6);

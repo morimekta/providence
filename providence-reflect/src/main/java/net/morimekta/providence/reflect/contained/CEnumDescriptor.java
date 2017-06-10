@@ -21,7 +21,6 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PEnumBuilder;
-import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
 import com.google.common.collect.ImmutableMap;
@@ -33,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Contained enum descriptor type.
@@ -52,7 +52,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
         this.values = new CEnumValue[0];
         this.comment = comment;
         this.annotations = annotations == null ? ImmutableMap.of() : ImmutableMap.copyOf(annotations);
-        ((_Factory) getFactoryInternal()).setType(this);
+        ((_Factory) getBuilderSupplier()).setType(this);
     }
 
     public void setValues(@Nonnull List<CEnumValue> values) {
@@ -112,7 +112,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
         return annotations.get(name);
     }
 
-    private static class _Factory extends PEnumBuilderFactory<CEnumValue> {
+    private static class _Factory implements Supplier<PEnumBuilder<CEnumValue>> {
         private CEnumDescriptor mType;
 
         public void setType(CEnumDescriptor type) {
@@ -121,7 +121,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
 
         @Nonnull
         @Override
-        public PEnumBuilder<CEnumValue> builder() {
+        public PEnumBuilder<CEnumValue> get() {
             return new CEnumValue.Builder(mType);
         }
     }

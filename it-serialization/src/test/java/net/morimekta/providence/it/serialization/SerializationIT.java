@@ -40,8 +40,10 @@ public class SerializationIT {
 
     @Test
     public void testSerializationSpeed_consistentData() throws IOException {
-        assertThat(it.run("--silent", containers.getAbsolutePath()), is(0));
+        assertThat(it.run("--no_progress",
+                          "--runs", "10",
+                          containers.getAbsolutePath()), is(0));
 
-        System.out.println(console.output());
+        System.err.println(console.output());
     }
 }

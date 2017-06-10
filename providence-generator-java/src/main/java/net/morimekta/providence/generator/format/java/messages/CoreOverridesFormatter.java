@@ -22,7 +22,6 @@ package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -170,7 +169,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .begin()
               .appendln("public _Descriptor() {")
               .begin();
-        writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b);",
+        writer.formatln("super(\"%s\", \"%s\", _Builder::new, %b);",
                         message.descriptor().getProgramName(),
                         message.descriptor().getName(),
                         message.descriptor().isSimple());
@@ -221,21 +220,6 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .end()
               .appendln("}")
-              .newline();
-
-        writer.appendln("private final static class _Factory")
-              .begin()
-              .formatln("    extends %s<%s,_Field> {",
-                        PMessageBuilderFactory.class.getName(),
-                        message.instanceType())
-              .appendln("@Override")
-              .appendln("public _Builder builder() {")
-              .begin()
-              .appendln("return new _Builder();")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
               .newline();
     }
 

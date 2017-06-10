@@ -21,7 +21,6 @@
 package net.morimekta.providence.generator.format.java.enums;
 
 import net.morimekta.providence.PEnumBuilder;
-import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
@@ -122,21 +121,6 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("private static class _Factory")
-              .begin()
-              .formatln("    extends %s<%s> {",
-                        PEnumBuilderFactory.class.getName(),
-                        simpleClass)
-              .appendln("@Override")
-              .formatln("public %s._Builder builder() {", simpleClass)
-              .begin()
-              .formatln("return new %s._Builder();", simpleClass)
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-
         writer.appendln("private static class _Descriptor")
               .formatln("        extends %s<%s> {",
                         PEnumDescriptor.class.getName(),
@@ -144,7 +128,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .begin()
               .appendln("public _Descriptor() {")
               .begin()
-              .formatln("super(\"%s\", \"%s\", new _Factory());",
+              .formatln("super(\"%s\", \"%s\", _Builder::new);",
                         type.getProgramName(),
                         type.getName(),
                         simpleClass)

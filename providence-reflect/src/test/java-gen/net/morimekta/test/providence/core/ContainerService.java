@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ContainerService {
     public interface Iface {
         /**
@@ -183,6 +184,7 @@ public class ContainerService {
 
     // type --> ContainerService.load.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _load_request
             implements net.morimekta.providence.PMessage<_load_request,_load_request._Field>,
                        Comparable<_load_request>,
@@ -379,7 +381,7 @@ public class ContainerService {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> {
             public _Descriptor() {
-                super("providence", "ContainerService.load.request", new _Factory(), false);
+                super("providence", "ContainerService.load.request", _Builder::new, false);
             }
 
             @Override
@@ -406,14 +408,6 @@ public class ContainerService {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_load_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -488,8 +482,8 @@ public class ContainerService {
 
                 optionals.set(0);
                 modified.set(0);
-                mC_builder = null;
                 mC = value;
+                mC_builder = null;
                 return this;
             }
 
@@ -664,6 +658,7 @@ public class ContainerService {
 
     // type <-- ContainerService.load.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _load_response
             implements net.morimekta.providence.PUnion<_load_response,_load_response._Field>,
                        Comparable<_load_response>,
@@ -926,7 +921,7 @@ public class ContainerService {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> {
             public _Descriptor() {
-                super("providence", "ContainerService.load.response", new _Factory(), false);
+                super("providence", "ContainerService.load.response", _Builder::new, false);
             }
 
             @Override
@@ -953,14 +948,6 @@ public class ContainerService {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_load_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -1047,8 +1034,8 @@ public class ContainerService {
 
                 tUnionField = _Field.SUCCESS;
                 modified = true;
-                mSuccess_builder = null;
                 mSuccess = value;
+                mSuccess_builder = null;
                 return this;
             }
 
@@ -1110,8 +1097,8 @@ public class ContainerService {
 
                 tUnionField = _Field.EF;
                 modified = true;
-                mEf_builder = null;
                 mEf = value;
+                mEf_builder = null;
                 return this;
             }
 

@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Operand
         implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
                    Comparable<Operand>,
@@ -307,7 +308,7 @@ public class Operand
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> {
         public _Descriptor() {
-            super("calculator", "Operand", new _Factory(), false);
+            super("calculator", "Operand", _Builder::new, false);
         }
 
         @Override
@@ -334,14 +335,6 @@ public class Operand
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Operand,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -434,8 +427,8 @@ public class Operand
 
             tUnionField = _Field.OPERATION;
             modified = true;
-            mOperation_builder = null;
             mOperation = value;
+            mOperation_builder = null;
             return this;
         }
 
@@ -542,8 +535,8 @@ public class Operand
 
             tUnionField = _Field.IMAGINARY;
             modified = true;
-            mImaginary_builder = null;
             mImaginary = value;
+            mImaginary_builder = null;
             return this;
         }
 

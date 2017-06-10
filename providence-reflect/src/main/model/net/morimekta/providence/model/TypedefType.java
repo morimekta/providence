@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * typedef &lt;type&gt; &lt;name&gt;
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class TypedefType
         implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
                    Comparable<TypedefType>,
@@ -299,7 +300,7 @@ public class TypedefType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> {
         public _Descriptor() {
-            super("model", "TypedefType", new _Factory(), true);
+            super("model", "TypedefType", _Builder::new, true);
         }
 
         @Override
@@ -326,14 +327,6 @@ public class TypedefType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<TypedefType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

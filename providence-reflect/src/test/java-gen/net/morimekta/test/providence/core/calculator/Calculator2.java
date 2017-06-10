@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Calculator2 extends net.morimekta.test.providence.core.calculator.Calculator {
     public interface Iface extends net.morimekta.test.providence.core.calculator.Calculator.Iface {
         /**
@@ -272,6 +273,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
     // type --> Calculator2.extra.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _extra_request
             implements net.morimekta.providence.PMessage<_extra_request,_extra_request._Field>,
                        Comparable<_extra_request>,
@@ -429,7 +431,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator2.extra.request", new _Factory(), true);
+                super("calculator", "Calculator2.extra.request", _Builder::new, true);
             }
 
             @Override
@@ -456,14 +458,6 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_extra_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -609,6 +603,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
     // type <-- Calculator2.extra.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _extra_response
             implements net.morimekta.providence.PUnion<_extra_response,_extra_response._Field>,
                        Comparable<_extra_response>,
@@ -827,7 +822,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator2.extra.response", new _Factory(), true);
+                super("calculator", "Calculator2.extra.response", _Builder::new, true);
             }
 
             @Override
@@ -854,14 +849,6 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_extra_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 

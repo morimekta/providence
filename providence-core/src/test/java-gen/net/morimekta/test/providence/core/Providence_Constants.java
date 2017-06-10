@@ -6,7 +6,7 @@ public class Providence_Constants {
 
     public static final java.util.List<net.morimekta.test.providence.core.CompactFields> kDefaultCompactFields;
     static {
-        kDefaultCompactFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.test.providence.core.CompactFields>()
+        kDefaultCompactFields = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.core.CompactFields>()
                 .add(net.morimekta.test.providence.core.CompactFields.builder()
                          .setName("Tut-Ankh-Amon")
                          .setId(1333)

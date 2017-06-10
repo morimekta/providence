@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class CalculateException
         extends Exception
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
@@ -269,7 +270,7 @@ public class CalculateException
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> {
         public _Descriptor() {
-            super("calculator", "CalculateException", new _Factory(), false);
+            super("calculator", "CalculateException", _Builder::new, false);
         }
 
         @Override
@@ -296,14 +297,6 @@ public class CalculateException
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<CalculateException,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -444,8 +437,8 @@ public class CalculateException
 
             optionals.set(1);
             modified.set(1);
-            mOperation_builder = null;
             mOperation = value;
+            mOperation_builder = null;
             return this;
         }
 

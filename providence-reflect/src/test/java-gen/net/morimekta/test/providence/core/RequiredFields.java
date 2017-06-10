@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class RequiredFields
         implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
                    Comparable<RequiredFields>,
@@ -534,7 +535,7 @@ public class RequiredFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> {
         public _Descriptor() {
-            super("providence", "RequiredFields", new _Factory(), false);
+            super("providence", "RequiredFields", _Builder::new, false);
         }
 
         @Override
@@ -561,14 +562,6 @@ public class RequiredFields
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<RequiredFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -1216,8 +1209,8 @@ public class RequiredFields
 
             optionals.set(9);
             modified.set(9);
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ProgramType
         implements net.morimekta.providence.PMessage<ProgramType,ProgramType._Field>,
                    Comparable<ProgramType>,
@@ -12,9 +13,9 @@ public class ProgramType
     private final static long serialVersionUID = 2224801959218006031L;
 
     private final static String kDefaultProgramName = "";
-    private final static java.util.Map<String,String> kDefaultNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<String,String>()
+    private final static java.util.Map<String,String> kDefaultNamespaces = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,String>()
                 .build();
-    private final static java.util.List<net.morimekta.providence.model.Declaration> kDefaultDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.Declaration>()
+    private final static java.util.List<net.morimekta.providence.model.Declaration> kDefaultDecl = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.Declaration>()
                 .build();
 
     private final String mDocumentation;
@@ -42,7 +43,7 @@ public class ProgramType
             mIncludes = null;
         }
         if (pNamespaces != null) {
-            mNamespaces = com.google.common.collect.ImmutableMap.copyOf(pNamespaces);
+            mNamespaces = com.google.common.collect.ImmutableSortedMap.copyOf(pNamespaces);
         } else {
             mNamespaces = kDefaultNamespaces;
         }
@@ -61,17 +62,17 @@ public class ProgramType
             mProgramName = kDefaultProgramName;
         }
         if (builder.isSetIncludes()) {
-            mIncludes = builder.mIncludes.build();
+            mIncludes = com.google.common.collect.ImmutableList.copyOf(builder.mIncludes);
         } else {
             mIncludes = null;
         }
         if (builder.isSetNamespaces()) {
-            mNamespaces = builder.mNamespaces.build();
+            mNamespaces = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mNamespaces);
         } else {
             mNamespaces = kDefaultNamespaces;
         }
         if (builder.isSetDecl()) {
-            mDecl = builder.mDecl.build();
+            mDecl = com.google.common.collect.ImmutableList.copyOf(builder.mDecl);
         } else {
             mDecl = kDefaultDecl;
         }
@@ -354,7 +355,7 @@ public class ProgramType
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         PROGRAM_NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "program_name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         INCLUDES(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "includes", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "namespaces", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "namespaces", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         DECL(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.Declaration.provider()), null),
         ;
 
@@ -434,7 +435,7 @@ public class ProgramType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> {
         public _Descriptor() {
-            super("model", "ProgramType", new _Factory(), false);
+            super("model", "ProgramType", _Builder::new, false);
         }
 
         @Override
@@ -464,14 +465,6 @@ public class ProgramType
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ProgramType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a model.ProgramType builder.
      * @return The builder instance.
@@ -491,9 +484,9 @@ public class ProgramType
 
         private String mDocumentation;
         private String mProgramName;
-        private net.morimekta.providence.descriptor.PList.Builder<String> mIncludes;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mNamespaces;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mDecl;
+        private java.util.List<String> mIncludes;
+        private java.util.Map<String,String> mNamespaces;
+        private java.util.List<net.morimekta.providence.model.Declaration> mDecl;
 
         /**
          * Make a model.ProgramType builder.
@@ -502,9 +495,8 @@ public class ProgramType
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mProgramName = kDefaultProgramName;
-            mIncludes = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mNamespaces = kDefaultNamespaces;
+            mDecl = kDefaultDecl;
         }
 
         /**
@@ -523,12 +515,12 @@ public class ProgramType
             mProgramName = base.mProgramName;
             if (base.hasIncludes()) {
                 optionals.set(2);
-                mIncludes.addAll(base.mIncludes);
+                mIncludes = base.mIncludes;
             }
             optionals.set(3);
-            mNamespaces.putAll(base.mNamespaces);
+            mNamespaces = base.mNamespaces;
             optionals.set(4);
-            mDecl.addAll(base.mDecl);
+            mDecl = base.mDecl;
         }
 
         @javax.annotation.Nonnull
@@ -547,18 +539,16 @@ public class ProgramType
             if (from.hasIncludes()) {
                 optionals.set(2);
                 modified.set(2);
-                mIncludes.clear();
-                mIncludes.addAll(from.getIncludes());
+                mIncludes = from.getIncludes();
             }
 
             optionals.set(3);
             modified.set(3);
-            mNamespaces.putAll(from.getNamespaces());
+            mutableNamespaces().putAll(from.getNamespaces());
 
             optionals.set(4);
             modified.set(4);
-            mDecl.clear();
-            mDecl.addAll(from.getDecl());
+            mDecl = from.getDecl();
             return this;
         }
 
@@ -694,8 +684,7 @@ public class ProgramType
 
             optionals.set(2);
             modified.set(2);
-            mIncludes.clear();
-            mIncludes.addAll(value);
+            mIncludes = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -711,8 +700,9 @@ public class ProgramType
         public _Builder addToIncludes(String... values) {
             optionals.set(2);
             modified.set(2);
+            java.util.List<String> _container = mutableIncludes();
             for (String item : values) {
-                mIncludes.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -750,7 +740,7 @@ public class ProgramType
         public _Builder clearIncludes() {
             optionals.clear(2);
             modified.set(2);
-            mIncludes.clear();
+            mIncludes = null;
             return this;
         }
 
@@ -761,9 +751,15 @@ public class ProgramType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<String> mutableIncludes() {
+        public java.util.List<String> mutableIncludes() {
             optionals.set(2);
             modified.set(2);
+
+            if (mIncludes == null) {
+                mIncludes = new java.util.LinkedList<>();
+            } else if (!(mIncludes instanceof java.util.LinkedList)) {
+                mIncludes = new java.util.LinkedList<>(mIncludes);
+            }
             return mIncludes;
         }
 
@@ -783,8 +779,7 @@ public class ProgramType
 
             optionals.set(3);
             modified.set(3);
-            mNamespaces.clear();
-            mNamespaces.putAll(value);
+            mNamespaces = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -801,7 +796,7 @@ public class ProgramType
         public _Builder putInNamespaces(String key, String value) {
             optionals.set(3);
             modified.set(3);
-            mNamespaces.put(key, value);
+            mutableNamespaces().put(key, value);
             return this;
         }
 
@@ -838,7 +833,7 @@ public class ProgramType
         public _Builder clearNamespaces() {
             optionals.clear(3);
             modified.set(3);
-            mNamespaces.clear();
+            mNamespaces = kDefaultNamespaces;
             return this;
         }
 
@@ -849,9 +844,15 @@ public class ProgramType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableNamespaces() {
+        public java.util.Map<String,String> mutableNamespaces() {
             optionals.set(3);
             modified.set(3);
+
+            if (mNamespaces == null) {
+                mNamespaces = new java.util.TreeMap<>();
+            } else if (!(mNamespaces instanceof java.util.TreeMap)) {
+                mNamespaces = new java.util.TreeMap<>(mNamespaces);
+            }
             return mNamespaces;
         }
 
@@ -869,8 +870,7 @@ public class ProgramType
 
             optionals.set(4);
             modified.set(4);
-            mDecl.clear();
-            mDecl.addAll(value);
+            mDecl = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -884,8 +884,9 @@ public class ProgramType
         public _Builder addToDecl(net.morimekta.providence.model.Declaration... values) {
             optionals.set(4);
             modified.set(4);
+            java.util.List<net.morimekta.providence.model.Declaration> _container = mutableDecl();
             for (net.morimekta.providence.model.Declaration item : values) {
-                mDecl.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -917,7 +918,7 @@ public class ProgramType
         public _Builder clearDecl() {
             optionals.clear(4);
             modified.set(4);
-            mDecl.clear();
+            mDecl = kDefaultDecl;
             return this;
         }
 
@@ -926,9 +927,15 @@ public class ProgramType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mutableDecl() {
+        public java.util.List<net.morimekta.providence.model.Declaration> mutableDecl() {
             optionals.set(4);
             modified.set(4);
+
+            if (mDecl == null) {
+                mDecl = new java.util.LinkedList<>();
+            } else if (!(mDecl instanceof java.util.LinkedList)) {
+                mDecl = new java.util.LinkedList<>(mDecl);
+            }
             return mDecl;
         }
 
@@ -1085,16 +1092,18 @@ public class ProgramType
                     }
                     case 3: {
                         if (type == 15) {
-                            byte t_4 = reader.expectByte();
-                            if (t_4 == 11) {
-                                final int len_3 = reader.expectUInt32();
-                                for (int i_5 = 0; i_5 < len_3; ++i_5) {
-                                    int len_7 = reader.expectUInt32();
-                                    String key_6 = new String(reader.expectBytes(len_7), java.nio.charset.StandardCharsets.UTF_8);
-                                    mIncludes.add(key_6);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<String> b_3 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_5 = reader.expectByte();
+                            if (t_5 == 11) {
+                                final int len_4 = reader.expectUInt32();
+                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
+                                    int len_8 = reader.expectUInt32();
+                                    String key_7 = new String(reader.expectBytes(len_8), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_3.add(key_7);
                                 }
+                                mIncludes = b_3.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_4) + " for model.ProgramType.includes, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) + " for model.ProgramType.includes, should be string(11)");
                             }
                             optionals.set(2);
                         } else {
@@ -1104,21 +1113,23 @@ public class ProgramType
                     }
                     case 4: {
                         if (type == 13) {
-                            byte t_9 = reader.expectByte();
-                            byte t_10 = reader.expectByte();
-                            if (t_9 == 11 && t_10 == 11) {
-                                final int len_8 = reader.expectUInt32();
-                                for (int i_11 = 0; i_11 < len_8; ++i_11) {
-                                    int len_14 = reader.expectUInt32();
-                                    String key_12 = new String(reader.expectBytes(len_14), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_15 = reader.expectUInt32();
-                                    String val_13 = new String(reader.expectBytes(len_15), java.nio.charset.StandardCharsets.UTF_8);
-                                    mNamespaces.put(key_12, val_13);
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_9 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_11 = reader.expectByte();
+                            byte t_12 = reader.expectByte();
+                            if (t_11 == 11 && t_12 == 11) {
+                                final int len_10 = reader.expectUInt32();
+                                for (int i_13 = 0; i_13 < len_10; ++i_13) {
+                                    int len_16 = reader.expectUInt32();
+                                    String key_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_17 = reader.expectUInt32();
+                                    String val_15 = new String(reader.expectBytes(len_17), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_9.put(key_14, val_15);
                                 }
+                                mNamespaces = b_9.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_9) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_10) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_11) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_12) +
                                         " for model.ProgramType.namespaces, should be string(11) and string(11)");
                             }
                             optionals.set(3);
@@ -1129,15 +1140,17 @@ public class ProgramType
                     }
                     case 5: {
                         if (type == 15) {
-                            byte t_17 = reader.expectByte();
-                            if (t_17 == 12) {
-                                final int len_16 = reader.expectUInt32();
-                                for (int i_18 = 0; i_18 < len_16; ++i_18) {
-                                    net.morimekta.providence.model.Declaration key_19 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.Declaration.kDescriptor, strict);
-                                    mDecl.add(key_19);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.Declaration> b_18 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_20 = reader.expectByte();
+                            if (t_20 == 12) {
+                                final int len_19 = reader.expectUInt32();
+                                for (int i_21 = 0; i_21 < len_19; ++i_21) {
+                                    net.morimekta.providence.model.Declaration key_22 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.Declaration.kDescriptor, strict);
+                                    b_18.add(key_22);
                                 }
+                                mDecl = b_18.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_17) + " for model.ProgramType.decl, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_20) + " for model.ProgramType.decl, should be struct(12)");
                             }
                             optionals.set(4);
                         } else {

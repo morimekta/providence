@@ -21,13 +21,13 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PEnumBuilder;
-import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * The definition of a thrift enum.
@@ -36,11 +36,11 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
     // According to doc it's 1, but the current c++ compiler makes it 0...
     public static final int DEFAULT_FIRST_VALUE = 0;
 
-    private final PEnumBuilderFactory<T> factory;
+    private final Supplier<PEnumBuilder<T>> builderSupplier;
 
-    public PEnumDescriptor(String packageName, String name, PEnumBuilderFactory<T> provider) {
+    public PEnumDescriptor(String packageName, String name, Supplier<PEnumBuilder<T>> provider) {
         super(packageName, name);
-        factory = provider;
+        builderSupplier = provider;
     }
 
     @Nonnull
@@ -70,7 +70,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
 
     @Override
     public PEnumBuilder<T> builder() {
-        return factory.builder();
+        return builderSupplier.get();
     }
 
     @Override
@@ -106,7 +106,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
         return Objects.hash(PEnumDescriptor.class, getQualifiedName());
     }
 
-    protected PEnumBuilderFactory<T> getFactoryInternal() {
-        return factory;
+    protected Supplier<PEnumBuilder<T>> getBuilderSupplier() {
+        return builderSupplier;
     }
 }

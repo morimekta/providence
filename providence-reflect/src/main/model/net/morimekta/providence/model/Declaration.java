@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * ( &lt;enum&gt; | &lt;typedef&gt; | &lt;struct&gt; | &lt;service&gt; | &lt;const&gt; )
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Declaration
         implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
                    Comparable<Declaration>,
@@ -398,7 +399,7 @@ public class Declaration
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> {
         public _Descriptor() {
-            super("model", "Declaration", new _Factory(), false);
+            super("model", "Declaration", _Builder::new, false);
         }
 
         @Override
@@ -425,14 +426,6 @@ public class Declaration
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Declaration,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 
@@ -555,8 +548,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_ENUM;
             modified = true;
-            mDeclEnum_builder = null;
             mDeclEnum = value;
+            mDeclEnum_builder = null;
             return this;
         }
 
@@ -618,8 +611,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_TYPEDEF;
             modified = true;
-            mDeclTypedef_builder = null;
             mDeclTypedef = value;
+            mDeclTypedef_builder = null;
             return this;
         }
 
@@ -681,8 +674,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_STRUCT;
             modified = true;
-            mDeclStruct_builder = null;
             mDeclStruct = value;
+            mDeclStruct_builder = null;
             return this;
         }
 
@@ -744,8 +737,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_SERVICE;
             modified = true;
-            mDeclService_builder = null;
             mDeclService = value;
+            mDeclService_builder = null;
             return this;
         }
 
@@ -807,8 +800,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_CONST;
             modified = true;
-            mDeclConst_builder = null;
             mDeclConst = value;
+            mDeclConst_builder = null;
             return this;
         }
 

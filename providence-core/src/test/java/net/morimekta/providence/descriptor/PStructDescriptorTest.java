@@ -19,8 +19,6 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.test.providence.core.CompactFields;
 import net.morimekta.test.providence.core.Containers;
@@ -67,7 +65,7 @@ public class PStructDescriptorTest {
     @Test
     public void testOverrides() {
         assertEquals(PMessageVariant.STRUCT, Imaginary.kDescriptor.getVariant());
-        assertThat(Imaginary.kDescriptor.getFactoryInternal(), is(notNullValue()));
+        assertThat(Imaginary.kDescriptor.getBuilderSupplier(), is(notNullValue()));
         assertThat(Imaginary.kDescriptor.isSimple(), is(true));
         assertThat(Containers.kDescriptor.isSimple(), is(false));
     }
@@ -99,13 +97,7 @@ public class PStructDescriptorTest {
 
         @SuppressWarnings("unchecked")
         Dummy(Collection<PField> fields) {
-            super("program", "Type", new PMessageBuilderFactory() {
-                @Nonnull
-                @Override
-                public PMessageBuilder builder() {
-                    return DefaultFields.builder();
-                }
-            }, false);
+            super("program", "Type", DefaultFields::builder, false);
             this.fields = fields.toArray(new PField[fields.size()]);
         }
 

@@ -21,7 +21,6 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
-import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
 import com.google.common.collect.ImmutableSet;
@@ -31,19 +30,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Descriptor for a set with item type.
  */
 public class PSet<Item> extends PContainer<Set<Item>> {
-    private final BuilderFactory<Item> builderFactory;
+    private final Supplier<Builder<Item>> builderSupplier;
 
     public PSet(PDescriptorProvider itemType,
-                BuilderFactory<Item> builderFactory) {
+                Supplier<Builder<Item>> builderSupplier) {
         super(itemType);
-        this.builderFactory = builderFactory;
+        this.builderSupplier = builderSupplier;
     }
 
     @Nonnull
@@ -85,101 +84,116 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         return PSet.class.hashCode() + itemDescriptor().hashCode();
     }
 
+    @Override
+    public Builder<Item> builder() {
+        return builderSupplier.get();
+    }
+
+    /**
+     * Container builder used in serialization.
+     *
+     * @param <I> The item type.
+     */
     public interface Builder<I> extends PBuilder<Set<I>> {
         @Nonnull
         Builder<I> add(@Nonnull I value);
         @Nonnull
         Builder<I> addAll(@Nonnull Collection<I> items);
-        @Nonnull
-        Builder<I> clear();
-
-        int size();
 
         @Nonnull
         @Override
         Set<I> build();
     }
 
-    private interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
-        @Nonnull
-        @Override
-        Builder<I> builder();
-    }
+    /**
+     * Default builder returning an ImmutableSet.
+     *
+     * @param <I> The item type.
+     */
+    public static class DefaultBuilder<I> implements Builder<I> {
+        private ImmutableSet.Builder<I> builder;
 
-    public static class ImmutableSetBuilder<I> extends LinkedHashSetBuilder<I> {
-        @Nonnull
-        @Override
-        public Set<I> build() {
-            return ImmutableSet.copyOf(builder);
-        }
-    }
-
-    public static class ImmutableSortedSetBuilder<I extends Comparable<I>> extends LinkedHashSetBuilder<I> {
-        @Nonnull
-        @Override
-        public Set<I> build() {
-            return ImmutableSortedSet.copyOf(builder);
-        }
-    }
-
-    public static class LinkedHashSetBuilder<I> implements Builder<I> {
-        final LinkedHashSet<I> builder;
-
-        public LinkedHashSetBuilder() {
-            this.builder = new LinkedHashSet<>();
+        public DefaultBuilder() {
+            builder = ImmutableSet.builder();
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> add(@Nonnull I value) {
+        public Builder<I> add(@Nonnull I value) {
             builder.add(value);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> addAll(@Nonnull Collection<I> items) {
+        public Builder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> clear() {
-            builder.clear();
+        public Set<I> build() {
+            return builder.build();
+        }
+    }
+
+    /**
+     * Default builder returning an ImmutableSortedSet.
+     *
+     * @param <I> The item type.
+     */
+    public static class SortedBuilder<I extends Comparable<I>> implements Builder<I> {
+        private ImmutableSortedSet.Builder<I> builder;
+
+        public SortedBuilder() {
+            builder = ImmutableSortedSet.naturalOrder();
+        }
+
+        @Nonnull
+        @Override
+        public Builder<I> add(@Nonnull I value) {
+            builder.add(value);
             return this;
         }
 
-        public int size() {
-            return builder.size();
+        @Nonnull
+        @Override
+        public Builder<I> addAll(@Nonnull Collection<I> items) {
+            builder.addAll(items);
+            return this;
         }
 
         @Nonnull
         @Override
         public Set<I> build() {
-            return Collections.unmodifiableSet(builder);
+            return builder.build();
         }
     }
 
-    @Override
-    public Builder<Item> builder() {
-        return builderFactory.builder();
+    /**
+     * Default builder returning an ImmutableSet. The immutable set is
+     * order preserving.
+     *
+     * @param <I> The item type.
+     */
+    public static class OrderedBuilder<I> extends DefaultBuilder<I> {
     }
 
     public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableSetBuilder::new);
+        return provider(itemDesc, DefaultBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> sortedProvider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableSortedSetBuilder::new);
+        return provider(itemDesc, SortedBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> orderedProvider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, LinkedHashSetBuilder::new);
+        return provider(itemDesc, OrderedBuilder::new);
     }
 
     private static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc,
-                                                                      BuilderFactory<I> builderFactory) {
+                                                                    Supplier<Builder<I>> builderFactory) {
         return new PContainerProvider<>(new PSet<>(itemDesc, builderFactory));
     }
 }

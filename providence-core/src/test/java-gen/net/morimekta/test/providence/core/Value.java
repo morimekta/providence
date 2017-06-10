@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.core;
 
+@javax.annotation.Generated("providence java generator")
 public enum Value
         implements net.morimekta.providence.PEnumValue<Value> {
     FIRST(1, "FIRST"),
@@ -144,18 +145,10 @@ public enum Value
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<Value>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<Value> {
-        @Override
-        public Value._Builder builder() {
-            return new Value._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<Value> {
         public _Descriptor() {
-            super("providence", "Value", new _Factory());
+            super("providence", "Value", _Builder::new);
         }
 
         @Override

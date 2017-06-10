@@ -6,6 +6,7 @@ package net.morimekta.providence.model;
  * }
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class MessageType
         implements net.morimekta.providence.PMessage<MessageType,MessageType._Field>,
                    Comparable<MessageType>,
@@ -15,7 +16,7 @@ public class MessageType
 
     private final static net.morimekta.providence.model.MessageVariant kDefaultVariant = net.morimekta.providence.model.MessageVariant.STRUCT;
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType>()
                 .build();
 
     private final String mDocumentation;
@@ -44,7 +45,7 @@ public class MessageType
             mFields = kDefaultFields;
         }
         if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -59,12 +60,12 @@ public class MessageType
             mName = kDefaultName;
         }
         if (builder.isSetFields()) {
-            mFields = builder.mFields.build();
+            mFields = com.google.common.collect.ImmutableList.copyOf(builder.mFields);
         } else {
             mFields = kDefaultFields;
         }
         if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -333,7 +334,7 @@ public class MessageType
         VARIANT(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "variant", net.morimekta.providence.model.MessageVariant.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultVariant)),
         NAME(3, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         FIELDS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "fields", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -412,7 +413,7 @@ public class MessageType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> {
         public _Descriptor() {
-            super("model", "MessageType", new _Factory(), false);
+            super("model", "MessageType", _Builder::new, false);
         }
 
         @Override
@@ -442,14 +443,6 @@ public class MessageType
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<MessageType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a model.MessageType builder.
      * @return The builder instance.
@@ -472,8 +465,8 @@ public class MessageType
         private String mDocumentation;
         private net.morimekta.providence.model.MessageVariant mVariant;
         private String mName;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mFields;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
+        private java.util.List<net.morimekta.providence.model.FieldType> mFields;
+        private java.util.Map<String,String> mAnnotations;
 
         /**
          * Make a model.MessageType builder.
@@ -482,8 +475,7 @@ public class MessageType
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mName = kDefaultName;
-            mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mFields = kDefaultFields;
         }
 
         /**
@@ -505,10 +497,10 @@ public class MessageType
             optionals.set(2);
             mName = base.mName;
             optionals.set(3);
-            mFields.addAll(base.mFields);
+            mFields = base.mFields;
             if (base.hasAnnotations()) {
                 optionals.set(4);
-                mAnnotations.putAll(base.mAnnotations);
+                mAnnotations = base.mAnnotations;
             }
         }
 
@@ -533,13 +525,12 @@ public class MessageType
 
             optionals.set(3);
             modified.set(3);
-            mFields.clear();
-            mFields.addAll(from.getFields());
+            mFields = from.getFields();
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
                 modified.set(4);
-                mAnnotations.putAll(from.getAnnotations());
+                mutableAnnotations().putAll(from.getAnnotations());
             }
             return this;
         }
@@ -732,8 +723,7 @@ public class MessageType
 
             optionals.set(3);
             modified.set(3);
-            mFields.clear();
-            mFields.addAll(value);
+            mFields = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -747,8 +737,9 @@ public class MessageType
         public _Builder addToFields(net.morimekta.providence.model.FieldType... values) {
             optionals.set(3);
             modified.set(3);
+            java.util.List<net.morimekta.providence.model.FieldType> _container = mutableFields();
             for (net.morimekta.providence.model.FieldType item : values) {
-                mFields.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -780,7 +771,7 @@ public class MessageType
         public _Builder clearFields() {
             optionals.clear(3);
             modified.set(3);
-            mFields.clear();
+            mFields = kDefaultFields;
             return this;
         }
 
@@ -789,9 +780,15 @@ public class MessageType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableFields() {
+        public java.util.List<net.morimekta.providence.model.FieldType> mutableFields() {
             optionals.set(3);
             modified.set(3);
+
+            if (mFields == null) {
+                mFields = new java.util.LinkedList<>();
+            } else if (!(mFields instanceof java.util.LinkedList)) {
+                mFields = new java.util.LinkedList<>(mFields);
+            }
             return mFields;
         }
 
@@ -809,8 +806,7 @@ public class MessageType
 
             optionals.set(4);
             modified.set(4);
-            mAnnotations.clear();
-            mAnnotations.putAll(value);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -825,7 +821,7 @@ public class MessageType
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
             modified.set(4);
-            mAnnotations.put(key, value);
+            mutableAnnotations().put(key, value);
             return this;
         }
 
@@ -856,7 +852,7 @@ public class MessageType
         public _Builder clearAnnotations() {
             optionals.clear(4);
             modified.set(4);
-            mAnnotations.clear();
+            mAnnotations = null;
             return this;
         }
 
@@ -865,9 +861,15 @@ public class MessageType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+        public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
+
+            if (mAnnotations == null) {
+                mAnnotations = new java.util.TreeMap<>();
+            } else if (!(mAnnotations instanceof java.util.TreeMap)) {
+                mAnnotations = new java.util.TreeMap<>(mAnnotations);
+            }
             return mAnnotations;
         }
 
@@ -1032,15 +1034,17 @@ public class MessageType
                     }
                     case 4: {
                         if (type == 15) {
-                            byte t_4 = reader.expectByte();
-                            if (t_4 == 12) {
-                                final int len_3 = reader.expectUInt32();
-                                for (int i_5 = 0; i_5 < len_3; ++i_5) {
-                                    net.morimekta.providence.model.FieldType key_6 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
-                                    mFields.add(key_6);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType> b_3 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_5 = reader.expectByte();
+                            if (t_5 == 12) {
+                                final int len_4 = reader.expectUInt32();
+                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
+                                    net.morimekta.providence.model.FieldType key_7 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
+                                    b_3.add(key_7);
                                 }
+                                mFields = b_3.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_4) + " for model.MessageType.fields, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) + " for model.MessageType.fields, should be struct(12)");
                             }
                             optionals.set(3);
                         } else {
@@ -1050,21 +1054,23 @@ public class MessageType
                     }
                     case 5: {
                         if (type == 13) {
-                            byte t_8 = reader.expectByte();
-                            byte t_9 = reader.expectByte();
-                            if (t_8 == 11 && t_9 == 11) {
-                                final int len_7 = reader.expectUInt32();
-                                for (int i_10 = 0; i_10 < len_7; ++i_10) {
-                                    int len_13 = reader.expectUInt32();
-                                    String key_11 = new String(reader.expectBytes(len_13), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_14 = reader.expectUInt32();
-                                    String val_12 = new String(reader.expectBytes(len_14), java.nio.charset.StandardCharsets.UTF_8);
-                                    mAnnotations.put(key_11, val_12);
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_8 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_10 = reader.expectByte();
+                            byte t_11 = reader.expectByte();
+                            if (t_10 == 11 && t_11 == 11) {
+                                final int len_9 = reader.expectUInt32();
+                                for (int i_12 = 0; i_12 < len_9; ++i_12) {
+                                    int len_15 = reader.expectUInt32();
+                                    String key_13 = new String(reader.expectBytes(len_15), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_16 = reader.expectUInt32();
+                                    String val_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_8.put(key_13, val_14);
                                 }
+                                mAnnotations = b_8.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_8) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_9) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_10) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_11) +
                                         " for model.MessageType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);

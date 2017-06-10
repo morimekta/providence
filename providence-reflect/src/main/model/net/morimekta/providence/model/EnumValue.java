@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * &lt;name&gt; (= &lt;value&gt;)
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class EnumValue
         implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>,
                    Comparable<EnumValue>,
@@ -33,7 +34,7 @@ public class EnumValue
         }
         mValue = pValue;
         if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -48,7 +49,7 @@ public class EnumValue
         }
         mValue = builder.mValue;
         if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
@@ -281,7 +282,7 @@ public class EnumValue
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "value", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -358,7 +359,7 @@ public class EnumValue
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> {
         public _Descriptor() {
-            super("model", "EnumValue", new _Factory(), false);
+            super("model", "EnumValue", _Builder::new, false);
         }
 
         @Override
@@ -388,14 +389,6 @@ public class EnumValue
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<EnumValue,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a model.EnumValue builder.
      * @return The builder instance.
@@ -416,7 +409,7 @@ public class EnumValue
         private String mDocumentation;
         private String mName;
         private Integer mValue;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
+        private java.util.Map<String,String> mAnnotations;
 
         /**
          * Make a model.EnumValue builder.
@@ -425,7 +418,6 @@ public class EnumValue
             optionals = new java.util.BitSet(4);
             modified = new java.util.BitSet(4);
             mName = kDefaultName;
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         /**
@@ -448,7 +440,7 @@ public class EnumValue
             }
             if (base.hasAnnotations()) {
                 optionals.set(3);
-                mAnnotations.putAll(base.mAnnotations);
+                mAnnotations = base.mAnnotations;
             }
         }
 
@@ -474,7 +466,7 @@ public class EnumValue
             if (from.hasAnnotations()) {
                 optionals.set(3);
                 modified.set(3);
-                mAnnotations.putAll(from.getAnnotations());
+                mutableAnnotations().putAll(from.getAnnotations());
             }
             return this;
         }
@@ -663,8 +655,7 @@ public class EnumValue
 
             optionals.set(3);
             modified.set(3);
-            mAnnotations.clear();
-            mAnnotations.putAll(value);
+            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -679,7 +670,7 @@ public class EnumValue
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(3);
             modified.set(3);
-            mAnnotations.put(key, value);
+            mutableAnnotations().put(key, value);
             return this;
         }
 
@@ -710,7 +701,7 @@ public class EnumValue
         public _Builder clearAnnotations() {
             optionals.clear(3);
             modified.set(3);
-            mAnnotations.clear();
+            mAnnotations = null;
             return this;
         }
 
@@ -719,9 +710,15 @@ public class EnumValue
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+        public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(3);
             modified.set(3);
+
+            if (mAnnotations == null) {
+                mAnnotations = new java.util.TreeMap<>();
+            } else if (!(mAnnotations instanceof java.util.TreeMap)) {
+                mAnnotations = new java.util.TreeMap<>(mAnnotations);
+            }
             return mAnnotations;
         }
 
@@ -879,21 +876,23 @@ public class EnumValue
                     }
                     case 4: {
                         if (type == 13) {
-                            byte t_4 = reader.expectByte();
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_3 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
                             byte t_5 = reader.expectByte();
-                            if (t_4 == 11 && t_5 == 11) {
-                                final int len_3 = reader.expectUInt32();
-                                for (int i_6 = 0; i_6 < len_3; ++i_6) {
-                                    int len_9 = reader.expectUInt32();
-                                    String key_7 = new String(reader.expectBytes(len_9), java.nio.charset.StandardCharsets.UTF_8);
+                            byte t_6 = reader.expectByte();
+                            if (t_5 == 11 && t_6 == 11) {
+                                final int len_4 = reader.expectUInt32();
+                                for (int i_7 = 0; i_7 < len_4; ++i_7) {
                                     int len_10 = reader.expectUInt32();
-                                    String val_8 = new String(reader.expectBytes(len_10), java.nio.charset.StandardCharsets.UTF_8);
-                                    mAnnotations.put(key_7, val_8);
+                                    String key_8 = new String(reader.expectBytes(len_10), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_11 = reader.expectUInt32();
+                                    String val_9 = new String(reader.expectBytes(len_11), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_3.put(key_8, val_9);
                                 }
+                                mAnnotations = b_3.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_4) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_6) +
                                         " for model.EnumValue.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(3);

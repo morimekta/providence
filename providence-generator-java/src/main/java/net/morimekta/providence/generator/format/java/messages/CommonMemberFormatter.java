@@ -78,8 +78,10 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
         writer.appendln("@SuppressWarnings(\"unused\")");
-        if (options.generated_annotation) {
+        if (options.generated_annotation_version) {
             writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        } else {
+            writer.formatln("@%s(\"providence java generator\")", Generated.class.getName());
         }
     }
 
@@ -429,12 +431,9 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                     continue;
                 }
                 switch (field.type()) {
-                    case LIST:
+                    case LIST: {
                         writer.formatln("if (%s != null) {", field.param())
-                              .formatln("    %s = %s.copyOf(%s);",
-                                        field.member(),
-                                        field.fieldInstanceType(),
-                                        field.param())
+                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
                               .appendln("} else {");
                         if (field.alwaysPresent()) {
                             writer.formatln("    %s = %s;", field.member(), field.kDefault());
@@ -443,21 +442,10 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                         }
                         writer.appendln('}');
                         break;
-                    case SET:
+                    }
+                    case SET: {
                         writer.formatln("if (%s != null) {", field.param())
-                              .begin();
-                        if (field.containerType() == ContainerType.ORDERED) {
-                            writer.formatln("%s = %s.unmodifiableSet(%s);",
-                                            field.member(),
-                                            Collections.class.getName(),
-                                            field.param());
-                        } else {
-                            writer.formatln("%s = %s.copyOf(%s);",
-                                            field.member(),
-                                            field.fieldInstanceType(),
-                                            field.param());
-                        }
-                        writer.end()
+                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
                               .appendln("} else {");
                         if (field.alwaysPresent()) {
                             writer.formatln("    %s = %s;", field.member(), field.kDefault());
@@ -466,21 +454,10 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                         }
                         writer.appendln('}');
                         break;
-                    case MAP:
+                    }
+                    case MAP: {
                         writer.formatln("if (%s != null) {", field.param())
-                              .begin();
-                        if (field.containerType() == ContainerType.ORDERED) {
-                            writer.formatln("%s = %s.unmodifiableMap(%s);",
-                                            field.member(),
-                                            Collections.class.getName(),
-                                            field.param());
-                        } else {
-                            writer.formatln("%s = %s.copyOf(%s);",
-                                            field.member(),
-                                            field.fieldInstanceType(),
-                                            field.param());
-                        }
-                        writer.end()
+                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
                               .appendln("} else {");
                         if (field.alwaysPresent()) {
                             writer.formatln("    %s = %s;", field.member(), field.kDefault());
@@ -489,6 +466,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                         }
                         writer.appendln('}');
                         break;
+                    }
                     default: {
                         if (field.alwaysPresent() && !(field.isRequired() && field.isPrimitiveJavaValue())) {
                             writer.formatln("if (%s != null) {", field.param())

@@ -14,16 +14,16 @@ public class OptionalFields
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
 
-    private final Boolean mBooleanValue;
-    private final Byte mByteValue;
-    private final Short mShortValue;
-    private final Integer mIntegerValue;
-    private final Long mLongValue;
-    private final Double mDoubleValue;
-    private final String mStringValue;
+    private final Boolean                   mBooleanValue;
+    private final Byte                      mByteValue;
+    private final Short                     mShortValue;
+    private final Integer                   mIntegerValue;
+    private final Long                      mLongValue;
+    private final Double                    mDoubleValue;
+    private final String                    mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
-    private final Value mEnumValue;
-    private final CompactFields mCompactValue;
+    private final Value                     mEnumValue;
+    private final CompactFields             mCompactValue;
 
     private volatile int tHashCode;
 
@@ -518,7 +518,7 @@ public class OptionalFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<OptionalFields,_Field> {
         public _Descriptor() {
-            super("providence", "OptionalFields", new _Factory(), false);
+            super("providence", "OptionalFields", _Builder::new, false);
         }
 
         @Override
@@ -548,14 +548,6 @@ public class OptionalFields
         }
     }
 
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<OptionalFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
-        }
-    }
-
     /**
      * Make a providence.OptionalFields builder.
      * @return The builder instance.
@@ -569,17 +561,17 @@ public class OptionalFields
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private Boolean mBooleanValue;
-        private Byte mByteValue;
-        private Short mShortValue;
-        private Integer mIntegerValue;
-        private Long mLongValue;
-        private Double mDoubleValue;
-        private String mStringValue;
+        private Boolean                   mBooleanValue;
+        private Byte                      mByteValue;
+        private Short                     mShortValue;
+        private Integer                   mIntegerValue;
+        private Long                      mLongValue;
+        private Double                    mDoubleValue;
+        private String                    mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
-        private Value mEnumValue;
-        private CompactFields mCompactValue;
-        private CompactFields._Builder mCompactValue_builder;
+        private Value                     mEnumValue;
+        private CompactFields             mCompactValue;
+        private CompactFields._Builder    mCompactValue_builder;
 
         /**
          * Make a providence.OptionalFields builder.
@@ -761,7 +753,7 @@ public class OptionalFields
          *
          * @return The field value
          */
-        public boolean isBooleanValue() {
+        public boolean getBooleanValue() {
             return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
         }
 
@@ -1043,6 +1035,10 @@ public class OptionalFields
          */
         @javax.annotation.Nonnull
         public _Builder setStringValue(String value) {
+            if (value == null) {
+                return clearStringValue();
+            }
+
             optionals.set(6);
             modified.set(6);
             mStringValue = value;
@@ -1097,6 +1093,10 @@ public class OptionalFields
          */
         @javax.annotation.Nonnull
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
+            if (value == null) {
+                return clearBinaryValue();
+            }
+
             optionals.set(7);
             modified.set(7);
             mBinaryValue = value;
@@ -1151,6 +1151,10 @@ public class OptionalFields
          */
         @javax.annotation.Nonnull
         public _Builder setEnumValue(Value value) {
+            if (value == null) {
+                return clearEnumValue();
+            }
+
             optionals.set(8);
             modified.set(8);
             mEnumValue = value;
@@ -1205,10 +1209,14 @@ public class OptionalFields
          */
         @javax.annotation.Nonnull
         public _Builder setCompactValue(CompactFields value) {
+            if (value == null) {
+                return clearCompactValue();
+            }
+
             optionals.set(9);
             modified.set(9);
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

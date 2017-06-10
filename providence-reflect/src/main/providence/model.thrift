@@ -17,7 +17,7 @@ struct EnumValue {
     1: optional string documentation;
     2: required string name;
     3: optional i32 value;
-    4: optional map<string,string> annotations;
+    4: optional map<string,string> annotations (container = "SORTED");
 }
 
 /**
@@ -29,7 +29,7 @@ struct EnumType {
     1: optional string documentation;
     2: required string name;
     3:          list<EnumValue> values;
-    4: optional map<string,string> annotations;
+    4: optional map<string,string> annotations (container = "SORTED");
 }
 
 /**
@@ -83,7 +83,7 @@ struct FieldType {
     4: required string type;
     5: required string name;
     6: optional string default_value;
-    7: optional map<string,string> annotations;
+    7: optional map<string,string> annotations (container = "SORTED");
 
     // Note the start of the default value in the parsed thrift file, this
     // can be used for making more accurate exception / parse data from the
@@ -102,7 +102,7 @@ struct MessageType {
     2: optional MessageVariant variant = MessageVariant.STRUCT;
     3: required string name;
     4:          list<FieldType> fields;
-    5: optional map<string,string> annotations;
+    5: optional map<string,string> annotations (container = "SORTED");
 }
 
 /**
@@ -115,7 +115,7 @@ struct FunctionType {
     4: required string name;
     5:          list<FieldType> params;
     6: optional list<FieldType> exceptions;
-    7: optional map<string,string> annotations;
+    7: optional map<string,string> annotations (container = "SORTED");
 }
 
 /**
@@ -128,7 +128,7 @@ struct ServiceType {
     2: required string name;
     3: optional string extend;
     4:          list<FunctionType> methods;
-    5: optional map<string,string> annotations;
+    5: optional map<string,string> annotations (container = "SORTED");
 }
 
 /**
@@ -139,7 +139,7 @@ struct ConstType {
     4: required string type;
     5: required string name;
     6: required string value;
-    7: optional map<string,string> annotations;
+    7: optional map<string,string> annotations (container = "SORTED");
 
     // Note the start of the const in the parsed thrift file, this can be used
     // for making more accurate exception / parse data from the const parser.
@@ -184,7 +184,7 @@ struct ProgramType {
      *
      * namespace <key> <value>
      */
-    4:          map<string,string> namespaces;
+    4:          map<string,string> namespaces (container = "SORTED");
 
     /**
      * List of declarations in the program file. Same order as in the thrift file.

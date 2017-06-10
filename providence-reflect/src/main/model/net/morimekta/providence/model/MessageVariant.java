@@ -8,6 +8,7 @@ package net.morimekta.providence.model;
  * UNION: No required fields. Only one field set to be valid.
  * EXCEPTION: No &#39;cause&#39; field, &#39;message&#39; field *must* be a string (java).
  */
+@javax.annotation.Generated("providence java generator")
 public enum MessageVariant
         implements net.morimekta.providence.PEnumValue<MessageVariant> {
     STRUCT(1, "STRUCT"),
@@ -98,18 +99,10 @@ public enum MessageVariant
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<MessageVariant>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<MessageVariant> {
-        @Override
-        public MessageVariant._Builder builder() {
-            return new MessageVariant._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<MessageVariant> {
         public _Descriptor() {
-            super("model", "MessageVariant", new _Factory());
+            super("model", "MessageVariant", _Builder::new);
         }
 
         @Override

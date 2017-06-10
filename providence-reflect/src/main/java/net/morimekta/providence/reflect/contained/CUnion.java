@@ -24,16 +24,26 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
-import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.reflect.util.ThriftCollection;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
@@ -47,14 +57,29 @@ public class CUnion implements PUnion<CUnion,CField> {
     private CUnion(Builder builder) {
         this.unionField = builder.unionField;
         this.descriptor = builder.descriptor;
+
         if (builder.currentValue instanceof PMessageBuilder) {
             this.unionValue = ((PMessageBuilder) builder.currentValue).build();
-        } else if (builder.currentValue instanceof PMap.Builder) {
-            this.unionValue = ((PMap.Builder) builder.currentValue).build();
-        } else if (builder.currentValue instanceof PList.Builder) {
-            this.unionValue = ((PList.Builder) builder.currentValue).build();
-        } else if (builder.currentValue instanceof PSet.Builder) {
-            this.unionValue = ((PSet.Builder) builder.currentValue).build();
+        } else if (builder.currentValue instanceof List) {
+            this.unionValue = ImmutableList.copyOf((List) builder.currentValue);
+        } else if (builder.currentValue instanceof Map) {
+            switch (ThriftCollection.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
+                case SORTED:
+                    this.unionValue = ImmutableSortedMap.copyOf((Map) builder.currentValue);
+                    break;
+                default:
+                    this.unionValue = ImmutableMap.copyOf((Map) builder.currentValue);
+                    break;
+            }
+        } else if (builder.currentValue instanceof Set) {
+            switch (ThriftCollection.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
+                case SORTED:
+                    this.unionValue = ImmutableSortedSet.copyOf((Set) builder.currentValue);
+                    break;
+                default:
+                    this.unionValue = ImmutableSet.copyOf((Set) builder.currentValue);
+                    break;
+            }
         } else {
             this.unionValue = builder.currentValue;
         }
@@ -189,10 +214,10 @@ public class CUnion implements PUnion<CUnion,CField> {
                         break;
                     }
                     case SET:
-                        ((PSet.Builder<Object>) currentValue).addAll((Collection<Object>) from.get(key));
+                        ((Set<Object>) currentValue).addAll((Collection<Object>) from.get(key));
                         break;
                     case MAP:
-                        ((PMap.Builder<Object, Object>) currentValue).putAll((Map<Object, Object>) from.get(key));
+                        ((Map<Object, Object>) currentValue).putAll((Map<Object, Object>) from.get(key));
                         break;
                     default:
                         set(key, from.get(key));
@@ -242,13 +267,13 @@ public class CUnion implements PUnion<CUnion,CField> {
             this.unionField = field;
             switch (field.getType()) {
                 case SET:
-                    this.currentValue = ((PSet) field.getDescriptor()).builder().addAll((Collection) value);
+                    this.currentValue = new LinkedHashSet<>((Collection) value);
                     break;
                 case LIST:
-                    this.currentValue = ((PList) field.getDescriptor()).builder().addAll((Collection) value);
+                    this.currentValue = new LinkedList<>((Collection) value);
                     break;
                 case MAP:
-                    this.currentValue = ((PMap) field.getDescriptor()).builder().putAll((Map) value);
+                    this.currentValue = new LinkedHashMap<>((Map) value);
                     break;
                 default:
                     this.currentValue = value;
@@ -287,29 +312,18 @@ public class CUnion implements PUnion<CUnion,CField> {
                 this.unionField = field;
                 switch (field.getType()) {
                     case LIST: {
-                        this.currentValue = ((PList) field.getDescriptor()).builder();
+                        this.currentValue = new LinkedList<>();
                         break;
                     }
                     case SET: {
-                        this.currentValue = ((PSet) field.getDescriptor()).builder();
+                        this.currentValue = new LinkedHashSet<>();
                         break;
                     }
                     default:
                         break;
                 }
             }
-            switch (field.getType()) {
-                case LIST: {
-                    ((PList.Builder) this.currentValue).add(value);
-                    break;
-                }
-                case SET: {
-                    ((PList.Builder) this.currentValue).add(value);
-                    break;
-                }
-                default:
-                    break;
-            }
+            ((Collection<Object>) this.currentValue).add(value);
             return this;
         }
 

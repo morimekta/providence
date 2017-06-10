@@ -22,27 +22,27 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Descriptor base class for all messages.
  */
 public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PField> extends PDeclaredDescriptor<T> {
-    private final PMessageBuilderFactory<T, F> factory;
-    private final boolean                      simple;
+    private final Supplier<PMessageBuilder<T, F>> builderSupplier;
+    private final boolean                         simple;
 
     public PMessageDescriptor(String programName,
                               String name,
-                              PMessageBuilderFactory<T, F> factory,
+                              Supplier<PMessageBuilder<T, F>> builderSupplier,
                               boolean simple) {
         super(programName, name);
 
-        this.factory = factory;
+        this.builderSupplier = builderSupplier;
         this.simple = simple;
     }
 
@@ -85,7 +85,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
 
     @Override
     public PMessageBuilder<T, F> builder() {
-        return factory.builder();
+        return builderSupplier.get();
     }
 
     @Override
@@ -121,10 +121,10 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     }
 
     /**
-     * Get the actual builder factory instance. For contained structs only.
-     * @return The builder factory.
+     * Get the actual builder builderSupplier instance. For contained structs only.
+     * @return The builder builderSupplier.
      */
-    protected PMessageBuilderFactory<T, F> getFactoryInternal() {
-        return factory;
+    protected Supplier<PMessageBuilder<T, F>> getBuilderSupplier() {
+        return builderSupplier;
     }
 }

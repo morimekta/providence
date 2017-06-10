@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Calculator {
     public interface Iface {
         /**
@@ -249,6 +250,7 @@ public class Calculator {
 
     // type --> Calculator.calculate.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _calculate_request
             implements net.morimekta.providence.PMessage<_calculate_request,_calculate_request._Field>,
                        Comparable<_calculate_request>,
@@ -445,7 +447,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_calculate_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.calculate.request", new _Factory(), false);
+                super("calculator", "Calculator.calculate.request", _Builder::new, false);
             }
 
             @Override
@@ -472,14 +474,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_calculate_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_calculate_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -554,8 +548,8 @@ public class Calculator {
 
                 optionals.set(0);
                 modified.set(0);
-                mOp_builder = null;
                 mOp = value;
+                mOp_builder = null;
                 return this;
             }
 
@@ -730,6 +724,7 @@ public class Calculator {
 
     // type <-- Calculator.calculate.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _calculate_response
             implements net.morimekta.providence.PUnion<_calculate_response,_calculate_response._Field>,
                        Comparable<_calculate_response>,
@@ -992,7 +987,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_calculate_response,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.calculate.response", new _Factory(), false);
+                super("calculator", "Calculator.calculate.response", _Builder::new, false);
             }
 
             @Override
@@ -1019,14 +1014,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_calculate_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_calculate_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -1113,8 +1100,8 @@ public class Calculator {
 
                 tUnionField = _Field.SUCCESS;
                 modified = true;
-                mSuccess_builder = null;
                 mSuccess = value;
+                mSuccess_builder = null;
                 return this;
             }
 
@@ -1176,8 +1163,8 @@ public class Calculator {
 
                 tUnionField = _Field.CE;
                 modified = true;
-                mCe_builder = null;
                 mCe = value;
+                mCe_builder = null;
                 return this;
             }
 
@@ -1377,6 +1364,7 @@ public class Calculator {
 
     // type --> Calculator.iamalive.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _iamalive_request
             implements net.morimekta.providence.PMessage<_iamalive_request,_iamalive_request._Field>,
                        Comparable<_iamalive_request>,
@@ -1534,7 +1522,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_iamalive_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.iamalive.request", new _Factory(), true);
+                super("calculator", "Calculator.iamalive.request", _Builder::new, true);
             }
 
             @Override
@@ -1561,14 +1549,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_iamalive_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_iamalive_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -1714,6 +1694,7 @@ public class Calculator {
 
     // type --> Calculator.ping.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _ping_request
             implements net.morimekta.providence.PMessage<_ping_request,_ping_request._Field>,
                        Comparable<_ping_request>,
@@ -1871,7 +1852,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_ping_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.ping.request", new _Factory(), true);
+                super("calculator", "Calculator.ping.request", _Builder::new, true);
             }
 
             @Override
@@ -1898,14 +1879,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_ping_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_ping_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -2051,6 +2024,7 @@ public class Calculator {
 
     // type <-- Calculator.ping.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _ping_response
             implements net.morimekta.providence.PUnion<_ping_response,_ping_response._Field>,
                        Comparable<_ping_response>,
@@ -2253,7 +2227,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_ping_response,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.ping.response", new _Factory(), true);
+                super("calculator", "Calculator.ping.response", _Builder::new, true);
             }
 
             @Override
@@ -2280,14 +2254,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_ping_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_ping_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 

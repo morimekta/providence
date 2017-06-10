@@ -225,7 +225,7 @@ public class BinaryFormatUtils {
 
                     out = mapType.builder();
                 } else {
-                    out = new PMap.ImmutableMapBuilder<>();
+                    out = new PMap.DefaultBuilder<>();
                 }
 
                 FieldInfo keyInfo = new FieldInfo(1, keyT);
@@ -257,7 +257,7 @@ public class BinaryFormatUtils {
                     entryType = setType.itemDescriptor();
                     out = setType.builder();
                 } else {
-                    out = new PSet.ImmutableSetBuilder<>();
+                    out = new PSet.DefaultBuilder<>();
                 }
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
@@ -284,7 +284,7 @@ public class BinaryFormatUtils {
                     entryType = listType.itemDescriptor();
                     out = listType.builder();
                 } else {
-                    out = new PList.ImmutableListBuilder<>();
+                    out = new PList.DefaultBuilder<>();
                 }
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
