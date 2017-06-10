@@ -520,7 +520,7 @@ public class DefaultValues
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> {
         public _Descriptor() {
-            super("providence", "DefaultValues", new _Factory(), false);
+            super("providence", "DefaultValues", _Builder::new, false);
         }
 
         @Override
@@ -547,14 +547,6 @@ public class DefaultValues
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<DefaultValues,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

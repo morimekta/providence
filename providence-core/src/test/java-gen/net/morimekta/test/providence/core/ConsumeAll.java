@@ -159,7 +159,7 @@ public class ConsumeAll
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ConsumeAll,_Field> {
         public _Descriptor() {
-            super("providence", "ConsumeAll", new _Factory(), true);
+            super("providence", "ConsumeAll", _Builder::new, true);
         }
 
         @Override
@@ -186,14 +186,6 @@ public class ConsumeAll
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<ConsumeAll,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ConsumeAll,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

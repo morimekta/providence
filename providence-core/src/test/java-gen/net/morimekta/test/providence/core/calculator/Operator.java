@@ -97,18 +97,10 @@ public enum Operator
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<Operator>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<Operator> {
-        @Override
-        public Operator._Builder builder() {
-            return new Operator._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<Operator> {
         public _Descriptor() {
-            super("calculator", "Operator", new _Factory());
+            super("calculator", "Operator", _Builder::new);
         }
 
         @Override

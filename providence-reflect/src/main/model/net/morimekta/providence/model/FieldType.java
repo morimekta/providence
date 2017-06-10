@@ -581,7 +581,7 @@ public class FieldType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> {
         public _Descriptor() {
-            super("model", "FieldType", new _Factory(), false);
+            super("model", "FieldType", _Builder::new, false);
         }
 
         @Override
@@ -608,14 +608,6 @@ public class FieldType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<FieldType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

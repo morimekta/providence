@@ -21,7 +21,6 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 
@@ -32,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Stein Eldar Johnsen
@@ -53,7 +53,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
-        ((_Factory) getFactoryInternal()).setType(this);
+        ((_Factory) getBuilderSupplier()).setType(this);
 
         this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
@@ -132,7 +132,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         return null;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CUnion,CField> {
+    private static class _Factory implements Supplier<PMessageBuilder<CUnion,CField>> {
         private CUnionDescriptor mType;
 
         public void setType(CUnionDescriptor type) {
@@ -141,7 +141,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
 
         @Nonnull
         @Override
-        public PMessageBuilder<CUnion,CField> builder() {
+        public PMessageBuilder<CUnion,CField> get() {
             return new CUnion.Builder(mType);
         }
     }

@@ -94,18 +94,10 @@ public enum FieldRequirement
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<FieldRequirement>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<FieldRequirement> {
-        @Override
-        public FieldRequirement._Builder builder() {
-            return new FieldRequirement._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<FieldRequirement> {
         public _Descriptor() {
-            super("model", "FieldRequirement", new _Factory());
+            super("model", "FieldRequirement", _Builder::new);
         }
 
         @Override

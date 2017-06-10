@@ -257,7 +257,7 @@ public class Operation
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> {
         public _Descriptor() {
-            super("calculator", "Operation", new _Factory(), false);
+            super("calculator", "Operation", _Builder::new, false);
         }
 
         @Override
@@ -284,14 +284,6 @@ public class Operation
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Operation,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

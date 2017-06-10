@@ -230,7 +230,7 @@ public class Imaginary
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> {
         public _Descriptor() {
-            super("number", "Imaginary", new _Factory(), true);
+            super("number", "Imaginary", _Builder::new, true);
         }
 
         @Override
@@ -257,14 +257,6 @@ public class Imaginary
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Imaginary,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

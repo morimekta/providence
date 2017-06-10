@@ -514,7 +514,7 @@ public class FunctionType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> {
         public _Descriptor() {
-            super("model", "FunctionType", new _Factory(), false);
+            super("model", "FunctionType", _Builder::new, false);
         }
 
         @Override
@@ -541,14 +541,6 @@ public class FunctionType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<FunctionType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

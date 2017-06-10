@@ -535,7 +535,7 @@ public class RequiredFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> {
         public _Descriptor() {
-            super("providence", "RequiredFields", new _Factory(), false);
+            super("providence", "RequiredFields", _Builder::new, false);
         }
 
         @Override
@@ -562,14 +562,6 @@ public class RequiredFields
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<RequiredFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

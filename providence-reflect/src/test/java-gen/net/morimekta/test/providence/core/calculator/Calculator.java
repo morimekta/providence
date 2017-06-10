@@ -447,7 +447,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_calculate_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.calculate.request", new _Factory(), false);
+                super("calculator", "Calculator.calculate.request", _Builder::new, false);
             }
 
             @Override
@@ -474,14 +474,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_calculate_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_calculate_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -995,7 +987,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_calculate_response,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.calculate.response", new _Factory(), false);
+                super("calculator", "Calculator.calculate.response", _Builder::new, false);
             }
 
             @Override
@@ -1022,14 +1014,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_calculate_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_calculate_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -1538,7 +1522,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_iamalive_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.iamalive.request", new _Factory(), true);
+                super("calculator", "Calculator.iamalive.request", _Builder::new, true);
             }
 
             @Override
@@ -1565,14 +1549,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_iamalive_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_iamalive_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -1876,7 +1852,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_ping_request,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.ping.request", new _Factory(), true);
+                super("calculator", "Calculator.ping.request", _Builder::new, true);
             }
 
             @Override
@@ -1903,14 +1879,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_ping_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_ping_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -2259,7 +2227,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_ping_response,_Field> {
             public _Descriptor() {
-                super("calculator", "Calculator.ping.response", new _Factory(), true);
+                super("calculator", "Calculator.ping.response", _Builder::new, true);
             }
 
             @Override
@@ -2286,14 +2254,6 @@ public class Calculator {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_ping_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_ping_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 

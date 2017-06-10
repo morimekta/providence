@@ -413,7 +413,7 @@ public class MessageType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> {
         public _Descriptor() {
-            super("model", "MessageType", new _Factory(), false);
+            super("model", "MessageType", _Builder::new, false);
         }
 
         @Override
@@ -440,14 +440,6 @@ public class MessageType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<MessageType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

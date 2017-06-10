@@ -381,7 +381,7 @@ public class ContainerService {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> {
             public _Descriptor() {
-                super("providence", "ContainerService.load.request", new _Factory(), false);
+                super("providence", "ContainerService.load.request", _Builder::new, false);
             }
 
             @Override
@@ -408,14 +408,6 @@ public class ContainerService {
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_load_request,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 
@@ -929,7 +921,7 @@ public class ContainerService {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> {
             public _Descriptor() {
-                super("providence", "ContainerService.load.response", new _Factory(), false);
+                super("providence", "ContainerService.load.response", _Builder::new, false);
             }
 
             @Override
@@ -956,14 +948,6 @@ public class ContainerService {
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
                 return kDescriptor;
-            }
-        }
-
-        private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<_load_response,_Field> {
-            @Override
-            public _Builder builder() {
-                return new _Builder();
             }
         }
 

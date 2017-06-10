@@ -159,18 +159,10 @@ public enum PApplicationExceptionType
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<PApplicationExceptionType>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<PApplicationExceptionType> {
-        @Override
-        public PApplicationExceptionType._Builder builder() {
-            return new PApplicationExceptionType._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<PApplicationExceptionType> {
         public _Descriptor() {
-            super("service", "PApplicationExceptionType", new _Factory());
+            super("service", "PApplicationExceptionType", _Builder::new);
         }
 
         @Override

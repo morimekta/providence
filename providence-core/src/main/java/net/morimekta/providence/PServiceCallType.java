@@ -116,18 +116,10 @@ public enum PServiceCallType
         return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<PServiceCallType>(kDescriptor);
     }
 
-    private static class _Factory
-            extends net.morimekta.providence.PEnumBuilderFactory<PServiceCallType> {
-        @Override
-        public PServiceCallType._Builder builder() {
-            return new PServiceCallType._Builder();
-        }
-    }
-
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<PServiceCallType> {
         public _Descriptor() {
-            super("service", "PServiceCallType", new _Factory());
+            super("service", "PServiceCallType", _Builder::new);
         }
 
         @Override

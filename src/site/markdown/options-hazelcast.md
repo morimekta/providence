@@ -104,15 +104,15 @@ struct RequiredFields {
   and needs to be unique for the entire hazelcast cluster you are working on. Be
   it the code generated from providence or manually created factories.
 * Each struct that should be part of hazelcast needs to have the annotation 
-  `hazelcast.class.id` with a unique id in that file (for each factory). 
-* Each sub struct used in a factory also needs to have a unique id assigned to
+  `hazelcast.class.id` with a unique id in that file (for each builderSupplier). 
+* Each sub struct used in a builderSupplier also needs to have a unique id assigned to
   them, in this case the CompactFields.
   
 Validation is in place for this to be printed as errors if you provide the 
 `hazelcast_portable=true` to the code generator without providing the required
 fields.
 
-If you don't provide any annotation in a trhift file, no factory will be created
+If you don't provide any annotation in a trhift file, no builderSupplier will be created
 for that file even though you provide the `hazelcast_portable=true` flag.
 
 ## Limitations

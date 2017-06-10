@@ -270,7 +270,7 @@ public class CalculateException
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> {
         public _Descriptor() {
-            super("calculator", "CalculateException", new _Factory(), false);
+            super("calculator", "CalculateException", _Builder::new, false);
         }
 
         @Override
@@ -297,14 +297,6 @@ public class CalculateException
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<CalculateException,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

@@ -399,7 +399,7 @@ public class Declaration
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> {
         public _Descriptor() {
-            super("model", "Declaration", new _Factory(), false);
+            super("model", "Declaration", _Builder::new, false);
         }
 
         @Override
@@ -426,14 +426,6 @@ public class Declaration
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Declaration,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

@@ -370,7 +370,7 @@ public class EnumType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> {
         public _Descriptor() {
-            super("model", "EnumType", new _Factory(), false);
+            super("model", "EnumType", _Builder::new, false);
         }
 
         @Override
@@ -397,14 +397,6 @@ public class EnumType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<EnumType,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

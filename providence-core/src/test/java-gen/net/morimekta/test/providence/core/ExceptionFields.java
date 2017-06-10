@@ -655,7 +655,7 @@ public class ExceptionFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PExceptionDescriptor<ExceptionFields,_Field> {
         public _Descriptor() {
-            super("providence", "ExceptionFields", new _Factory(), false);
+            super("providence", "ExceptionFields", _Builder::new, false);
         }
 
         @Override
@@ -682,14 +682,6 @@ public class ExceptionFields
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<ExceptionFields,_Field> descriptor() {
             return kDescriptor;
-        }
-    }
-
-    private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ExceptionFields,_Field> {
-        @Override
-        public _Builder builder() {
-            return new _Builder();
         }
     }
 

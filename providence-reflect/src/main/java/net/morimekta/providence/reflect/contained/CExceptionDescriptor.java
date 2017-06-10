@@ -21,7 +21,6 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
 
@@ -32,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Stein Eldar Johnsen
@@ -49,7 +49,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
-        ((_Factory) getFactoryInternal()).setType(this);
+        ((_Factory) getBuilderSupplier()).setType(this);
 
         this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
@@ -128,7 +128,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
         return true;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CException, CField> {
+    private static class _Factory implements Supplier<PMessageBuilder<CException, CField>> {
         private CExceptionDescriptor mType;
 
         public void setType(CExceptionDescriptor type) {
@@ -137,7 +137,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
 
         @Nonnull
         @Override
-        public PMessageBuilder<CException, CField> builder() {
+        public PMessageBuilder<CException, CField> get() {
             return new CException.Builder(mType);
         }
     }
