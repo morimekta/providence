@@ -60,14 +60,44 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
      * @return Enum if found, null otherwise.
      */
     @Nullable
-    public abstract T getValueById(int id);
+    public abstract T findById(int id);
 
     /**
      * @param name Name to look up enum from.
      * @return Enum if found, null otherwise.
      */
-    public abstract T getValueByName(String name);
+    @Nullable
+    public abstract T findByName(String name);
 
+    /**
+     * @param id Value to look up enum from.
+     * @return The enum value.
+     * @throws IllegalArgumentException If value not found.
+     */
+    @Nonnull
+    public T valueForId(int id) {
+        T value = findById(id);
+        if (value == null) {
+            throw new IllegalArgumentException("No " + getQualifiedName() + " for id " + id);
+        }
+        return value;
+    }
+
+    /**
+     * @param name Name to look up enum from.
+     * @return The enum value.
+     * @throws IllegalArgumentException If value not found.
+     */
+    @Nonnull
+    public T valueForName(String name) {
+        T value = findByName(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No " + getQualifiedName() + " for name \" " + name + "\"");
+        }
+        return value;
+    }
+
+    @Nonnull
     @Override
     public PEnumBuilder<T> builder() {
         return builderSupplier.get();
@@ -92,8 +122,8 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
             return false;
         }
         for (PEnumValue<?> value : getValues()) {
-            PEnumValue<?> ovI = other.getValueById(value.getValue());
-            if (ovI != null && !value.getName().equals(ovI.getName())) {
+            PEnumValue<?> ovI = other.findById(value.asInteger());
+            if (ovI != null && !value.asString().equals(ovI.asString())) {
                 return false;
             }
         }

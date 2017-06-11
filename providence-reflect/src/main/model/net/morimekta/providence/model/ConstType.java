@@ -104,6 +104,7 @@ public class ConstType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getType() {
         return mType;
     }
@@ -115,6 +116,7 @@ public class ConstType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -126,6 +128,7 @@ public class ConstType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getValue() {
         return mValue;
     }
@@ -248,6 +251,7 @@ public class ConstType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -936,6 +940,7 @@ public class ConstType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);

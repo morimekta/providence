@@ -30,13 +30,34 @@ import javax.annotation.Nonnull;
  */
 public interface PEnumValue<T> extends PValue<T>, Stringable, Numeric {
     /**
-     * @return The numeric value for the enum.
+     * Method for getting the ID of the value that is a bit more accurate
+     * when reading code than {@link #asInteger()}
+     *
+     * @return The ID value for the enum.
      */
-    int getValue();
+    default int getId() {
+        return asInteger();
+    }
 
     /**
+     * Method for getting the name of the value that is a bit more accurate
+     * when reading code than {@link #asString()}
+     *
      * @return The name of the enum value.
      */
     @Nonnull
-    String getName();
+    default String getName() {
+        return asString();
+    }
+
+    /**
+     * @return The numeric value for the enum.
+     * @deprecated Use {@link #asInteger()} or {@link #getId()} instead.
+     *             Will be removed in a future version, but kept for now as it is
+     *             too widely used to be removed immediately.
+     */
+    @Deprecated
+    default int getValue() {
+        return asInteger();
+    }
 }

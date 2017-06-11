@@ -552,7 +552,7 @@ public class ProvidenceConfig {
                     // net.morimekta.providence.descriptor.PEnumDescriptor
                     // TODO: Figure out a way to fix the generic cast.
                     PEnumDescriptor ed = (PEnumDescriptor) (Object) registry.getDeclaredType(id.substring(0, l));
-                    PEnumValue val = ed.getValueByName(id.substring(l + 1));
+                    PEnumValue val = ed.findByName(id.substring(l + 1));
                     if (val == null && strict) {
                         throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
                                 .setLine(tokenizer.getLine(token.getLineNo()));
@@ -993,9 +993,9 @@ public class ProvidenceConfig {
                     PEnumDescriptor ed = (PEnumDescriptor) descriptor;
                     PEnumValue value;
                     if (next.isInteger()) {
-                        value = ed.getValueById((int) next.parseInteger());
+                        value = ed.findById((int) next.parseInteger());
                     } else if (next.isIdentifier()) {
-                        value = ed.getValueByName(next.asString());
+                        value = ed.findByName(next.asString());
                         if (value == null && context.containsReference(next.asString())) {
                             value = resolve(context, next, tokenizer, ed);
                         }
@@ -1138,14 +1138,14 @@ public class ProvidenceConfig {
                 return (V) (Object) asDouble(value);
             case ENUM:
                 if (value instanceof PEnumValue) {
-                    PEnumValue verified = ((PEnumDescriptor) descriptor).getValueById(((PEnumValue) value).getValue());
+                    PEnumValue verified = ((PEnumDescriptor) descriptor).findById(((PEnumValue) value).asInteger());
                     if (value.equals(verified)) {
                         return (V) value;
                     }
                 } else if (value instanceof Number) {
-                    return (V) ((PEnumDescriptor) descriptor).getValueById(((Number) value).intValue());
+                    return (V) ((PEnumDescriptor) descriptor).findById(((Number) value).intValue());
                 } else if (value instanceof CharSequence) {
-                    return (V) ((PEnumDescriptor) descriptor).getValueByName(value.toString());
+                    return (V) ((PEnumDescriptor) descriptor).findByName(value.toString());
                 }
                 throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getQualifiedName());
             case STRING:

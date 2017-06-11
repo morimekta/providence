@@ -88,6 +88,7 @@ public class ServiceType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -114,6 +115,7 @@ public class ServiceType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FunctionType> getMethods() {
         return mMethods;
     }
@@ -201,6 +203,7 @@ public class ServiceType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -782,6 +785,7 @@ public class ServiceType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.FunctionType> mutableMethods() {
             optionals.set(3);
             modified.set(3);
@@ -863,6 +867,7 @@ public class ServiceType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);

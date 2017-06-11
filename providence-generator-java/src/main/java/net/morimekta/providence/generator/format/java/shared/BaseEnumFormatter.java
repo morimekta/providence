@@ -102,23 +102,23 @@ public class BaseEnumFormatter {
             }
             writer.formatln("%s(%d, \"%s\"),",
                             JUtils.enumConst(v),
-                            v.getValue(),
-                            v.getName());
+                            v.asInteger(),
+                            v.asString());
         }
         writer.appendln(';')
               .newline();
     }
 
     private void appendEnumFields(CEnumDescriptor type) {
-        writer.appendln("private final int mValue;")
+        writer.appendln("private final int    mId;")
               .appendln("private final String mName;")
               .newline();
     }
 
     private void appendEnumConstructor(CEnumDescriptor type) {
-        writer.formatln("%s(int value, String name) {", JUtils.getClassName(type))
+        writer.formatln("%s(int id, String name) {", JUtils.getClassName(type))
               .begin()
-              .appendln("mValue = value;")
+              .appendln("mId = id;")
               .appendln("mName = name;")
               .end()
               .appendln("}")

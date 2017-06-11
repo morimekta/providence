@@ -73,6 +73,7 @@ public class EnumValue
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -166,6 +167,7 @@ public class EnumValue
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -710,6 +712,7 @@ public class EnumValue
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(3);
             modified.set(3);

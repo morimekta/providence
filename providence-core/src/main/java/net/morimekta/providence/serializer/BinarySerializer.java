@@ -93,6 +93,7 @@ public class BinarySerializer extends Serializer {
         return true;
     }
 
+    @Nonnull
     @Override
     public String mimeType() {
         return MIME_TYPE;
@@ -100,27 +101,27 @@ public class BinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, Message message) throws IOException {
+    int serialize(@Nonnull OutputStream os, @Nonnull Message message) throws IOException {
         BigEndianBinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, PServiceCall<Message, Field> call)
+    int serialize(@Nonnull OutputStream os, @Nonnull PServiceCall<Message, Field> call)
             throws IOException {
         BigEndianBinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
 
         int len = method.length;
         if (versioned) {
-            len += out.writeInt(VERSION_1 | call.getType().getValue());
+            len += out.writeInt(VERSION_1 | call.getType().asInteger());
             len += out.writeInt(method.length);
             out.write(method);
         } else {
             len += out.writeInt(method.length);
             out.write(method);
-            len += out.writeByte((byte) call.getType().getValue());
+            len += out.writeByte((byte) call.getType().asInteger());
         }
         len += out.writeInt(call.getSequence());
         len += writeMessage(out, call.getMessage());
@@ -130,7 +131,7 @@ public class BinarySerializer extends Serializer {
     @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor)
+    Message deserialize(@Nonnull InputStream input, @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         BigEndianBinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, strict);
@@ -140,7 +141,7 @@ public class BinarySerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream is, PService service)
+    PServiceCall<Message, Field> deserialize(@Nonnull InputStream is, @Nonnull PService service)
             throws IOException {
         BigEndianBinaryReader in = new BigEndianBinaryReader(is);
         String methodName = null;
@@ -183,7 +184,7 @@ public class BinarySerializer extends Serializer {
             }
             sequence = in.expectInt();
 
-            type = PServiceCallType.forValue(typeKey);
+            type = PServiceCallType.findById(typeKey);
             PServiceMethod method = service.getMethod(methodName);
             if (type == null) {
                 throw new SerializerException("Invalid call type " + typeKey)

@@ -58,9 +58,9 @@ public class PEnumDescriptorTest {
         }
 
         @Override
-        public PEnumValue getValueById(int id) {
+        public PEnumValue findById(int id) {
             for (PEnumValue val : values) {
-                if (val.getValue() == id) {
+                if (val.asInteger() == id) {
                     return val;
                 }
             }
@@ -68,9 +68,9 @@ public class PEnumDescriptorTest {
         }
 
         @Override
-        public PEnumValue getValueByName(String name) {
+        public PEnumValue findByName(String name) {
             for (PEnumValue val : values) {
-                if (val.getName().equals(name)) {
+                if (val.asString().equals(name)) {
                     return val;
                 }
             }

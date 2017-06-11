@@ -26,6 +26,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.EnumMemberFormatter;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -54,30 +55,15 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
     @Override
     public void appendMethods(CEnumDescriptor type) throws GeneratorException {
         writer.appendln("@Override")
-              .appendln("public int getValue() {")
-              .begin()
-              .appendln("return mValue;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.appendln("@Override")
-              .appendln("public String getName() {")
-              .begin()
-              .appendln("return mName;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.appendln("@Override")
               .appendln("public int asInteger() {")
               .begin()
-              .appendln("return mValue;")
+              .appendln("return mId;")
               .end()
               .appendln('}')
               .newline();
 
         writer.appendln("@Override")
+              .appendln(JAnnotation.NON_NULL)
               .appendln("public String asString() {")
               .begin()
               .appendln("return mName;")
@@ -136,6 +122,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .appendln('}')
               .newline()
               .appendln("@Override")
+              .appendln(JAnnotation.NON_NULL)
               .formatln("public %s[] getValues() {", simpleClass)
               .begin()
               .formatln("return %s.values();", simpleClass)
@@ -143,16 +130,18 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .appendln('}')
               .newline()
               .appendln("@Override")
-              .formatln("public %s getValueById(int id) {", simpleClass)
+              .appendln(JAnnotation.NULLABLE)
+              .formatln("public %s findById(int id) {", simpleClass)
               .begin()
-              .formatln("return %s.forValue(id);", simpleClass)
+              .formatln("return %s.findById(id);", simpleClass)
               .end()
               .appendln('}')
               .newline()
               .appendln("@Override")
-              .formatln("public %s getValueByName(String name) {", simpleClass)
+              .appendln(JAnnotation.NULLABLE)
+              .formatln("public %s findByName(String name) {", simpleClass)
               .begin()
-              .formatln("return %s.forName(name);", simpleClass)
+              .formatln("return %s.findByName(name);", simpleClass)
               .end()
               .appendln('}')
               .end()
@@ -176,18 +165,20 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .newline();
 
         writer.appendln("@Override")
-              .appendln("public _Builder setByValue(int value) {")
+              .appendln(JAnnotation.NON_NULL)
+              .appendln("public _Builder setById(int value) {")
               .begin()
-              .formatln("mValue = %s.forValue(value);", simpleClass)
+              .formatln("mValue = %s.findById(value);", simpleClass)
               .appendln("return this;")
               .end()
               .appendln('}')
               .newline();
 
         writer.appendln("@Override")
+              .appendln(JAnnotation.NON_NULL)
               .appendln("public _Builder setByName(String name) {")
               .begin()
-              .formatln("mValue = %s.forName(name);", simpleClass)
+              .formatln("mValue = %s.findByName(name);", simpleClass)
               .appendln("return this;")
               .end()
               .appendln('}')

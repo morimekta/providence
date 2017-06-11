@@ -83,7 +83,7 @@ public class HazelcastIT {
                                             0 < (POS_5 & flags) ? rand.nextDouble() : null,
                                             0 < (POS_6 & flags) ? fairy.textProducer().loremIpsum() : null,
                                             0 < (POS_7 & flags) ? Binary.wrap(bytes) : null,
-                                            0 < (POS_8 & flags) ? Value.forValue(rand.nextInt(Value.values().length)) : null,
+                                            0 < (POS_8 & flags) ? Value.values()[rand.nextInt(Value.values().length)] : null,
                                             0 < (POS_9 & flags) ? genCompactFields() : null);
         optionalListFields = new OptionalListFields(0 < (POS_10 & flags) ? genBooleanList(rand.nextInt(MAX_LIST_LENGTH)) : null,
                                                     0 < (POS_11 & flags) ? genByteList(rand.nextInt(MAX_LIST_LENGTH)) : null,

@@ -76,5 +76,6 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor {
      *
      * @return The type specific builder provider.
      */
+    @Nonnull
     public abstract PBuilder<T> builder();
 }

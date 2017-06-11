@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core.calculator;
+package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -13,12 +13,12 @@ public class CalculateException
     private final static String kDefaultMessage = "";
 
     private final String mMessage;
-    private final net.morimekta.test.providence.core.calculator.Operation mOperation;
+    private final net.morimekta.test.providence.reflect.calculator.Operation mOperation;
 
     private volatile int tHashCode;
 
     public CalculateException(String pMessage,
-                              net.morimekta.test.providence.core.calculator.Operation pOperation) {
+                              net.morimekta.test.providence.reflect.calculator.Operation pOperation) {
         super(pMessage);
 
         if (pMessage != null) {
@@ -47,6 +47,7 @@ public class CalculateException
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getMessage() {
         return mMessage;
     }
@@ -58,7 +59,7 @@ public class CalculateException
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.calculator.Operation getOperation() {
+    public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
         return mOperation;
     }
 
@@ -135,6 +136,7 @@ public class CalculateException
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -197,7 +199,7 @@ public class CalculateException
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        OPERATION(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
+        OPERATION(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.reflect.calculator.Operation.provider(), null),
         ;
 
         private final int mKey;
@@ -316,8 +318,8 @@ public class CalculateException
         private java.util.BitSet modified;
 
         private String mMessage;
-        private net.morimekta.test.providence.core.calculator.Operation mOperation;
-        private net.morimekta.test.providence.core.calculator.Operation._Builder mOperation_builder;
+        private net.morimekta.test.providence.reflect.calculator.Operation mOperation;
+        private net.morimekta.test.providence.reflect.calculator.Operation._Builder mOperation_builder;
 
         /**
          * Make a calculator.CalculateException builder.
@@ -431,7 +433,7 @@ public class CalculateException
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setOperation(net.morimekta.test.providence.core.calculator.Operation value) {
+        public _Builder setOperation(net.morimekta.test.providence.reflect.calculator.Operation value) {
             if (value == null) {
                 return clearOperation();
             }
@@ -480,7 +482,8 @@ public class CalculateException
          *
          * @return The field builder
          */
-        public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOperation() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.reflect.calculator.Operation._Builder mutableOperation() {
             optionals.set(1);
             modified.set(1);
 
@@ -488,7 +491,7 @@ public class CalculateException
                 mOperation_builder = mOperation.mutate();
                 mOperation = null;
             } else if (mOperation_builder == null) {
-                mOperation_builder = net.morimekta.test.providence.core.calculator.Operation.builder();
+                mOperation_builder = net.morimekta.test.providence.reflect.calculator.Operation.builder();
             }
             return mOperation_builder;
         }
@@ -499,6 +502,7 @@ public class CalculateException
          * @param cause The cause
          * @return Builder instance
          */
+        @javax.annotation.Nonnull
         public _Builder initCause(Throwable cause) {
             this.cause = cause;
             return this;
@@ -538,7 +542,7 @@ public class CalculateException
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setMessage((String) value); break;
-                case 2: setOperation((net.morimekta.test.providence.core.calculator.Operation) value); break;
+                case 2: setOperation((net.morimekta.test.providence.reflect.calculator.Operation) value); break;
                 default: break;
             }
             return this;
@@ -628,7 +632,7 @@ public class CalculateException
                     }
                     case 2: {
                         if (type == 12) {
-                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
+                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operation.kDescriptor, strict);
                             optionals.set(1);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.CalculateException.operation, should be struct(12)");

@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core;
+package net.morimekta.test.providence.reflect;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -7,13 +7,13 @@ public class ContainerService {
         /**
          * @param pC The c value.
          * @return The load result.
-         * @throws net.morimekta.test.providence.core.ExceptionFields The ef exception.
+         * @throws net.morimekta.test.providence.reflect.ExceptionFields The ef exception.
          * @throws java.io.IOException On providence or non-declared exceptions.
          */
-        net.morimekta.test.providence.core.CompactFields load(
-                net.morimekta.test.providence.core.Containers pC)
+        net.morimekta.test.providence.reflect.CompactFields load(
+                net.morimekta.test.providence.reflect.Containers pC)
                 throws java.io.IOException,
-                       net.morimekta.test.providence.core.ExceptionFields;
+                       net.morimekta.test.providence.reflect.ExceptionFields;
     }
 
     /**
@@ -34,11 +34,11 @@ public class ContainerService {
         }
 
         @Override
-        public net.morimekta.test.providence.core.CompactFields load(
-                net.morimekta.test.providence.core.Containers pC)
+        public net.morimekta.test.providence.reflect.CompactFields load(
+                net.morimekta.test.providence.reflect.Containers pC)
                 throws java.io.IOException,
-                       net.morimekta.test.providence.core.ExceptionFields {
-            net.morimekta.test.providence.core.ContainerService._load_request._Builder rq = net.morimekta.test.providence.core.ContainerService._load_request.builder();
+                       net.morimekta.test.providence.reflect.ExceptionFields {
+            net.morimekta.test.providence.reflect.ContainerService._load_request._Builder rq = net.morimekta.test.providence.reflect.ContainerService._load_request.builder();
             rq.setC(pC);
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("load", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
@@ -48,7 +48,7 @@ public class ContainerService {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.ContainerService._load_response msg = (net.morimekta.test.providence.core.ContainerService._load_response) resp.getMessage();
+            net.morimekta.test.providence.reflect.ContainerService._load_response msg = (net.morimekta.test.providence.reflect.ContainerService._load_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case EF:
@@ -86,13 +86,13 @@ public class ContainerService {
                        net.morimekta.providence.serializer.SerializerException {
             switch(call.getMethod()) {
                 case "load": {
-                    net.morimekta.test.providence.core.ContainerService._load_response._Builder rsp = net.morimekta.test.providence.core.ContainerService._load_response.builder();
+                    net.morimekta.test.providence.reflect.ContainerService._load_response._Builder rsp = net.morimekta.test.providence.reflect.ContainerService._load_response.builder();
                     try {
-                        net.morimekta.test.providence.core.ContainerService._load_request req = (net.morimekta.test.providence.core.ContainerService._load_request) call.getMessage();
-                        net.morimekta.test.providence.core.CompactFields result =
+                        net.morimekta.test.providence.reflect.ContainerService._load_request req = (net.morimekta.test.providence.reflect.ContainerService._load_request) call.getMessage();
+                        net.morimekta.test.providence.reflect.CompactFields result =
                                 impl.load(req.getC());
                         rsp.setSuccess(result);
-                    } catch (net.morimekta.test.providence.core.ExceptionFields e) {
+                    } catch (net.morimekta.test.providence.reflect.ExceptionFields e) {
                         rsp.setEf(e);
                     }
                     net.morimekta.providence.PServiceCall reply =
@@ -119,7 +119,7 @@ public class ContainerService {
     }
 
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
-        LOAD("load", false, net.morimekta.test.providence.core.ContainerService._load_request.kDescriptor, net.morimekta.test.providence.core.ContainerService._load_response.kDescriptor),
+        LOAD("load", false, net.morimekta.test.providence.reflect.ContainerService._load_request.kDescriptor, net.morimekta.test.providence.reflect.ContainerService._load_response.kDescriptor),
         ;
 
         private final String name;
@@ -192,11 +192,11 @@ public class ContainerService {
                        net.morimekta.providence.serializer.rw.BinaryWriter {
         private final static long serialVersionUID = 642175186578463330L;
 
-        private final net.morimekta.test.providence.core.Containers mC;
+        private final net.morimekta.test.providence.reflect.Containers mC;
 
         private volatile int tHashCode;
 
-        public _load_request(net.morimekta.test.providence.core.Containers pC) {
+        public _load_request(net.morimekta.test.providence.reflect.Containers pC) {
             mC = pC;
         }
 
@@ -211,7 +211,7 @@ public class ContainerService {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.Containers getC() {
+        public net.morimekta.test.providence.reflect.Containers getC() {
             return mC;
         }
 
@@ -263,6 +263,7 @@ public class ContainerService {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -310,7 +311,7 @@ public class ContainerService {
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
-            C(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "c", net.morimekta.test.providence.core.Containers.provider(), null),
+            C(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "c", net.morimekta.test.providence.reflect.Containers.provider(), null),
             ;
 
             private final int mKey;
@@ -425,8 +426,8 @@ public class ContainerService {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
-            private net.morimekta.test.providence.core.Containers mC;
-            private net.morimekta.test.providence.core.Containers._Builder mC_builder;
+            private net.morimekta.test.providence.reflect.Containers mC;
+            private net.morimekta.test.providence.reflect.Containers._Builder mC_builder;
 
             /**
              * Make a providence.ContainerService.load.request builder.
@@ -475,7 +476,7 @@ public class ContainerService {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setC(net.morimekta.test.providence.core.Containers value) {
+            public _Builder setC(net.morimekta.test.providence.reflect.Containers value) {
                 if (value == null) {
                     return clearC();
                 }
@@ -524,7 +525,8 @@ public class ContainerService {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.Containers._Builder mutableC() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.Containers._Builder mutableC() {
                 optionals.set(0);
                 modified.set(0);
 
@@ -532,7 +534,7 @@ public class ContainerService {
                     mC_builder = mC.mutate();
                     mC = null;
                 } else if (mC_builder == null) {
-                    mC_builder = net.morimekta.test.providence.core.Containers.builder();
+                    mC_builder = net.morimekta.test.providence.reflect.Containers.builder();
                 }
                 return mC_builder;
             }
@@ -568,7 +570,7 @@ public class ContainerService {
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
-                    case 1: setC((net.morimekta.test.providence.core.Containers) value); break;
+                    case 1: setC((net.morimekta.test.providence.reflect.Containers) value); break;
                     default: break;
                 }
                 return this;
@@ -633,7 +635,7 @@ public class ContainerService {
                     switch (field) {
                         case 1: {
                             if (type == 12) {
-                                mC = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.Containers.kDescriptor, strict);
+                                mC = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.Containers.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.request.c, should be struct(12)");
@@ -666,8 +668,8 @@ public class ContainerService {
                        net.morimekta.providence.serializer.rw.BinaryWriter {
         private final static long serialVersionUID = 4669041823902453548L;
 
-        private final net.morimekta.test.providence.core.CompactFields mSuccess;
-        private final net.morimekta.test.providence.core.ExceptionFields mEf;
+        private final net.morimekta.test.providence.reflect.CompactFields mSuccess;
+        private final net.morimekta.test.providence.reflect.ExceptionFields mEf;
 
         private final _Field tUnionField;
 
@@ -677,7 +679,7 @@ public class ContainerService {
          * @param value The union value
          * @return The created union.
          */
-        public static _load_response withSuccess(net.morimekta.test.providence.core.CompactFields value) {
+        public static _load_response withSuccess(net.morimekta.test.providence.reflect.CompactFields value) {
             return new _Builder().setSuccess(value).build();
         }
 
@@ -685,7 +687,7 @@ public class ContainerService {
          * @param value The union value
          * @return The created union.
          */
-        public static _load_response withEf(net.morimekta.test.providence.core.ExceptionFields value) {
+        public static _load_response withEf(net.morimekta.test.providence.reflect.ExceptionFields value) {
             return new _Builder().setEf(value).build();
         }
 
@@ -707,7 +709,7 @@ public class ContainerService {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.CompactFields getSuccess() {
+        public net.morimekta.test.providence.reflect.CompactFields getSuccess() {
             return mSuccess;
         }
 
@@ -718,7 +720,7 @@ public class ContainerService {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.ExceptionFields getEf() {
+        public net.morimekta.test.providence.reflect.ExceptionFields getEf() {
             return mEf;
         }
 
@@ -781,6 +783,7 @@ public class ContainerService {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -847,8 +850,8 @@ public class ContainerService {
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
-            SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.core.CompactFields.provider(), null),
-            EF(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ef", net.morimekta.test.providence.core.ExceptionFields.provider(), null),
+            SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.reflect.CompactFields.provider(), null),
+            EF(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ef", net.morimekta.test.providence.reflect.ExceptionFields.provider(), null),
             ;
 
             private final int mKey;
@@ -966,10 +969,10 @@ public class ContainerService {
 
             private boolean modified;
 
-            private net.morimekta.test.providence.core.CompactFields mSuccess;
-            private net.morimekta.test.providence.core.CompactFields._Builder mSuccess_builder;
-            private net.morimekta.test.providence.core.ExceptionFields mEf;
-            private net.morimekta.test.providence.core.ExceptionFields._Builder mEf_builder;
+            private net.morimekta.test.providence.reflect.CompactFields mSuccess;
+            private net.morimekta.test.providence.reflect.CompactFields._Builder mSuccess_builder;
+            private net.morimekta.test.providence.reflect.ExceptionFields mEf;
+            private net.morimekta.test.providence.reflect.ExceptionFields._Builder mEf_builder;
 
             /**
              * Make a providence.ContainerService.load.response builder.
@@ -1027,7 +1030,7 @@ public class ContainerService {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setSuccess(net.morimekta.test.providence.core.CompactFields value) {
+            public _Builder setSuccess(net.morimekta.test.providence.reflect.CompactFields value) {
                 if (value == null) {
                     return clearSuccess();
                 }
@@ -1067,7 +1070,8 @@ public class ContainerService {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.CompactFields._Builder mutableSuccess() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.CompactFields._Builder mutableSuccess() {
                 if (tUnionField != _Field.SUCCESS) {
                     clearSuccess();
                 }
@@ -1078,7 +1082,7 @@ public class ContainerService {
                     mSuccess_builder = mSuccess.mutate();
                     mSuccess = null;
                 } else if (mSuccess_builder == null) {
-                    mSuccess_builder = net.morimekta.test.providence.core.CompactFields.builder();
+                    mSuccess_builder = net.morimekta.test.providence.reflect.CompactFields.builder();
                 }
                 return mSuccess_builder;
             }
@@ -1090,7 +1094,7 @@ public class ContainerService {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setEf(net.morimekta.test.providence.core.ExceptionFields value) {
+            public _Builder setEf(net.morimekta.test.providence.reflect.ExceptionFields value) {
                 if (value == null) {
                     return clearEf();
                 }
@@ -1130,7 +1134,8 @@ public class ContainerService {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.ExceptionFields._Builder mutableEf() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.ExceptionFields._Builder mutableEf() {
                 if (tUnionField != _Field.EF) {
                     clearEf();
                 }
@@ -1141,7 +1146,7 @@ public class ContainerService {
                     mEf_builder = mEf.mutate();
                     mEf = null;
                 } else if (mEf_builder == null) {
-                    mEf_builder = net.morimekta.test.providence.core.ExceptionFields.builder();
+                    mEf_builder = net.morimekta.test.providence.reflect.ExceptionFields.builder();
                 }
                 return mEf_builder;
             }
@@ -1189,8 +1194,8 @@ public class ContainerService {
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
-                    case 0: setSuccess((net.morimekta.test.providence.core.CompactFields) value); break;
-                    case 1: setEf((net.morimekta.test.providence.core.ExceptionFields) value); break;
+                    case 0: setSuccess((net.morimekta.test.providence.reflect.CompactFields) value); break;
+                    case 1: setEf((net.morimekta.test.providence.reflect.ExceptionFields) value); break;
                     default: break;
                 }
                 return this;
@@ -1264,7 +1269,7 @@ public class ContainerService {
                     switch (field) {
                         case 0: {
                             if (type == 12) {
-                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
+                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.success, should be struct(12)");
@@ -1273,7 +1278,7 @@ public class ContainerService {
                         }
                         case 1: {
                             if (type == 12) {
-                                mEf = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.ExceptionFields.kDescriptor, strict);
+                                mEf = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.ExceptionFields.kDescriptor, strict);
                                 tUnionField = _Field.EF;
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.ef, should be struct(12)");

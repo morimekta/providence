@@ -71,14 +71,14 @@ public class ProvidenceTest {
 
     @Test
     public void testEnumNaming() {
-        assertThat(EnumNames.UM4V.getName(), is("UM4V"));
-        assertThat(EnumNames.UMP3.getName(), is("UMP3"));
-        assertThat(EnumNames.LM4V.getName(), is("lm4v"));
-        assertThat(EnumNames.LMP3.getName(), is("lmp3"));
-        assertThat(EnumNames.UMPEG4.getName(), is("Umpeg4"));
-        assertThat(EnumNames.L_MPEG4.getName(), is("lMPEG4"));
-        assertThat(EnumNames.U4L.getName(), is("U4l"));
-        assertThat(EnumNames.L4_U.getName(), is("l4U"));
+        assertThat(EnumNames.UM4V.asString(), is("UM4V"));
+        assertThat(EnumNames.UMP3.asString(), is("UMP3"));
+        assertThat(EnumNames.LM4V.asString(), is("lm4v"));
+        assertThat(EnumNames.LMP3.asString(), is("lmp3"));
+        assertThat(EnumNames.UMPEG4.asString(), is("Umpeg4"));
+        assertThat(EnumNames.L_MPEG4.asString(), is("lMPEG4"));
+        assertThat(EnumNames.U4L.asString(), is("U4l"));
+        assertThat(EnumNames.L4_U.asString(), is("l4U"));
     }
 
     @Test

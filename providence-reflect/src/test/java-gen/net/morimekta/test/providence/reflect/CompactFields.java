@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core;
+package net.morimekta.test.providence.reflect;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -48,6 +48,7 @@ public class CompactFields
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -143,6 +144,7 @@ public class CompactFields
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");

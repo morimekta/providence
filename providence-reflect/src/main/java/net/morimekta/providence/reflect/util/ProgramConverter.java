@@ -307,7 +307,7 @@ public class ProgramConverter {
                                              field.getStartLinePos());
         }
         PRequirement requirement = PRequirement.valueOf(field.getRequirement()
-                                                             .getName());
+                                                             .asString());
         if (variant == MessageVariant.UNION) {
             if (requirement == PRequirement.REQUIRED) {
                 throw new IllegalArgumentException("Required field in union");

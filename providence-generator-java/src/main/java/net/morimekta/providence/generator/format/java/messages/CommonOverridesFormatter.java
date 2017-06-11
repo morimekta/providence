@@ -22,6 +22,7 @@ package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.Strings;
@@ -172,6 +173,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
 
     private void appendAsString(JMessage<?> message) {
         writer.appendln("@Override")
+              .appendln(JAnnotation.NON_NULL)
               .appendln("public String asString() {")
               .begin()
               .appendln("StringBuilder out = new StringBuilder();")
@@ -368,7 +370,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                         writer.formatln("return %s.compareTo(other.%s);", field.member(), field.member());
                         break;
                     case ENUM:
-                        writer.formatln("return Integer.compare(%s.getValue(), other.%s.getValue());",
+                        writer.formatln("return Integer.compare(%s.asInteger(), other.%s.asInteger());",
                                         field.member(),
                                         field.member());
                         break;

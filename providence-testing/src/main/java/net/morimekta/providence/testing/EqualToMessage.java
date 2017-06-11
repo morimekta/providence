@@ -313,7 +313,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
             return limitToString((PMessage) o);
         } else if (o instanceof PEnumValue) {
             return ((PEnumValue) o).descriptor()
-                                   .getName() + "." + ((PEnumValue) o).getName();
+                                   .getName() + "." + ((PEnumValue) o).asString();
         } else if (o instanceof Map) {
             return "{" + Strings.join(",",
                                       ((Map<?, ?>) o).entrySet()

@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core.calculator;
+package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -7,13 +7,13 @@ public class Calculator {
         /**
          * @param pOp The op value.
          * @return The calculate result.
-         * @throws net.morimekta.test.providence.core.calculator.CalculateException The ce exception.
+         * @throws net.morimekta.test.providence.reflect.calculator.CalculateException The ce exception.
          * @throws java.io.IOException On providence or non-declared exceptions.
          */
-        net.morimekta.test.providence.core.calculator.Operand calculate(
-                net.morimekta.test.providence.core.calculator.Operation pOp)
+        net.morimekta.test.providence.reflect.calculator.Operand calculate(
+                net.morimekta.test.providence.reflect.calculator.Operation pOp)
                 throws java.io.IOException,
-                       net.morimekta.test.providence.core.calculator.CalculateException;
+                       net.morimekta.test.providence.reflect.calculator.CalculateException;
 
         /**
          * @throws java.io.IOException On providence or non-declared exceptions.
@@ -46,11 +46,11 @@ public class Calculator {
         }
 
         @Override
-        public net.morimekta.test.providence.core.calculator.Operand calculate(
-                net.morimekta.test.providence.core.calculator.Operation pOp)
+        public net.morimekta.test.providence.reflect.calculator.Operand calculate(
+                net.morimekta.test.providence.reflect.calculator.Operation pOp)
                 throws java.io.IOException,
-                       net.morimekta.test.providence.core.calculator.CalculateException {
-            net.morimekta.test.providence.core.calculator.Calculator._calculate_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._calculate_request.builder();
+                       net.morimekta.test.providence.reflect.calculator.CalculateException {
+            net.morimekta.test.providence.reflect.calculator.Calculator._calculate_request._Builder rq = net.morimekta.test.providence.reflect.calculator.Calculator._calculate_request.builder();
             rq.setOp(pOp);
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
@@ -60,7 +60,7 @@ public class Calculator {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.calculator.Calculator._calculate_response msg = (net.morimekta.test.providence.core.calculator.Calculator._calculate_response) resp.getMessage();
+            net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response msg = (net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case CE:
@@ -77,7 +77,7 @@ public class Calculator {
         @Override
         public void iamalive()
                 throws java.io.IOException {
-            net.morimekta.test.providence.core.calculator.Calculator._iamalive_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._iamalive_request.builder();
+            net.morimekta.test.providence.reflect.calculator.Calculator._iamalive_request._Builder rq = net.morimekta.test.providence.reflect.calculator.Calculator._iamalive_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
             handler.handleCall(call, Calculator.kDescriptor);
@@ -86,7 +86,7 @@ public class Calculator {
         @Override
         public void ping()
                 throws java.io.IOException {
-            net.morimekta.test.providence.core.calculator.Calculator._ping_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._ping_request.builder();
+            net.morimekta.test.providence.reflect.calculator.Calculator._ping_request._Builder rq = net.morimekta.test.providence.reflect.calculator.Calculator._ping_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("ping", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
@@ -95,7 +95,7 @@ public class Calculator {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.calculator.Calculator._ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator._ping_response) resp.getMessage();
+            net.morimekta.test.providence.reflect.calculator.Calculator._ping_response msg = (net.morimekta.test.providence.reflect.calculator.Calculator._ping_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case SUCCESS:
@@ -131,13 +131,13 @@ public class Calculator {
                        net.morimekta.providence.serializer.SerializerException {
             switch(call.getMethod()) {
                 case "calculate": {
-                    net.morimekta.test.providence.core.calculator.Calculator._calculate_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator._calculate_response.builder();
+                    net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response._Builder rsp = net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response.builder();
                     try {
-                        net.morimekta.test.providence.core.calculator.Calculator._calculate_request req = (net.morimekta.test.providence.core.calculator.Calculator._calculate_request) call.getMessage();
-                        net.morimekta.test.providence.core.calculator.Operand result =
+                        net.morimekta.test.providence.reflect.calculator.Calculator._calculate_request req = (net.morimekta.test.providence.reflect.calculator.Calculator._calculate_request) call.getMessage();
+                        net.morimekta.test.providence.reflect.calculator.Operand result =
                                 impl.calculate(req.getOp());
                         rsp.setSuccess(result);
-                    } catch (net.morimekta.test.providence.core.calculator.CalculateException e) {
+                    } catch (net.morimekta.test.providence.reflect.calculator.CalculateException e) {
                         rsp.setCe(e);
                     }
                     net.morimekta.providence.PServiceCall reply =
@@ -148,13 +148,13 @@ public class Calculator {
                     return reply;
                 }
                 case "iamalive": {
-                    net.morimekta.test.providence.core.calculator.Calculator._iamalive_request req = (net.morimekta.test.providence.core.calculator.Calculator._iamalive_request) call.getMessage();
+                    net.morimekta.test.providence.reflect.calculator.Calculator._iamalive_request req = (net.morimekta.test.providence.reflect.calculator.Calculator._iamalive_request) call.getMessage();
                     impl.iamalive();
                     return null;
                 }
                 case "ping": {
-                    net.morimekta.test.providence.core.calculator.Calculator._ping_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator._ping_response.builder();
-                    net.morimekta.test.providence.core.calculator.Calculator._ping_request req = (net.morimekta.test.providence.core.calculator.Calculator._ping_request) call.getMessage();
+                    net.morimekta.test.providence.reflect.calculator.Calculator._ping_response._Builder rsp = net.morimekta.test.providence.reflect.calculator.Calculator._ping_response.builder();
+                    net.morimekta.test.providence.reflect.calculator.Calculator._ping_request req = (net.morimekta.test.providence.reflect.calculator.Calculator._ping_request) call.getMessage();
                     impl.ping();
                     rsp.setSuccess();
                     net.morimekta.providence.PServiceCall reply =
@@ -181,9 +181,9 @@ public class Calculator {
     }
 
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
-        CALCULATE("calculate", false, net.morimekta.test.providence.core.calculator.Calculator._calculate_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator._calculate_response.kDescriptor),
-        IAMALIVE("iamalive", true, net.morimekta.test.providence.core.calculator.Calculator._iamalive_request.kDescriptor, null),
-        PING("ping", false, net.morimekta.test.providence.core.calculator.Calculator._ping_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator._ping_response.kDescriptor),
+        CALCULATE("calculate", false, net.morimekta.test.providence.reflect.calculator.Calculator._calculate_request.kDescriptor, net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response.kDescriptor),
+        IAMALIVE("iamalive", true, net.morimekta.test.providence.reflect.calculator.Calculator._iamalive_request.kDescriptor, null),
+        PING("ping", false, net.morimekta.test.providence.reflect.calculator.Calculator._ping_request.kDescriptor, net.morimekta.test.providence.reflect.calculator.Calculator._ping_response.kDescriptor),
         ;
 
         private final String name;
@@ -258,11 +258,11 @@ public class Calculator {
                        net.morimekta.providence.serializer.rw.BinaryWriter {
         private final static long serialVersionUID = 5385883517742336295L;
 
-        private final net.morimekta.test.providence.core.calculator.Operation mOp;
+        private final net.morimekta.test.providence.reflect.calculator.Operation mOp;
 
         private volatile int tHashCode;
 
-        public _calculate_request(net.morimekta.test.providence.core.calculator.Operation pOp) {
+        public _calculate_request(net.morimekta.test.providence.reflect.calculator.Operation pOp) {
             mOp = pOp;
         }
 
@@ -277,7 +277,7 @@ public class Calculator {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.calculator.Operation getOp() {
+        public net.morimekta.test.providence.reflect.calculator.Operation getOp() {
             return mOp;
         }
 
@@ -329,6 +329,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -376,7 +377,7 @@ public class Calculator {
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
-            OP(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "op", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
+            OP(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "op", net.morimekta.test.providence.reflect.calculator.Operation.provider(), null),
             ;
 
             private final int mKey;
@@ -491,8 +492,8 @@ public class Calculator {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
-            private net.morimekta.test.providence.core.calculator.Operation mOp;
-            private net.morimekta.test.providence.core.calculator.Operation._Builder mOp_builder;
+            private net.morimekta.test.providence.reflect.calculator.Operation mOp;
+            private net.morimekta.test.providence.reflect.calculator.Operation._Builder mOp_builder;
 
             /**
              * Make a calculator.Calculator.calculate.request builder.
@@ -541,7 +542,7 @@ public class Calculator {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setOp(net.morimekta.test.providence.core.calculator.Operation value) {
+            public _Builder setOp(net.morimekta.test.providence.reflect.calculator.Operation value) {
                 if (value == null) {
                     return clearOp();
                 }
@@ -590,7 +591,8 @@ public class Calculator {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOp() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.calculator.Operation._Builder mutableOp() {
                 optionals.set(0);
                 modified.set(0);
 
@@ -598,7 +600,7 @@ public class Calculator {
                     mOp_builder = mOp.mutate();
                     mOp = null;
                 } else if (mOp_builder == null) {
-                    mOp_builder = net.morimekta.test.providence.core.calculator.Operation.builder();
+                    mOp_builder = net.morimekta.test.providence.reflect.calculator.Operation.builder();
                 }
                 return mOp_builder;
             }
@@ -634,7 +636,7 @@ public class Calculator {
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
-                    case 1: setOp((net.morimekta.test.providence.core.calculator.Operation) value); break;
+                    case 1: setOp((net.morimekta.test.providence.reflect.calculator.Operation) value); break;
                     default: break;
                 }
                 return this;
@@ -699,7 +701,7 @@ public class Calculator {
                     switch (field) {
                         case 1: {
                             if (type == 12) {
-                                mOp = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
+                                mOp = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operation.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.request.op, should be struct(12)");
@@ -732,8 +734,8 @@ public class Calculator {
                        net.morimekta.providence.serializer.rw.BinaryWriter {
         private final static long serialVersionUID = -1787619653444046051L;
 
-        private final net.morimekta.test.providence.core.calculator.Operand mSuccess;
-        private final net.morimekta.test.providence.core.calculator.CalculateException mCe;
+        private final net.morimekta.test.providence.reflect.calculator.Operand mSuccess;
+        private final net.morimekta.test.providence.reflect.calculator.CalculateException mCe;
 
         private final _Field tUnionField;
 
@@ -743,7 +745,7 @@ public class Calculator {
          * @param value The union value
          * @return The created union.
          */
-        public static _calculate_response withSuccess(net.morimekta.test.providence.core.calculator.Operand value) {
+        public static _calculate_response withSuccess(net.morimekta.test.providence.reflect.calculator.Operand value) {
             return new _Builder().setSuccess(value).build();
         }
 
@@ -751,7 +753,7 @@ public class Calculator {
          * @param value The union value
          * @return The created union.
          */
-        public static _calculate_response withCe(net.morimekta.test.providence.core.calculator.CalculateException value) {
+        public static _calculate_response withCe(net.morimekta.test.providence.reflect.calculator.CalculateException value) {
             return new _Builder().setCe(value).build();
         }
 
@@ -773,7 +775,7 @@ public class Calculator {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.calculator.Operand getSuccess() {
+        public net.morimekta.test.providence.reflect.calculator.Operand getSuccess() {
             return mSuccess;
         }
 
@@ -784,7 +786,7 @@ public class Calculator {
         /**
          * @return The field value
          */
-        public net.morimekta.test.providence.core.calculator.CalculateException getCe() {
+        public net.morimekta.test.providence.reflect.calculator.CalculateException getCe() {
             return mCe;
         }
 
@@ -847,6 +849,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -913,8 +916,8 @@ public class Calculator {
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
-            SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.core.calculator.Operand.provider(), null),
-            CE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ce", net.morimekta.test.providence.core.calculator.CalculateException.provider(), null),
+            SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.reflect.calculator.Operand.provider(), null),
+            CE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ce", net.morimekta.test.providence.reflect.calculator.CalculateException.provider(), null),
             ;
 
             private final int mKey;
@@ -1032,10 +1035,10 @@ public class Calculator {
 
             private boolean modified;
 
-            private net.morimekta.test.providence.core.calculator.Operand mSuccess;
-            private net.morimekta.test.providence.core.calculator.Operand._Builder mSuccess_builder;
-            private net.morimekta.test.providence.core.calculator.CalculateException mCe;
-            private net.morimekta.test.providence.core.calculator.CalculateException._Builder mCe_builder;
+            private net.morimekta.test.providence.reflect.calculator.Operand mSuccess;
+            private net.morimekta.test.providence.reflect.calculator.Operand._Builder mSuccess_builder;
+            private net.morimekta.test.providence.reflect.calculator.CalculateException mCe;
+            private net.morimekta.test.providence.reflect.calculator.CalculateException._Builder mCe_builder;
 
             /**
              * Make a calculator.Calculator.calculate.response builder.
@@ -1093,7 +1096,7 @@ public class Calculator {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setSuccess(net.morimekta.test.providence.core.calculator.Operand value) {
+            public _Builder setSuccess(net.morimekta.test.providence.reflect.calculator.Operand value) {
                 if (value == null) {
                     return clearSuccess();
                 }
@@ -1133,7 +1136,8 @@ public class Calculator {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.calculator.Operand._Builder mutableSuccess() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.calculator.Operand._Builder mutableSuccess() {
                 if (tUnionField != _Field.SUCCESS) {
                     clearSuccess();
                 }
@@ -1144,7 +1148,7 @@ public class Calculator {
                     mSuccess_builder = mSuccess.mutate();
                     mSuccess = null;
                 } else if (mSuccess_builder == null) {
-                    mSuccess_builder = net.morimekta.test.providence.core.calculator.Operand.builder();
+                    mSuccess_builder = net.morimekta.test.providence.reflect.calculator.Operand.builder();
                 }
                 return mSuccess_builder;
             }
@@ -1156,7 +1160,7 @@ public class Calculator {
              * @return The builder
              */
             @javax.annotation.Nonnull
-            public _Builder setCe(net.morimekta.test.providence.core.calculator.CalculateException value) {
+            public _Builder setCe(net.morimekta.test.providence.reflect.calculator.CalculateException value) {
                 if (value == null) {
                     return clearCe();
                 }
@@ -1196,7 +1200,8 @@ public class Calculator {
              *
              * @return The field builder
              */
-            public net.morimekta.test.providence.core.calculator.CalculateException._Builder mutableCe() {
+            @javax.annotation.Nonnull
+            public net.morimekta.test.providence.reflect.calculator.CalculateException._Builder mutableCe() {
                 if (tUnionField != _Field.CE) {
                     clearCe();
                 }
@@ -1207,7 +1212,7 @@ public class Calculator {
                     mCe_builder = mCe.mutate();
                     mCe = null;
                 } else if (mCe_builder == null) {
-                    mCe_builder = net.morimekta.test.providence.core.calculator.CalculateException.builder();
+                    mCe_builder = net.morimekta.test.providence.reflect.calculator.CalculateException.builder();
                 }
                 return mCe_builder;
             }
@@ -1255,8 +1260,8 @@ public class Calculator {
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
-                    case 0: setSuccess((net.morimekta.test.providence.core.calculator.Operand) value); break;
-                    case 1: setCe((net.morimekta.test.providence.core.calculator.CalculateException) value); break;
+                    case 0: setSuccess((net.morimekta.test.providence.reflect.calculator.Operand) value); break;
+                    case 1: setCe((net.morimekta.test.providence.reflect.calculator.CalculateException) value); break;
                     default: break;
                 }
                 return this;
@@ -1330,7 +1335,7 @@ public class Calculator {
                     switch (field) {
                         case 0: {
                             if (type == 12) {
-                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operand.kDescriptor, strict);
+                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.success, should be struct(12)");
@@ -1339,7 +1344,7 @@ public class Calculator {
                         }
                         case 1: {
                             if (type == 12) {
-                                mCe = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.CalculateException.kDescriptor, strict);
+                                mCe = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.CalculateException.kDescriptor, strict);
                                 tUnionField = _Field.CE;
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.ce, should be struct(12)");
@@ -1424,6 +1429,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -1754,6 +1760,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -2105,6 +2112,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");

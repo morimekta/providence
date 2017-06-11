@@ -185,7 +185,7 @@ public class BinaryFormatUtils {
                 if (fieldType != null && fieldType instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
                     PEnumBuilder builder = ((PEnumDescriptor<?>)fieldType).builder();
-                    builder.setByValue(val);
+                    builder.setById(val);
                     return builder.build();
                 } else {
                     return val;
@@ -379,7 +379,7 @@ public class BinaryFormatUtils {
                 return len + out.writeBinary(binary);
             }
             case ENUM:
-                return out.writeInt(((PEnumValue<?>) value).getValue());
+                return out.writeInt(((PEnumValue<?>) value).asInteger());
             case MAP: {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) value;

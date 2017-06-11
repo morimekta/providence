@@ -33,6 +33,7 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Nonnull;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Objects;
@@ -584,6 +585,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
+        writer.appendln(JAnnotation.NON_NULL);
         switch (field.type()) {
             case MESSAGE: {
                 writer.formatln("public %s._Builder %s() {", field.instanceType(), field.mutable())
@@ -694,6 +696,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 .param_("cause", "The cause")
                 .return_("Builder instance")
                 .finish();
+        writer.appendln(JAnnotation.NON_NULL);
         writer.appendln("public _Builder initCause(Throwable cause) {")
               .appendln("    this.cause = cause;")
               .appendln("    return this;")

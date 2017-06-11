@@ -47,6 +47,7 @@ public class CalculateException
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getMessage() {
         return mMessage;
     }
@@ -135,6 +136,7 @@ public class CalculateException
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -480,6 +482,7 @@ public class CalculateException
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOperation() {
             optionals.set(1);
             modified.set(1);
@@ -499,6 +502,7 @@ public class CalculateException
          * @param cause The cause
          * @return Builder instance
          */
+        @javax.annotation.Nonnull
         public _Builder initCause(Throwable cause) {
             this.cause = cause;
             return this;

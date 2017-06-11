@@ -135,6 +135,7 @@ public class PApplicationException
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -192,7 +193,7 @@ public class PApplicationException
         if (hasId()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 2);
-            length += writer.writeInt(mId.getValue());
+            length += writer.writeInt(mId.asInteger());
         }
 
         length += writer.writeByte((byte) 0);
@@ -497,6 +498,7 @@ public class PApplicationException
          * @param cause The cause
          * @return Builder instance
          */
+        @javax.annotation.Nonnull
         public _Builder initCause(Throwable cause) {
             this.cause = cause;
             return this;
@@ -613,7 +615,7 @@ public class PApplicationException
                     }
                     case 2: {
                         if (type == 8) {
-                            mId = net.morimekta.providence.PApplicationExceptionType.forValue(reader.expectInt());
+                            mId = net.morimekta.providence.PApplicationExceptionType.findById(reader.expectInt());
                             optionals.set(1);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for service.PApplicationException.id, should be struct(12)");

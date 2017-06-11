@@ -24,6 +24,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.shared.EnumMemberFormatter;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
@@ -69,17 +70,48 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
         }
     }
 
-    @Override
-    public void appendExtraProperties(CEnumDescriptor type) throws GeneratorException {
-        String simpleClass = JUtils.getClassName(type);
+    public void appendStaticGetter_Legacy(CEnumDescriptor type, String simpleClass) {
+        new BlockCommentBuilder(writer)
+                .comment("Find a value based in its ID")
+                .newline()
+                .param_("id", "Id of value")
+                .return_("Value found or null")
+                .deprecated_("#findById(int)")
+                .finish();
+        writer.appendln("@Deprecated")
+              .formatln("public static %s forValue(int id) {", simpleClass)
+              .appendln("    return findById(id);")
+              .appendln('}')
+              .newline();
 
-        writer.formatln("public static %s forValue(int value) {", simpleClass)
+        new BlockCommentBuilder(writer)
+                .comment("Find a value based in its name")
+                .newline()
+                .param_("name", "Name of value")
+                .return_("Value found or null")
+                .deprecated_("#findByName(String)")
+                .finish();
+        writer.appendln("@Deprecated")
+              .formatln("public static %s forName(String name) {", simpleClass)
+              .appendln("    return findByName(name);")
+              .appendln('}')
+              .newline();
+    }
+
+    public void appendStaticGetter_FindBy(CEnumDescriptor type, String simpleClass) {
+        new BlockCommentBuilder(writer)
+                .comment("Find a value based in its ID")
+                .newline()
+                .param_("id", "Id of value")
+                .return_("Value found or null")
+                .finish();
+        writer.formatln("public static %s findById(int id) {", simpleClass)
               .begin()
-              .appendln("switch (value) {")
+              .appendln("switch (id) {")
               .begin();
         for (PEnumValue<?> value : type.getValues()) {
             writer.formatln("case %d: return %s.%s;",
-                            value.getValue(),
+                            value.asInteger(),
                             simpleClass,
                             JUtils.enumConst(value));
         }
@@ -90,13 +122,22 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
               .appendln('}')
               .newline();
 
-        writer.formatln("public static %s forName(String name) {", simpleClass)
+        new BlockCommentBuilder(writer)
+                .comment("Find a value based in its name")
+                .newline()
+                .param_("name", "Name of value")
+                .return_("Value found or null")
+                .finish();
+        writer.formatln("public static %s findByName(String name) {", simpleClass)
               .begin()
+              .appendln("if (name == null) {")
+              .formatln("    throw new IllegalArgumentException(\"Null name given\");", type.getQualifiedName())
+              .appendln("}")
               .appendln("switch (name) {")
               .begin();
         for (PEnumValue<?> value : type.getValues()) {
             writer.formatln("case \"%s\": return %s.%s;",
-                            value.getName(),
+                            value.asString(),
                             simpleClass,
                             JUtils.enumConst(value));
         }
@@ -106,5 +147,50 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
               .end()
               .appendln('}')
               .newline();
+    }
+
+    public void appendStaticGetter_ValueFor(CEnumDescriptor type, String simpleClass) {
+        new BlockCommentBuilder(writer)
+                .comment("Get a value based in its ID")
+                .newline()
+                .param_("id", "Id of value")
+                .return_("Value found")
+                .throws_(IllegalArgumentException.class.getSimpleName(), "If no value for id is found")
+                .finish();
+        writer.appendln(JAnnotation.NON_NULL)
+              .formatln("public static %s valueForId(int id) {", simpleClass)
+              .formatln("    %s value = findById(id);", simpleClass)
+              .appendln("    if (value == null) {")
+              .formatln("        throw new IllegalArgumentException(\"No %s for id \" + id);", type.getQualifiedName())
+              .appendln("    }")
+              .appendln("    return value;")
+              .appendln('}')
+              .newline();
+
+        new BlockCommentBuilder(writer)
+                .comment("Get a value based in its name")
+                .newline()
+                .param_("name", "Name of value")
+                .return_("Value found")
+                .throws_(IllegalArgumentException.class.getSimpleName(), "If no value for name is found, or null name")
+                .finish();
+        writer.appendln(JAnnotation.NON_NULL)
+              .formatln("public static %s valueForName(String name) {", simpleClass)
+              .formatln("    %s value = findByName(name);", simpleClass)
+              .appendln("    if (value == null) {")
+              .formatln("        throw new IllegalArgumentException(\"No %s for name \\\"\" + name + \"\\\"\");", type.getQualifiedName())
+              .appendln("    }")
+              .appendln("    return value;")
+              .appendln('}')
+              .newline();
+    }
+
+    @Override
+    public void appendExtraProperties(CEnumDescriptor type) throws GeneratorException {
+        String simpleClass = JUtils.getClassName(type);
+
+        appendStaticGetter_Legacy(type, simpleClass);
+        appendStaticGetter_FindBy(type, simpleClass);
+        appendStaticGetter_ValueFor(type, simpleClass);
     }
 }

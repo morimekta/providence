@@ -388,7 +388,7 @@ public class ConstParser {
             case ENUM:
                 PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
                 if (Strings.isInteger(key)) {
-                    return eb.setByValue(Integer.parseInt(key))
+                    return eb.setById(Integer.parseInt(key))
                              .build();
                 } else {
                     if (key.startsWith(keyType.getProgramName() + "." + keyType.getName() + ".")) {
@@ -465,9 +465,9 @@ public class ConstParser {
         PDeclaredDescriptor descriptor = registry.getDeclaredType(typeName, programContext);
         if (descriptor != null && descriptor instanceof PEnumDescriptor) {
             PEnumDescriptor desc = (PEnumDescriptor) descriptor;
-            PEnumValue value = desc.getValueByName(valueName);
+            PEnumValue value = desc.findByName(valueName);
             if (value != null) {
-                return value.getValue();
+                return value.asInteger();
             }
         }
 

@@ -410,7 +410,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                         service.getService().getQualifiedName())
               .formatln("                %s.%s);",
                         PApplicationExceptionType.class.getName(),
-                        PApplicationExceptionType.UNKNOWN_METHOD.getName());
+                        PApplicationExceptionType.UNKNOWN_METHOD.asString());
 
         String spaces = PServiceCall.class.getName().replaceAll("[\\S]", " ");
         writer.formatln("%s reply =", PServiceCall.class.getName())

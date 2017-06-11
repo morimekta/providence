@@ -45,6 +45,7 @@ import net.morimekta.util.io.LittleEndianBinaryReader;
 import net.morimekta.util.io.LittleEndianBinaryWriter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -83,18 +84,18 @@ public class FastBinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, Message message) throws IOException {
+    int serialize(@Nonnull OutputStream os, @Nonnull Message message) throws IOException {
         LittleEndianBinaryWriter out = new LittleEndianBinaryWriter(os);
         return writeMessage(out, message);
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, PServiceCall<Message, Field> call)
+    int serialize(@Nonnull OutputStream os, @Nonnull PServiceCall<Message, Field> call)
             throws IOException {
         LittleEndianBinaryWriter out = new LittleEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
-        int len = out.writeVarint(method.length << 3 | call.getType().getValue());
+        int len = out.writeVarint(method.length << 3 | call.getType().asInteger());
         len += method.length;
         out.write(method);
         len += out.writeVarint(call.getSequence());
@@ -105,7 +106,8 @@ public class FastBinarySerializer extends Serializer {
     @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream is, PMessageDescriptor<Message, Field> descriptor)
+    Message deserialize(@Nonnull InputStream is,
+                        @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         LittleEndianBinaryReader in = new LittleEndianBinaryReader(is);
         return readMessage(in, descriptor);
@@ -115,7 +117,7 @@ public class FastBinarySerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream is, PService service)
+    PServiceCall<Message, Field> deserialize(@Nonnull InputStream is, @Nonnull PService service)
             throws SerializerException {
         String methodName = null;
         int sequence = 0;
@@ -129,7 +131,7 @@ public class FastBinarySerializer extends Serializer {
 
             methodName = new String(in.expectBytes(len), UTF_8);
             sequence = in.readIntVarint();
-            type = PServiceCallType.forValue(typeKey);
+            type = PServiceCallType.findById(typeKey);
 
             if (type == null) {
                 throw new SerializerException("Invalid call type " + typeKey)
@@ -149,6 +151,12 @@ public class FastBinarySerializer extends Serializer {
 
             @SuppressWarnings("unchecked")
             PMessageDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            if (descriptor == null) {
+                throw new SerializerException("No such %s descriptor for %s",
+                                              isRequestCallType(type) ? "request" : "response",
+                                              service.getQualifiedName())
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
+            }
 
             Message message = readMessage(in, descriptor);
             return new PServiceCall<>(methodName, type, sequence, message);
@@ -170,6 +178,7 @@ public class FastBinarySerializer extends Serializer {
         return true;
     }
 
+    @Nonnull
     @Override
     public String mimeType() {
         return MIME_TYPE;
@@ -198,18 +207,20 @@ public class FastBinarySerializer extends Serializer {
         return len + out.writeVarint(STOP);
     }
 
+    private void consumeMessage(LittleEndianBinaryReader in) throws IOException {
+        int tag;
+        while ((tag = in.readIntVarint()) != STOP) {
+            int type = tag & 0x07;
+            readFieldValue(in, type, null);
+        }
+    }
+
+    @Nonnull
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(LittleEndianBinaryReader in, PMessageDescriptor<Message, Field> descriptor)
+    Message readMessage(@Nonnull LittleEndianBinaryReader in,
+                        @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         int tag;
-        if (descriptor == null) {
-            while ((tag = in.readIntVarint()) != STOP) {
-                int type = tag & 0x07;
-                readFieldValue(in, type, null);
-            }
-            return null;
-        }
-
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         while ((tag = in.readIntVarint()) != STOP) {
             int id = tag >>> 3;
@@ -282,7 +293,7 @@ public class FastBinarySerializer extends Serializer {
             }
             case ENUM: {
                 int len = out.writeVarint(key << 3 | VARINT);
-                return len + out.writeZigzag(((PEnumValue) value).getValue());
+                return len + out.writeZigzag(((PEnumValue) value).asInteger());
             }
             case MESSAGE: {
                 int len = out.writeVarint(key << 3 | MESSAGE);
@@ -310,7 +321,7 @@ public class FastBinarySerializer extends Serializer {
                 } else if (value instanceof Number) {
                     return out.writeZigzag(((Number) value).longValue());
                 } else if (value instanceof PEnumValue) {
-                    return out.writeZigzag(((PEnumValue) value).getValue());
+                    return out.writeZigzag(((PEnumValue) value).asInteger());
                 } else {
                     throw new SerializerException("");
                 }
@@ -372,7 +383,9 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @SuppressWarnings("unchecked")
-    private Object readFieldValue(LittleEndianBinaryReader in, int type, PDescriptor descriptor)
+    private Object readFieldValue(@Nonnull LittleEndianBinaryReader in,
+                                  int type,
+                                  @Nullable PDescriptor descriptor)
             throws IOException {
         switch (type) {
             case NONE:
@@ -397,7 +410,7 @@ public class FastBinarySerializer extends Serializer {
                         return in.readLongZigzag();
                     case ENUM: {
                         PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).builder();
-                        builder.setByValue(in.readIntZigzag());
+                        builder.setById(in.readIntZigzag());
                         return builder.build();
                     }
                     default: {
@@ -424,6 +437,10 @@ public class FastBinarySerializer extends Serializer {
                 }
             }
             case MESSAGE:
+                if (descriptor == null) {
+                    consumeMessage(in);
+                    return null;
+                }
                 return readMessage(in, (PMessageDescriptor<?, ?>) descriptor);
             case COLLECTION:
                 if (descriptor == null) {

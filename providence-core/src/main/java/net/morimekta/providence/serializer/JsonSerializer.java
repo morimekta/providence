@@ -125,7 +125,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, T message) throws IOException {
+    public <T extends PMessage<T, F>, F extends PField> int serialize(@Nonnull OutputStream output, @Nonnull T message) throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         appendMessage(jsonWriter, message);
@@ -135,16 +135,17 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, PServiceCall<T, F> call)
+    public <T extends PMessage<T, F>, F extends PField> int serialize(@Nonnull OutputStream output, @Nonnull
+            PServiceCall<T, F> call)
             throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
 
         jsonWriter.array().value(call.getMethod());
         if (enumValueType == IdType.ID) {
-            jsonWriter.value(call.getType().getValue());
+            jsonWriter.value(call.getType().asInteger());
         } else {
-            jsonWriter.valueUnescaped(call.getType().getName());
+            jsonWriter.valueUnescaped(call.getType().asString());
         }
         jsonWriter.value(call.getSequence());
 
@@ -160,7 +161,7 @@ public class JsonSerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends PMessage<T, TF>, TF extends PField> T deserialize(
-            InputStream input, PMessageDescriptor<T, TF> type) throws IOException {
+            @Nonnull InputStream input, @Nonnull PMessageDescriptor<T, TF> type) throws IOException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
             if (!tokenizer.hasNext()) {
@@ -174,7 +175,8 @@ public class JsonSerializer extends Serializer {
 
     @Nonnull
     @Override
-    public <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> deserialize(InputStream input, PService service)
+    public <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> deserialize(@Nonnull InputStream input, @Nonnull
+            PService service)
             throws IOException {
         JsonTokenizer tokenizer = new JsonTokenizer(input);
         return parseServiceCall(tokenizer, service);
@@ -185,6 +187,7 @@ public class JsonSerializer extends Serializer {
         return false;
     }
 
+    @Nonnull
     @Override
     public String mimeType() {
         return MIME_TYPE;
@@ -228,14 +231,14 @@ public class JsonSerializer extends Serializer {
             JsonToken callTypeToken = tokenizer.expect("call type");
             if (callTypeToken.isInteger()) {
                 int typeKey = callTypeToken.byteValue();
-                type = PServiceCallType.forValue(typeKey);
+                type = PServiceCallType.findById(typeKey);
                 if (type == null) {
                     throw new SerializerException("Service call type " + typeKey + " is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.rawJsonLiteral();
-                type = PServiceCallType.forName(typeName);
+                type = PServiceCallType.findByName(typeName);
                 if (type == null) {
                     throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
@@ -459,7 +462,7 @@ public class JsonSerializer extends Serializer {
             case ENUM:
                 PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).builder();
                 if (token.isInteger()) {
-                    eb.setByValue(token.intValue());
+                    eb.setById(token.intValue());
                 } else if (token.isLiteral()) {
                     eb.setByName(token.rawJsonLiteral());
                 } else {
@@ -616,7 +619,7 @@ public class JsonSerializer extends Serializer {
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
                     if (Strings.isInteger(key)) {
-                        eb.setByValue(Integer.parseInt(key));
+                        eb.setById(Integer.parseInt(key));
                     } else {
                         eb.setByName(key);
                     }
@@ -745,7 +748,7 @@ public class JsonSerializer extends Serializer {
     private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(fieldIdType)) {
-                writer.key(((PEnumValue<?>) primitive).getValue());
+                writer.key(((PEnumValue<?>) primitive).asInteger());
             } else {
                 writer.keyUnescaped(primitive.toString());
             }
@@ -792,7 +795,7 @@ public class JsonSerializer extends Serializer {
     private void appendPrimitive(JsonWriter writer, Object primitive) throws SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(enumValueType)) {
-                writer.value(((PEnumValue<?>) primitive).getValue());
+                writer.value(((PEnumValue<?>) primitive).asInteger());
             } else {
                 writer.valueUnescaped(primitive.toString());
             }

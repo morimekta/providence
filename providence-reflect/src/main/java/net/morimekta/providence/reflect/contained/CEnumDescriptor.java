@@ -75,9 +75,10 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     }
 
     @Override
-    public CEnumValue getValueById(int id) {
+    @Nullable
+    public CEnumValue findById(int id) {
         for (CEnumValue value : getValues()) {
-            if (value.getValue() == id) {
+            if (value.asInteger() == id) {
                 return value;
             }
         }
@@ -85,9 +86,10 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     }
 
     @Override
-    public CEnumValue getValueByName(String name) {
+    @Nullable
+    public CEnumValue findByName(String name) {
         for (CEnumValue value : getValues()) {
-            if (value.getName()
+            if (value.asString()
                      .equalsIgnoreCase(name)) {
                 return value;
             }

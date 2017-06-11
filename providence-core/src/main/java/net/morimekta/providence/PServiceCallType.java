@@ -31,36 +31,57 @@ public enum PServiceCallType
     ONEWAY(4, "oneway"),
     ;
 
-    private final int mValue;
+    private final int    mId;
     private final String mName;
 
-    PServiceCallType(int value, String name) {
-        mValue = value;
+    PServiceCallType(int id, String name) {
+        mId = id;
         mName = name;
     }
 
     @Override
-    public int getValue() {
-        return mValue;
-    }
-
-    @Override
-    public String getName() {
-        return mName;
-    }
-
-    @Override
     public int asInteger() {
-        return mValue;
+        return mId;
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         return mName;
     }
 
-    public static PServiceCallType forValue(int value) {
-        switch (value) {
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     * @deprecated Use {@link #findById(int)} instead.
+     */
+    @Deprecated
+    public static PServiceCallType forValue(int id) {
+        return findById(id);
+    }
+
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     * @deprecated Use {@link #findByName(String)} instead.
+     */
+    @Deprecated
+    public static PServiceCallType forName(String name) {
+        return findByName(name);
+    }
+
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     */
+    public static PServiceCallType findById(int id) {
+        switch (id) {
             case 1: return PServiceCallType.CALL;
             case 2: return PServiceCallType.REPLY;
             case 3: return PServiceCallType.EXCEPTION;
@@ -69,7 +90,16 @@ public enum PServiceCallType
         }
     }
 
-    public static PServiceCallType forName(String name) {
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     */
+    public static PServiceCallType findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Null name given");
+        }
         switch (name) {
             case "call": return PServiceCallType.CALL;
             case "reply": return PServiceCallType.REPLY;
@@ -79,18 +109,52 @@ public enum PServiceCallType
         }
     }
 
+    /**
+     * Get a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for id is found
+     */
+    @javax.annotation.Nonnull
+    public static PServiceCallType valueForId(int id) {
+        PServiceCallType value = findById(id);
+        if (value == null) {
+            throw new IllegalArgumentException("No service.PServiceCallType for id " + id);
+        }
+        return value;
+    }
+
+    /**
+     * Get a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for name is found, or null name
+     */
+    @javax.annotation.Nonnull
+    public static PServiceCallType valueForName(String name) {
+        PServiceCallType value = findByName(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No service.PServiceCallType for name \"" + name + "\"");
+        }
+        return value;
+    }
+
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<PServiceCallType> {
         PServiceCallType mValue;
 
         @Override
-        public _Builder setByValue(int value) {
-            mValue = PServiceCallType.forValue(value);
+        @javax.annotation.Nonnull
+        public _Builder setById(int value) {
+            mValue = PServiceCallType.findById(value);
             return this;
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Builder setByName(String name) {
-            mValue = PServiceCallType.forName(name);
+            mValue = PServiceCallType.findByName(name);
             return this;
         }
 
@@ -123,18 +187,21 @@ public enum PServiceCallType
         }
 
         @Override
+        @javax.annotation.Nonnull
         public PServiceCallType[] getValues() {
             return PServiceCallType.values();
         }
 
         @Override
-        public PServiceCallType getValueById(int id) {
-            return PServiceCallType.forValue(id);
+        @javax.annotation.Nullable
+        public PServiceCallType findById(int id) {
+            return PServiceCallType.findById(id);
         }
 
         @Override
-        public PServiceCallType getValueByName(String name) {
-            return PServiceCallType.forName(name);
+        @javax.annotation.Nullable
+        public PServiceCallType findByName(String name) {
+            return PServiceCallType.findByName(name);
         }
     }
 

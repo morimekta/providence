@@ -1182,6 +1182,7 @@ public class Containers
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -1955,7 +1956,7 @@ public class Containers
             length += writer.writeByte((byte) 8);
             length += writer.writeUInt32(mEnumList.size());
             for (net.morimekta.test.providence.core.Value entry_29 : mEnumList) {
-                length += writer.writeInt(entry_29.getValue());
+                length += writer.writeInt(entry_29.asInteger());
             }
         }
 
@@ -1965,7 +1966,7 @@ public class Containers
             length += writer.writeByte((byte) 8);
             length += writer.writeUInt32(mEnumSet.size());
             for (net.morimekta.test.providence.core.Value entry_30 : mEnumSet) {
-                length += writer.writeInt(entry_30.getValue());
+                length += writer.writeInt(entry_30.asInteger());
             }
         }
 
@@ -1976,8 +1977,8 @@ public class Containers
             length += writer.writeByte((byte) 8);
             length += writer.writeUInt32(mEnumMap.size());
             for (java.util.Map.Entry<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> entry_31 : mEnumMap.entrySet()) {
-                length += writer.writeInt(entry_31.getKey().getValue());
-                length += writer.writeInt(entry_31.getValue().getValue());
+                length += writer.writeInt(entry_31.getKey().asInteger());
+                length += writer.writeInt(entry_31.getValue().asInteger());
             }
         }
 
@@ -2849,6 +2850,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Boolean> mutableBooleanList() {
             optionals.set(0);
             modified.set(0);
@@ -2932,6 +2934,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Byte> mutableByteList() {
             optionals.set(1);
             modified.set(1);
@@ -3015,6 +3018,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Short> mutableShortList() {
             optionals.set(2);
             modified.set(2);
@@ -3098,6 +3102,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Integer> mutableIntegerList() {
             optionals.set(3);
             modified.set(3);
@@ -3181,6 +3186,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Long> mutableLongList() {
             optionals.set(4);
             modified.set(4);
@@ -3264,6 +3270,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Double> mutableDoubleList() {
             optionals.set(5);
             modified.set(5);
@@ -3347,6 +3354,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<String> mutableStringList() {
             optionals.set(6);
             modified.set(6);
@@ -3430,6 +3438,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.util.Binary> mutableBinaryList() {
             optionals.set(7);
             modified.set(7);
@@ -3513,6 +3522,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Boolean> mutableBooleanSet() {
             optionals.set(8);
             modified.set(8);
@@ -3596,6 +3606,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Byte> mutableByteSet() {
             optionals.set(9);
             modified.set(9);
@@ -3679,6 +3690,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Short> mutableShortSet() {
             optionals.set(10);
             modified.set(10);
@@ -3762,6 +3774,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Integer> mutableIntegerSet() {
             optionals.set(11);
             modified.set(11);
@@ -3845,6 +3858,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Long> mutableLongSet() {
             optionals.set(12);
             modified.set(12);
@@ -3928,6 +3942,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Double> mutableDoubleSet() {
             optionals.set(13);
             modified.set(13);
@@ -4011,6 +4026,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<String> mutableStringSet() {
             optionals.set(14);
             modified.set(14);
@@ -4094,6 +4110,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<net.morimekta.util.Binary> mutableBinarySet() {
             optionals.set(15);
             modified.set(15);
@@ -4175,6 +4192,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Boolean,Boolean> mutableBooleanMap() {
             optionals.set(16);
             modified.set(16);
@@ -4256,6 +4274,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Byte,Byte> mutableByteMap() {
             optionals.set(17);
             modified.set(17);
@@ -4337,6 +4356,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Short,Short> mutableShortMap() {
             optionals.set(18);
             modified.set(18);
@@ -4418,6 +4438,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Integer,Integer> mutableIntegerMap() {
             optionals.set(19);
             modified.set(19);
@@ -4499,6 +4520,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Long,Long> mutableLongMap() {
             optionals.set(20);
             modified.set(20);
@@ -4580,6 +4602,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Double,Double> mutableDoubleMap() {
             optionals.set(21);
             modified.set(21);
@@ -4661,6 +4684,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableStringMap() {
             optionals.set(22);
             modified.set(22);
@@ -4742,6 +4766,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
             optionals.set(23);
             modified.set(23);
@@ -4825,6 +4850,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.test.providence.core.Value> mutableEnumList() {
             optionals.set(24);
             modified.set(24);
@@ -4908,6 +4934,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<net.morimekta.test.providence.core.Value> mutableEnumSet() {
             optionals.set(25);
             modified.set(25);
@@ -4989,6 +5016,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mutableEnumMap() {
             optionals.set(26);
             modified.set(26);
@@ -5072,6 +5100,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.test.providence.core.DefaultFields> mutableMessageList() {
             optionals.set(27);
             modified.set(27);
@@ -5155,6 +5184,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<net.morimekta.test.providence.core.DefaultFields> mutableMessageSet() {
             optionals.set(28);
             modified.set(28);
@@ -5236,6 +5266,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mutableMessageMap() {
             optionals.set(29);
             modified.set(29);
@@ -5317,6 +5348,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mutableMessageKeyMap() {
             optionals.set(30);
             modified.set(30);
@@ -5385,6 +5417,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.RequiredFields._Builder mutableRequiredFields() {
             optionals.set(31);
             modified.set(31);
@@ -5454,6 +5487,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.DefaultFields._Builder mutableDefaultFields() {
             optionals.set(32);
             modified.set(32);
@@ -5523,6 +5557,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.OptionalFields._Builder mutableOptionalFields() {
             optionals.set(33);
             modified.set(33);
@@ -5592,6 +5627,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.UnionFields._Builder mutableUnionFields() {
             optionals.set(34);
             modified.set(34);
@@ -5661,6 +5697,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.ExceptionFields._Builder mutableExceptionFields() {
             optionals.set(35);
             modified.set(35);
@@ -5730,6 +5767,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.DefaultValues._Builder mutableDefaultValues() {
             optionals.set(36);
             modified.set(36);
@@ -6613,7 +6651,7 @@ public class Containers
                             if (t_147 == 8) {
                                 final int len_146 = reader.expectUInt32();
                                 for (int i_148 = 0; i_148 < len_146; ++i_148) {
-                                    net.morimekta.test.providence.core.Value key_149 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    net.morimekta.test.providence.core.Value key_149 = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
                                     b_145.add(key_149);
                                 }
                                 mEnumList = b_145.build();
@@ -6633,7 +6671,7 @@ public class Containers
                             if (t_152 == 8) {
                                 final int len_151 = reader.expectUInt32();
                                 for (int i_153 = 0; i_153 < len_151; ++i_153) {
-                                    net.morimekta.test.providence.core.Value key_154 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    net.morimekta.test.providence.core.Value key_154 = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
                                     b_150.add(key_154);
                                 }
                                 mEnumSet = b_150.build();
@@ -6654,8 +6692,8 @@ public class Containers
                             if (t_157 == 8 && t_158 == 8) {
                                 final int len_156 = reader.expectUInt32();
                                 for (int i_159 = 0; i_159 < len_156; ++i_159) {
-                                    net.morimekta.test.providence.core.Value key_160 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
-                                    net.morimekta.test.providence.core.Value val_161 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    net.morimekta.test.providence.core.Value key_160 = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
+                                    net.morimekta.test.providence.core.Value val_161 = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
                                     b_155.put(key_160, val_161);
                                 }
                                 mEnumMap = b_155.build();

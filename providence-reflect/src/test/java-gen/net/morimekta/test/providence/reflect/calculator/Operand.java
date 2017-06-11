@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core.calculator;
+package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -11,9 +11,9 @@ public class Operand
 
     private final static double kDefaultNumber = 0.0d;
 
-    private final net.morimekta.test.providence.core.calculator.Operation mOperation;
+    private final net.morimekta.test.providence.reflect.calculator.Operation mOperation;
     private final Double mNumber;
-    private final net.morimekta.test.providence.core.number.Imaginary mImaginary;
+    private final net.morimekta.test.providence.reflect.number.Imaginary mImaginary;
 
     private final _Field tUnionField;
 
@@ -23,7 +23,7 @@ public class Operand
      * @param value The union value
      * @return The created union.
      */
-    public static Operand withOperation(net.morimekta.test.providence.core.calculator.Operation value) {
+    public static Operand withOperation(net.morimekta.test.providence.reflect.calculator.Operation value) {
         return new _Builder().setOperation(value).build();
     }
 
@@ -39,7 +39,7 @@ public class Operand
      * @param value The union value
      * @return The created union.
      */
-    public static Operand withImaginary(net.morimekta.test.providence.core.number.Imaginary value) {
+    public static Operand withImaginary(net.morimekta.test.providence.reflect.number.Imaginary value) {
         return new _Builder().setImaginary(value).build();
     }
 
@@ -62,7 +62,7 @@ public class Operand
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.calculator.Operation getOperation() {
+    public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
         return mOperation;
     }
 
@@ -84,7 +84,7 @@ public class Operand
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.number.Imaginary getImaginary() {
+    public net.morimekta.test.providence.reflect.number.Imaginary getImaginary() {
         return mImaginary;
     }
 
@@ -152,6 +152,7 @@ public class Operand
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -231,9 +232,9 @@ public class Operand
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        OPERATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
+        OPERATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.reflect.calculator.Operation.provider(), null),
         NUMBER(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "number", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
-        IMAGINARY(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "imaginary", net.morimekta.test.providence.core.number.Imaginary.provider(), null),
+        IMAGINARY(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "imaginary", net.morimekta.test.providence.reflect.number.Imaginary.provider(), null),
         ;
 
         private final int mKey;
@@ -353,11 +354,11 @@ public class Operand
 
         private boolean modified;
 
-        private net.morimekta.test.providence.core.calculator.Operation mOperation;
-        private net.morimekta.test.providence.core.calculator.Operation._Builder mOperation_builder;
+        private net.morimekta.test.providence.reflect.calculator.Operation mOperation;
+        private net.morimekta.test.providence.reflect.calculator.Operation._Builder mOperation_builder;
         private Double mNumber;
-        private net.morimekta.test.providence.core.number.Imaginary mImaginary;
-        private net.morimekta.test.providence.core.number.Imaginary._Builder mImaginary_builder;
+        private net.morimekta.test.providence.reflect.number.Imaginary mImaginary;
+        private net.morimekta.test.providence.reflect.number.Imaginary._Builder mImaginary_builder;
 
         /**
          * Make a calculator.Operand builder.
@@ -420,7 +421,7 @@ public class Operand
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setOperation(net.morimekta.test.providence.core.calculator.Operation value) {
+        public _Builder setOperation(net.morimekta.test.providence.reflect.calculator.Operation value) {
             if (value == null) {
                 return clearOperation();
             }
@@ -460,7 +461,8 @@ public class Operand
          *
          * @return The field builder
          */
-        public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOperation() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.reflect.calculator.Operation._Builder mutableOperation() {
             if (tUnionField != _Field.OPERATION) {
                 clearOperation();
             }
@@ -471,7 +473,7 @@ public class Operand
                 mOperation_builder = mOperation.mutate();
                 mOperation = null;
             } else if (mOperation_builder == null) {
-                mOperation_builder = net.morimekta.test.providence.core.calculator.Operation.builder();
+                mOperation_builder = net.morimekta.test.providence.reflect.calculator.Operation.builder();
             }
             return mOperation_builder;
         }
@@ -528,7 +530,7 @@ public class Operand
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setImaginary(net.morimekta.test.providence.core.number.Imaginary value) {
+        public _Builder setImaginary(net.morimekta.test.providence.reflect.number.Imaginary value) {
             if (value == null) {
                 return clearImaginary();
             }
@@ -568,7 +570,8 @@ public class Operand
          *
          * @return The field builder
          */
-        public net.morimekta.test.providence.core.number.Imaginary._Builder mutableImaginary() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.reflect.number.Imaginary._Builder mutableImaginary() {
             if (tUnionField != _Field.IMAGINARY) {
                 clearImaginary();
             }
@@ -579,7 +582,7 @@ public class Operand
                 mImaginary_builder = mImaginary.mutate();
                 mImaginary = null;
             } else if (mImaginary_builder == null) {
-                mImaginary_builder = net.morimekta.test.providence.core.number.Imaginary.builder();
+                mImaginary_builder = net.morimekta.test.providence.reflect.number.Imaginary.builder();
             }
             return mImaginary_builder;
         }
@@ -629,9 +632,9 @@ public class Operand
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setOperation((net.morimekta.test.providence.core.calculator.Operation) value); break;
+                case 1: setOperation((net.morimekta.test.providence.reflect.calculator.Operation) value); break;
                 case 2: setNumber((double) value); break;
-                case 3: setImaginary((net.morimekta.test.providence.core.number.Imaginary) value); break;
+                case 3: setImaginary((net.morimekta.test.providence.reflect.number.Imaginary) value); break;
                 default: break;
             }
             return this;
@@ -708,7 +711,7 @@ public class Operand
                 switch (field) {
                     case 1: {
                         if (type == 12) {
-                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
+                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operation.kDescriptor, strict);
                             tUnionField = _Field.OPERATION;
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operand.operation, should be struct(12)");
@@ -726,7 +729,7 @@ public class Operand
                     }
                     case 3: {
                         if (type == 12) {
-                            mImaginary = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.number.Imaginary.kDescriptor, strict);
+                            mImaginary = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.number.Imaginary.kDescriptor, strict);
                             tUnionField = _Field.IMAGINARY;
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operand.imaginary, should be struct(12)");

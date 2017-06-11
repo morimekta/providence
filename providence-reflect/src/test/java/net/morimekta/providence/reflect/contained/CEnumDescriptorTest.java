@@ -83,19 +83,19 @@ public class CEnumDescriptorTest {
         assertEquals("SIX", type.getValues()[4].toString());
         assertEquals("EIGHT", type.getValues()[5].toString());
 
-        assertEquals("ONE", type.getValues()[0].getName());
-        assertEquals("TWO", type.getValues()[1].getName());
-        assertEquals("THREE", type.getValues()[2].getName());
-        assertEquals("FIVE", type.getValues()[3].getName());
-        assertEquals("SIX", type.getValues()[4].getName());
-        assertEquals("EIGHT", type.getValues()[5].getName());
+        assertEquals("ONE", type.getValues()[0].asString());
+        assertEquals("TWO", type.getValues()[1].asString());
+        assertEquals("THREE", type.getValues()[2].asString());
+        assertEquals("FIVE", type.getValues()[3].asString());
+        assertEquals("SIX", type.getValues()[4].asString());
+        assertEquals("EIGHT", type.getValues()[5].asString());
 
-        assertEquals(1, type.getValues()[0].getValue());
-        assertEquals(2, type.getValues()[1].getValue());
-        assertEquals(3, type.getValues()[2].getValue());
-        assertEquals(5, type.getValues()[3].getValue());
-        assertEquals(6, type.getValues()[4].getValue());
-        assertEquals(8, type.getValues()[5].getValue());
+        assertEquals(1, type.getValues()[0].asInteger());
+        assertEquals(2, type.getValues()[1].asInteger());
+        assertEquals(3, type.getValues()[2].asInteger());
+        assertEquals(5, type.getValues()[3].asInteger());
+        assertEquals(6, type.getValues()[4].asInteger());
+        assertEquals(8, type.getValues()[5].asInteger());
 
         Assert.assertEquals("MyEnum", type.getName());
         Assert.assertEquals("MyEnum", type.getQualifiedName("package"));
@@ -106,7 +106,7 @@ public class CEnumDescriptorTest {
     public void testProvider() {
         assertEquals(CEnumValue.class,
                      type.builder()
-                         .setByValue(1)
+                         .setById(1)
                          .build()
                          .getClass());
     }

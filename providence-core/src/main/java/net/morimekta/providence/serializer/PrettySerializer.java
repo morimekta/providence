@@ -157,7 +157,7 @@ public class PrettySerializer extends Serializer {
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream out, Message message) {
+    int serialize(@Nonnull OutputStream out, @Nonnull Message message) {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
         if (prefixWithQualifiedName) {
@@ -171,14 +171,14 @@ public class PrettySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream out, PServiceCall<Message, Field> call)
+    int serialize(@Nonnull OutputStream out, @Nonnull PServiceCall<Message, Field> call)
             throws IOException {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
         builder.format("%d: %s %s(",
                        call.getSequence(),
-                       call.getType().getName(),
+                       call.getType().asString(),
                        call.getMethod())
                .begin(indent + indent);
 
@@ -196,7 +196,7 @@ public class PrettySerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream input, PService service)
+    PServiceCall<Message, Field> deserialize(@Nonnull InputStream input, @Nonnull PService service)
             throws IOException {
         String methodName = null;
         int sequence = 0;
@@ -211,7 +211,7 @@ public class PrettySerializer extends Serializer {
                 tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
                 token = tokenizer.expectIdentifier("Call Type");
             }
-            callType = PServiceCallType.forName(token.asString());
+            callType = PServiceCallType.findByName(token.asString());
             if (callType == null) {
                 throw new TokenizerException(token, "No such call type " + token.asString())
                         .setLine(tokenizer.getLine(token.getLineNo()))
@@ -266,8 +266,8 @@ public class PrettySerializer extends Serializer {
     @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream input,
-                        PMessageDescriptor<Message, Field> descriptor)
+    Message deserialize(@Nonnull InputStream input,
+                        @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
@@ -535,6 +535,7 @@ public class PrettySerializer extends Serializer {
         return false;
     }
 
+    @Nonnull
     @Override
     public String mimeType() {
         return MIME_TYPE;
@@ -717,9 +718,8 @@ public class PrettySerializer extends Serializer {
         if (token.isSymbol(Token.kMessageStart)) {
             // message or map.
             token = tokenizer.expect("map or message first entry");
-            if (token.isSymbol(Token.kMessageEnd)) {
-                // ignore, empty map or message.
-            } else {
+            if (!token.isSymbol(Token.kMessageEnd)) {
+                // ignore empty map or message.
                 if (!tokenizer.peek().isSymbol(Token.kFieldValueSep)) {
                     // assume map.
                     while (!token.isSymbol(Token.kMessageEnd)) {

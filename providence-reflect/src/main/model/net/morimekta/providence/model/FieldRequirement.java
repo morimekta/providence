@@ -11,36 +11,57 @@ public enum FieldRequirement
     REQUIRED(2, "REQUIRED"),
     ;
 
-    private final int mValue;
+    private final int    mId;
     private final String mName;
 
-    FieldRequirement(int value, String name) {
-        mValue = value;
+    FieldRequirement(int id, String name) {
+        mId = id;
         mName = name;
     }
 
     @Override
-    public int getValue() {
-        return mValue;
-    }
-
-    @Override
-    public String getName() {
-        return mName;
-    }
-
-    @Override
     public int asInteger() {
-        return mValue;
+        return mId;
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         return mName;
     }
 
-    public static FieldRequirement forValue(int value) {
-        switch (value) {
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     * @deprecated Use {@link #findById(int)} instead.
+     */
+    @Deprecated
+    public static FieldRequirement forValue(int id) {
+        return findById(id);
+    }
+
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     * @deprecated Use {@link #findByName(String)} instead.
+     */
+    @Deprecated
+    public static FieldRequirement forName(String name) {
+        return findByName(name);
+    }
+
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     */
+    public static FieldRequirement findById(int id) {
+        switch (id) {
             case 0: return FieldRequirement.DEFAULT;
             case 1: return FieldRequirement.OPTIONAL;
             case 2: return FieldRequirement.REQUIRED;
@@ -48,7 +69,16 @@ public enum FieldRequirement
         }
     }
 
-    public static FieldRequirement forName(String name) {
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     */
+    public static FieldRequirement findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Null name given");
+        }
         switch (name) {
             case "DEFAULT": return FieldRequirement.DEFAULT;
             case "OPTIONAL": return FieldRequirement.OPTIONAL;
@@ -57,18 +87,52 @@ public enum FieldRequirement
         }
     }
 
+    /**
+     * Get a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for id is found
+     */
+    @javax.annotation.Nonnull
+    public static FieldRequirement valueForId(int id) {
+        FieldRequirement value = findById(id);
+        if (value == null) {
+            throw new IllegalArgumentException("No model.FieldRequirement for id " + id);
+        }
+        return value;
+    }
+
+    /**
+     * Get a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for name is found, or null name
+     */
+    @javax.annotation.Nonnull
+    public static FieldRequirement valueForName(String name) {
+        FieldRequirement value = findByName(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No model.FieldRequirement for name \"" + name + "\"");
+        }
+        return value;
+    }
+
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<FieldRequirement> {
         FieldRequirement mValue;
 
         @Override
-        public _Builder setByValue(int value) {
-            mValue = FieldRequirement.forValue(value);
+        @javax.annotation.Nonnull
+        public _Builder setById(int value) {
+            mValue = FieldRequirement.findById(value);
             return this;
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Builder setByName(String name) {
-            mValue = FieldRequirement.forName(name);
+            mValue = FieldRequirement.findByName(name);
             return this;
         }
 
@@ -101,18 +165,21 @@ public enum FieldRequirement
         }
 
         @Override
+        @javax.annotation.Nonnull
         public FieldRequirement[] getValues() {
             return FieldRequirement.values();
         }
 
         @Override
-        public FieldRequirement getValueById(int id) {
-            return FieldRequirement.forValue(id);
+        @javax.annotation.Nullable
+        public FieldRequirement findById(int id) {
+            return FieldRequirement.findById(id);
         }
 
         @Override
-        public FieldRequirement getValueByName(String name) {
-            return FieldRequirement.forName(name);
+        @javax.annotation.Nullable
+        public FieldRequirement findByName(String name) {
+            return FieldRequirement.findByName(name);
         }
     }
 

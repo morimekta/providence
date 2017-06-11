@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core.calculator;
+package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -9,13 +9,13 @@ public class Operation
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -2122462501055525645L;
 
-    private final net.morimekta.test.providence.core.calculator.Operator mOperator;
-    private final java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
+    private final net.morimekta.test.providence.reflect.calculator.Operator mOperator;
+    private final java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> mOperands;
 
     private volatile int tHashCode;
 
-    public Operation(net.morimekta.test.providence.core.calculator.Operator pOperator,
-                     java.util.List<net.morimekta.test.providence.core.calculator.Operand> pOperands) {
+    public Operation(net.morimekta.test.providence.reflect.calculator.Operator pOperator,
+                     java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> pOperands) {
         mOperator = pOperator;
         if (pOperands != null) {
             mOperands = com.google.common.collect.ImmutableList.copyOf(pOperands);
@@ -40,7 +40,7 @@ public class Operation
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.calculator.Operator getOperator() {
+    public net.morimekta.test.providence.reflect.calculator.Operator getOperator() {
         return mOperator;
     }
 
@@ -55,7 +55,7 @@ public class Operation
     /**
      * @return The field value
      */
-    public java.util.List<net.morimekta.test.providence.core.calculator.Operand> getOperands() {
+    public java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> getOperands() {
         return mOperands;
     }
 
@@ -112,6 +112,7 @@ public class Operation
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -159,7 +160,7 @@ public class Operation
         if (hasOperator()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 1);
-            length += writer.writeInt(mOperator.getValue());
+            length += writer.writeInt(mOperator.asInteger());
         }
 
         if (hasOperands()) {
@@ -167,7 +168,7 @@ public class Operation
             length += writer.writeShort((short) 2);
             length += writer.writeByte((byte) 12);
             length += writer.writeUInt32(mOperands.size());
-            for (net.morimekta.test.providence.core.calculator.Operand entry_1 : mOperands) {
+            for (net.morimekta.test.providence.reflect.calculator.Operand entry_1 : mOperands) {
                 length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_1);
             }
         }
@@ -183,8 +184,8 @@ public class Operation
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        OPERATOR(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operator", net.morimekta.test.providence.core.calculator.Operator.provider(), null),
-        OPERANDS(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operands", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.calculator.Operand.provider()), null),
+        OPERATOR(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operator", net.morimekta.test.providence.reflect.calculator.Operator.provider(), null),
+        OPERANDS(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operands", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.reflect.calculator.Operand.provider()), null),
         ;
 
         private final int mKey;
@@ -301,8 +302,8 @@ public class Operation
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private net.morimekta.test.providence.core.calculator.Operator mOperator;
-        private java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
+        private net.morimekta.test.providence.reflect.calculator.Operator mOperator;
+        private java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> mOperands;
 
         /**
          * Make a calculator.Operation builder.
@@ -354,7 +355,7 @@ public class Operation
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setOperator(net.morimekta.test.providence.core.calculator.Operator value) {
+        public _Builder setOperator(net.morimekta.test.providence.reflect.calculator.Operator value) {
             if (value == null) {
                 return clearOperator();
             }
@@ -401,7 +402,7 @@ public class Operation
          *
          * @return The field value
          */
-        public net.morimekta.test.providence.core.calculator.Operator getOperator() {
+        public net.morimekta.test.providence.reflect.calculator.Operator getOperator() {
             return mOperator;
         }
 
@@ -412,7 +413,7 @@ public class Operation
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setOperands(java.util.Collection<net.morimekta.test.providence.core.calculator.Operand> value) {
+        public _Builder setOperands(java.util.Collection<net.morimekta.test.providence.reflect.calculator.Operand> value) {
             if (value == null) {
                 return clearOperands();
             }
@@ -430,11 +431,11 @@ public class Operation
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToOperands(net.morimekta.test.providence.core.calculator.Operand... values) {
+        public _Builder addToOperands(net.morimekta.test.providence.reflect.calculator.Operand... values) {
             optionals.set(1);
             modified.set(1);
-            java.util.List<net.morimekta.test.providence.core.calculator.Operand> _container = mutableOperands();
-            for (net.morimekta.test.providence.core.calculator.Operand item : values) {
+            java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> _container = mutableOperands();
+            for (net.morimekta.test.providence.reflect.calculator.Operand item : values) {
                 _container.add(item);
             }
             return this;
@@ -476,7 +477,8 @@ public class Operation
          *
          * @return The field builder
          */
-        public java.util.List<net.morimekta.test.providence.core.calculator.Operand> mutableOperands() {
+        @javax.annotation.Nonnull
+        public java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> mutableOperands() {
             optionals.set(1);
             modified.set(1);
 
@@ -520,8 +522,8 @@ public class Operation
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setOperator((net.morimekta.test.providence.core.calculator.Operator) value); break;
-                case 2: setOperands((java.util.List<net.morimekta.test.providence.core.calculator.Operand>) value); break;
+                case 1: setOperator((net.morimekta.test.providence.reflect.calculator.Operator) value); break;
+                case 2: setOperands((java.util.List<net.morimekta.test.providence.reflect.calculator.Operand>) value); break;
                 default: break;
             }
             return this;
@@ -550,7 +552,7 @@ public class Operation
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 2: addToOperands((net.morimekta.test.providence.core.calculator.Operand) value); break;
+                case 2: addToOperands((net.morimekta.test.providence.reflect.calculator.Operand) value); break;
                 default: break;
             }
             return this;
@@ -590,7 +592,7 @@ public class Operation
                 switch (field) {
                     case 1: {
                         if (type == 8) {
-                            mOperator = net.morimekta.test.providence.core.calculator.Operator.forValue(reader.expectInt());
+                            mOperator = net.morimekta.test.providence.reflect.calculator.Operator.findById(reader.expectInt());
                             optionals.set(0);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operation.operator, should be struct(12)");
@@ -599,12 +601,12 @@ public class Operation
                     }
                     case 2: {
                         if (type == 15) {
-                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.core.calculator.Operand> b_1 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.reflect.calculator.Operand> b_1 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
                             byte t_3 = reader.expectByte();
                             if (t_3 == 12) {
                                 final int len_2 = reader.expectUInt32();
                                 for (int i_4 = 0; i_4 < len_2; ++i_4) {
-                                    net.morimekta.test.providence.core.calculator.Operand key_5 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operand.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.calculator.Operand key_5 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
                                     b_1.add(key_5);
                                 }
                                 mOperands = b_1.build();

@@ -1,5 +1,7 @@
 package net.morimekta.providence.test_internal;
 
+import javax.annotation.Nonnull;
+
 public enum Value
         implements net.morimekta.providence.PEnumValue<Value> {
     FIRST(1, "FIRST"),
@@ -33,16 +35,6 @@ public enum Value
     Value(int value, String name) {
         mValue = value;
         mName = name;
-    }
-
-    @Override
-    public int getValue() {
-        return mValue;
-    }
-
-    @Override
-    public String getName() {
-        return mName;
     }
 
     @Override
@@ -110,12 +102,14 @@ public enum Value
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<Value> {
         Value mValue;
 
+        @Nonnull
         @Override
-        public _Builder setByValue(int value) {
+        public _Builder setById(int value) {
             mValue = Value.forValue(value);
             return this;
         }
 
+        @Nonnull
         @Override
         public _Builder setByName(String name) {
             mValue = Value.forName(name);
@@ -150,18 +144,19 @@ public enum Value
             super("providence", "Value", _Builder::new);
         }
 
+        @Nonnull
         @Override
         public Value[] getValues() {
             return Value.values();
         }
 
         @Override
-        public Value getValueById(int id) {
+        public Value findById(int id) {
             return Value.forValue(id);
         }
 
         @Override
-        public Value getValueByName(String name) {
+        public Value findByName(String name) {
             return Value.forName(name);
         }
     }

@@ -112,6 +112,7 @@ public class Operation
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -159,7 +160,7 @@ public class Operation
         if (hasOperator()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 1);
-            length += writer.writeInt(mOperator.getValue());
+            length += writer.writeInt(mOperator.asInteger());
         }
 
         if (hasOperands()) {
@@ -476,6 +477,7 @@ public class Operation
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.test.providence.core.calculator.Operand> mutableOperands() {
             optionals.set(1);
             modified.set(1);
@@ -590,7 +592,7 @@ public class Operation
                 switch (field) {
                     case 1: {
                         if (type == 8) {
-                            mOperator = net.morimekta.test.providence.core.calculator.Operator.forValue(reader.expectInt());
+                            mOperator = net.morimekta.test.providence.core.calculator.Operator.findById(reader.expectInt());
                             optionals.set(0);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operation.operator, should be struct(12)");

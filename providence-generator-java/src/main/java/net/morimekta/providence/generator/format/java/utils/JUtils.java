@@ -142,6 +142,6 @@ public class JUtils {
     }
 
     public static String enumConst(PEnumValue value) {
-        return Strings.c_case("", value.getName()).toUpperCase();
+        return Strings.c_case("", value.asString()).toUpperCase();
     }
 }

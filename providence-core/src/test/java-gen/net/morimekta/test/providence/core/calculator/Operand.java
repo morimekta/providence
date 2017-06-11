@@ -152,6 +152,7 @@ public class Operand
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -460,6 +461,7 @@ public class Operand
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOperation() {
             if (tUnionField != _Field.OPERATION) {
                 clearOperation();
@@ -568,6 +570,7 @@ public class Operand
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.number.Imaginary._Builder mutableImaginary() {
             if (tUnionField != _Field.IMAGINARY) {
                 clearImaginary();

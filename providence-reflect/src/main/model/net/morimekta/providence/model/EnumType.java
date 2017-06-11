@@ -84,6 +84,7 @@ public class EnumType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -99,6 +100,7 @@ public class EnumType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.EnumValue> getValues() {
         return mValues;
     }
@@ -181,6 +183,7 @@ public class EnumType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -668,6 +671,7 @@ public class EnumType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.EnumValue> mutableValues() {
             optionals.set(2);
             modified.set(2);
@@ -749,6 +753,7 @@ public class EnumType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(3);
             modified.set(3);

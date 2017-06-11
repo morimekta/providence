@@ -72,6 +72,7 @@ public class PDeclaredDescriptorTest {
             return PType.STRING;
         }
 
+        @Nonnull
         @Override
         public PBuilder<String> builder() {
             return new PBuilder<String>() {

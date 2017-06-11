@@ -269,6 +269,7 @@ public class DefaultValues
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -475,7 +476,7 @@ public class DefaultValues
         if (hasEnumValue()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 9);
-            length += writer.writeInt(mEnumValue.getValue());
+            length += writer.writeInt(mEnumValue.asInteger());
         }
 
         if (hasCompactValue()) {
@@ -1333,6 +1334,7 @@ public class DefaultValues
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.CompactFields._Builder mutableCompactValue() {
             optionals.set(9);
             modified.set(9);
@@ -1570,7 +1572,7 @@ public class DefaultValues
                     }
                     case 9: {
                         if (type == 8) {
-                            mEnumValue = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                            mEnumValue = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
                             optionals.set(8);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.DefaultValues.enumValue, should be struct(12)");

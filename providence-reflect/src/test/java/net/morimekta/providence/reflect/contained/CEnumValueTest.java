@@ -61,13 +61,13 @@ public class CEnumValueTest {
         type.setValues(values);
 
         value3 = type.builder()
-                     .setByValue(3)
+                     .setById(3)
                      .build();
         value3_other = type.builder()
-                           .setByValue(3)
+                           .setById(3)
                            .build();
         value5 = type.builder()
-                     .setByValue(5)
+                     .setById(5)
                      .build();
     }
 
@@ -91,9 +91,9 @@ public class CEnumValueTest {
 
     @Test
     public void testGetValue() {
-        assertEquals(3, value3.getValue());
-        assertEquals(3, value3_other.getValue());
-        assertEquals(5, value5.getValue());
+        assertEquals(3, value3.asInteger());
+        assertEquals(3, value3_other.asInteger());
+        assertEquals(5, value5.asInteger());
     }
 
     @Test
@@ -118,9 +118,9 @@ public class CEnumValueTest {
     @Test
     public void testBuilder() {
         assertFalse(new CEnumValue.Builder(type).valid());
-        assertTrue(new CEnumValue.Builder(type).setByValue(3)
+        assertTrue(new CEnumValue.Builder(type).setById(3)
                                                .valid());
-        assertFalse(new CEnumValue.Builder(type).setByValue(7)
+        assertFalse(new CEnumValue.Builder(type).setById(7)
                                                 .valid());
 
         CEnumValue.Builder threeBuilder = new CEnumValue.Builder(type).setByName("THREE");

@@ -125,6 +125,7 @@ public class FunctionType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -140,6 +141,7 @@ public class FunctionType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FieldType> getParams() {
         return mParams;
     }
@@ -252,6 +254,7 @@ public class FunctionType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -955,6 +958,7 @@ public class FunctionType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.FieldType> mutableParams() {
             optionals.set(4);
             modified.set(4);
@@ -1038,6 +1042,7 @@ public class FunctionType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.FieldType> mutableExceptions() {
             optionals.set(5);
             modified.set(5);
@@ -1119,6 +1124,7 @@ public class FunctionType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(6);
             modified.set(6);

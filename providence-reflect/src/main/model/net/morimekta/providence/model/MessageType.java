@@ -100,6 +100,7 @@ public class MessageType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -115,6 +116,7 @@ public class MessageType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FieldType> getFields() {
         return mFields;
     }
@@ -202,6 +204,7 @@ public class MessageType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -286,7 +289,7 @@ public class MessageType
         if (hasVariant()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 2);
-            length += writer.writeInt(mVariant.getValue());
+            length += writer.writeInt(mVariant.asInteger());
         }
 
         length += writer.writeByte((byte) 11);
@@ -780,6 +783,7 @@ public class MessageType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.FieldType> mutableFields() {
             optionals.set(3);
             modified.set(3);
@@ -861,6 +865,7 @@ public class MessageType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
@@ -1015,7 +1020,7 @@ public class MessageType
                     }
                     case 2: {
                         if (type == 8) {
-                            mVariant = net.morimekta.providence.model.MessageVariant.forValue(reader.expectInt());
+                            mVariant = net.morimekta.providence.model.MessageVariant.findById(reader.expectInt());
                             optionals.set(1);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.MessageType.variant, should be struct(12)");

@@ -93,7 +93,7 @@ public class TProtocolSerializerTest {
                         case ENUM: {
                             PEnumValue<?> pe = (PEnumValue) providence.get(field.getKey());
                             TEnum te = (TEnum) thrift.getFieldValue(thriftField);
-                            assertEquals(fieldPath, pe.getValue(), te.getValue());
+                            assertEquals(fieldPath, pe.asInteger(), te.getValue());
                             break;
                         }
                         case BINARY: {
@@ -144,7 +144,7 @@ public class TProtocolSerializerTest {
                                 } else if (pi instanceof PEnumValue) {
                                     PEnumValue pe = (PEnumValue) pi;
                                     TEnum te = (TEnum) ti;
-                                    assertEquals(itemPath, pe.getValue(), te.getValue());
+                                    assertEquals(itemPath, pe.asInteger(), te.getValue());
                                 } else {
                                     assertEquals(itemPath, pi, ti);
                                 }

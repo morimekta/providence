@@ -136,6 +136,7 @@ public class FieldType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getType() {
         return mType;
     }
@@ -147,6 +148,7 @@ public class FieldType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -291,6 +293,7 @@ public class FieldType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -424,7 +427,7 @@ public class FieldType
         if (hasRequirement()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 3);
-            length += writer.writeInt(mRequirement.getValue());
+            length += writer.writeInt(mRequirement.asInteger());
         }
 
         length += writer.writeByte((byte) 11);
@@ -1164,6 +1167,7 @@ public class FieldType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(6);
             modified.set(6);
@@ -1478,7 +1482,7 @@ public class FieldType
                     }
                     case 3: {
                         if (type == 8) {
-                            mRequirement = net.morimekta.providence.model.FieldRequirement.forValue(reader.expectInt());
+                            mRequirement = net.morimekta.providence.model.FieldRequirement.findById(reader.expectInt());
                             optionals.set(2);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.FieldType.requirement, should be struct(12)");

@@ -60,7 +60,7 @@ public class JacksonEnumFormatter implements EnumMemberFormatter {
     public void appendMethods(CEnumDescriptor type) throws GeneratorException {
         writer.formatln("@%s", JsonValue.class.getName())
               .appendln("public int jsonValue() {")
-              .appendln("    return mValue;")
+              .appendln("    return mId;")
               .appendln('}')
               .newline();
     }
@@ -82,14 +82,14 @@ public class JacksonEnumFormatter implements EnumMemberFormatter {
               .formatln("        if (jp.getCurrentToken() == %s.%s) {",
                         JsonToken.class.getName(),
                         JsonToken.VALUE_NUMBER_INT.name())
-              .formatln("            return %s.forValue(jp.getIntValue());", simpleClass)
+              .formatln("            return %s.findById(jp.getIntValue());", simpleClass)
               .formatln("        } else if (jp.getCurrentToken() == %s.%s) {",
                         JsonToken.class.getName(),
                         JsonToken.VALUE_STRING.name())
               .formatln("            if (%s.isInteger(jp.getText())) {", Strings.class.getName())
-              .formatln("                return %s.forValue(Integer.parseInt(jp.getText()));", simpleClass)
+              .formatln("                return %s.findById(Integer.parseInt(jp.getText()));", simpleClass)
               .appendln("            }")
-              .formatln("            return %s.forName(jp.getText());", simpleClass)
+              .formatln("            return %s.findByName(jp.getText());", simpleClass)
               .appendln("        } else {")
               .formatln("            throw new %s(jp, \"Invalid token for enum %s deserialization \" + jp.getText());",
                         JsonParseException.class.getName(),

@@ -94,6 +94,7 @@ class TProtocolSerializer extends Serializer {
         return binary;
     }
 
+    @Nonnull
     @Override
     public String mimeType() {
         return mimeType;
@@ -101,7 +102,7 @@ class TProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, Message message) throws IOException {
+    int serialize(@Nonnull OutputStream output, @Nonnull Message message) throws IOException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -117,13 +118,13 @@ class TProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, PServiceCall<Message, Field> call)
+    int serialize(@Nonnull OutputStream output, @Nonnull PServiceCall<Message, Field> call)
             throws IOException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
             TProtocol protocol = protocolFactory.getProtocol(transport);
-            TMessage tm = new TMessage(call.getMethod(), (byte) call.getType().getValue(), call.getSequence());
+            TMessage tm = new TMessage(call.getMethod(), (byte) call.getType().asInteger(), call.getSequence());
 
             protocol.writeMessageBegin(tm);
             writeMessage(call.getMessage(), protocol);
@@ -140,7 +141,7 @@ class TProtocolSerializer extends Serializer {
     @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> Message
-    deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException {
+    deserialize(@Nonnull InputStream input, @Nonnull PMessageDescriptor<Message, Field> descriptor) throws IOException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TProtocol protocol = protocolFactory.getProtocol(transport);
@@ -157,7 +158,7 @@ class TProtocolSerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream input, PService service)
+    PServiceCall<Message, Field> deserialize(@Nonnull InputStream input, @Nonnull PService service)
             throws SerializerException {
         PServiceCallType type = null;
         TMessage tm = null;
@@ -292,7 +293,7 @@ class TProtocolSerializer extends Serializer {
                     PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
                     PEnumBuilder<?> eb = et.builder();
                     int value = protocol.readI32();
-                    eb.setByValue(value);
+                    eb.setById(value);
                     if (!eb.valid() && !allowNull) {
                         throw new SerializerException("Invalid enum value " + value + " for " +
                                                       et.getQualifiedName());
@@ -386,7 +387,7 @@ class TProtocolSerializer extends Serializer {
                 break;
             case ENUM:
                 PEnumValue<?> value = (PEnumValue<?>) item;
-                protocol.writeI32(value.getValue());
+                protocol.writeI32(value.asInteger());
                 break;
             case MESSAGE:
                 writeMessage((PMessage<?,?>) item, protocol);

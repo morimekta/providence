@@ -329,6 +329,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -590,6 +591,7 @@ public class Calculator {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOp() {
                 optionals.set(0);
                 modified.set(0);
@@ -847,6 +849,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -1133,6 +1136,7 @@ public class Calculator {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.calculator.Operand._Builder mutableSuccess() {
                 if (tUnionField != _Field.SUCCESS) {
                     clearSuccess();
@@ -1196,6 +1200,7 @@ public class Calculator {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.calculator.CalculateException._Builder mutableCe() {
                 if (tUnionField != _Field.CE) {
                     clearCe();
@@ -1424,6 +1429,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -1754,6 +1760,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -2105,6 +2112,7 @@ public class Calculator {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");

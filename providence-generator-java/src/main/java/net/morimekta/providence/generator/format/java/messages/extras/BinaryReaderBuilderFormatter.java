@@ -101,7 +101,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 break;
             }
             case ENUM:
-                writer.formatln("%s = %s.forValue(reader.expectInt());",
+                writer.formatln("%s = %s.findById(reader.expectInt());",
                                 member, helper.getFieldType(descriptor));
                 break;
             case MAP: {

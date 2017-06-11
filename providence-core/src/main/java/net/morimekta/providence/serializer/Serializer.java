@@ -40,21 +40,26 @@ import java.io.OutputStream;
  */
 public abstract class Serializer {
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, Message message) throws IOException;
+    int serialize(@Nonnull OutputStream output,
+                  @Nonnull Message message) throws IOException;
 
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, PServiceCall<Message, Field> call) throws IOException;
-
-    @Nonnull
-    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException;
+    int serialize(@Nonnull OutputStream output,
+                  @Nonnull PServiceCall<Message, Field> call) throws IOException;
 
     @Nonnull
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream input, PService service) throws IOException;
+    Message deserialize(@Nonnull InputStream input,
+                        @Nonnull PMessageDescriptor<Message, Field> descriptor) throws IOException;
+
+    @Nonnull
+    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(@Nonnull InputStream input,
+                                             @Nonnull PService service) throws IOException;
 
     public abstract boolean binaryProtocol();
 
+    @Nonnull
     public abstract String mimeType();
 
     /**

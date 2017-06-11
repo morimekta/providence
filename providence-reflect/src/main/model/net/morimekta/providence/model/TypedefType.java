@@ -69,6 +69,7 @@ public class TypedefType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getType() {
         return mType;
     }
@@ -80,6 +81,7 @@ public class TypedefType
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getName() {
         return mName;
     }
@@ -142,6 +144,7 @@ public class TypedefType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");

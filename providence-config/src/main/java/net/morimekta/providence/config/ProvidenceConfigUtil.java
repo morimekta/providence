@@ -150,11 +150,11 @@ public class ProvidenceConfigUtil {
                 return ConfigUtil.asDouble(o);
             case ENUM:
                 if (o instanceof Number) {
-                    return ((PEnumDescriptor) field.getDescriptor()).getValueById(((Number) o).intValue());
+                    return ((PEnumDescriptor) field.getDescriptor()).findById(((Number) o).intValue());
                 } else if (o instanceof Numeric) {
-                    return ((PEnumDescriptor) field.getDescriptor()).getValueById(((Numeric) o).asInteger());
+                    return ((PEnumDescriptor) field.getDescriptor()).findById(((Numeric) o).asInteger());
                 } else if (o instanceof CharSequence) {
-                    return ((PEnumDescriptor) field.getDescriptor()).getValueByName(o.toString());
+                    return ((PEnumDescriptor) field.getDescriptor()).findByName(o.toString());
                 } else {
                     throw new IncompatibleValueException("Unable to cast " + o.getClass().getSimpleName() + " to enum type.");
                 }

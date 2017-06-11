@@ -263,6 +263,7 @@ public class ContainerService {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -524,6 +525,7 @@ public class ContainerService {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.Containers._Builder mutableC() {
                 optionals.set(0);
                 modified.set(0);
@@ -781,6 +783,7 @@ public class ContainerService {
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -1067,6 +1070,7 @@ public class ContainerService {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.CompactFields._Builder mutableSuccess() {
                 if (tUnionField != _Field.SUCCESS) {
                     clearSuccess();
@@ -1130,6 +1134,7 @@ public class ContainerService {
              *
              * @return The field builder
              */
+            @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.ExceptionFields._Builder mutableEf() {
                 if (tUnionField != _Field.EF) {
                     clearEf();

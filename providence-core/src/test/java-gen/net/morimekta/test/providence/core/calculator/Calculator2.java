@@ -333,6 +333,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");
@@ -696,6 +697,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         @Override
+        @javax.annotation.Nonnull
         public String asString() {
             StringBuilder out = new StringBuilder();
             out.append("{");

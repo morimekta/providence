@@ -100,6 +100,7 @@ public class ProgramType
      *
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getProgramName() {
         return mProgramName;
     }
@@ -138,6 +139,7 @@ public class ProgramType
      *
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.Map<String,String> getNamespaces() {
         return mNamespaces;
     }
@@ -155,6 +157,7 @@ public class ProgramType
      *
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
         return mDecl;
     }
@@ -227,6 +230,7 @@ public class ProgramType
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -751,6 +755,7 @@ public class ProgramType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<String> mutableIncludes() {
             optionals.set(2);
             modified.set(2);
@@ -844,6 +849,7 @@ public class ProgramType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableNamespaces() {
             optionals.set(3);
             modified.set(3);
@@ -927,6 +933,7 @@ public class ProgramType
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.providence.model.Declaration> mutableDecl() {
             optionals.set(4);
             modified.set(4);

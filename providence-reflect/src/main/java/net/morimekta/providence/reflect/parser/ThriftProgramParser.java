@@ -664,14 +664,14 @@ public class ThriftProgramParser implements ProgramParser {
         }
         boolean union = variant.equals("union");
         if (!variant.equals("struct")) {
-            struct.setVariant(MessageVariant.forName(variant.toUpperCase()));
+            struct.setVariant(MessageVariant.valueForName(variant.toUpperCase()));
         }
 
         struct.setName(tokenizer.expectIdentifier("message name identifier").asString());
 
         int nextAutoFieldKey = -1;
 
-        tokenizer.expectSymbol("struct start", Token.kMessageStart);
+        tokenizer.expectSymbol("message start", Token.kMessageStart);
 
         Set<String> fieldNames = new HashSet<>();
         Set<String> fieldNameVariants = new HashSet<>();

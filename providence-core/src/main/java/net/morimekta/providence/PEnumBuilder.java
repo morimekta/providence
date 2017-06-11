@@ -41,7 +41,7 @@ public abstract class PEnumBuilder<T> implements PBuilder<T> {
      * @return The builder.
      */
     @Nonnull
-    public abstract PEnumBuilder<T> setByValue(int value);
+    public abstract PEnumBuilder<T> setById(int value);
 
     /**
      * Set the enum entity from name as it was written in the thrift IDL.

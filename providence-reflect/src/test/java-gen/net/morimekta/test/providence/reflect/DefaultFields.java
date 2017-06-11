@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core;
+package net.morimekta.test.providence.reflect;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -26,8 +26,8 @@ public class DefaultFields
     private final double mDoubleValue;
     private final String mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
-    private final net.morimekta.test.providence.core.Value mEnumValue;
-    private final net.morimekta.test.providence.core.CompactFields mCompactValue;
+    private final net.morimekta.test.providence.reflect.Value mEnumValue;
+    private final net.morimekta.test.providence.reflect.CompactFields mCompactValue;
 
     private volatile int tHashCode;
 
@@ -39,8 +39,8 @@ public class DefaultFields
                          Double pDoubleValue,
                          String pStringValue,
                          net.morimekta.util.Binary pBinaryValue,
-                         net.morimekta.test.providence.core.Value pEnumValue,
-                         net.morimekta.test.providence.core.CompactFields pCompactValue) {
+                         net.morimekta.test.providence.reflect.Value pEnumValue,
+                         net.morimekta.test.providence.reflect.CompactFields pCompactValue) {
         if (pBooleanValue != null) {
             mBooleanValue = pBooleanValue;
         } else {
@@ -179,6 +179,7 @@ public class DefaultFields
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getStringValue() {
         return mStringValue;
     }
@@ -190,6 +191,7 @@ public class DefaultFields
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
     }
@@ -201,7 +203,7 @@ public class DefaultFields
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.Value getEnumValue() {
+    public net.morimekta.test.providence.reflect.Value getEnumValue() {
         return mEnumValue;
     }
 
@@ -212,7 +214,7 @@ public class DefaultFields
     /**
      * @return The field value
      */
-    public net.morimekta.test.providence.core.CompactFields getCompactValue() {
+    public net.morimekta.test.providence.reflect.CompactFields getCompactValue() {
         return mCompactValue;
     }
 
@@ -309,6 +311,7 @@ public class DefaultFields
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -441,7 +444,7 @@ public class DefaultFields
         if (hasEnumValue()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 9);
-            length += writer.writeInt(mEnumValue.getValue());
+            length += writer.writeInt(mEnumValue.asInteger());
         }
 
         if (hasCompactValue()) {
@@ -469,8 +472,8 @@ public class DefaultFields
         DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
         STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "enumValue", net.morimekta.test.providence.core.Value.provider(), null),
-        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "compactValue", net.morimekta.test.providence.core.CompactFields.provider(), null),
+        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "enumValue", net.morimekta.test.providence.reflect.Value.provider(), null),
+        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "compactValue", net.morimekta.test.providence.reflect.CompactFields.provider(), null),
         ;
 
         private final int mKey;
@@ -611,9 +614,9 @@ public class DefaultFields
         private double mDoubleValue;
         private String mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
-        private net.morimekta.test.providence.core.Value mEnumValue;
-        private net.morimekta.test.providence.core.CompactFields mCompactValue;
-        private net.morimekta.test.providence.core.CompactFields._Builder mCompactValue_builder;
+        private net.morimekta.test.providence.reflect.Value mEnumValue;
+        private net.morimekta.test.providence.reflect.CompactFields mCompactValue;
+        private net.morimekta.test.providence.reflect.CompactFields._Builder mCompactValue_builder;
 
         /**
          * Make a providence.DefaultFields builder.
@@ -1168,7 +1171,7 @@ public class DefaultFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumValue(net.morimekta.test.providence.core.Value value) {
+        public _Builder setEnumValue(net.morimekta.test.providence.reflect.Value value) {
             if (value == null) {
                 return clearEnumValue();
             }
@@ -1215,7 +1218,7 @@ public class DefaultFields
          *
          * @return The field value
          */
-        public net.morimekta.test.providence.core.Value getEnumValue() {
+        public net.morimekta.test.providence.reflect.Value getEnumValue() {
             return mEnumValue;
         }
 
@@ -1226,7 +1229,7 @@ public class DefaultFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setCompactValue(net.morimekta.test.providence.core.CompactFields value) {
+        public _Builder setCompactValue(net.morimekta.test.providence.reflect.CompactFields value) {
             if (value == null) {
                 return clearCompactValue();
             }
@@ -1275,7 +1278,8 @@ public class DefaultFields
          *
          * @return The field builder
          */
-        public net.morimekta.test.providence.core.CompactFields._Builder mutableCompactValue() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.reflect.CompactFields._Builder mutableCompactValue() {
             optionals.set(9);
             modified.set(9);
 
@@ -1283,7 +1287,7 @@ public class DefaultFields
                 mCompactValue_builder = mCompactValue.mutate();
                 mCompactValue = null;
             } else if (mCompactValue_builder == null) {
-                mCompactValue_builder = net.morimekta.test.providence.core.CompactFields.builder();
+                mCompactValue_builder = net.morimekta.test.providence.reflect.CompactFields.builder();
             }
             return mCompactValue_builder;
         }
@@ -1345,8 +1349,8 @@ public class DefaultFields
                 case 6: setDoubleValue((double) value); break;
                 case 7: setStringValue((String) value); break;
                 case 8: setBinaryValue((net.morimekta.util.Binary) value); break;
-                case 9: setEnumValue((net.morimekta.test.providence.core.Value) value); break;
-                case 10: setCompactValue((net.morimekta.test.providence.core.CompactFields) value); break;
+                case 9: setEnumValue((net.morimekta.test.providence.reflect.Value) value); break;
+                case 10: setCompactValue((net.morimekta.test.providence.reflect.CompactFields) value); break;
                 default: break;
             }
             return this;
@@ -1512,7 +1516,7 @@ public class DefaultFields
                     }
                     case 9: {
                         if (type == 8) {
-                            mEnumValue = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                            mEnumValue = net.morimekta.test.providence.reflect.Value.findById(reader.expectInt());
                             optionals.set(8);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.DefaultFields.enumValue, should be struct(12)");
@@ -1521,7 +1525,7 @@ public class DefaultFields
                     }
                     case 10: {
                         if (type == 12) {
-                            mCompactValue = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
+                            mCompactValue = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
                             optionals.set(9);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.DefaultFields.compactValue, should be struct(12)");

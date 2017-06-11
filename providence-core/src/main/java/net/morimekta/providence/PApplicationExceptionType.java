@@ -60,36 +60,57 @@ public enum PApplicationExceptionType
     UNSUPPORTED_CLIENT_TYPE(10, "UNSUPPORTED_CLIENT_TYPE"),
     ;
 
-    private final int mValue;
+    private final int    mId;
     private final String mName;
 
-    PApplicationExceptionType(int value, String name) {
-        mValue = value;
+    PApplicationExceptionType(int id, String name) {
+        mId = id;
         mName = name;
     }
 
     @Override
-    public int getValue() {
-        return mValue;
-    }
-
-    @Override
-    public String getName() {
-        return mName;
-    }
-
-    @Override
     public int asInteger() {
-        return mValue;
+        return mId;
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         return mName;
     }
 
-    public static PApplicationExceptionType forValue(int value) {
-        switch (value) {
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     * @deprecated Use {@link #findById(int)} instead.
+     */
+    @Deprecated
+    public static PApplicationExceptionType forValue(int id) {
+        return findById(id);
+    }
+
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     * @deprecated Use {@link #findByName(String)} instead.
+     */
+    @Deprecated
+    public static PApplicationExceptionType forName(String name) {
+        return findByName(name);
+    }
+
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     */
+    public static PApplicationExceptionType findById(int id) {
+        switch (id) {
             case 0: return PApplicationExceptionType.UNKNOWN;
             case 1: return PApplicationExceptionType.UNKNOWN_METHOD;
             case 2: return PApplicationExceptionType.INVALID_MESSAGE_TYPE;
@@ -105,7 +126,16 @@ public enum PApplicationExceptionType
         }
     }
 
-    public static PApplicationExceptionType forName(String name) {
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     */
+    public static PApplicationExceptionType findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Null name given");
+        }
         switch (name) {
             case "UNKNOWN": return PApplicationExceptionType.UNKNOWN;
             case "UNKNOWN_METHOD": return PApplicationExceptionType.UNKNOWN_METHOD;
@@ -122,18 +152,52 @@ public enum PApplicationExceptionType
         }
     }
 
+    /**
+     * Get a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for id is found
+     */
+    @javax.annotation.Nonnull
+    public static PApplicationExceptionType valueForId(int id) {
+        PApplicationExceptionType value = findById(id);
+        if (value == null) {
+            throw new IllegalArgumentException("No service.PApplicationExceptionType for id " + id);
+        }
+        return value;
+    }
+
+    /**
+     * Get a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for name is found, or null name
+     */
+    @javax.annotation.Nonnull
+    public static PApplicationExceptionType valueForName(String name) {
+        PApplicationExceptionType value = findByName(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No service.PApplicationExceptionType for name \"" + name + "\"");
+        }
+        return value;
+    }
+
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<PApplicationExceptionType> {
         PApplicationExceptionType mValue;
 
         @Override
-        public _Builder setByValue(int value) {
-            mValue = PApplicationExceptionType.forValue(value);
+        @javax.annotation.Nonnull
+        public _Builder setById(int value) {
+            mValue = PApplicationExceptionType.findById(value);
             return this;
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Builder setByName(String name) {
-            mValue = PApplicationExceptionType.forName(name);
+            mValue = PApplicationExceptionType.findByName(name);
             return this;
         }
 
@@ -166,18 +230,21 @@ public enum PApplicationExceptionType
         }
 
         @Override
+        @javax.annotation.Nonnull
         public PApplicationExceptionType[] getValues() {
             return PApplicationExceptionType.values();
         }
 
         @Override
-        public PApplicationExceptionType getValueById(int id) {
-            return PApplicationExceptionType.forValue(id);
+        @javax.annotation.Nullable
+        public PApplicationExceptionType findById(int id) {
+            return PApplicationExceptionType.findById(id);
         }
 
         @Override
-        public PApplicationExceptionType getValueByName(String name) {
-            return PApplicationExceptionType.forName(name);
+        @javax.annotation.Nullable
+        public PApplicationExceptionType findByName(String name) {
+            return PApplicationExceptionType.findByName(name);
         }
     }
 

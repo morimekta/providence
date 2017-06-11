@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.core
+namespace java net.morimekta.test.providence.reflect
 
 enum Value {
    FIRST = 1,

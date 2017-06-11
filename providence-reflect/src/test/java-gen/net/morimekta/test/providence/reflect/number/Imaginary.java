@@ -1,4 +1,4 @@
-package net.morimekta.test.providence.core.number;
+package net.morimekta.test.providence.reflect.number;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence java generator")
@@ -107,6 +107,7 @@ public class Imaginary
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");

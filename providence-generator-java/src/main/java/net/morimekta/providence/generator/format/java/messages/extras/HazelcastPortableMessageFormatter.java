@@ -247,7 +247,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s.writeDouble(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case ENUM:
-                writer.formatln("%s.writeInt(\"%s\", %s.getValue());", PORTABLE_WRITER, field.name(), field.member());
+                writer.formatln("%s.writeInt(\"%s\", %s.asInteger());", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case I16:
                 writer.formatln("%s.writeShort(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
@@ -467,7 +467,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s = %s.%s();", variable, bebr, "expectDouble");
                 break;
             case ENUM:
-                writer.formatln("%s = %s.forValue(%s.%s());",
+                writer.formatln("%s = %s.findById(%s.%s());",
                                 variable,
                                 helper.getFieldType(descriptor),
                                 bebr,
@@ -880,7 +880,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s(%s.readDouble(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case ENUM:
-                writer.formatln("%s(%s.forValue(%s.readInt(\"%s\")));",
+                writer.formatln("%s(%s.findById(%s.readInt(\"%s\")));",
                                 field.setter(),
                                 field.instanceType(),
                                 PORTABLE_READER,
@@ -1079,7 +1079,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                         PORTABLE_READER,
                         field.name(),
                         descriptor.getName(),
-                        "forValue",
+                        "findById",
                         //TODO need to change this to another value.
                         Collectors.class.getName());
                 break;

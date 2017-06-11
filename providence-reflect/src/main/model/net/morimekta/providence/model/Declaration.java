@@ -211,6 +211,7 @@ public class Declaration
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -581,6 +582,7 @@ public class Declaration
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.providence.model.EnumType._Builder mutableDeclEnum() {
             if (tUnionField != _Field.DECL_ENUM) {
                 clearDeclEnum();
@@ -644,6 +646,7 @@ public class Declaration
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.providence.model.TypedefType._Builder mutableDeclTypedef() {
             if (tUnionField != _Field.DECL_TYPEDEF) {
                 clearDeclTypedef();
@@ -707,6 +710,7 @@ public class Declaration
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.providence.model.MessageType._Builder mutableDeclStruct() {
             if (tUnionField != _Field.DECL_STRUCT) {
                 clearDeclStruct();
@@ -770,6 +774,7 @@ public class Declaration
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.providence.model.ServiceType._Builder mutableDeclService() {
             if (tUnionField != _Field.DECL_SERVICE) {
                 clearDeclService();
@@ -833,6 +838,7 @@ public class Declaration
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.providence.model.ConstType._Builder mutableDeclConst() {
             if (tUnionField != _Field.DECL_CONST) {
                 clearDeclConst();

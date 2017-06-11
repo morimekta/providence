@@ -24,7 +24,6 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
-import net.morimekta.providence.generator.format.java.utils.ContainerType;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
@@ -38,7 +37,6 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import javax.annotation.Generated;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -186,6 +184,9 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                    .finish();
             if (JAnnotation.isDeprecated(field)) {
                 writer.appendln(JAnnotation.DEPRECATED);
+            }
+            if (field.alwaysPresent() && !field.isPrimitiveJavaValue()) {
+                writer.appendln(JAnnotation.NON_NULL);
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
             if ((field.isPrimitiveJavaValue() ||

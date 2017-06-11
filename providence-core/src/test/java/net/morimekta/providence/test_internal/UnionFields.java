@@ -418,7 +418,7 @@ public class UnionFields
             case BINARY_VALUE:
                 return mBinaryValue.compareTo(other.mBinaryValue);
             case ENUM_VALUE:
-                return Integer.compare(mEnumValue.getValue(), other.mEnumValue.getValue());
+                return Integer.compare(mEnumValue.asInteger(), other.mEnumValue.asInteger());
             case COMPACT_VALUE:
                 return mCompactValue.compareTo(other.mCompactValue);
             default: return 0;

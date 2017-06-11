@@ -337,6 +337,7 @@ public class UnionFields
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -420,7 +421,7 @@ public class UnionFields
             case BINARY_VALUE:
                 return mBinaryValue.compareTo(other.mBinaryValue);
             case ENUM_VALUE:
-                return Integer.compare(mEnumValue.getValue(), other.mEnumValue.getValue());
+                return Integer.compare(mEnumValue.asInteger(), other.mEnumValue.asInteger());
             case COMPACT_VALUE:
                 return mCompactValue.compareTo(other.mCompactValue);
             default: return 0;
@@ -487,7 +488,7 @@ public class UnionFields
                 case ENUM_VALUE: {
                     length += writer.writeByte((byte) 8);
                     length += writer.writeShort((short) 9);
-                    length += writer.writeInt(mEnumValue.getValue());
+                    length += writer.writeInt(mEnumValue.asInteger());
                     break;
                 }
                 case COMPACT_VALUE: {
@@ -1214,6 +1215,7 @@ public class UnionFields
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.CompactFields._Builder mutableCompactValue() {
             if (tUnionField != _Field.COMPACT_VALUE) {
                 clearCompactValue();
@@ -1469,7 +1471,7 @@ public class UnionFields
                     }
                     case 9: {
                         if (type == 8) {
-                            mEnumValue = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                            mEnumValue = net.morimekta.test.providence.core.Value.findById(reader.expectInt());
                             tUnionField = _Field.ENUM_VALUE;
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.enumValue, should be struct(12)");

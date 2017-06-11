@@ -3,11 +3,11 @@ package net.morimekta.providence.reflect.parser.internal;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
-import net.morimekta.test.providence.core.CompactFields;
-import net.morimekta.test.providence.core.Containers;
-import net.morimekta.test.providence.core.OptionalFields;
-import net.morimekta.test.providence.core.Value;
-import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.reflect.CompactFields;
+import net.morimekta.test.providence.reflect.Containers;
+import net.morimekta.test.providence.reflect.OptionalFields;
+import net.morimekta.test.providence.reflect.Value;
+import net.morimekta.test.providence.reflect.calculator.Operation;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableList;

@@ -65,17 +65,6 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
-    public int getValue() {
-        return value;
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public int asInteger() {
         return value;
     }
@@ -119,9 +108,9 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
         return other.descriptor()
                     .getQualifiedName()
                     .equals(type.getQualifiedName()) &&
-               other.getName()
+               other.asString()
                     .equals(name) &&
-               other.getValue() == value;
+               other.asInteger() == value;
     }
 
     @Override
@@ -162,15 +151,15 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
 
         @Nonnull
         @Override
-        public Builder setByValue(int id) {
-            mValue = mType.getValueById(id);
+        public Builder setById(int id) {
+            mValue = mType.findById(id);
             return this;
         }
 
         @Nonnull
         @Override
         public Builder setByName(String name) {
-            mValue = mType.getValueByName(name);
+            mValue = mType.findByName(name);
             return this;
         }
     }

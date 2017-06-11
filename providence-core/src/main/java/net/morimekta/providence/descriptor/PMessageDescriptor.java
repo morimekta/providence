@@ -83,6 +83,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
         return PType.MESSAGE;
     }
 
+    @Nonnull
     @Override
     public PMessageBuilder<T, F> builder() {
         return builderSupplier.get();
