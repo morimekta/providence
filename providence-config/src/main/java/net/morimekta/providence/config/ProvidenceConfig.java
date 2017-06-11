@@ -33,10 +33,10 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.Tokenizer;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
+import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -50,8 +50,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -356,7 +356,7 @@ public class ProvidenceConfig {
     }
 
     private Set<String> getReverseDeps(String to) {
-        return reverseDependencies.computeIfAbsent(to, k -> new HashSet<>());
+        return reverseDependencies.computeIfAbsent(to, k -> new LinkedHashSet<>());
     }
 
     @SuppressWarnings("unchecked") @Nonnull
@@ -830,7 +830,7 @@ public class ProvidenceConfig {
             } else if (field.getType() == PType.MAP) {
                 // maps can be extended the same way as
                 token = tokenizer.expect("field sep or value start");
-                Map baseValue = new HashMap();
+                Map baseValue = new LinkedHashMap<>();
                 String reference = null;
                 if (token.isSymbol(kDefineReference)) {
                     reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
@@ -858,7 +858,7 @@ public class ProvidenceConfig {
                             builder.set(field.getKey(), context.setReference(reference, baseValue));
                             continue;
                         } else if (baseValue == null) {
-                            baseValue = new HashMap();
+                            baseValue = new LinkedHashMap<>();
                         }
                     }
                 } else {
@@ -1031,7 +1031,7 @@ public class ProvidenceConfig {
                         }
                         return resolved;
                     } else if (next.isSymbol(Token.kMessageStart)) {
-                        return parseMapValue(tokenizer, context, (PMap) descriptor, new HashMap());
+                        return parseMapValue(tokenizer, context, (PMap) descriptor, new LinkedHashMap());
                     }
                     break;
                 }
@@ -1041,7 +1041,7 @@ public class ProvidenceConfig {
                     } else if (next.isSymbol(Token.kListStart)) {
                         @SuppressWarnings("unchecked")
                         PSet<Object> ct = (PSet) descriptor;
-                        HashSet<Object> value = new HashSet<>();
+                        Set<Object> value = new LinkedHashSet<>();
 
                         next = tokenizer.expect("set value or end");
                         while (!next.isSymbol(Token.kListEnd)) {

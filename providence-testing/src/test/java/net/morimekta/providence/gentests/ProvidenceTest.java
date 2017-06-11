@@ -32,21 +32,23 @@ import net.morimekta.test.providence.testing.UnionFields;
 import net.morimekta.test.providence.testing.Value;
 import net.morimekta.util.Binary;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -266,16 +268,40 @@ public class ProvidenceTest {
 
     @Test
     public void testMutableContainer() {
-        Containers containers = Containers.builder()
+        Containers._Builder containers = Containers.builder()
                                           .setByteList(new LinkedList<>())
-                                          .setShortSet(new HashSet<>())
+                                          .setShortSet(ImmutableSet.of(
+                                                  (short) 1,
+                                                  (short) -1,
+                                                  (short) 2,
+                                                  (short) -2))
                                           .setIntegerMap(new HashMap<>())
                                           .addToLongList(1, 2, 3, 4, 5)
                                           .addToEnumSet(Value.EIGHTEENTH, Value.THIRD)
                                           .putInDoubleMap(12, 44)
-                                          .putInDoubleMap(44, 12)
-                                          .build();
+                                          .putInDoubleMap(44, 12);
 
-        assertThat(containers, is(equalToMessage(containers.mutate().build())));
+        // Not set before, is created.
+        assertThat(containers.mutableBinarySet(), is(notNullValue()));
+        // Changes to returned collection is reflected in built instance.
+        containers.mutableShortSet().remove((short) -1);
+        containers.mutableShortSet().add((short) 3);
+
+        assertThat(debugString(containers.build()), is(equalToLines(
+                "byteList = []\n" +
+                "longList = [1, 2, 3, 4, 5]\n" +
+                "shortSet = [1, 2, -2, 3]\n" +
+                "binarySet = [\n" +
+                "]\n" +
+                "integerMap = {\n" +
+                "}\n" +
+                "doubleMap = {\n" +
+                "  44: 12\n" +
+                "  12: 44\n" +
+                "}\n" +
+                "enumSet = [\n" +
+                "  EIGHTEENTH,\n" +
+                "  THIRD\n" +
+                "]")));
     }
 }
