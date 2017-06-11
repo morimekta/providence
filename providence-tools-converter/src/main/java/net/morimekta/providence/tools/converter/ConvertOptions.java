@@ -53,6 +53,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static net.morimekta.console.util.Parser.dir;
+import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
 import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
@@ -115,11 +116,15 @@ public class ConvertOptions extends CommonOptions {
 
         Map<String, File> includeMap = new HashMap<>();
         if (includes.isEmpty()) {
-            includes.add(new File("."));
+            collectConfigIncludes(getRc(), includeMap);
         }
-        Utils.collectConfigIncludes(getRc(), includeMap);
-        for (File file : includes) {
-            collectIncludes(file, includeMap);
+        if (includeMap.isEmpty()) {
+            if (includes.isEmpty()) {
+                includes.add(new File("."));
+            }
+            for (File file : includes) {
+                collectIncludes(file, includeMap);
+            }
         }
 
         Set<File> rootSet = new TreeSet<File>();

@@ -49,6 +49,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static net.morimekta.console.util.Parser.dir;
+import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
+import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
  * ConfigOptions used by the providence converter.
@@ -97,15 +99,18 @@ public class ConfigOptions extends CommonOptions {
         return (super.showHelp() || command == null) && !showVersion();
     }
 
-    public void execute() throws ParseException, IOException {
+    public void execute() throws IOException {
         Map<String, File> includeMap = new TreeMap<>();
-        try {
-            Utils.collectConfigIncludes(getRc(), includeMap);
-            for (File include : includes) {
-                Utils.collectIncludes(include, includeMap);
+        if (includes.isEmpty()) {
+            collectConfigIncludes(getRc(), includeMap);
+        }
+        if (includeMap.isEmpty()) {
+            if (includes.isEmpty()) {
+                includes.add(new File("."));
             }
-        } catch (IOException e) {
-            throw new ArgumentException(e.getMessage(), e);
+            for (File file : includes) {
+                collectIncludes(file, includeMap);
+            }
         }
 
         Set<File> rootSet = includeMap.values()

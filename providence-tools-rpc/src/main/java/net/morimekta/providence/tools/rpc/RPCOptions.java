@@ -167,11 +167,15 @@ public class RPCOptions extends CommonOptions {
 
         Map<String, File> includeMap = new HashMap<>();
         if (includes.isEmpty()) {
-            includes.add(new File("."));
+            collectConfigIncludes(getRc(), includeMap);
         }
-        collectConfigIncludes(getRc(), includeMap);
-        for (File file : includes) {
-            collectIncludes(file, includeMap);
+        if (includeMap.isEmpty()) {
+            if (includes.isEmpty()) {
+                includes.add(new File("."));
+            }
+            for (File file : includes) {
+                collectIncludes(file, includeMap);
+            }
         }
 
         Set<File> rootSet = new TreeSet<File>();
