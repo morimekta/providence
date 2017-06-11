@@ -43,7 +43,7 @@ import java.util.LinkedList;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
-import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static net.morimekta.providence.util.ProvidenceHelper.parseDebugString;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -287,7 +287,7 @@ public class ProvidenceTest {
         containers.mutableShortSet().remove((short) -1);
         containers.mutableShortSet().add((short) 3);
 
-        assertThat(debugString(containers.build()), is(equalToLines(
+        assertThat(containers.build(), is(equalToMessage(parseDebugString(
                 "byteList = []\n" +
                 "longList = [1, 2, 3, 4, 5]\n" +
                 "shortSet = [1, 2, -2, 3]\n" +
@@ -302,6 +302,6 @@ public class ProvidenceTest {
                 "enumSet = [\n" +
                 "  EIGHTEENTH,\n" +
                 "  THIRD\n" +
-                "]")));
+                "]", Containers.kDescriptor))));
     }
 }
