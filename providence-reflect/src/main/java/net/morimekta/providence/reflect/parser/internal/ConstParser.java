@@ -149,7 +149,7 @@ public class ConstParser {
                 skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
                 continue;
             }
-            Field field = type.getField(token.decodeLiteral(true));
+            Field field = type.findFieldByName(token.decodeLiteral(true));
             if (field == null) {
                 throw tokenizer.failure(token, "Not a valid field name: " + token.decodeLiteral(true));
             }

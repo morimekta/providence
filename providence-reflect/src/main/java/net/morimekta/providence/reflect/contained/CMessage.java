@@ -43,13 +43,13 @@ public interface CMessage<Message extends PMessage<Message, CField>>
 
     @Override
     default boolean has(int key) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         return field != null && values().containsKey(key);
     }
 
     @Override
     default int num(int key) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         if (field == null) {
             return 0;
         }
@@ -73,7 +73,7 @@ public interface CMessage<Message extends PMessage<Message, CField>>
 
     @Override
     default Object get(int key) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         if (field != null) {
             Object value = values().get(key);
             if (value != null) {

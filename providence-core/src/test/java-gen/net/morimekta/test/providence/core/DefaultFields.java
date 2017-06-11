@@ -571,13 +571,13 @@ public class DefaultFields
         }
 
         @Override
-        public _Field getField(String name) {
+        public _Field findFieldByName(String name) {
             return _Field.forName(name);
         }
 
         @Override
-        public _Field getField(int key) {
-            return _Field.forKey(key);
+        public _Field findFieldById(int id) {
+            return _Field.forKey(id);
         }
     }
 

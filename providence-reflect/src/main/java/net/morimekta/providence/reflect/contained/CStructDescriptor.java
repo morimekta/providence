@@ -81,13 +81,13 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     }
 
     @Override
-    public CField getField(String name) {
+    public CField findFieldByName(String name) {
         return fieldNameMap.get(name);
     }
 
     @Override
-    public CField getField(int key) {
-        return fieldIdMap.get(key);
+    public CField findFieldById(int id) {
+        return fieldIdMap.get(id);
     }
 
     @Nonnull

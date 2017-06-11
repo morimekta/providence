@@ -169,7 +169,7 @@ public class CUnion implements PUnion<CUnion,CField> {
         @Override
         @SuppressWarnings("unchecked")
         public PMessageBuilder mutator(int key) {
-            CField field = descriptor.getField(key);
+            CField field = descriptor.findFieldById(key);
             if (field == null) {
                 throw new IllegalArgumentException("No such field ID " + key);
             } else if (field.getType() != PType.MESSAGE) {
@@ -257,7 +257,7 @@ public class CUnion implements PUnion<CUnion,CField> {
         @Override
         @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
-            CField field = descriptor.getField(key);
+            CField field = descriptor.findFieldById(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
@@ -297,7 +297,7 @@ public class CUnion implements PUnion<CUnion,CField> {
         @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
-            CField field = descriptor.getField(key);
+            CField field = descriptor.findFieldById(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }

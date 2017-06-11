@@ -135,7 +135,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 continue;
             }
             PField field = containedBuilder.descriptor()
-                                           .getField(fieldName);
+                                           .findFieldByName(fieldName);
             if (field == null) {
                 if (strict) {
                     throw new ConfigException("No such field %s in %s [%s]",
@@ -197,7 +197,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
         for (int i = 0; i < (path.length - 1); ++i) {
             PMessageDescriptor descriptor = builder.descriptor();
             String fieldName = path[i];
-            PField field = descriptor.getField(fieldName);
+            PField field = descriptor.findFieldByName(fieldName);
             if (field == null) {
                 if (strict) {
                     throw new ConfigException("No such field %s in %s [%s]",

@@ -25,8 +25,8 @@ public class CExceptionTest {
                                                                    null);
 
         assertThat(descriptor.getDocumentation(), is("comment"));
-        assertThat(descriptor.getField("text"), is(sameInstance(text)));
-        assertThat(descriptor.getField(2), is(sameInstance(num)));
+        assertThat(descriptor.findFieldByName("text"), is(sameInstance(text)));
+        assertThat(descriptor.findFieldById(2), is(sameInstance(num)));
         assertThat(descriptor.getAnnotations(), is(ImmutableSet.of()));
         assertThat(descriptor.hasAnnotation("boo"), is(false));
         assertThat(descriptor.getAnnotationValue("boo"), is(nullValue()));

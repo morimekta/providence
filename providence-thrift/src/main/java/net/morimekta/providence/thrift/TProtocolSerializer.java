@@ -242,7 +242,7 @@ class TProtocolSerializer extends Serializer {
 
             PField field;
             // f.name is never fulled out, rely on f.id being correct.
-            field = descriptor.getField(f.id);
+            field = descriptor.findFieldById(f.id);
             if (field != null) {
                 if (f.type != forType(field.getDescriptor().getType())) {
                     throw new SerializerException("Incompatible serialized type " + asString(f.type) +

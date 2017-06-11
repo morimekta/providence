@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * Generic descriptor for a container type.
  * <p>
@@ -55,5 +57,6 @@ public abstract class PContainer<Container> implements PDescriptor {
      * Get an instance builder for the container.
      * @return The instance builder.
      */
+    @Nonnull
     public abstract PBuilder<Container> builder();
 }

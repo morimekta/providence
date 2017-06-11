@@ -44,6 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Convenience methods for handling providence messages.
  */
 public class ProvidenceHelper {
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message fromJsonResource(String path,
                              PMessageDescriptor<Message, Field> descriptor)
@@ -51,6 +52,7 @@ public class ProvidenceHelper {
         return fromResource(path, descriptor, new JsonSerializer(true));
     }
 
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     ArrayList<Message> arrayListFromJsonResource(String path,
                                                  PMessageDescriptor<Message, Field> descriptor)
@@ -58,6 +60,7 @@ public class ProvidenceHelper {
         return arrayListFromResource(path, descriptor, new JsonSerializer(true));
     }
 
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message fromResource(String resource,
                          PMessageDescriptor<Message, Field> descriptor,
@@ -70,13 +73,14 @@ public class ProvidenceHelper {
         return serializer.deserialize(new BufferedInputStream(in), descriptor);
     }
 
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     ArrayList<Message> arrayListFromResource(String path,
                                              PMessageDescriptor<Message, Field> descriptor,
                                              Serializer serializer)
             throws IOException {
-        return (ArrayList<Message>) MessageStreams.resource(path, serializer, descriptor)
-                                                  .collect(Collectors.toList());
+        return MessageStreams.resource(path, serializer, descriptor)
+                             .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

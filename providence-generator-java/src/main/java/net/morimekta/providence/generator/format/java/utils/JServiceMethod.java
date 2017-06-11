@@ -76,8 +76,8 @@ public class JServiceMethod {
 
     public JField getResponse() {
         if (method.getResponseType() != null) {
-            if (method.getResponseType().getField(0) != null) {
-                return new JField(method.getResponseType().getField(0),
+            if (method.getResponseType().findFieldById(0) != null) {
+                return new JField(method.getResponseType().findFieldById(0),
                                   helper,
                                   0);
             }

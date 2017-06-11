@@ -31,6 +31,8 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.serializer.json.JsonCompactible;
@@ -178,6 +180,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .newline()
               .appendln("@Override")
+              .appendln(JAnnotation.NON_NULL)
               .appendln("public _Field[] getFields() {")
               .begin()
               .appendln("return _Field.values();")
@@ -185,16 +188,18 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .newline()
               .appendln("@Override")
-              .appendln("public _Field getField(String name) {")
+              .appendln(JAnnotation.NULLABLE)
+              .appendln("public _Field findFieldByName(String name) {")
               .begin()
-              .appendln("return _Field.forName(name);")
+              .appendln("return _Field.findByName(name);")
               .end()
               .appendln('}')
               .newline()
               .appendln("@Override")
-              .appendln("public _Field getField(int key) {")
+              .appendln(JAnnotation.NULLABLE)
+              .appendln("public _Field findFieldById(int id) {")
               .begin()
-              .appendln("return _Field.forKey(key);")
+              .appendln("return _Field.findById(id);")
               .end()
               .appendln('}')
               .end()
@@ -300,9 +305,13 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("public static _Field forKey(int key) {")
+        new BlockCommentBuilder(writer)
+                .param_("id", "Field name")
+                .return_("The identified field or null")
+                .finish();
+        writer.appendln("public static _Field findById(int id) {")
               .begin()
-              .appendln("switch (key) {")
+              .appendln("switch (id) {")
               .begin();
         for (JField field : message.declaredOrderFields()) {
             writer.formatln("case %d: return _Field.%s;", field.id(), field.fieldEnum());
@@ -314,7 +323,11 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("public static _Field forName(String name) {")
+        new BlockCommentBuilder(writer)
+                .param_("name", "Field name")
+                .return_("The named field or null")
+                .finish();
+        writer.appendln("public static _Field findByName(String name) {")
               .begin()
               .appendln("switch (name) {")
               .begin();
@@ -326,6 +339,41 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("return null;")
               .end()
               .appendln('}');
+
+        new BlockCommentBuilder(writer)
+                .param_("id", "Field name")
+                .return_("The identified field")
+                .throws_("IllegalArgumentException", "If no such field")
+                .finish();
+        writer.appendln("public static _Field fieldForId(int id) {")
+              .begin()
+              .appendln("_Field field = findById(id);")
+              .appendln("if (field == null) {")
+              .formatln("    throw new IllegalArgumentException(\"No such field id \" + id + \" in %s\");",
+                        message.descriptor().getQualifiedName())
+              .appendln("}")
+              .appendln("return field;")
+              .end()
+              .appendln('}')
+              .newline();
+
+        new BlockCommentBuilder(writer)
+                .param_("name", "Field name")
+                .return_("The named field")
+                .throws_("IllegalArgumentException", "If no such field")
+                .finish();
+        writer.appendln("public static _Field fieldForName(String name) {")
+              .begin()
+              .appendln("_Field field = findByName(name);")
+              .appendln("if (field == null) {")
+              .formatln("    throw new IllegalArgumentException(\"No such field \\\"\" + name + \"\\\" in %s\");",
+                        message.descriptor().getQualifiedName())
+              .appendln("}")
+              .appendln("return field;")
+              .end()
+              .appendln('}')
+              .newline();
+
 
         writer.end()
               .appendln('}')

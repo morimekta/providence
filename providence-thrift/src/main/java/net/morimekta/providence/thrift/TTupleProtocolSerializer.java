@@ -260,7 +260,7 @@ public class TTupleProtocolSerializer extends Serializer {
 
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             int fieldId = protocol.readI16();
-            PField fld = descriptor.getField(fieldId);
+            PField fld = descriptor.findFieldById(fieldId);
             builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
         } else {
             PField[] fields = descriptor.getFields();

@@ -23,7 +23,7 @@ package net.morimekta.providence.descriptor;
 import javax.annotation.Nonnull;
 
 /**
- * Descriptor for a single service method.
+ * Provide a service descriptor
  */
 @FunctionalInterface
 public interface PServiceProvider {

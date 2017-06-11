@@ -37,6 +37,7 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.BaseServiceFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
@@ -493,7 +494,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("public static Method forName(String name) {")
+        writer.appendln("public static Method findByName(String name) {")
               .begin()
               .appendln("switch (name) {")
               .begin();
@@ -509,9 +510,22 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
               .end()
               .appendln('}');
 
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("public static Method methodForName(String name) {")
+              .begin()
+              .appendln("Method method = findByName(name);")
+              .appendln("if (method == null) {")
+              .formatln("    throw new IllegalArgumentException(\"No such method \\\"\" + name + \"\\\" in service %s\");",
+                        service.getService().getQualifiedName())
+              .appendln("}")
+              .appendln("return method;")
+              .end()
+              .appendln('}');
+
         writer.end()
               .appendln('}')
               .newline();
+        // Ended methods enum.
 
         String inherits = "null";
         if (service.getService().getExtendsService() != null) {
@@ -532,7 +546,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
               .newline()
               .appendln("@Override")
               .appendln("public Method getMethod(String name) {")
-              .appendln("    return Method.forName(name);")
+              .appendln("    return Method.findByName(name);")
               .appendln("}")
               .end()
               .appendln('}')

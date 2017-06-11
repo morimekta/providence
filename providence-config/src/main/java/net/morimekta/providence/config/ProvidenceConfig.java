@@ -735,7 +735,7 @@ public class ProvidenceConfig {
                         .setLine(tokenizer.getLine(token.getLineNo()));
             }
 
-            F field = descriptor.getField(token.asString());
+            F field = descriptor.findFieldByName(token.asString());
             if (field == null) {
                 if (strict) {
                     throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())

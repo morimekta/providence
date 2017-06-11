@@ -313,7 +313,7 @@ public class PrettySerializer extends Serializer {
 
             tokenizer.expectSymbol("field value separator", Token.kFieldValueSep);
 
-            PField field = descriptor.getField(token.asString());
+            PField field = descriptor.findFieldByName(token.asString());
             if (field == null) {
                 consumeValue(tokenizer, tokenizer.expect("field value"));
             } else {

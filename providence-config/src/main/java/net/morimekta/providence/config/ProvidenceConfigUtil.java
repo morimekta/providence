@@ -74,7 +74,7 @@ public class ProvidenceConfigUtil {
             name = sub.substring(0, idx);
             sub = sub.substring(idx + 1);
 
-            PField field = descriptor.getField(name);
+            PField field = descriptor.findFieldByName(name);
             if (field == null) {
                 throw new KeyNotFoundException("Message " + descriptor.getQualifiedName() + " has no field named " + name);
             }
@@ -90,7 +90,7 @@ public class ProvidenceConfigUtil {
             }
         }
 
-        PField field = descriptor.getField(sub);
+        PField field = descriptor.findFieldByName(sub);
         if (field == null) {
             throw new KeyNotFoundException("Message " + descriptor.getQualifiedName() + " has no field named " + sub);
         }

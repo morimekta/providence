@@ -225,7 +225,7 @@ public class FastBinarySerializer extends Serializer {
         while ((tag = in.readIntVarint()) != STOP) {
             int id = tag >>> 3;
             int type = tag & 0x07;
-            Field field = descriptor.getField(id);
+            Field field = descriptor.findFieldById(id);
             if (field != null) {
                 Object value = readFieldValue(in, type, field.getDescriptor());
                 builder.set(field.getKey(), value);

@@ -132,15 +132,18 @@ public class PList<Item> extends PContainer<List<Item>> {
         }
     }
 
+    @Nonnull
     @Override
     public Builder<Item> builder() {
         return builderSupplier.get();
     }
 
+    @Nonnull
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc) {
         return provider(itemDesc, DefaultBuilder::new);
     }
 
+    @Nonnull
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc,
                                                                      Supplier<Builder<I>> builderFactory) {
         return new PContainerProvider<>(new PList<>(itemDesc, builderFactory));

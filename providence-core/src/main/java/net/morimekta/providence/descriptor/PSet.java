@@ -84,6 +84,7 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         return PSet.class.hashCode() + itemDescriptor().hashCode();
     }
 
+    @Nonnull
     @Override
     public Builder<Item> builder() {
         return builderSupplier.get();
@@ -180,14 +181,17 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     public static class OrderedBuilder<I> extends DefaultBuilder<I> {
     }
 
+    @Nonnull
     public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
         return provider(itemDesc, DefaultBuilder::new);
     }
 
+    @Nonnull
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> sortedProvider(PDescriptorProvider itemDesc) {
         return provider(itemDesc, SortedBuilder::new);
     }
 
+    @Nonnull
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> orderedProvider(PDescriptorProvider itemDesc) {
         return provider(itemDesc, OrderedBuilder::new);
     }

@@ -23,6 +23,9 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * See the struct descriptor of {@link PStructDescriptor}. It is avoided in this case in
  * order to be able to have subclasses of PStructDescriptor and PUnionDescriptor to
@@ -32,9 +35,12 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 public interface CMessageDescriptor
         extends CAnnotatedDescriptor, PDescriptor {
     // From PMessageDescriptor
+    @Nonnull
     CField[] getFields();
 
-    CField getField(String name);
+    @Nullable
+    CField findFieldByName(String name);
 
-    CField getField(int key);
+    @Nullable
+    CField findFieldById(int id);
 }

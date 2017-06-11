@@ -26,6 +26,7 @@ import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -56,13 +57,63 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
      * @param name Name of field to get.
      * @return The field if present.
      */
-    public abstract F getField(String name);
+    @Nullable
+    public abstract F findFieldByName(String name);
 
     /**
-     * @param key The ID of the field to get.
+     * @param id The ID of the field to get.
      * @return The field if present.
      */
-    public abstract F getField(int key);
+    @Nullable
+    public abstract F findFieldById(int id);
+
+    /**
+     * @param name The name of the field to get.
+     * @return The field.
+     * @throws IllegalArgumentException If not present.
+     */
+    @Nonnull
+    public F fieldForName(String name) {
+        F field = findFieldByName(name);
+        if (field == null) {
+            throw new IllegalArgumentException("No field " + name + " in " + getQualifiedName());
+        }
+        return field;
+    }
+
+    /**
+     * @param id The ID of the field to get.
+     * @return The field.
+     * @throws IllegalArgumentException If not present.
+     */
+    @Nonnull
+    public F fieldForId(int id) {
+        F field = findFieldById(id);
+        if (field == null) {
+            throw new IllegalArgumentException("No field key " + id + " in " + getQualifiedName());
+        }
+        return field;
+    }
+
+    /**
+     * @param name Field name.
+     * @return Field or null.
+     * @deprecated Use {@link #findFieldByName(String)} instead.
+     */
+    @Deprecated
+    public F getField(String name) {
+        return findFieldByName(name);
+    }
+
+    /**
+     * @param key Field key.
+     * @return Field or null.
+     * @deprecated Use {@link #findFieldById(int)} instead.
+     */
+    @Deprecated
+    public F getField(int key) {
+        return findFieldById(key);
+    }
 
     /**
      * @return The struct variant.
@@ -102,7 +153,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
             return false;
         }
         for (PField field : getFields()) {
-            if (!field.equals(other.getField(field.getKey()))) {
+            if (!field.equals(other.findFieldById(field.getKey()))) {
                 return false;
             }
         }

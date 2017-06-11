@@ -97,7 +97,7 @@ public class BinaryFormatUtils {
         } else {
             FieldInfo fieldInfo = readFieldInfo(input);
             while (fieldInfo != null) {
-                PField field = descriptor.getField(fieldInfo.getId());
+                PField field = descriptor.findFieldById(fieldInfo.getId());
                 if (field != null) {
                     Object value = readFieldValue(input, fieldInfo, field.getDescriptor(), strict);
                     builder.set(field.getKey(), value);

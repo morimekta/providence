@@ -18,8 +18,6 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -87,7 +85,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @Override
     @SuppressWarnings("unchecked")
     public PMessageBuilder mutator(int key) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         if (field == null) {
             throw new IllegalArgumentException("No such field ID " + key);
         } else if (field.getType() != PType.MESSAGE) {
@@ -146,7 +144,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @Override
     @SuppressWarnings("unchecked")
     public Builder set(int key, Object value) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         if (field == null) {
             return (Builder) this; // soft ignoring unsupported fields.
         }
@@ -190,7 +188,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @Override
     @SuppressWarnings("unchecked")
     public Builder addTo(int key, Object value) {
-        CField field = descriptor().getField(key);
+        CField field = descriptor().findFieldById(key);
         if (field == null) {
             return (Builder) this; // soft ignoring unsupported fields.
         }

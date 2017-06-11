@@ -65,7 +65,7 @@ public class HasFieldValueThat<Message extends PMessage<Message, Field>, Field e
             }
             PMessage actual = (PMessage) o;
 
-            PField field = actual.descriptor().getField(path[i]);
+            PField field = actual.descriptor().findFieldByName(path[i]);
             if (field == null) {
                 return false;
             }
@@ -107,7 +107,7 @@ public class HasFieldValueThat<Message extends PMessage<Message, Field>, Field e
                 }
                 PMessage actual = (PMessage) o;
 
-                PField field = actual.descriptor().getField(fieldName);
+                PField field = actual.descriptor().findFieldByName(fieldName);
                 if (field == null) {
                     mismatchDescription.appendText("field path " + path + " is not valid");
                     return;

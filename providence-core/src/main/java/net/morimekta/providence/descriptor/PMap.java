@@ -189,21 +189,25 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
     public static class OrderedBuilder<K, V> extends DefaultBuilder<K, V> {
     }
 
+    @Nonnull
     @Override
     public Builder<Key, Value> builder() {
         return builderSupplier.get();
     }
 
+    @Nonnull
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,
                                                                             PDescriptorProvider itemDesc) {
         return provider(keyDesc, itemDesc, DefaultBuilder::new);
     }
 
+    @Nonnull
     public static <K extends Comparable<K>, V> PContainerProvider<Map<K, V>, PMap<K, V>> sortedProvider(PDescriptorProvider keyDesc,
                                                                                                         PDescriptorProvider itemDesc) {
         return provider(keyDesc, itemDesc, SortedBuilder::new);
     }
 
+    @Nonnull
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> orderedProvider(PDescriptorProvider keyDesc,
                                                                                    PDescriptorProvider itemDesc) {
         return provider(keyDesc, itemDesc, OrderedBuilder::new);

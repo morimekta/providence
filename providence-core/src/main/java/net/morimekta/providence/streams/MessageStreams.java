@@ -59,6 +59,7 @@ public class MessageStreams {
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> path(Path file,
                          Serializer serializer,
@@ -81,6 +82,7 @@ public class MessageStreams {
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> file(File file,
                          Serializer serializer,
@@ -103,6 +105,7 @@ public class MessageStreams {
      * @return The stream that reads the file.
      * @throws IOException when unable find the resource.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> resource(@Nonnull String resource,
                              @Nonnull Serializer serializer,
@@ -128,6 +131,7 @@ public class MessageStreams {
      * @param <Field>    The message field type.
      * @return The stream that reads the file.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> stream(InputStream in,
                            Serializer serializer,

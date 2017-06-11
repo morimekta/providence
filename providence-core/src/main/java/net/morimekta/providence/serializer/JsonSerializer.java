@@ -311,9 +311,9 @@ public class JsonSerializer extends Serializer {
                 String key = token.rawJsonLiteral();
                 PField field;
                 if (Strings.isInteger(key)) {
-                    field = type.getField(Integer.parseInt(key));
+                    field = type.findFieldById(Integer.parseInt(key));
                 } else {
-                    field = type.getField(key);
+                    field = type.findFieldByName(key);
                 }
                 tokenizer.expectSymbol("field KV sep", JsonToken.kKeyValSep);
 
@@ -347,7 +347,7 @@ public class JsonSerializer extends Serializer {
         int i = 0;
         char sep = JsonToken.kListStart;
         while (sep != JsonToken.kListEnd) {
-            PField field = type.getField(++i);
+            PField field = type.findFieldById(++i);
 
             if (field != null) {
                 Object value = parseTypedValue(tokenizer.expect("field value"), tokenizer, field.getDescriptor(), true);

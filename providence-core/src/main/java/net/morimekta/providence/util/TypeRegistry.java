@@ -62,6 +62,7 @@ public class TypeRegistry {
      * @param <T>     The described type.
      * @return The type descriptor.
      */
+    @Nonnull
     @SuppressWarnings("unchecked")
     public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String name,
                                                                 @Nonnull String context) {
@@ -88,6 +89,7 @@ public class TypeRegistry {
      * @param <T>  The described type.
      * @return The type descriptor.
      */
+    @Nonnull
     public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String name) {
         String[] parts = name.split("\\.");
         if (parts.length < 2) {
@@ -105,7 +107,7 @@ public class TypeRegistry {
      * @param declaredType The type to register.
      * @param <T> The descriptor object type.
      */
-    public <T> void putDeclaredType(PDeclaredDescriptor<T> declaredType) {
+    public <T> void putDeclaredType(@Nonnull PDeclaredDescriptor<T> declaredType) {
         String declaredTypeName = declaredType.getQualifiedName();
         if (declaredTypes.containsKey(declaredTypeName)) {
             throw new IllegalStateException("Type " + declaredTypeName + " already exists");
@@ -213,6 +215,7 @@ public class TypeRegistry {
      * @param context The package context.
      * @return The qualified typename.
      */
+    @Nonnull
     private String qualifiedTypename(String name, String context) {
         if (name == null || context == null) {
             throw new IllegalArgumentException("Null argument for qualified typename");

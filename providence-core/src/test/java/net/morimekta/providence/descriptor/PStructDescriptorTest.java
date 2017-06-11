@@ -108,7 +108,7 @@ public class PStructDescriptorTest {
         }
 
         @Override
-        public PField getField(String name) {
+        public PField findFieldByName(String name) {
             for (PField field : fields) {
                 if (field.getName().equals(name)) {
                     return field;
@@ -118,9 +118,9 @@ public class PStructDescriptorTest {
         }
 
         @Override
-        public PField getField(int key) {
+        public PField findFieldById(int id) {
             for (PField field : fields) {
-                if (field.getKey() == key) {
+                if (field.getKey() == id) {
                     return field;
                 }
             }

@@ -27,6 +27,7 @@ import net.morimekta.providence.serializer.SerializerException;
 
 import com.google.common.base.Suppliers;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,6 +51,7 @@ public class MessageCollectors {
      * @param <Field> The field type.
      * @return The collector.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, OutputStream, Integer> toPath(Path file,
                                                      Serializer serializer) {
@@ -65,6 +67,7 @@ public class MessageCollectors {
      * @param <Field> The field type.
      * @return The collector.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, OutputStream, Integer> toFile(File file,
                                                      Serializer serializer) {
@@ -108,6 +111,7 @@ public class MessageCollectors {
      * @param <Field> The field type.
      * @return The collector.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, AtomicInteger, Integer> toStream(OutputStream out,
                                                         Serializer serializer) {
