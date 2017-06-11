@@ -153,6 +153,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     protected boolean requireEnumValue = false;
 
+    /**
+     * Generate the legacy 'forValue' and 'forName' static enum getters.
+     */
+    @Parameter
+    protected boolean generate_legacy_enum_getters = false;
+
     // --- After here are internals, components and maven-set params.
 
     /**
@@ -270,6 +276,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             options.rw_binary = rw_binary;
             options.hazelcast_portable = hazelcast_portable;
             options.generated_annotation_version = generated_annotation_version;
+            options.generate_legacy_enum_getters = generate_legacy_enum_getters;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 

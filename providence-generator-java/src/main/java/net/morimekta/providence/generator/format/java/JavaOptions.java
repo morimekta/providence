@@ -48,4 +48,9 @@ public class JavaOptions {
      * Add the <code>@Generated</code> annotation to each generated class.
      */
     public boolean generated_annotation_version = false;
+
+    /**
+     * Keep the 'forName' and 'forValue' legacy static enum getters.
+     */
+    public boolean generate_legacy_enum_getters = false;
 }

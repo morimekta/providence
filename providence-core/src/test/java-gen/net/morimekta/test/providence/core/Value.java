@@ -52,30 +52,6 @@ public enum Value
      *
      * @param id Id of value
      * @return Value found or null
-     * @deprecated Use {@link #findById(int)} instead.
-     */
-    @Deprecated
-    public static Value forValue(int id) {
-        return findById(id);
-    }
-
-    /**
-     * Find a value based in its name
-     *
-     * @param name Name of value
-     * @return Value found or null
-     * @deprecated Use {@link #findByName(String)} instead.
-     */
-    @Deprecated
-    public static Value forName(String name) {
-        return findByName(name);
-    }
-
-    /**
-     * Find a value based in its ID
-     *
-     * @param id Id of value
-     * @return Value found or null
      */
     public static Value findById(int id) {
         switch (id) {

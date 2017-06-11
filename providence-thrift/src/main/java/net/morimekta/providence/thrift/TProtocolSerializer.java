@@ -168,7 +168,7 @@ class TProtocolSerializer extends Serializer {
 
             tm = protocol.readMessageBegin();
 
-            type = PServiceCallType.forValue(tm.type);
+            type = PServiceCallType.findById(tm.type);
             if (type == null) {
                 throw new SerializerException("Unknown call type for id " + tm.type);
             } else if (type == PServiceCallType.EXCEPTION) {
@@ -191,7 +191,7 @@ class TProtocolSerializer extends Serializer {
             return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
             throw new SerializerException(e, e.getMessage())
-                    .setExceptionType(PApplicationExceptionType.forValue(e.getType()))
+                    .setExceptionType(PApplicationExceptionType.findById(e.getType()))
                     .setCallType(type)
                     .setSequenceNo(tm != null ? tm.seqid : 0)
                     .setMethodName(tm != null ? tm.name : null);

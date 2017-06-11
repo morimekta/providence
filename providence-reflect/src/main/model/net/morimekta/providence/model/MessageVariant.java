@@ -40,30 +40,6 @@ public enum MessageVariant
      *
      * @param id Id of value
      * @return Value found or null
-     * @deprecated Use {@link #findById(int)} instead.
-     */
-    @Deprecated
-    public static MessageVariant forValue(int id) {
-        return findById(id);
-    }
-
-    /**
-     * Find a value based in its name
-     *
-     * @param name Name of value
-     * @return Value found or null
-     * @deprecated Use {@link #findByName(String)} instead.
-     */
-    @Deprecated
-    public static MessageVariant forName(String name) {
-        return findByName(name);
-    }
-
-    /**
-     * Find a value based in its ID
-     *
-     * @param id Id of value
-     * @return Value found or null
      */
     public static MessageVariant findById(int id) {
         switch (id) {

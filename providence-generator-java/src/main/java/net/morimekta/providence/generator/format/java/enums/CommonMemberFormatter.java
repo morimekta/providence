@@ -189,7 +189,9 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
     public void appendExtraProperties(CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
 
-        appendStaticGetter_Legacy(type, simpleClass);
+        if (options.generate_legacy_enum_getters) {
+            appendStaticGetter_Legacy(type, simpleClass);
+        }
         appendStaticGetter_FindBy(type, simpleClass);
         appendStaticGetter_ValueFor(type, simpleClass);
     }
