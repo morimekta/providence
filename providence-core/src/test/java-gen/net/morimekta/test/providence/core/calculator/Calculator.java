@@ -214,13 +214,21 @@ public class Calculator {
             return response;
         }
 
-        public static Method forName(String name) {
+        public static Method findByName(String name) {
             switch (name) {
                 case "calculate": return CALCULATE;
                 case "iamalive": return IAMALIVE;
                 case "ping": return PING;
             }
             return null;
+        }
+        @javax.annotation.Nonnull
+        public static Method methodForName(String name) {
+            Method method = findByName(name);
+            if (method == null) {
+                throw new IllegalArgumentException("No such method \"" + name + "\" in service calculator.Calculator");
+            }
+            return method;
         }
     }
 
@@ -231,7 +239,7 @@ public class Calculator {
 
         @Override
         public Method getMethod(String name) {
-            return Method.forName(name);
+            return Method.findByName(name);
         }
     }
 
@@ -380,14 +388,14 @@ public class Calculator {
             OP(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "op", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -395,7 +403,7 @@ public class Calculator {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -419,19 +427,53 @@ public class Calculator {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                     case 1: return _Field.OP;
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                     case "op": return _Field.OP;
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in calculator.Calculator.calculate.request");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Calculator.calculate.request");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_calculate_request,_Field> provider() {
@@ -452,18 +494,21 @@ public class Calculator {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 
@@ -920,14 +965,14 @@ public class Calculator {
             CE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ce", net.morimekta.test.providence.core.calculator.CalculateException.provider(), null),
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -935,7 +980,7 @@ public class Calculator {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -959,21 +1004,55 @@ public class Calculator {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                     case 0: return _Field.SUCCESS;
                     case 1: return _Field.CE;
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                     case "success": return _Field.SUCCESS;
                     case "ce": return _Field.CE;
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in calculator.Calculator.calculate.response");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Calculator.calculate.response");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_calculate_response,_Field> provider() {
@@ -994,18 +1073,21 @@ public class Calculator {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 
@@ -1462,14 +1544,14 @@ public class Calculator {
         public enum _Field implements net.morimekta.providence.descriptor.PField {
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -1477,7 +1559,7 @@ public class Calculator {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -1501,17 +1583,51 @@ public class Calculator {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in calculator.Calculator.iamalive.request");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Calculator.iamalive.request");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_iamalive_request,_Field> provider() {
@@ -1532,18 +1648,21 @@ public class Calculator {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 
@@ -1793,14 +1912,14 @@ public class Calculator {
         public enum _Field implements net.morimekta.providence.descriptor.PField {
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -1808,7 +1927,7 @@ public class Calculator {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -1832,17 +1951,51 @@ public class Calculator {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in calculator.Calculator.ping.request");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Calculator.ping.request");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_ping_request,_Field> provider() {
@@ -1863,18 +2016,21 @@ public class Calculator {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 
@@ -2167,14 +2323,14 @@ public class Calculator {
             SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.providence.descriptor.PPrimitive.VOID.provider(), null),
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -2182,7 +2338,7 @@ public class Calculator {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -2206,19 +2362,53 @@ public class Calculator {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                     case 0: return _Field.SUCCESS;
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                     case "success": return _Field.SUCCESS;
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in calculator.Calculator.ping.response");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Calculator.ping.response");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_ping_response,_Field> provider() {
@@ -2239,18 +2429,21 @@ public class Calculator {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 

@@ -316,7 +316,7 @@ public class ProgramConverter {
         }
         @SuppressWarnings("unchecked")
         CField made = new CField(field.getDocumentation(),
-                                 field.getKey(),
+                                 field.getId(),
                                  requirement,
                                  field.getName(),
                                  type,

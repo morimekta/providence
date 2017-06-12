@@ -78,7 +78,7 @@ enum FieldRequirement {
  */
 struct FieldType {
     1: optional string documentation;
-    2: required i32    key;
+    2: required i32    id;
     3: optional FieldRequirement requirement = DEFAULT;
     4: required string type;
     5: required string name;

@@ -324,14 +324,14 @@ public class Declaration
         DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_const", net.morimekta.providence.model.ConstType.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -339,7 +339,7 @@ public class Declaration
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -363,8 +363,12 @@ public class Declaration
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.DECL_ENUM;
                 case 2: return _Field.DECL_TYPEDEF;
                 case 3: return _Field.DECL_STRUCT;
@@ -374,7 +378,11 @@ public class Declaration
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "decl_enum": return _Field.DECL_ENUM;
                 case "decl_typedef": return _Field.DECL_TYPEDEF;
@@ -384,6 +392,32 @@ public class Declaration
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in model.Declaration");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in model.Declaration");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Declaration,_Field> provider() {
@@ -404,18 +438,21 @@ public class Declaration
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 

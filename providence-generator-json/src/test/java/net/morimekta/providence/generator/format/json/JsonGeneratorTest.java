@@ -66,13 +66,13 @@ public class JsonGeneratorTest {
                      "                \"name\": \"Test\",\n" +
                      "                \"fields\": [\n" +
                      "                    {\n" +
-                     "                        \"key\": -1,\n" +
+                     "                        \"id\": -1,\n" +
                      "                        \"requirement\": \"REQUIRED\",\n" +
                      "                        \"type\": \"i32\",\n" +
                      "                        \"name\": \"test\"\n" +
                      "                    },\n" +
                      "                    {\n" +
-                     "                        \"key\": -2,\n" +
+                     "                        \"id\": -2,\n" +
                      "                        \"requirement\": \"OPTIONAL\",\n" +
                      "                        \"type\": \"i32\",\n" +
                      "                        \"name\": \"another\"\n" +

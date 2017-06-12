@@ -188,14 +188,14 @@ public class Operation
         OPERANDS(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operands", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.reflect.calculator.Operand.provider()), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -203,7 +203,7 @@ public class Operation
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -227,21 +227,55 @@ public class Operation
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.OPERATOR;
                 case 2: return _Field.OPERANDS;
             }
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "operator": return _Field.OPERATOR;
                 case "operands": return _Field.OPERANDS;
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in calculator.Operation");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in calculator.Operation");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Operation,_Field> provider() {
@@ -262,18 +296,21 @@ public class Operation
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 

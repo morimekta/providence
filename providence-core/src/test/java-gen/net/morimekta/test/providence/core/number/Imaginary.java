@@ -161,14 +161,14 @@ public class Imaginary
         I(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "i", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultI)),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -176,7 +176,7 @@ public class Imaginary
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -200,21 +200,55 @@ public class Imaginary
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.V;
                 case 2: return _Field.I;
             }
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "v": return _Field.V;
                 case "i": return _Field.I;
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in number.Imaginary");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in number.Imaginary");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Imaginary,_Field> provider() {
@@ -235,18 +269,21 @@ public class Imaginary
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 

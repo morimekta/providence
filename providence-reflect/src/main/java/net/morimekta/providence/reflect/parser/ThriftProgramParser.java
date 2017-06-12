@@ -387,14 +387,14 @@ public class ThriftProgramParser implements ProgramParser {
                 }
 
                 if (token.isInteger()) {
-                    field.setKey((int) token.parseInteger());
+                    field.setId((int) token.parseInteger());
                     tokenizer.expectSymbol("params kv sep", Token.kKeyValueSep);
                     token = tokenizer.expect("param type");
                 } else {
                     if (requireFieldId) {
                         throw tokenizer.failure(token, "Missing param ID in strict declaration");
                     }
-                    field.setKey(nextAutoParamKey--);
+                    field.setId(nextAutoParamKey--);
                 }
 
                 field.setType(parseType(tokenizer, token, includedPrograms));
@@ -444,14 +444,14 @@ public class ThriftProgramParser implements ProgramParser {
                     }
 
                     if (token.isInteger()) {
-                        field.setKey((int) token.parseInteger());
+                        field.setId((int) token.parseInteger());
                         tokenizer.expectSymbol("exception KV sep", Token.kKeyValueSep);
                         token = tokenizer.expect("exception type");
                     } else {
                         if (requireFieldId) {
                             throw tokenizer.failure(token, "Missing exception ID in strict declaration");
                         }
-                        field.setKey(nextAutoExceptionKey--);
+                        field.setId(nextAutoExceptionKey--);
                     }
 
                     field.setType(parseType(tokenizer, token, includedPrograms));
@@ -704,7 +704,7 @@ public class ThriftProgramParser implements ProgramParser {
                                             "Field id " + fId + " already exists in " + struct.build().getName());
                 }
                 fieldIds.add(fId);
-                field.setKey(fId);
+                field.setId(fId);
 
                 tokenizer.expectSymbol("field id sep", Token.kKeyValueSep);
                 token = tokenizer.expect("field requirement or type",
@@ -714,7 +714,7 @@ public class ThriftProgramParser implements ProgramParser {
                     throw tokenizer.failure(token,
                                             "Missing field ID in strict declaration");
                 }
-                field.setKey(nextAutoFieldKey--);
+                field.setId(nextAutoFieldKey--);
             }
 
             if (token.strEquals(kRequired)) {

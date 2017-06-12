@@ -21,7 +21,7 @@ public class FieldType
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -5885640707344801505L;
 
-    private final static int kDefaultKey = 0;
+    private final static int kDefaultId = 0;
     private final static net.morimekta.providence.model.FieldRequirement kDefaultRequirement = net.morimekta.providence.model.FieldRequirement.DEFAULT;
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
@@ -29,7 +29,7 @@ public class FieldType
     private final static int kDefaultStartLinePos = 0;
 
     private final String mDocumentation;
-    private final int mKey;
+    private final int mId;
     private final net.morimekta.providence.model.FieldRequirement mRequirement;
     private final String mType;
     private final String mName;
@@ -41,7 +41,7 @@ public class FieldType
     private volatile int tHashCode;
 
     public FieldType(String pDocumentation,
-                     int pKey,
+                     int pId,
                      net.morimekta.providence.model.FieldRequirement pRequirement,
                      String pType,
                      String pName,
@@ -50,7 +50,7 @@ public class FieldType
                      Integer pStartLineNo,
                      Integer pStartLinePos) {
         mDocumentation = pDocumentation;
-        mKey = pKey;
+        mId = pId;
         mRequirement = pRequirement;
         if (pType != null) {
             mType = pType;
@@ -74,7 +74,7 @@ public class FieldType
 
     private FieldType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mKey = builder.mKey;
+        mId = builder.mId;
         mRequirement = builder.mRequirement;
         if (builder.isSetType()) {
             mType = builder.mType;
@@ -107,15 +107,15 @@ public class FieldType
         return mDocumentation;
     }
 
-    public boolean hasKey() {
+    public boolean hasId() {
         return true;
     }
 
     /**
      * @return The field value
      */
-    public int getKey() {
-        return mKey;
+    public int getId() {
+        return mId;
     }
 
     public boolean hasRequirement() {
@@ -241,7 +241,7 @@ public class FieldType
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();
-            case 2: return getKey();
+            case 2: return getId();
             case 3: return getRequirement();
             case 4: return getType();
             case 5: return getName();
@@ -259,7 +259,7 @@ public class FieldType
         if (o == null || !o.getClass().equals(getClass())) return false;
         FieldType other = (FieldType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-               java.util.Objects.equals(mKey, other.mKey) &&
+               java.util.Objects.equals(mId, other.mId) &&
                java.util.Objects.equals(mRequirement, other.mRequirement) &&
                java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
@@ -275,7 +275,7 @@ public class FieldType
             tHashCode = java.util.Objects.hash(
                     FieldType.class,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.KEY, mKey,
+                    _Field.ID, mId,
                     _Field.REQUIREMENT, mRequirement,
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
@@ -307,8 +307,8 @@ public class FieldType
                .append('\"');
         }
         if (!first) out.append(',');
-        out.append("key:")
-           .append(mKey);
+        out.append("id:")
+           .append(mId);
         if (hasRequirement()) {
             out.append(',');
             out.append("requirement:")
@@ -361,7 +361,7 @@ public class FieldType
             if (c != 0) return c;
         }
 
-        c = Integer.compare(mKey, other.mKey);
+        c = Integer.compare(mId, other.mId);
         if (c != 0) return c;
 
         c = Boolean.compare(mRequirement != null, other.mRequirement != null);
@@ -422,7 +422,7 @@ public class FieldType
 
         length += writer.writeByte((byte) 8);
         length += writer.writeShort((short) 2);
-        length += writer.writeInt(mKey);
+        length += writer.writeInt(mId);
 
         if (hasRequirement()) {
             length += writer.writeByte((byte) 8);
@@ -490,7 +490,7 @@ public class FieldType
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        KEY(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "key", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        ID(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "id", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         REQUIREMENT(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requirement", net.morimekta.providence.model.FieldRequirement.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultRequirement)),
         TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
@@ -500,14 +500,14 @@ public class FieldType
         START_LINE_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_pos", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -515,7 +515,7 @@ public class FieldType
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -539,10 +539,14 @@ public class FieldType
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.DOCUMENTATION;
-                case 2: return _Field.KEY;
+                case 2: return _Field.ID;
                 case 3: return _Field.REQUIREMENT;
                 case 4: return _Field.TYPE;
                 case 5: return _Field.NAME;
@@ -554,10 +558,14 @@ public class FieldType
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
-                case "key": return _Field.KEY;
+                case "id": return _Field.ID;
                 case "requirement": return _Field.REQUIREMENT;
                 case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
@@ -568,6 +576,32 @@ public class FieldType
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in model.FieldType");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in model.FieldType");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<FieldType,_Field> provider() {
@@ -588,18 +622,21 @@ public class FieldType
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 
@@ -641,7 +678,7 @@ public class FieldType
         private java.util.BitSet modified;
 
         private String mDocumentation;
-        private int mKey;
+        private int mId;
         private net.morimekta.providence.model.FieldRequirement mRequirement;
         private String mType;
         private String mName;
@@ -656,7 +693,7 @@ public class FieldType
         public _Builder() {
             optionals = new java.util.BitSet(9);
             modified = new java.util.BitSet(9);
-            mKey = kDefaultKey;
+            mId = kDefaultId;
             mType = kDefaultType;
             mName = kDefaultName;
         }
@@ -674,7 +711,7 @@ public class FieldType
                 mDocumentation = base.mDocumentation;
             }
             optionals.set(1);
-            mKey = base.mKey;
+            mId = base.mId;
             if (base.hasRequirement()) {
                 optionals.set(2);
                 mRequirement = base.mRequirement;
@@ -712,7 +749,7 @@ public class FieldType
 
             optionals.set(1);
             modified.set(1);
-            mKey = from.getKey();
+            mId = from.getId();
 
             if (from.hasRequirement()) {
                 optionals.set(2);
@@ -813,57 +850,57 @@ public class FieldType
         }
 
         /**
-         * Sets the value of key.
+         * Sets the value of id.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setKey(int value) {
+        public _Builder setId(int value) {
             optionals.set(1);
             modified.set(1);
-            mKey = value;
+            mId = value;
             return this;
         }
 
         /**
-         * Checks for presence of the key field.
+         * Checks for presence of the id field.
          *
-         * @return True if key has been set.
+         * @return True if id has been set.
          */
-        public boolean isSetKey() {
+        public boolean isSetId() {
             return optionals.get(1);
         }
 
         /**
-         * Checks if key has been modified since the _Builder was created.
+         * Checks if id has been modified since the _Builder was created.
          *
-         * @return True if key has been modified.
+         * @return True if id has been modified.
          */
-        public boolean isModifiedKey() {
+        public boolean isModifiedId() {
             return modified.get(1);
         }
 
         /**
-         * Clears the key field.
+         * Clears the id field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearKey() {
+        public _Builder clearId() {
             optionals.clear(1);
             modified.set(1);
-            mKey = kDefaultKey;
+            mId = kDefaultId;
             return this;
         }
 
         /**
-         * Gets the value of the contained key.
+         * Gets the value of the contained id.
          *
          * @return The field value
          */
-        public int getKey() {
-            return mKey;
+        public int getId() {
+            return mId;
         }
 
         /**
@@ -1305,7 +1342,7 @@ public class FieldType
             FieldType._Builder other = (FieldType._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-                   java.util.Objects.equals(mKey, other.mKey) &&
+                   java.util.Objects.equals(mId, other.mId) &&
                    java.util.Objects.equals(mRequirement, other.mRequirement) &&
                    java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mName, other.mName) &&
@@ -1320,7 +1357,7 @@ public class FieldType
             return java.util.Objects.hash(
                     FieldType.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.KEY, mKey,
+                    _Field.ID, mId,
                     _Field.REQUIREMENT, mRequirement,
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
@@ -1345,7 +1382,7 @@ public class FieldType
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setDocumentation((String) value); break;
-                case 2: setKey((int) value); break;
+                case 2: setId((int) value); break;
                 case 3: setRequirement((net.morimekta.providence.model.FieldRequirement) value); break;
                 case 4: setType((String) value); break;
                 case 5: setName((String) value); break;
@@ -1405,7 +1442,7 @@ public class FieldType
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearDocumentation(); break;
-                case 2: clearKey(); break;
+                case 2: clearId(); break;
                 case 3: clearRequirement(); break;
                 case 4: clearType(); break;
                 case 5: clearName(); break;
@@ -1431,7 +1468,7 @@ public class FieldType
                 java.util.LinkedList<String> missing = new java.util.LinkedList<>();
 
                 if (!optionals.get(1)) {
-                    missing.add("key");
+                    missing.add("id");
                 }
 
                 if (!optionals.get(3)) {
@@ -1473,10 +1510,10 @@ public class FieldType
                     }
                     case 2: {
                         if (type == 8) {
-                            mKey = reader.expectInt();
+                            mId = reader.expectInt();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.FieldType.key, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.FieldType.id, should be struct(12)");
                         }
                         break;
                     }

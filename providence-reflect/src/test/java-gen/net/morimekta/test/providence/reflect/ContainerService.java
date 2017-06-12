@@ -150,11 +150,19 @@ public class ContainerService {
             return response;
         }
 
-        public static Method forName(String name) {
+        public static Method findByName(String name) {
             switch (name) {
                 case "load": return LOAD;
             }
             return null;
+        }
+        @javax.annotation.Nonnull
+        public static Method methodForName(String name) {
+            Method method = findByName(name);
+            if (method == null) {
+                throw new IllegalArgumentException("No such method \"" + name + "\" in service providence.ContainerService");
+            }
+            return method;
         }
     }
 
@@ -165,7 +173,7 @@ public class ContainerService {
 
         @Override
         public Method getMethod(String name) {
-            return Method.forName(name);
+            return Method.findByName(name);
         }
     }
 
@@ -314,14 +322,14 @@ public class ContainerService {
             C(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "c", net.morimekta.test.providence.reflect.Containers.provider(), null),
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -329,7 +337,7 @@ public class ContainerService {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -353,19 +361,53 @@ public class ContainerService {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                     case 1: return _Field.C;
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                     case "c": return _Field.C;
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in providence.ContainerService.load.request");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in providence.ContainerService.load.request");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_load_request,_Field> provider() {
@@ -386,18 +428,21 @@ public class ContainerService {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 
@@ -854,14 +899,14 @@ public class ContainerService {
             EF(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ef", net.morimekta.test.providence.reflect.ExceptionFields.provider(), null),
             ;
 
-            private final int mKey;
+            private final int mId;
             private final net.morimekta.providence.descriptor.PRequirement mRequired;
             private final String mName;
             private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
             private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-                mKey = key;
+            _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mId = id;
                 mRequired = required;
                 mName = name;
                 mTypeProvider = typeProvider;
@@ -869,7 +914,7 @@ public class ContainerService {
             }
 
             @Override
-            public int getId() { return mKey; }
+            public int getId() { return mId; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -893,21 +938,55 @@ public class ContainerService {
                 return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
-            public static _Field forKey(int key) {
-                switch (key) {
+            /**
+             * @param id Field name
+             * @return The identified field or null
+             */
+            public static _Field findById(int id) {
+                switch (id) {
                     case 0: return _Field.SUCCESS;
                     case 1: return _Field.EF;
                 }
                 return null;
             }
 
-            public static _Field forName(String name) {
+            /**
+             * @param name Field name
+             * @return The named field or null
+             */
+            public static _Field findByName(String name) {
                 switch (name) {
                     case "success": return _Field.SUCCESS;
                     case "ef": return _Field.EF;
                 }
                 return null;
             }
+            /**
+             * @param id Field name
+             * @return The identified field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForId(int id) {
+                _Field field = findById(id);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field id " + id + " in providence.ContainerService.load.response");
+                }
+                return field;
+            }
+
+            /**
+             * @param name Field name
+             * @return The named field
+             * @throws IllegalArgumentException If no such field
+             */
+            public static _Field fieldForName(String name) {
+                _Field field = findByName(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No such field \"" + name + "\" in providence.ContainerService.load.response");
+                }
+                return field;
+            }
+
         }
 
         public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_load_response,_Field> provider() {
@@ -928,18 +1007,21 @@ public class ContainerService {
             }
 
             @Override
+            @javax.annotation.Nonnull
             public _Field[] getFields() {
                 return _Field.values();
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldByName(String name) {
-                return _Field.forName(name);
+                return _Field.findByName(name);
             }
 
             @Override
+            @javax.annotation.Nullable
             public _Field findFieldById(int id) {
-                return _Field.forKey(id);
+                return _Field.findById(id);
             }
         }
 

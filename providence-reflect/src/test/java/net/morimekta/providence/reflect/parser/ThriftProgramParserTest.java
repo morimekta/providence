@@ -106,18 +106,18 @@ public class ThriftProgramParserTest {
                            "      fields = [\n" +
                            "        {\n" +
                            "          documentation = \"Double line\\ncomment on field.\"\n" +
-                           "          key = 1\n" +
+                           "          id = 1\n" +
                            "          type = \"Operation\"\n" +
                            "          name = \"operation\"\n" +
                            "        },\n" +
                            "        {\n" +
                            "          documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
-                           "          key = 2\n" +
+                           "          id = 2\n" +
                            "          type = \"double\"\n" +
                            "          name = \"number\"\n" +
                            "        },\n" +
                            "        {\n" +
-                           "          key = 3\n" +
+                           "          id = 3\n" +
                            "          type = \"number.Imaginary\"\n" +
                            "          name = \"imaginary\"\n" +
                            "        }\n" +
@@ -129,12 +129,12 @@ public class ThriftProgramParserTest {
                            "      name = \"Operation\"\n" +
                            "      fields = [\n" +
                            "        {\n" +
-                           "          key = 1\n" +
+                           "          id = 1\n" +
                            "          type = \"Operator\"\n" +
                            "          name = \"operator\"\n" +
                            "        },\n" +
                            "        {\n" +
-                           "          key = 2\n" +
+                           "          id = 2\n" +
                            "          type = \"list<Operand>\"\n" +
                            "          name = \"operands\"\n" +
                            "        }\n" +
@@ -150,13 +150,13 @@ public class ThriftProgramParserTest {
                            "      name = \"CalculateException\"\n" +
                            "      fields = [\n" +
                            "        {\n" +
-                           "          key = 1\n" +
+                           "          id = 1\n" +
                            "          requirement = REQUIRED\n" +
                            "          type = \"string\"\n" +
                            "          name = \"message\"\n" +
                            "        },\n" +
                            "        {\n" +
-                           "          key = 2\n" +
+                           "          id = 2\n" +
                            "          type = \"Operation\"\n" +
                            "          name = \"operation\"\n" +
                            "        }\n" +
@@ -173,14 +173,14 @@ public class ThriftProgramParserTest {
                            "          name = \"calculate\"\n" +
                            "          params = [\n" +
                            "            {\n" +
-                           "              key = 1\n" +
+                           "              id = 1\n" +
                            "              type = \"Operation\"\n" +
                            "              name = \"op\"\n" +
                            "            }\n" +
                            "          ]\n" +
                            "          exceptions = [\n" +
                            "            {\n" +
-                           "              key = 1\n" +
+                           "              id = 1\n" +
                            "              type = \"CalculateException\"\n" +
                            "              name = \"ce\"\n" +
                            "            }\n" +
@@ -278,18 +278,18 @@ public class ThriftProgramParserTest {
                 "      fields = [\n" +
                 "        {\n" +
                 "          documentation = \"Double line\\ncomment on field.\"\n" +
-                "          key = 1\n" +
+                "          id = 1\n" +
                 "          type = \"Operation\"\n" +
                 "          name = \"operation\"\n" +
                 "        },\n" +
                 "        {\n" +
                 "          documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
-                "          key = 2\n" +
+                "          id = 2\n" +
                 "          type = \"double\"\n" +
                 "          name = \"number\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "          key = 3\n" +
+                "          id = 3\n" +
                 "          type = \"number.Imaginary\"\n" +
                 "          name = \"imaginary\"\n" +
                 "        }\n" +
@@ -301,12 +301,12 @@ public class ThriftProgramParserTest {
                 "      name = \"Operation\"\n" +
                 "      fields = [\n" +
                 "        {\n" +
-                "          key = 1\n" +
+                "          id = 1\n" +
                 "          type = \"Operator\"\n" +
                 "          name = \"operator\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "          key = 2\n" +
+                "          id = 2\n" +
                 "          type = \"list<Operand>\"\n" +
                 "          name = \"operands\"\n" +
                 "        }\n" +
@@ -322,13 +322,13 @@ public class ThriftProgramParserTest {
                 "      name = \"CalculateException\"\n" +
                 "      fields = [\n" +
                 "        {\n" +
-                "          key = 1\n" +
+                "          id = 1\n" +
                 "          requirement = REQUIRED\n" +
                 "          type = \"string\"\n" +
                 "          name = \"message\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "          key = 2\n" +
+                "          id = 2\n" +
                 "          type = \"Operation\"\n" +
                 "          name = \"operation\"\n" +
                 "        }\n" +
@@ -345,14 +345,14 @@ public class ThriftProgramParserTest {
                 "          name = \"calculate\"\n" +
                 "          params = [\n" +
                 "            {\n" +
-                "              key = 1\n" +
+                "              id = 1\n" +
                 "              type = \"Operation\"\n" +
                 "              name = \"op\"\n" +
                 "            }\n" +
                 "          ]\n" +
                 "          exceptions = [\n" +
                 "            {\n" +
-                "              key = 1\n" +
+                "              id = 1\n" +
                 "              type = \"CalculateException\"\n" +
                 "              name = \"ce\"\n" +
                 "            }\n" +
@@ -420,13 +420,13 @@ public class ThriftProgramParserTest {
                            "      name = \"Imaginary\"\n" +
                            "      fields = [\n" +
                            "        {\n" +
-                           "          key = 1\n" +
+                           "          id = 1\n" +
                            "          requirement = REQUIRED\n" +
                            "          type = \"real\"\n" +
                            "          name = \"v\"\n" +
                            "        },\n" +
                            "        {\n" +
-                           "          key = 2\n" +
+                           "          id = 2\n" +
                            "          type = \"double\"\n" +
                            "          name = \"i\"\n" +
                            "          default_value = \"0.0\"\n" +
@@ -490,7 +490,7 @@ public class ThriftProgramParserTest {
                                 "      name = \"S\"\n" +
                                 "      fields = [\n" +
                                 "        {\n" +
-                                "          key = 1\n" +
+                                "          id = 1\n" +
                                 "          type = \"bool\"\n" +
                                 "          name = \"val\"\n" +
                                 "          annotations = {\n" +
@@ -511,7 +511,7 @@ public class ThriftProgramParserTest {
                                 "          name = \"method\"\n" +
                                 "          params = [\n" +
                                 "            {\n" +
-                                "              key = 1\n" +
+                                "              id = 1\n" +
                                 "              type = \"i32\"\n" +
                                 "              name = \"param\"\n" +
                                 "              annotations = {\n" +
@@ -527,7 +527,7 @@ public class ThriftProgramParserTest {
                                 "          name = \"method2\"\n" +
                                 "          params = [\n" +
                                 "            {\n" +
-                                "              key = 1\n" +
+                                "              id = 1\n" +
                                 "              type = \"i32\"\n" +
                                 "              name = \"param\"\n" +
                                 "              annotations = {\n" +
@@ -537,7 +537,7 @@ public class ThriftProgramParserTest {
                                 "          ]\n" +
                                 "          exceptions = [\n" +
                                 "            {\n" +
-                                "              key = 1\n" +
+                                "              id = 1\n" +
                                 "              type = \"S\"\n" +
                                 "              name = \"e\"\n" +
                                 "              annotations = {\n" +
@@ -581,12 +581,12 @@ public class ThriftProgramParserTest {
                      "      name = \"AutoId\"\n" +
                      "      fields = [\n" +
                      "        {\n" +
-                     "          key = -1\n" +
+                     "          id = -1\n" +
                      "          type = \"string\"\n" +
                      "          name = \"message\"\n" +
                      "        },\n" +
                      "        {\n" +
-                     "          key = -2\n" +
+                     "          id = -2\n" +
                      "          type = \"i32\"\n" +
                      "          name = \"second\"\n" +
                      "        }\n" +
@@ -602,19 +602,19 @@ public class ThriftProgramParserTest {
                      "          name = \"method\"\n" +
                      "          params = [\n" +
                      "            {\n" +
-                     "              key = -1\n" +
+                     "              id = -1\n" +
                      "              type = \"i32\"\n" +
                      "              name = \"a\"\n" +
                      "            },\n" +
                      "            {\n" +
-                     "              key = -2\n" +
+                     "              id = -2\n" +
                      "              type = \"i32\"\n" +
                      "              name = \"b\"\n" +
                      "            }\n" +
                      "          ]\n" +
                      "          exceptions = [\n" +
                      "            {\n" +
-                     "              key = -1\n" +
+                     "              id = -1\n" +
                      "              type = \"AutoId\"\n" +
                      "              name = \"auto1\"\n" +
                      "            }\n" +
