@@ -155,7 +155,7 @@ public class ConstParser {
             }
             tokenizer.expectSymbol("message key-value sep", Token.kKeyValueSep);
 
-            builder.set(field.getKey(),
+            builder.set(field.getId(),
                         parseTypedValue(tokenizer.expect("parsing field value"), tokenizer, field.getDescriptor(), false));
 
             token = tokenizer.peek("optional line sep or message end");

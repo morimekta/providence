@@ -46,7 +46,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @SuppressWarnings("unchecked")
     public Builder merge(Message from) {
         for (PField field : descriptor().getFields()) {
-            int key = field.getKey();
+            int key = field.getId();
             if (from.has(key)) {
                 switch (field.getType()) {
                     case MESSAGE:
@@ -112,7 +112,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     public boolean valid() {
         for (PField field : descriptor().getFields()) {
             if (field.getRequirement() == PRequirement.REQUIRED) {
-                if (!values.containsKey(field.getKey())) {
+                if (!values.containsKey(field.getId())) {
                     return false;
                 }
             }
@@ -126,7 +126,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         LinkedList<String> missing = new LinkedList<>();
         for (PField field : descriptor().getFields()) {
             if (field.getRequirement() == PRequirement.REQUIRED) {
-                if (!values.containsKey(field.getKey())) {
+                if (!values.containsKey(field.getId())) {
                     missing.add(field.getName());
                 }
             }
@@ -196,19 +196,19 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             throw new IllegalArgumentException("Adding null value");
         }
         if (field.getType() == PType.LIST) {
-            List<Object> list = (List<Object>) values.get(field.getKey());
+            List<Object> list = (List<Object>) values.get(field.getId());
             if (list == null) {
                 list = new LinkedList<>();
-                values.put(field.getKey(), list);
+                values.put(field.getId(), list);
             }
             list.add(value);
         } else if (field.getType() == PType.SET) {
             ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
 
-            Set<Object> set = (Set<Object>) values.get(field.getKey());
+            Set<Object> set = (Set<Object>) values.get(field.getId());
             if (set == null) {
                 set = new LinkedHashSet<>();
-                values.put(field.getKey(), set);
+                values.put(field.getId(), set);
             }
             set.add(value);
         } else {
@@ -231,7 +231,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     Map<Integer, Object> getValueMap() {
         ImmutableMap.Builder<Integer, Object> out = ImmutableMap.builder();
         for (CField field : descriptor().getFields()) {
-            int key = field.getKey();
+            int key = field.getId();
             if (values.containsKey(key)) {
                 switch (field.getType()) {
                     case LIST:

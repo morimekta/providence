@@ -62,7 +62,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         Map<Integer, CField> fieldIdMap = new LinkedHashMap<>();
         Map<String, CField> fieldNameMap = new LinkedHashMap<>();
         for (CField field : fields) {
-            fieldIdMap.put(field.getKey(), field);
+            fieldIdMap.put(field.getId(), field);
             fieldNameMap.put(field.getName(), field);
         }
         this.fieldIdMap = fieldIdMap;

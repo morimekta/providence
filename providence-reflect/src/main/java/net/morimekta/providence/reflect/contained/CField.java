@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public class CField implements PField, CAnnotatedDescriptor {
     private final String              comment;
-    private final int                 key;
+    private final int                 id;
     private final PRequirement        requirement;
     private final PDescriptorProvider typeProvider;
     private final String              name;
@@ -48,14 +48,14 @@ public class CField implements PField, CAnnotatedDescriptor {
     private final Map<String, String> annotations;
 
     public CField(@Nullable String docs,
-                  int key,
+                  int id,
                   @Nonnull PRequirement requirement,
                   @Nonnull String name,
                   @Nonnull PDescriptorProvider typeProvider,
                   @Nullable PValueProvider defaultValue,
                   @Nullable Map<String, String> annotations) {
         this.comment = docs;
-        this.key = key;
+        this.id = id;
         this.requirement = requirement;
         this.typeProvider = typeProvider;
         this.name = name;
@@ -69,8 +69,8 @@ public class CField implements PField, CAnnotatedDescriptor {
     }
 
     @Override
-    public int getKey() {
-        return key;
+    public int getId() {
+        return id;
     }
 
     @Nonnull
@@ -143,7 +143,7 @@ public class CField implements PField, CAnnotatedDescriptor {
         StringBuilder builder = new StringBuilder();
         builder.append(PField.class.getSimpleName())
                .append('{')
-               .append(key)
+               .append(id)
                .append(": ");
         if (requirement != PRequirement.DEFAULT) {
             builder.append(requirement.label)
@@ -163,7 +163,7 @@ public class CField implements PField, CAnnotatedDescriptor {
             return false;
         }
         CField other = (CField) o;
-        return key == other.key &&
+        return id == other.id &&
                requirement == other.requirement &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
@@ -174,7 +174,7 @@ public class CField implements PField, CAnnotatedDescriptor {
 
     @Override
     public int hashCode() {
-        return Objects.hash(CField.class, key, requirement, name, getDefaultValue());
+        return Objects.hash(CField.class, id, requirement, name, getDefaultValue());
     }
 
     /**

@@ -153,7 +153,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
             return false;
         }
         for (PField field : getFields()) {
-            if (!field.equals(other.findFieldById(field.getKey()))) {
+            if (!field.equals(other.findFieldById(field.getId()))) {
                 return false;
             }
         }

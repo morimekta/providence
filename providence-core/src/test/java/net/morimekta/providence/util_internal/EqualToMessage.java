@@ -133,18 +133,18 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
 
         for (PField field : expected.descriptor()
                                        .getFields()) {
-            int key = field.getKey();
+            int key = field.getId();
             String fieldXPath = xPath.isEmpty() ? field.getName() : xPath + "." + field.getName();
 
             if (expected.has(key) != actual.has(key)) {
                 if (!expected.has(key)) {
                     mismatches.add(String.format("%s to be missing, but was %s",
                                                  fieldXPath,
-                                                 toString(actual.get(field.getKey()))));
+                                                 toString(actual.get(field.getId()))));
                 } else if (!actual.has(key)) {
                     mismatches.add(String.format("%s to be %s, but was missing",
                                                  fieldXPath,
-                                                 toString(expected.get(field.getKey()))));
+                                                 toString(expected.get(field.getId()))));
                 }
             } else if (!Objects.equals(expected.get(key), actual.get(key))) {
                 switch (field.getType()) {
@@ -170,8 +170,8 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                     default: {
                         mismatches.add(String.format("%s was %s, expected %s",
                                                      fieldXPath,
-                                                     toString(actual.get(field.getKey())),
-                                                     toString(expected.get(field.getKey()))));
+                                                     toString(actual.get(field.getId())),
+                                                     toString(expected.get(field.getId()))));
                         break;
                     }
                 }

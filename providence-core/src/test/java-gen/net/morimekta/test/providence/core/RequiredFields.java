@@ -467,7 +467,7 @@ public class RequiredFields
         }
 
         @Override
-        public int getKey() { return mKey; }
+        public int getId() { return mKey; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }

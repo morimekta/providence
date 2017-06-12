@@ -87,7 +87,7 @@ public class CUnion implements PUnion<CUnion,CField> {
 
     @Override
     public boolean has(int key) {
-        return unionField != null && unionField.getKey() == key && unionValue != null;
+        return unionField != null && unionField.getId() == key && unionValue != null;
     }
 
     @Override
@@ -197,9 +197,9 @@ public class CUnion implements PUnion<CUnion,CField> {
         @SuppressWarnings("unchecked")
         public Builder merge(CUnion from) {
             if (unionField == null || unionField != from.unionField()) {
-                set(from.unionField.getKey(), from.get(from.unionField.getKey()));
+                set(from.unionField.getId(), from.get(from.unionField.getId()));
             } else {
-                int key = unionField.getKey();
+                int key = unionField.getId();
                 switch (unionField.getType()) {
                     case MESSAGE: {
                         PMessageBuilder src;
@@ -285,7 +285,7 @@ public class CUnion implements PUnion<CUnion,CField> {
 
         @Override
         public boolean isSet(int key) {
-            return unionField != null && unionField.getKey() == key;
+            return unionField != null && unionField.getId() == key;
         }
 
         @Override

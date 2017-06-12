@@ -257,18 +257,18 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         writer.appendln(';')
               .newline();
 
-        writer.appendln("private final int mKey;")
+        writer.appendln("private final int mId;")
               .formatln("private final %s mRequired;", PRequirement.class.getName())
               .appendln("private final String mName;")
               .formatln("private final %s mTypeProvider;", PDescriptorProvider.class.getName())
               .formatln("private final %s<?> mDefaultValue;", PValueProvider.class.getName())
               .newline()
-              .formatln("_Field(int key, %s required, String name, %s typeProvider, %s<?> defaultValue) {",
+              .formatln("_Field(int id, %s required, String name, %s typeProvider, %s<?> defaultValue) {",
                         PRequirement.class.getName(),
                         PDescriptorProvider.class.getName(),
                         PValueProvider.class.getName())
               .begin()
-              .appendln("mKey = key;")
+              .appendln("mId = id;")
               .appendln("mRequired = required;")
               .appendln("mName = name;")
               .appendln("mTypeProvider = typeProvider;")
@@ -277,7 +277,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln('}')
               .newline();
         writer.appendln("@Override")
-              .appendln("public int getKey() { return mKey; }")
+              .appendln("public int getId() { return mId; }")
               .newline();
         writer.appendln("@Override")
               .formatln("public %s getRequirement() { return mRequired; }",

@@ -319,7 +319,7 @@ public class JsonSerializer extends Serializer {
 
                 if (field != null) {
                     Object value = parseTypedValue(tokenizer.expect("field value"), tokenizer, field.getDescriptor(), true);
-                    builder.set(field.getKey(), value);
+                    builder.set(field.getId(), value);
                 } else {
                     consume(tokenizer.expect("field value"), tokenizer);
                 }
@@ -660,9 +660,9 @@ public class JsonSerializer extends Serializer {
             writer.object();
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                Object value = message.get(field.getKey());
+                Object value = message.get(field.getId());
                 if (IdType.ID.equals(fieldIdType)) {
-                    writer.key(field.getKey());
+                    writer.key(field.getId());
                 } else {
                     writer.keyUnescaped(field.getName());
                 }
@@ -673,8 +673,8 @@ public class JsonSerializer extends Serializer {
             if (isCompact(message)) {
                 writer.array();
                 for (PField field : type.getFields()) {
-                    if (message.has(field.getKey())) {
-                        appendTypedValue(writer, field.getDescriptor(), message.get(field.getKey()));
+                    if (message.has(field.getId())) {
+                        appendTypedValue(writer, field.getDescriptor(), message.get(field.getId()));
                     } else {
                         break;
                     }
@@ -683,10 +683,10 @@ public class JsonSerializer extends Serializer {
             } else {
                 writer.object();
                 for (PField field : type.getFields()) {
-                    if (message.has(field.getKey())) {
-                        Object value = message.get(field.getKey());
+                    if (message.has(field.getId())) {
+                        Object value = message.get(field.getId());
                         if (IdType.ID.equals(fieldIdType)) {
-                            writer.key(field.getKey());
+                            writer.key(field.getId());
                         } else {
                             writer.keyUnescaped(field.getName());
                         }

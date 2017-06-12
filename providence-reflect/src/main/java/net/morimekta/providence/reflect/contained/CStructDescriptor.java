@@ -62,7 +62,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         Map<Integer, CField> fieldIdMap = new LinkedHashMap<>();
         Map<String, CField> fieldNameMap = new LinkedHashMap<>();
         for (CField field : fields) {
-            fieldIdMap.put(field.getKey(), field);
+            fieldIdMap.put(field.getId(), field);
             fieldNameMap.put(field.getName(), field);
         }
         this.fieldIdMap = fieldIdMap;
@@ -166,7 +166,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         int next = 1;
         boolean hasOptional = false;
         for (CField field : fields) {
-            if (field.getKey() != next) {
+            if (field.getId() != next) {
                 return false;
             }
             if (hasOptional && field.getRequirement() == PRequirement.REQUIRED) {

@@ -381,7 +381,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             }
 
             @Override
-            public int getKey() { return mKey; }
+            public int getId() { return mKey; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -771,7 +771,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             }
 
             @Override
-            public int getKey() { return mKey; }
+            public int getId() { return mKey; }
 
             @Override
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }

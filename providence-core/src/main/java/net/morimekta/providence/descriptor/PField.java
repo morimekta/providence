@@ -33,7 +33,7 @@ public interface PField {
     /**
      * @return The field numeric ID or key.
      */
-    int getKey();
+    int getId();
 
     /**
      * @return How the field is required for validity.
@@ -82,7 +82,7 @@ public interface PField {
     static String asString(PField field) {
         StringBuilder builder = new StringBuilder();
         builder.append("field(")
-               .append(field.getKey())
+               .append(field.getId())
                .append(": ");
         if (field.getRequirement() != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
             builder.append(field.getRequirement().label).append(" ");

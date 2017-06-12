@@ -154,7 +154,7 @@ public class ProvidenceBuilderTest {
     public void testMutator() {
         Imaginary imag = (Imaginary) Operand.builder()
                                             .mutator(3)
-                                            .set(Imaginary._Field.I.getKey(), 12.6)
+                                            .set(Imaginary._Field.I.getId(), 12.6)
                                             .build();
         assertEquals(Imaginary.builder()
                               .setI(12.6)
@@ -164,7 +164,7 @@ public class ProvidenceBuilderTest {
 
         Operand._Builder builder = Operand.builder();
         builder.mutableImaginary()
-               .set(Imaginary._Field.I.getKey(), 12.6);
+               .set(Imaginary._Field.I.getId(), 12.6);
 
         assertEquals(expected, builder.build());
     }

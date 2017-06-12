@@ -74,37 +74,37 @@ public class TProtocolSerializerTest {
             ThriftField t_field = t_union.getSetField();
             PField p_field = p_union.unionField();
 
-            assertEquals(p_field.getKey(), t_field.getThriftFieldId());
+            assertEquals(p_field.getId(), t_field.getThriftFieldId());
         } else {
             for (PField field : providence.descriptor()
                                              .getFields()) {
-                ThriftField thriftField = thrift.fieldForId(field.getKey());
+                ThriftField thriftField = thrift.fieldForId(field.getId());
 
                 String fieldPath = (prefix.isEmpty() ? "" : prefix + ".") + field.getName();
 
-                assertEquals("has " + fieldPath, providence.has(field.getKey()), thrift.isSet(thriftField));
-                if (providence.has(field.getKey())) {
+                assertEquals("has " + fieldPath, providence.has(field.getId()), thrift.isSet(thriftField));
+                if (providence.has(field.getId())) {
                     switch (field.getType()) {
                         case MESSAGE:
                             assertConsistent(fieldPath,
-                                             (PMessage) providence.get(field.getKey()),
+                                             (PMessage) providence.get(field.getId()),
                                              (TBase) thrift.getFieldValue(thriftField));
                             break;
                         case ENUM: {
-                            PEnumValue<?> pe = (PEnumValue) providence.get(field.getKey());
+                            PEnumValue<?> pe = (PEnumValue) providence.get(field.getId());
                             TEnum te = (TEnum) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath, pe.asInteger(), te.getValue());
                             break;
                         }
                         case BINARY: {
-                            Binary pBin = (Binary) providence.get(field.getKey());
+                            Binary pBin = (Binary) providence.get(field.getId());
                             byte[] tBytes = (byte[]) thrift.getFieldValue(thriftField);
                             Binary tBin = Binary.wrap(tBytes);
                             assertEquals(fieldPath, pBin, tBin);
                             break;
                         }
                         case MAP: {
-                            Map pm = (Map) providence.get(field.getKey());
+                            Map pm = (Map) providence.get(field.getId());
                             Map tm = (Map) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath + " size", pm.size(), tm.size());
 
@@ -112,7 +112,7 @@ public class TProtocolSerializerTest {
                             break;
                         }
                         case SET: {
-                            Set ps = (Set) providence.get(field.getKey());
+                            Set ps = (Set) providence.get(field.getId());
                             Set ts = (Set) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath + " size", ps.size(), ts.size());
 
@@ -120,7 +120,7 @@ public class TProtocolSerializerTest {
                             break;
                         }
                         case LIST: {
-                            List pl = (List) providence.get(field.getKey());
+                            List pl = (List) providence.get(field.getId());
                             List tl = (List) thrift.getFieldValue(thriftField);
 
                             assertEquals(fieldPath + " size", pl.size(), tl.size());
@@ -152,7 +152,7 @@ public class TProtocolSerializerTest {
                             break;
                         }
                         default:
-                            assertEquals(fieldPath, providence.get(field.getKey()), thrift.getFieldValue(thriftField));
+                            assertEquals(fieldPath, providence.get(field.getId()), thrift.getFieldValue(thriftField));
                             break;
                     }
                 }

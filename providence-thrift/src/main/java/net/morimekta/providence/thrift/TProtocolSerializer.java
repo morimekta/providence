@@ -211,15 +211,15 @@ class TProtocolSerializer extends Serializer {
                                                      .getQualifiedName()));
 
         for (PField field : type.getFields()) {
-            if (!message.has(field.getKey())) {
+            if (!message.has(field.getId())) {
                 continue;
             }
 
             protocol.writeFieldBegin(new TField(field.getName(),
                                                 forType(field.getDescriptor().getType()),
-                                                (short) field.getKey()));
+                                                (short) field.getId()));
 
-            writeTypedValue(message.get(field.getKey()), field.getDescriptor(), protocol);
+            writeTypedValue(message.get(field.getId()), field.getDescriptor(), protocol);
 
             protocol.writeFieldEnd();
         }
@@ -252,7 +252,7 @@ class TProtocolSerializer extends Serializer {
 
                 Object value = readTypedValue(f.type, field.getDescriptor(), protocol, true);
                 if (value != null) {
-                    builder.set(field.getKey(), value);
+                    builder.set(field.getId(), value);
                 }
             } else {
                 TProtocolUtil.skip(protocol, f.type);

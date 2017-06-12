@@ -80,7 +80,7 @@ public class JField {
     }
 
     public int id() {
-        return field.getKey();
+        return field.getId();
     }
 
     public String name() {

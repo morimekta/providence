@@ -120,7 +120,7 @@ public class PStructDescriptorTest {
         @Override
         public PField findFieldById(int id) {
             for (PField field : fields) {
-                if (field.getKey() == id) {
+                if (field.getId() == id) {
                     return field;
                 }
             }

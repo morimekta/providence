@@ -193,13 +193,13 @@ public class FastBinarySerializer extends Serializer {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
+                len += writeFieldValue(out, field.getId(), field.getDescriptor(), message.get(field.getId()));
             }
         } else {
             for (PField field : message.descriptor()
                                           .getFields()) {
-                if (message.has(field.getKey())) {
-                    len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
+                if (message.has(field.getId())) {
+                    len += writeFieldValue(out, field.getId(), field.getDescriptor(), message.get(field.getId()));
                 }
             }
         }
@@ -228,7 +228,7 @@ public class FastBinarySerializer extends Serializer {
             Field field = descriptor.findFieldById(id);
             if (field != null) {
                 Object value = readFieldValue(in, type, field.getDescriptor());
-                builder.set(field.getKey(), value);
+                builder.set(field.getId(), value);
             } else {
                 readFieldValue(in, type, null);
             }

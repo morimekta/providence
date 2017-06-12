@@ -150,7 +150,7 @@ public class LogFormatter {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                Object o = message.get(field.getKey());
+                Object o = message.get(field.getId());
 
                 writer.appendln()
                       .append(field.getName())
@@ -162,13 +162,13 @@ public class LogFormatter {
         } else {
             boolean first = true;
             for (PField field : type.getFields()) {
-                if (message.has(field.getKey())) {
+                if (message.has(field.getId())) {
                     if (first) {
                         first = false;
                     } else {
                         writer.append(entrySep);
                     }
-                    Object o = message.get(field.getKey());
+                    Object o = message.get(field.getId());
 
                     writer.appendln()
                           .append(field.getName())

@@ -86,7 +86,7 @@ public class ProvidenceConfigUtil {
             descriptor = (PMessageDescriptor) fieldDesc;
 
             if (message != null) {
-                message = (PMessage) message.get(field.getKey());
+                message = (PMessage) message.get(field.getId());
             }
         }
 
@@ -95,11 +95,11 @@ public class ProvidenceConfigUtil {
             throw new KeyNotFoundException("Message " + descriptor.getQualifiedName() + " has no field named " + sub);
         }
 
-        if (message == null || !message.has(field.getKey())) {
+        if (message == null || !message.has(field.getId())) {
             return asFieldType(field, defValue);
         }
 
-        return message.get(field.getKey());
+        return message.get(field.getId());
     }
 
     /**
@@ -110,11 +110,11 @@ public class ProvidenceConfigUtil {
      */
     static void buildKeySet(String prefix, PMessage message, Set<String> valueKeySet) {
         for (PField field : message.descriptor().getFields()) {
-            if (message.has(field.getKey())) {
+            if (message.has(field.getId())) {
                 String key = makeKey(prefix, field);
 
                 if (field.getType() == PType.MESSAGE) {
-                    buildKeySet(key, (PMessage) message.get(field.getKey()), valueKeySet);
+                    buildKeySet(key, (PMessage) message.get(field.getId()), valueKeySet);
                 } else {
                     valueKeySet.add(key);
                 }

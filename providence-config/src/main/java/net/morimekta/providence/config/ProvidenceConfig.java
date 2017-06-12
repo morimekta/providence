@@ -781,7 +781,7 @@ public class ProvidenceConfig {
                     token = tokenizer.expect("reference or message start");
                     if (UNDEFINED.equals(token.asString())) {
                         // unset.
-                        builder.clear(field.getKey());
+                        builder.clear(field.getId());
                         context.setReference(reference, null);
 
                         // special casing this, as we don't want to duplicate the parse line below.
@@ -814,7 +814,7 @@ public class ProvidenceConfig {
                         // if the following symbol is *not* message start,
                         // we assume a new field or end of current message.
                         if (!token.isSymbol(Token.kMessageStart)) {
-                            builder.set(field.getKey(), context.setReference(reference, bld.build()));
+                            builder.set(field.getId(), context.setReference(reference, bld.build()));
                             continue;
                         }
                     } else if (!token.isSymbol(Token.kMessageStart)) {
@@ -824,9 +824,9 @@ public class ProvidenceConfig {
                     }
                 } else {
                     // extend in-line.
-                    bld = builder.mutator(field.getKey());
+                    bld = builder.mutator(field.getId());
                 }
-                builder.set(field.getKey(), context.setReference(reference, parseMessage(tokenizer, context, bld)));
+                builder.set(field.getId(), context.setReference(reference, parseMessage(tokenizer, context, bld)));
             } else if (field.getType() == PType.MAP) {
                 // maps can be extended the same way as
                 token = tokenizer.expect("field sep or value start");
@@ -840,7 +840,7 @@ public class ProvidenceConfig {
                 if (token.isSymbol(Token.kFieldValueSep)) {
                     token = tokenizer.expect("field id or start");
                     if (UNDEFINED.equals(token.asString())) {
-                        builder.clear(field.getKey());
+                        builder.clear(field.getId());
                         context.setReference(reference, null);
 
                         token = tokenizer.expect("message end or field");
@@ -855,14 +855,14 @@ public class ProvidenceConfig {
 
                         token = tokenizer.expect("map start or next field");
                         if (!token.isSymbol(Token.kMessageStart)) {
-                            builder.set(field.getKey(), context.setReference(reference, baseValue));
+                            builder.set(field.getId(), context.setReference(reference, baseValue));
                             continue;
                         } else if (baseValue == null) {
                             baseValue = new LinkedHashMap<>();
                         }
                     }
                 } else {
-                    baseValue.putAll((Map) builder.build().get(field.getKey()));
+                    baseValue.putAll((Map) builder.build().get(field.getId()));
                 }
 
                 if (!token.isSymbol(Token.kMessageStart)) {
@@ -870,7 +870,7 @@ public class ProvidenceConfig {
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
                 Map map =  parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue);
-                builder.set(field.getKey(), context.setReference(reference, map));
+                builder.set(field.getId(), context.setReference(reference, map));
             } else {
                 String reference = null;
                 // Simple fields *must* have the '=' separation, may have '&' reference.
@@ -881,11 +881,11 @@ public class ProvidenceConfig {
                 }
                 token = tokenizer.expect("field value");
                 if (UNDEFINED.equals(token.asString())) {
-                    builder.clear(field.getKey());
+                    builder.clear(field.getId());
                     context.setReference(reference, null);
                 } else {
                     Object value = parseFieldValue(token, tokenizer, context, field.getDescriptor());
-                    builder.set(field.getKey(), context.setReference(reference, value));
+                    builder.set(field.getId(), context.setReference(reference, value));
                 }
             }
 

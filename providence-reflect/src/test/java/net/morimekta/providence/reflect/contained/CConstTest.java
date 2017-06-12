@@ -20,7 +20,7 @@ public class CConstTest {
 
         assertThat(c.getName(), is("name"));
         assertThat(c.getDocumentation(), is("comment"));
-        assertThat(c.getKey(), is(-1));
+        assertThat(c.getId(), is(-1));
         assertThat(c.getType(), is(PType.STRING));
         assertThat(c.getDefaultValue(), is("value"));
     }

@@ -138,9 +138,9 @@ public class ValueBuilder {
                 int i = 0;
                 for (CField field : ((CMessageDescriptor) type).getFields()) {
                     JField fld = new JField(field, helper, i++);
-                    if (message.has(field.getKey())) {
+                    if (message.has(field.getId())) {
                         writer.formatln(".%s(", fld.setter());
-                        appendTypedValue(message.get(field.getKey()), field.getDescriptor());
+                        appendTypedValue(message.get(field.getId()), field.getDescriptor());
                         writer.append(")");
                     }
                 }

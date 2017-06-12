@@ -152,12 +152,12 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                                                                                      .getBytes(StandardCharsets.UTF_8)),
                                                     true);
                 if (UNDEFINED.equals(override.getValue())) {
-                    containedBuilder.clear(field.getKey());
+                    containedBuilder.clear(field.getId());
                 } else if (field.getType() == PType.STRING) {
                     if (tokenizer.hasNext()) {
                         Token next = tokenizer.next();
                         if (next.isStringLiteral()) {
-                            containedBuilder.set(field.getKey(), next.decodeLiteral(strict));
+                            containedBuilder.set(field.getId(), next.decodeLiteral(strict));
                             if (tokenizer.hasNext()) {
                                 throw new ConfigException("Garbage after string value [%s]: '%s'",
                                                           override.getKey(),
@@ -166,9 +166,9 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                             continue;
                         }
                     }
-                    containedBuilder.set(field.getKey(), override.getValue());
+                    containedBuilder.set(field.getId(), override.getValue());
                 } else {
-                    containedBuilder.set(field.getKey(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
+                    containedBuilder.set(field.getId(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
                     if (tokenizer.hasNext()) {
                         throw new ConfigException("Garbage after %s value [%s]: '%s'",
                                                   field.getType(),
@@ -213,7 +213,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                                           descriptor.getQualifiedName(),
                                           String.join(".", path));
             }
-            builder = builder.mutator(field.getKey());
+            builder = builder.mutator(field.getId());
         }
         return builder;
     }

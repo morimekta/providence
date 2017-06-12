@@ -317,7 +317,7 @@ public class PrettySerializer extends Serializer {
             if (field == null) {
                 consumeValue(tokenizer, tokenizer.expect("field value"));
             } else {
-                builder.set(field.getKey(), readFieldValue(
+                builder.set(field.getId(), readFieldValue(
                         tokenizer, tokenizer.expect("field value"), field.getDescriptor()));
             }
 
@@ -552,7 +552,7 @@ public class PrettySerializer extends Serializer {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                Object o = message.get(field.getKey());
+                Object o = message.get(field.getId());
 
                 if (enclose) {
                     builder.appendln();
@@ -567,7 +567,7 @@ public class PrettySerializer extends Serializer {
         } else {
             boolean first = true;
             for (PField field : type.getFields()) {
-                if (message.has(field.getKey())) {
+                if (message.has(field.getId())) {
                     if (first) {
                         first = false;
                         if (enclose) {
@@ -577,7 +577,7 @@ public class PrettySerializer extends Serializer {
                         builder.append(entrySep);
                         builder.appendln();
                     }
-                    Object o = message.get(field.getKey());
+                    Object o = message.get(field.getId());
 
                     builder.append(field.getName())
                            .append(space)

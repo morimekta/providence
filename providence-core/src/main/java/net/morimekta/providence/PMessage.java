@@ -45,7 +45,7 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      * @return Whether the field is present.
      */
     default boolean has(@Nonnull Field field) {
-        return has(field.getKey());
+        return has(field.getId());
     }
 
     /**
@@ -59,7 +59,7 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      * @return Whether the field is present.
      */
     default int num(@Nonnull Field field) {
-        return num(field.getKey());
+        return num(field.getId());
     }
 
     /**
@@ -73,7 +73,7 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      * @return Whether the field is present.
      */
     default Object get(@Nonnull Field field) {
-        return get(field.getKey());
+        return get(field.getId());
     }
 
     /**

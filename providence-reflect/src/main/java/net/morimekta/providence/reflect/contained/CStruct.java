@@ -61,7 +61,7 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
         }
         boolean missing = false;
         for (CField field : descriptor.getFields()) {
-            if (has(field.getKey())) {
+            if (has(field.getId())) {
                 if (missing) {
                     return false;
                 }
@@ -133,7 +133,7 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
         }
 
         for (CField field : a.descriptor().getFields()) {
-            int id = field.getKey();
+            int id = field.getId();
             if (a.has(id) != b.has(id)) {
                 return false;
             }
@@ -195,12 +195,12 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
         }
         for (PField field : m1.descriptor()
                               .getFields()) {
-            c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
+            c = Boolean.compare(m1.has(field.getId()), m2.has(field.getId()));
             if (c != 0) {
                 return c;
             }
-            if (m1.has(field.getKey())) {
-                c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
+            if (m1.has(field.getId())) {
+                c = compare((Comparable) m1.get(field.getId()), (Comparable) m2.get(field.getId()));
                 if (c != 0) {
                     return c;
                 }

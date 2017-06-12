@@ -100,7 +100,7 @@ public class BinaryFormatUtils {
                 PField field = descriptor.findFieldById(fieldInfo.getId());
                 if (field != null) {
                     Object value = readFieldValue(input, fieldInfo, field.getDescriptor(), strict);
-                    builder.set(field.getKey(), value);
+                    builder.set(field.getId(), value);
                 } else {
                     readFieldValue(input, fieldInfo, null, false);
                 }
@@ -327,17 +327,17 @@ public class BinaryFormatUtils {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getKey());
+                len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getId());
                 len += writeFieldValue(writer,
-                                       message.get(field.getKey()),
+                                       message.get(field.getId()),
                                        field.getDescriptor());
             }
         } else {
             for (PField field : message.descriptor().getFields()) {
-                if (message.has(field.getKey())) {
-                    len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getKey());
+                if (message.has(field.getId())) {
+                    len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getId());
                     len += writeFieldValue(writer,
-                                           message.get(field.getKey()),
+                                           message.get(field.getId()),
                                            field.getDescriptor());
                 }
             }

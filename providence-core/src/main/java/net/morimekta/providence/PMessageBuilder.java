@@ -72,7 +72,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      */
     @Nonnull
     public PMessageBuilder<T, F> set(@Nonnull F field, Object value) {
-        return set(field.getKey(), value);
+        return set(field.getId(), value);
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return True if the field is set.
      */
     public boolean isSet(@Nonnull F field) {
-        return isSet(field.getKey());
+        return isSet(field.getId());
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return True if the field is modified.
      */
     public boolean isModified(@Nonnull F field) {
-        return isModified(field.getKey());
+        return isModified(field.getId());
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      */
     @Nonnull
     public PMessageBuilder<T, F> addTo(@Nonnull F field, Object value) {
-        return addTo(field.getKey(), value);
+        return addTo(field.getId(), value);
     }
 
     /**
@@ -179,7 +179,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      */
     @Nonnull
     public PMessageBuilder<T, F> clear(@Nonnull F field) {
-        return clear(field.getKey());
+        return clear(field.getId());
     }
 
 
@@ -217,7 +217,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      */
     @Nonnull
     public PMessageBuilder mutator(@Nonnull F field) {
-        return mutator(field.getKey());
+        return mutator(field.getId());
     }
 
     /**

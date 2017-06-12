@@ -100,7 +100,7 @@ public class JServiceMethod {
 
         int idx = 0;
         for (CField field : method.getResponseType().getFields()) {
-            if (field.getKey() != 0) {
+            if (field.getId() != 0) {
                 ret.add(new JField(field, helper, idx++));
             }
         }

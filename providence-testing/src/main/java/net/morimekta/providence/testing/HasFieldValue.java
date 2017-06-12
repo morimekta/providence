@@ -65,10 +65,10 @@ public class HasFieldValue<Message extends PMessage<Message, Field>, Field exten
             if (field == null) {
                 return false;
             }
-            if (!actual.has(field.getKey())) {
+            if (!actual.has(field.getId())) {
                 return false;
             }
-            o = actual.get(field.getKey());
+            o = actual.get(field.getId());
         }
         return true;
     }
@@ -104,12 +104,12 @@ public class HasFieldValue<Message extends PMessage<Message, Field>, Field exten
                     mismatchDescription.appendText("field path \'" + path + "\' is not valid");
                     return;
                 }
-                if (!actual.has(field.getKey())) {
+                if (!actual.has(field.getId())) {
                     mismatchDescription.appendText("field \'" + path + "\' is missing");
                     return;
                 }
 
-                o = actual.get(field.getKey());
+                o = actual.get(field.getId());
             }
         }
     }
