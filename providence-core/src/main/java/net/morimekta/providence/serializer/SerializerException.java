@@ -98,17 +98,17 @@ public class SerializerException extends IOException implements Stringable {
         return MoreObjects.toStringHelper(getClass())
                           .omitNullValues()
                           .addValue(getMessage())
-                          .add("method", getMethodName())
-                          .add("type", getCallType())
-                          .add("seq", getSequenceNo())
-                          .add("exception", getExceptionType())
+                          .add("method", methodName)
+                          .add("type", callType)
+                          .add("seq", methodName == null ? null : sequenceNo)
+                          .add("exception", exceptionType)
                           .toString();
     }
 
     @Override
     public String asString() {
         if (methodName != null) {
-            return "Error in " + methodName + ": " + getMessage();
+            return "Error in " + methodName + "(): " + getMessage();
         } else {
             return "Error: " + getMessage();
         }
