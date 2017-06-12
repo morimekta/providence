@@ -26,7 +26,7 @@ public class ConfigHelpTest extends ConfigTestBase {
 
     @Test
     public void testHelp() {
-        sut.run("--help");
+        sut.run("--help", "--verbose");
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(

@@ -3,7 +3,7 @@ package net.morimekta.providence.tools.config.cmd;
 import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.SubCommandSet;
-import net.morimekta.providence.config.ProvidenceConfig;
+import net.morimekta.providence.tools.config.ConfigOptions;
 
 /**
  * Simple help command.
@@ -21,7 +21,7 @@ public class Help implements Command {
     }
 
     @Override
-    public void execute(ProvidenceConfig config) {
+    public void execute(ConfigOptions config) {
         if (command == null) {
             System.out.println(parent.getDescription() + " - " + parent.getVersion());
             System.out.println("Usage: " + parent.getSingleLineUsage());

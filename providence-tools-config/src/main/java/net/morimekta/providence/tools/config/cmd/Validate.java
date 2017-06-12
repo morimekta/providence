@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Print an overview over the available params for the config.
  */
-public class Validate implements Command {
+public class Validate extends CommandBase {
     protected File file = null;
 
     @Override

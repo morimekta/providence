@@ -21,6 +21,7 @@
 
 package net.morimekta.providence.tools.common.options;
 
+import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
@@ -29,8 +30,13 @@ import net.morimekta.console.util.STTY;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static net.morimekta.console.util.Parser.file;
+import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
+import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
 /**
@@ -87,4 +93,21 @@ public class CommonOptions {
     private void setRc(File file) {
         this.rc = file;
     }
+
+    public Map<String, File> getIncludeMap(List<File> includes) throws IOException {
+        Map<String, File> includeMap = new HashMap<>();
+        if (includes.isEmpty()) {
+            collectConfigIncludes(getRc(), includeMap);
+        }
+        if (includes.isEmpty()) {
+            throw new ArgumentException("No includes, use --include/-I or update ~/.pvdrc");
+        }
+        if (includeMap.isEmpty()) {
+            for (File file : includes) {
+                collectIncludes(file, includeMap);
+            }
+        }
+        return includeMap;
+    }
+
 }

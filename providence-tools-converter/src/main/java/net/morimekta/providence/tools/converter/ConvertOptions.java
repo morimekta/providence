@@ -42,7 +42,6 @@ import net.morimekta.providence.tools.common.options.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -110,21 +109,9 @@ public class ConvertOptions extends CommonOptions {
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
     PMessageDescriptor<Message, Field> getDefinition() throws ParseException, IOException {
+        Map<String, File> includeMap = getIncludeMap(includes);
         if (type.isEmpty()) {
-            throw new ArgumentException("Input type.");
-        }
-
-        Map<String, File> includeMap = new HashMap<>();
-        if (includes.isEmpty()) {
-            collectConfigIncludes(getRc(), includeMap);
-        }
-        if (includeMap.isEmpty()) {
-            if (includes.isEmpty()) {
-                includes.add(new File("."));
-            }
-            for (File file : includes) {
-                collectIncludes(file, includeMap);
-            }
+            throw new ArgumentException("Missing input type name");
         }
 
         Set<File> rootSet = new TreeSet<File>();

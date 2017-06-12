@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Print the resulting config.
  */
-public class Print implements Command {
+public class Print extends CommandBase {
     private Serializer serializer = new PrettySerializer().config();
     private File       file       = null;
 

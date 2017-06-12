@@ -21,19 +21,15 @@
 
 package net.morimekta.providence.tools.config;
 
-import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
 import net.morimekta.console.args.SubCommand;
 import net.morimekta.console.args.SubCommandSet;
 import net.morimekta.console.util.STTY;
-import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.tools.common.options.CommonOptions;
-import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
 import net.morimekta.providence.tools.config.cmd.Print;
@@ -45,12 +41,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static net.morimekta.console.util.Parser.dir;
-import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
-import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
  * ConfigOptions used by the providence converter.
@@ -100,28 +93,14 @@ public class ConfigOptions extends CommonOptions {
     }
 
     public void execute() throws IOException {
-        Map<String, File> includeMap = new TreeMap<>();
-        if (includes.isEmpty()) {
-            collectConfigIncludes(getRc(), includeMap);
-        }
-        if (includeMap.isEmpty()) {
-            if (includes.isEmpty()) {
-                includes.add(new File("."));
-            }
-            for (File file : includes) {
-                collectIncludes(file, includeMap);
-            }
-        }
+        command.execute(this);
+    }
 
-        Set<File> rootSet = includeMap.values()
-                                      .stream()
-                                      .map(File::getParentFile)
-                                      .collect(Collectors.toSet());
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
-        for (File file : includeMap.values()) {
-            loader.load(file);
-        }
+    public boolean isStrict() {
+        return strict;
+    }
 
-        command.execute(new ProvidenceConfig(loader.getRegistry(), strict));
+    public List<File> getIncludes() {
+        return includes;
     }
 }

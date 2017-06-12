@@ -160,22 +160,9 @@ public class RPCOptions extends CommonOptions {
     }
 
     public PService getDefinition() throws ParseException, IOException {
-
+        Map<String, File> includeMap = getIncludeMap(includes);
         if (service.isEmpty()) {
-            throw new ArgumentException( "Input type.");
-        }
-
-        Map<String, File> includeMap = new HashMap<>();
-        if (includes.isEmpty()) {
-            collectConfigIncludes(getRc(), includeMap);
-        }
-        if (includeMap.isEmpty()) {
-            if (includes.isEmpty()) {
-                includes.add(new File("."));
-            }
-            for (File file : includes) {
-                collectIncludes(file, includeMap);
-            }
+            throw new ArgumentException("Missing service type name");
         }
 
         Set<File> rootSet = new TreeSet<File>();
