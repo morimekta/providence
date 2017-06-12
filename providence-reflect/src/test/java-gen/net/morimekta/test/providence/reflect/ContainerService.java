@@ -197,7 +197,7 @@ public class ContainerService {
             implements net.morimekta.providence.PMessage<_load_request,_load_request._Field>,
                        Comparable<_load_request>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 642175186578463330L;
 
         private final net.morimekta.test.providence.reflect.Containers mC;
@@ -305,7 +305,7 @@ public class ContainerService {
             if (hasC()) {
                 length += writer.writeByte((byte) 12);
                 length += writer.writeShort((short) 1);
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mC);
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mC);
             }
 
             length += writer.writeByte((byte) 0);
@@ -467,7 +467,7 @@ public class ContainerService {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_load_request,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
@@ -680,15 +680,15 @@ public class ContainerService {
                     switch (field) {
                         case 1: {
                             if (type == 12) {
-                                mC = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.Containers.kDescriptor, strict);
+                                mC = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.Containers.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.request.c, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.ContainerService.load.request.c, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -710,7 +710,7 @@ public class ContainerService {
             implements net.morimekta.providence.PUnion<_load_response,_load_response._Field>,
                        Comparable<_load_response>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 4669041823902453548L;
 
         private final net.morimekta.test.providence.reflect.CompactFields mSuccess;
@@ -872,13 +872,13 @@ public class ContainerService {
                     case SUCCESS: {
                         length += writer.writeByte((byte) 12);
                         length += writer.writeShort((short) 0);
-                        length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mSuccess);
+                        length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mSuccess);
                         break;
                     }
                     case EF: {
                         length += writer.writeByte((byte) 12);
                         length += writer.writeShort((short) 1);
-                        length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mEf);
+                        length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mEf);
                         break;
                     }
                     default: break;
@@ -1046,7 +1046,7 @@ public class ContainerService {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_load_response,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private _Field tUnionField;
 
             private boolean modified;
@@ -1351,24 +1351,24 @@ public class ContainerService {
                     switch (field) {
                         case 0: {
                             if (type == 12) {
-                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
+                                mSuccess = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.ContainerService.load.response.success, should be struct(12)");
                             }
                             break;
                         }
                         case 1: {
                             if (type == 12) {
-                                mEf = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.ExceptionFields.kDescriptor, strict);
+                                mEf = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.ExceptionFields.kDescriptor, strict);
                                 tUnionField = _Field.EF;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.ef, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.ContainerService.load.response.ef, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }

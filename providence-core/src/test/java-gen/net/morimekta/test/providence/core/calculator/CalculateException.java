@@ -7,7 +7,7 @@ public class CalculateException
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
                    net.morimekta.providence.PException,
                    Comparable<CalculateException>,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -3144631929815376595L;
 
     private final static String kDefaultMessage = "";
@@ -184,7 +184,7 @@ public class CalculateException
         if (hasOperation()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 2);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOperation);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mOperation);
         }
 
         length += writer.writeByte((byte) 0);
@@ -349,7 +349,7 @@ public class CalculateException
 
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private Throwable cause;
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
@@ -663,21 +663,21 @@ public class CalculateException
                             mMessage = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.CalculateException.message, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.CalculateException.message, should be struct(12)");
                         }
                         break;
                     }
                     case 2: {
                         if (type == 12) {
-                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
+                            mOperation = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.CalculateException.operation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.CalculateException.operation, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

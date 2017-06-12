@@ -1,4 +1,4 @@
-package net.morimekta.providence.serializer.rw;
+package net.morimekta.providence.serializer.binary;
 
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
@@ -24,8 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
-import static net.morimekta.providence.serializer.rw.BinaryType.asString;
-import static net.morimekta.providence.serializer.rw.BinaryType.forType;
+import static net.morimekta.providence.serializer.binary.BinaryType.asString;
+import static net.morimekta.providence.serializer.binary.BinaryType.forType;
 
 /**
  * Utilities helping with reading and writing binary format (protocol)

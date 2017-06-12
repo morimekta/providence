@@ -9,7 +9,7 @@ public class TypedefType
         implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
                    Comparable<TypedefType>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = 5431583053440540554L;
 
     private final static String kDefaultType = "";
@@ -383,7 +383,7 @@ public class TypedefType
      */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<TypedefType,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -740,7 +740,7 @@ public class TypedefType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.TypedefType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.TypedefType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -750,7 +750,7 @@ public class TypedefType
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.TypedefType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.TypedefType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -760,12 +760,12 @@ public class TypedefType
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.TypedefType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.TypedefType.name, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

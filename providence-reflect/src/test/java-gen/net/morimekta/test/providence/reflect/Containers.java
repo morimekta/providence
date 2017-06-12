@@ -6,7 +6,7 @@ public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = 3106880629763954881L;
 
     private final java.util.List<Boolean> mBooleanList;
@@ -1988,7 +1988,7 @@ public class Containers
             length += writer.writeByte((byte) 12);
             length += writer.writeUInt32(mMessageList.size());
             for (net.morimekta.test.providence.reflect.DefaultFields entry_32 : mMessageList) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_32);
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_32);
             }
         }
 
@@ -1998,7 +1998,7 @@ public class Containers
             length += writer.writeByte((byte) 12);
             length += writer.writeUInt32(mMessageSet.size());
             for (net.morimekta.test.providence.reflect.DefaultFields entry_33 : mMessageSet) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_33);
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_33);
             }
         }
 
@@ -2012,7 +2012,7 @@ public class Containers
                 net.morimekta.util.Binary tmp_35 = net.morimekta.util.Binary.wrap(entry_34.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 length += writer.writeUInt32(tmp_35.length());
                 length += writer.writeBinary(tmp_35);
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_34.getValue());
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_34.getValue());
             }
         }
 
@@ -2023,7 +2023,7 @@ public class Containers
             length += writer.writeByte((byte) 11);
             length += writer.writeUInt32(mMessageKeyMap.size());
             for (java.util.Map.Entry<net.morimekta.test.providence.reflect.CompactFields,String> entry_36 : mMessageKeyMap.entrySet()) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_36.getKey());
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_36.getKey());
                 net.morimekta.util.Binary tmp_37 = net.morimekta.util.Binary.wrap(entry_36.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 length += writer.writeUInt32(tmp_37.length());
                 length += writer.writeBinary(tmp_37);
@@ -2033,37 +2033,37 @@ public class Containers
         if (hasRequiredFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 51);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mRequiredFields);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mRequiredFields);
         }
 
         if (hasDefaultFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 52);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDefaultFields);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDefaultFields);
         }
 
         if (hasOptionalFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 53);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOptionalFields);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mOptionalFields);
         }
 
         if (hasUnionFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 54);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mUnionFields);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mUnionFields);
         }
 
         if (hasExceptionFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 55);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mExceptionFields);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mExceptionFields);
         }
 
         if (hasDefaultValues()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 56);
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDefaultValues);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDefaultValues);
         }
 
         length += writer.writeByte((byte) 0);
@@ -2333,7 +2333,7 @@ public class Containers
 
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<Containers,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -6165,11 +6165,11 @@ public class Containers
                                 }
                                 mBooleanList = b_1.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_3) + " for providence.Containers.booleanList, should be bool(2)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_3) + " for providence.Containers.booleanList, should be bool(2)");
                             }
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.booleanList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.booleanList, should be struct(12)");
                         }
                         break;
                     }
@@ -6185,11 +6185,11 @@ public class Containers
                                 }
                                 mByteList = b_6.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_8) + " for providence.Containers.byteList, should be byte(3)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_8) + " for providence.Containers.byteList, should be byte(3)");
                             }
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.byteList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.byteList, should be struct(12)");
                         }
                         break;
                     }
@@ -6205,11 +6205,11 @@ public class Containers
                                 }
                                 mShortList = b_11.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_13) + " for providence.Containers.shortList, should be i16(6)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_13) + " for providence.Containers.shortList, should be i16(6)");
                             }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.shortList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.shortList, should be struct(12)");
                         }
                         break;
                     }
@@ -6225,11 +6225,11 @@ public class Containers
                                 }
                                 mIntegerList = b_16.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_18) + " for providence.Containers.integerList, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_18) + " for providence.Containers.integerList, should be i32(8)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.integerList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.integerList, should be struct(12)");
                         }
                         break;
                     }
@@ -6245,11 +6245,11 @@ public class Containers
                                 }
                                 mLongList = b_21.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_23) + " for providence.Containers.longList, should be i64(10)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_23) + " for providence.Containers.longList, should be i64(10)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.longList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.longList, should be struct(12)");
                         }
                         break;
                     }
@@ -6265,11 +6265,11 @@ public class Containers
                                 }
                                 mDoubleList = b_26.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_28) + " for providence.Containers.doubleList, should be double(4)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_28) + " for providence.Containers.doubleList, should be double(4)");
                             }
                             optionals.set(5);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.doubleList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.doubleList, should be struct(12)");
                         }
                         break;
                     }
@@ -6286,11 +6286,11 @@ public class Containers
                                 }
                                 mStringList = b_31.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_33) + " for providence.Containers.stringList, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_33) + " for providence.Containers.stringList, should be string(11)");
                             }
                             optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.stringList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.stringList, should be struct(12)");
                         }
                         break;
                     }
@@ -6307,11 +6307,11 @@ public class Containers
                                 }
                                 mBinaryList = b_37.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_39) + " for providence.Containers.binaryList, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_39) + " for providence.Containers.binaryList, should be string(11)");
                             }
                             optionals.set(7);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.binaryList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.binaryList, should be struct(12)");
                         }
                         break;
                     }
@@ -6327,11 +6327,11 @@ public class Containers
                                 }
                                 mBooleanSet = b_43.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_45) + " for providence.Containers.booleanSet, should be bool(2)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_45) + " for providence.Containers.booleanSet, should be bool(2)");
                             }
                             optionals.set(8);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.booleanSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.booleanSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6347,11 +6347,11 @@ public class Containers
                                 }
                                 mByteSet = b_48.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_50) + " for providence.Containers.byteSet, should be byte(3)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_50) + " for providence.Containers.byteSet, should be byte(3)");
                             }
                             optionals.set(9);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.byteSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.byteSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6367,11 +6367,11 @@ public class Containers
                                 }
                                 mShortSet = b_53.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_55) + " for providence.Containers.shortSet, should be i16(6)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_55) + " for providence.Containers.shortSet, should be i16(6)");
                             }
                             optionals.set(10);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.shortSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.shortSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6387,11 +6387,11 @@ public class Containers
                                 }
                                 mIntegerSet = b_58.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_60) + " for providence.Containers.integerSet, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_60) + " for providence.Containers.integerSet, should be i32(8)");
                             }
                             optionals.set(11);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.integerSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.integerSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6407,11 +6407,11 @@ public class Containers
                                 }
                                 mLongSet = b_63.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_65) + " for providence.Containers.longSet, should be i64(10)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_65) + " for providence.Containers.longSet, should be i64(10)");
                             }
                             optionals.set(12);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.longSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.longSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6427,11 +6427,11 @@ public class Containers
                                 }
                                 mDoubleSet = b_68.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_70) + " for providence.Containers.doubleSet, should be double(4)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_70) + " for providence.Containers.doubleSet, should be double(4)");
                             }
                             optionals.set(13);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.doubleSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.doubleSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6448,11 +6448,11 @@ public class Containers
                                 }
                                 mStringSet = b_73.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_75) + " for providence.Containers.stringSet, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_75) + " for providence.Containers.stringSet, should be string(11)");
                             }
                             optionals.set(14);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.stringSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.stringSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6469,11 +6469,11 @@ public class Containers
                                 }
                                 mBinarySet = b_79.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_81) + " for providence.Containers.binarySet, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_81) + " for providence.Containers.binarySet, should be string(11)");
                             }
                             optionals.set(15);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.binarySet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.binarySet, should be struct(12)");
                         }
                         break;
                     }
@@ -6492,13 +6492,13 @@ public class Containers
                                 mBooleanMap = b_85.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_87) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_88) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_87) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_88) +
                                         " for providence.Containers.booleanMap, should be bool(2) and bool(2)");
                             }
                             optionals.set(16);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.booleanMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.booleanMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6517,13 +6517,13 @@ public class Containers
                                 mByteMap = b_92.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_94) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_95) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_94) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_95) +
                                         " for providence.Containers.byteMap, should be byte(3) and byte(3)");
                             }
                             optionals.set(17);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.byteMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.byteMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6542,13 +6542,13 @@ public class Containers
                                 mShortMap = b_99.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_101) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_102) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_101) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_102) +
                                         " for providence.Containers.shortMap, should be i16(6) and i16(6)");
                             }
                             optionals.set(18);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.shortMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.shortMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6567,13 +6567,13 @@ public class Containers
                                 mIntegerMap = b_106.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_108) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_109) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_108) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_109) +
                                         " for providence.Containers.integerMap, should be i32(8) and i32(8)");
                             }
                             optionals.set(19);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.integerMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.integerMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6592,13 +6592,13 @@ public class Containers
                                 mLongMap = b_113.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_115) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_116) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_115) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_116) +
                                         " for providence.Containers.longMap, should be i64(10) and i64(10)");
                             }
                             optionals.set(20);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.longMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.longMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6617,13 +6617,13 @@ public class Containers
                                 mDoubleMap = b_120.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_122) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_123) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_122) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_123) +
                                         " for providence.Containers.doubleMap, should be double(4) and double(4)");
                             }
                             optionals.set(21);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.doubleMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.doubleMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6644,13 +6644,13 @@ public class Containers
                                 mStringMap = b_127.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_129) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_130) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_129) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_130) +
                                         " for providence.Containers.stringMap, should be string(11) and string(11)");
                             }
                             optionals.set(22);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.stringMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.stringMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6671,13 +6671,13 @@ public class Containers
                                 mBinaryMap = b_136.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_138) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_139) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_138) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_139) +
                                         " for providence.Containers.binaryMap, should be string(11) and string(11)");
                             }
                             optionals.set(23);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.binaryMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.binaryMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6693,11 +6693,11 @@ public class Containers
                                 }
                                 mEnumList = b_145.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_147) + " for providence.Containers.enumList, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_147) + " for providence.Containers.enumList, should be i32(8)");
                             }
                             optionals.set(24);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.enumList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.enumList, should be struct(12)");
                         }
                         break;
                     }
@@ -6713,11 +6713,11 @@ public class Containers
                                 }
                                 mEnumSet = b_150.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_152) + " for providence.Containers.enumSet, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_152) + " for providence.Containers.enumSet, should be i32(8)");
                             }
                             optionals.set(25);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.enumSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.enumSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6736,13 +6736,13 @@ public class Containers
                                 mEnumMap = b_155.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_157) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_158) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_157) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_158) +
                                         " for providence.Containers.enumMap, should be i32(8) and i32(8)");
                             }
                             optionals.set(26);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.enumMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.enumMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6753,16 +6753,16 @@ public class Containers
                             if (t_164 == 12) {
                                 final int len_163 = reader.expectUInt32();
                                 for (int i_165 = 0; i_165 < len_163; ++i_165) {
-                                    net.morimekta.test.providence.reflect.DefaultFields key_166 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.DefaultFields key_166 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
                                     b_162.add(key_166);
                                 }
                                 mMessageList = b_162.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_164) + " for providence.Containers.messageList, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_164) + " for providence.Containers.messageList, should be struct(12)");
                             }
                             optionals.set(27);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.messageList, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.messageList, should be struct(12)");
                         }
                         break;
                     }
@@ -6773,16 +6773,16 @@ public class Containers
                             if (t_169 == 12) {
                                 final int len_168 = reader.expectUInt32();
                                 for (int i_170 = 0; i_170 < len_168; ++i_170) {
-                                    net.morimekta.test.providence.reflect.DefaultFields key_171 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.DefaultFields key_171 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
                                     b_167.add(key_171);
                                 }
                                 mMessageSet = b_167.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_169) + " for providence.Containers.messageSet, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_169) + " for providence.Containers.messageSet, should be struct(12)");
                             }
                             optionals.set(28);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.messageSet, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.messageSet, should be struct(12)");
                         }
                         break;
                     }
@@ -6796,19 +6796,19 @@ public class Containers
                                 for (int i_176 = 0; i_176 < len_173; ++i_176) {
                                     int len_179 = reader.expectUInt32();
                                     String key_177 = new String(reader.expectBytes(len_179), java.nio.charset.StandardCharsets.UTF_8);
-                                    net.morimekta.test.providence.reflect.DefaultFields val_178 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.DefaultFields val_178 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
                                     b_172.put(key_177, val_178);
                                 }
                                 mMessageMap = b_172.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_174) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_175) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_174) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_175) +
                                         " for providence.Containers.messageMap, should be string(11) and struct(12)");
                             }
                             optionals.set(29);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.messageMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.messageMap, should be struct(12)");
                         }
                         break;
                     }
@@ -6820,7 +6820,7 @@ public class Containers
                             if (t_182 == 12 && t_183 == 11) {
                                 final int len_181 = reader.expectUInt32();
                                 for (int i_184 = 0; i_184 < len_181; ++i_184) {
-                                    net.morimekta.test.providence.reflect.CompactFields key_185 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.CompactFields key_185 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.CompactFields.kDescriptor, strict);
                                     int len_187 = reader.expectUInt32();
                                     String val_186 = new String(reader.expectBytes(len_187), java.nio.charset.StandardCharsets.UTF_8);
                                     b_180.put(key_185, val_186);
@@ -6828,72 +6828,72 @@ public class Containers
                                 mMessageKeyMap = b_180.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_182) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_183) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_182) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_183) +
                                         " for providence.Containers.messageKeyMap, should be struct(12) and string(11)");
                             }
                             optionals.set(30);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.messageKeyMap, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.messageKeyMap, should be struct(12)");
                         }
                         break;
                     }
                     case 51: {
                         if (type == 12) {
-                            mRequiredFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.RequiredFields.kDescriptor, strict);
+                            mRequiredFields = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.RequiredFields.kDescriptor, strict);
                             optionals.set(31);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.requiredFields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.requiredFields, should be struct(12)");
                         }
                         break;
                     }
                     case 52: {
                         if (type == 12) {
-                            mDefaultFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
+                            mDefaultFields = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultFields.kDescriptor, strict);
                             optionals.set(32);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.defaultFields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.defaultFields, should be struct(12)");
                         }
                         break;
                     }
                     case 53: {
                         if (type == 12) {
-                            mOptionalFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.OptionalFields.kDescriptor, strict);
+                            mOptionalFields = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.OptionalFields.kDescriptor, strict);
                             optionals.set(33);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.optionalFields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.optionalFields, should be struct(12)");
                         }
                         break;
                     }
                     case 54: {
                         if (type == 12) {
-                            mUnionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.UnionFields.kDescriptor, strict);
+                            mUnionFields = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.UnionFields.kDescriptor, strict);
                             optionals.set(34);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.unionFields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.unionFields, should be struct(12)");
                         }
                         break;
                     }
                     case 55: {
                         if (type == 12) {
-                            mExceptionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.ExceptionFields.kDescriptor, strict);
+                            mExceptionFields = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.ExceptionFields.kDescriptor, strict);
                             optionals.set(35);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.exceptionFields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.exceptionFields, should be struct(12)");
                         }
                         break;
                     }
                     case 56: {
                         if (type == 12) {
-                            mDefaultValues = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultValues.kDescriptor, strict);
+                            mDefaultValues = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.DefaultValues.kDescriptor, strict);
                             optionals.set(36);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.defaultValues, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.defaultValues, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

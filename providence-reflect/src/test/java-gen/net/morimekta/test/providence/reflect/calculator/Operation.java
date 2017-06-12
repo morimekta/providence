@@ -6,7 +6,7 @@ public class Operation
         implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
                    Comparable<Operation>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -2122462501055525645L;
 
     private final net.morimekta.test.providence.reflect.calculator.Operator mOperator;
@@ -169,7 +169,7 @@ public class Operation
             length += writer.writeByte((byte) 12);
             length += writer.writeUInt32(mOperands.size());
             for (net.morimekta.test.providence.reflect.calculator.Operand entry_1 : mOperands) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_1);
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_1);
             }
         }
 
@@ -335,7 +335,7 @@ public class Operation
 
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<Operation,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -632,7 +632,7 @@ public class Operation
                             mOperator = net.morimekta.test.providence.reflect.calculator.Operator.findById(reader.expectInt());
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operation.operator, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Operation.operator, should be struct(12)");
                         }
                         break;
                     }
@@ -643,21 +643,21 @@ public class Operation
                             if (t_3 == 12) {
                                 final int len_2 = reader.expectUInt32();
                                 for (int i_4 = 0; i_4 < len_2; ++i_4) {
-                                    net.morimekta.test.providence.reflect.calculator.Operand key_5 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
+                                    net.morimekta.test.providence.reflect.calculator.Operand key_5 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
                                     b_1.add(key_5);
                                 }
                                 mOperands = b_1.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_3) + " for calculator.Operation.operands, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_3) + " for calculator.Operation.operands, should be struct(12)");
                             }
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operation.operands, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Operation.operands, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

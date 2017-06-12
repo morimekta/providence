@@ -9,7 +9,7 @@ public class Declaration
         implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
                    Comparable<Declaration>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -6998763195276182553L;
 
     private final net.morimekta.providence.model.EnumType mDeclEnum;
@@ -276,31 +276,31 @@ public class Declaration
                 case DECL_ENUM: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 1);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDeclEnum);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclEnum);
                     break;
                 }
                 case DECL_TYPEDEF: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 2);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDeclTypedef);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclTypedef);
                     break;
                 }
                 case DECL_STRUCT: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 3);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDeclStruct);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclStruct);
                     break;
                 }
                 case DECL_SERVICE: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 4);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDeclService);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclService);
                     break;
                 }
                 case DECL_CONST: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 5);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDeclConst);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclConst);
                     break;
                 }
                 default: break;
@@ -480,7 +480,7 @@ public class Declaration
      */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<Declaration,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private _Field tUnionField;
 
         private boolean modified;
@@ -1031,51 +1031,51 @@ public class Declaration
                 switch (field) {
                     case 1: {
                         if (type == 12) {
-                            mDeclEnum = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumType.kDescriptor, strict);
+                            mDeclEnum = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumType.kDescriptor, strict);
                             tUnionField = _Field.DECL_ENUM;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.Declaration.decl_enum, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_enum, should be struct(12)");
                         }
                         break;
                     }
                     case 2: {
                         if (type == 12) {
-                            mDeclTypedef = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.TypedefType.kDescriptor, strict);
+                            mDeclTypedef = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.TypedefType.kDescriptor, strict);
                             tUnionField = _Field.DECL_TYPEDEF;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.Declaration.decl_typedef, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_typedef, should be struct(12)");
                         }
                         break;
                     }
                     case 3: {
                         if (type == 12) {
-                            mDeclStruct = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.MessageType.kDescriptor, strict);
+                            mDeclStruct = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.MessageType.kDescriptor, strict);
                             tUnionField = _Field.DECL_STRUCT;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.Declaration.decl_struct, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_struct, should be struct(12)");
                         }
                         break;
                     }
                     case 4: {
                         if (type == 12) {
-                            mDeclService = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ServiceType.kDescriptor, strict);
+                            mDeclService = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ServiceType.kDescriptor, strict);
                             tUnionField = _Field.DECL_SERVICE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.Declaration.decl_service, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_service, should be struct(12)");
                         }
                         break;
                     }
                     case 5: {
                         if (type == 12) {
-                            mDeclConst = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ConstType.kDescriptor, strict);
+                            mDeclConst = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ConstType.kDescriptor, strict);
                             tUnionField = _Field.DECL_CONST;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.Declaration.decl_const, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_const, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

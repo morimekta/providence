@@ -263,7 +263,7 @@ public class Calculator {
             implements net.morimekta.providence.PMessage<_calculate_request,_calculate_request._Field>,
                        Comparable<_calculate_request>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 5385883517742336295L;
 
         private final net.morimekta.test.providence.reflect.calculator.Operation mOp;
@@ -371,7 +371,7 @@ public class Calculator {
             if (hasOp()) {
                 length += writer.writeByte((byte) 12);
                 length += writer.writeShort((short) 1);
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOp);
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mOp);
             }
 
             length += writer.writeByte((byte) 0);
@@ -533,7 +533,7 @@ public class Calculator {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_calculate_request,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
@@ -746,15 +746,15 @@ public class Calculator {
                     switch (field) {
                         case 1: {
                             if (type == 12) {
-                                mOp = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operation.kDescriptor, strict);
+                                mOp = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operation.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.request.op, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Calculator.calculate.request.op, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -776,7 +776,7 @@ public class Calculator {
             implements net.morimekta.providence.PUnion<_calculate_response,_calculate_response._Field>,
                        Comparable<_calculate_response>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -1787619653444046051L;
 
         private final net.morimekta.test.providence.reflect.calculator.Operand mSuccess;
@@ -938,13 +938,13 @@ public class Calculator {
                     case SUCCESS: {
                         length += writer.writeByte((byte) 12);
                         length += writer.writeShort((short) 0);
-                        length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mSuccess);
+                        length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mSuccess);
                         break;
                     }
                     case CE: {
                         length += writer.writeByte((byte) 12);
                         length += writer.writeShort((short) 1);
-                        length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mCe);
+                        length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mCe);
                         break;
                     }
                     default: break;
@@ -1112,7 +1112,7 @@ public class Calculator {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_calculate_response,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private _Field tUnionField;
 
             private boolean modified;
@@ -1417,24 +1417,24 @@ public class Calculator {
                     switch (field) {
                         case 0: {
                             if (type == 12) {
-                                mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
+                                mSuccess = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.Operand.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.success, should be struct(12)");
                             }
                             break;
                         }
                         case 1: {
                             if (type == 12) {
-                                mCe = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.CalculateException.kDescriptor, strict);
+                                mCe = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.reflect.calculator.CalculateException.kDescriptor, strict);
                                 tUnionField = _Field.CE;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.ce, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Calculator.calculate.response.ce, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -1456,7 +1456,7 @@ public class Calculator {
             implements net.morimekta.providence.PMessage<_iamalive_request,_iamalive_request._Field>,
                        Comparable<_iamalive_request>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -4737575730674403867L;
 
 
@@ -1687,7 +1687,7 @@ public class Calculator {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_iamalive_request,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
@@ -1802,7 +1802,7 @@ public class Calculator {
                     int field = reader.expectShort();
                     switch (field) {
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -1824,7 +1824,7 @@ public class Calculator {
             implements net.morimekta.providence.PMessage<_ping_request,_ping_request._Field>,
                        Comparable<_ping_request>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -4600906282490783449L;
 
 
@@ -2055,7 +2055,7 @@ public class Calculator {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_ping_request,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
@@ -2170,7 +2170,7 @@ public class Calculator {
                     int field = reader.expectShort();
                     switch (field) {
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -2192,7 +2192,7 @@ public class Calculator {
             implements net.morimekta.providence.PUnion<_ping_response,_ping_response._Field>,
                        Comparable<_ping_response>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -1098386840489696915L;
 
 
@@ -2468,7 +2468,7 @@ public class Calculator {
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_ping_response,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private _Field tUnionField;
 
             private boolean modified;
@@ -2652,12 +2652,12 @@ public class Calculator {
                             if (type == 1) {
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator.ping.response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Calculator.ping.response.success, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }

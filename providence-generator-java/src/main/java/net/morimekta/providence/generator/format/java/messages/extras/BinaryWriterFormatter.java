@@ -28,9 +28,9 @@ import net.morimekta.providence.generator.format.java.shared.MessageMemberFormat
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.serializer.rw.BinaryFormatUtils;
-import net.morimekta.providence.serializer.rw.BinaryType;
-import net.morimekta.providence.serializer.rw.BinaryWriter;
+import net.morimekta.providence.serializer.binary.BinaryFormatUtils;
+import net.morimekta.providence.serializer.binary.BinaryType;
+import net.morimekta.providence.serializer.binary.BinaryWriter;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryWriter;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
-import static net.morimekta.providence.serializer.rw.BinaryType.forType;
+import static net.morimekta.providence.serializer.binary.BinaryType.forType;
 
 /**
  * @author Stein Eldar Johnsen

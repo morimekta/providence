@@ -11,7 +11,7 @@ public class EnumType
         implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
                    Comparable<EnumType>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = 5720337451968926862L;
 
     private final static String kDefaultName = "";
@@ -263,7 +263,7 @@ public class EnumType
         length += writer.writeByte((byte) 12);
         length += writer.writeUInt32(mValues.size());
         for (net.morimekta.providence.model.EnumValue entry_3 : mValues) {
-            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_3);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_3);
         }
 
         if (hasAnnotations()) {
@@ -455,7 +455,7 @@ public class EnumType
      */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<EnumType,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -933,7 +933,7 @@ public class EnumType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.EnumType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -943,7 +943,7 @@ public class EnumType
                             mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.EnumType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -954,16 +954,16 @@ public class EnumType
                             if (t_5 == 12) {
                                 final int len_4 = reader.expectUInt32();
                                 for (int i_6 = 0; i_6 < len_4; ++i_6) {
-                                    net.morimekta.providence.model.EnumValue key_7 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumValue.kDescriptor, strict);
+                                    net.morimekta.providence.model.EnumValue key_7 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumValue.kDescriptor, strict);
                                     b_3.add(key_7);
                                 }
                                 mValues = b_3.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) + " for model.EnumType.values, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_5) + " for model.EnumType.values, should be struct(12)");
                             }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumType.values, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.EnumType.values, should be struct(12)");
                         }
                         break;
                     }
@@ -984,18 +984,18 @@ public class EnumType
                                 mAnnotations = b_8.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_10) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_11) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_10) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
                                         " for model.EnumType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.EnumType.annotations, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

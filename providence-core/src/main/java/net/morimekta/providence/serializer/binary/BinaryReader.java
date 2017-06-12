@@ -1,4 +1,4 @@
-package net.morimekta.providence.serializer.rw;
+package net.morimekta.providence.serializer.binary;
 
 import net.morimekta.util.io.BigEndianBinaryReader;
 

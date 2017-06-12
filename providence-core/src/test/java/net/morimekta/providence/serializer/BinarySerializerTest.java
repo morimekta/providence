@@ -25,7 +25,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
-import net.morimekta.providence.serializer.rw.BinaryType;
+import net.morimekta.providence.serializer.binary.BinaryType;
 import net.morimekta.providence.test_internal.Containers;
 import net.morimekta.providence.test_internal.OptionalFields;
 import net.morimekta.providence.test_internal.RequiredFields;

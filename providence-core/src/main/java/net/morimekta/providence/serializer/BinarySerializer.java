@@ -38,8 +38,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage;
-import static net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage;
+import static net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage;
+import static net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage;
 
 /**
  * Compact binary serializer. This usesd a format that is as close the the default

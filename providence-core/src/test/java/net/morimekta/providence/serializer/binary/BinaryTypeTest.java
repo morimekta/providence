@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.serializer.rw;
+package net.morimekta.providence.serializer.binary;
 
 import net.morimekta.providence.PType;
 

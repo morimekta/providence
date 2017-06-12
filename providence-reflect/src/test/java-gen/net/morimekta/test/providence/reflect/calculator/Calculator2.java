@@ -286,7 +286,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             implements net.morimekta.providence.PMessage<_extra_request,_extra_request._Field>,
                        Comparable<_extra_request>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 7756543901078345535L;
 
 
@@ -517,7 +517,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_extra_request,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
@@ -632,7 +632,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
                     int field = reader.expectShort();
                     switch (field) {
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -654,7 +654,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             implements net.morimekta.providence.PUnion<_extra_response,_extra_response._Field>,
                        Comparable<_extra_response>,
                        java.io.Serializable,
-                       net.morimekta.providence.serializer.rw.BinaryWriter {
+                       net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -3257175400506493499L;
 
         private final String mSuccess;
@@ -946,7 +946,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
 
         public static class _Builder
                 extends net.morimekta.providence.PMessageBuilder<_extra_response,_Field>
-                implements net.morimekta.providence.serializer.rw.BinaryReader {
+                implements net.morimekta.providence.serializer.binary.BinaryReader {
             private _Field tUnionField;
 
             private boolean modified;
@@ -1152,12 +1152,12 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
                                 mSuccess = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator2.extra.response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Calculator2.extra.response.success, should be struct(12)");
                             }
                             break;
                         }
                         default: {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }

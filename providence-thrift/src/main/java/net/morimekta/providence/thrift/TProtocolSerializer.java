@@ -41,7 +41,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.serializer.rw.BinaryType;
+import net.morimekta.providence.serializer.binary.BinaryType;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
@@ -68,8 +68,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.providence.serializer.rw.BinaryType.asString;
-import static net.morimekta.providence.serializer.rw.BinaryType.forType;
+import static net.morimekta.providence.serializer.binary.BinaryType.asString;
+import static net.morimekta.providence.serializer.binary.BinaryType.forType;
 
 /**
  * @author Stein Eldar Johnsen

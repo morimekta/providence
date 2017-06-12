@@ -6,7 +6,7 @@ public class ConsumeAll
         implements net.morimekta.providence.PMessage<ConsumeAll,ConsumeAll._Field>,
                    Comparable<ConsumeAll>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -9118592554502001384L;
 
 
@@ -237,7 +237,7 @@ public class ConsumeAll
 
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<ConsumeAll,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -352,7 +352,7 @@ public class ConsumeAll
                 int field = reader.expectShort();
                 switch (field) {
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

@@ -6,7 +6,7 @@ public class Operand
         implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
                    Comparable<Operand>,
                    java.io.Serializable,
-                   net.morimekta.providence.serializer.rw.BinaryWriter {
+                   net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;
@@ -203,7 +203,7 @@ public class Operand
                 case OPERATION: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 1);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOperation);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mOperation);
                     break;
                 }
                 case NUMBER: {
@@ -215,7 +215,7 @@ public class Operand
                 case IMAGINARY: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 3);
-                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mImaginary);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mImaginary);
                     break;
                 }
                 default: break;
@@ -386,7 +386,7 @@ public class Operand
 
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<Operand,_Field>
-            implements net.morimekta.providence.serializer.rw.BinaryReader {
+            implements net.morimekta.providence.serializer.binary.BinaryReader {
         private _Field tUnionField;
 
         private boolean modified;
@@ -748,10 +748,10 @@ public class Operand
                 switch (field) {
                     case 1: {
                         if (type == 12) {
-                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
+                            mOperation = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
                             tUnionField = _Field.OPERATION;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operand.operation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Operand.operation, should be struct(12)");
                         }
                         break;
                     }
@@ -760,21 +760,21 @@ public class Operand
                             mNumber = reader.expectDouble();
                             tUnionField = _Field.NUMBER;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operand.number, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Operand.number, should be struct(12)");
                         }
                         break;
                     }
                     case 3: {
                         if (type == 12) {
-                            mImaginary = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.number.Imaginary.kDescriptor, strict);
+                            mImaginary = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.number.Imaginary.kDescriptor, strict);
                             tUnionField = _Field.IMAGINARY;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Operand.imaginary, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for calculator.Operand.imaginary, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }
