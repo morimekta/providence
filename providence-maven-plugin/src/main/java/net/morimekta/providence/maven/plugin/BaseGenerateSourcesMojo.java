@@ -159,6 +159,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     protected boolean generate_legacy_enum_getters = false;
 
+    /**
+     * Generate public constructors with all fields as arguments for structs and
+     * exceptions.
+     */
+    @Parameter
+    protected boolean generate_public_constructors = false;
+
     // --- After here are internals, components and maven-set params.
 
     /**
@@ -277,6 +284,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             options.hazelcast_portable = hazelcast_portable;
             options.generated_annotation_version = generated_annotation_version;
             options.generate_legacy_enum_getters = generate_legacy_enum_getters;
+            options.generate_public_constructors = generate_public_constructors;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 

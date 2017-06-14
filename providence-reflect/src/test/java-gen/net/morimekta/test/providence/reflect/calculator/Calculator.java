@@ -270,10 +270,6 @@ public class Calculator {
 
         private volatile int tHashCode;
 
-        public _calculate_request(net.morimekta.test.providence.reflect.calculator.Operation pOp) {
-            mOp = pOp;
-        }
-
         private _calculate_request(_Builder builder) {
             mOp = builder.mOp_builder != null ? builder.mOp_builder.build() : builder.mOp;
         }
@@ -1462,9 +1458,6 @@ public class Calculator {
 
         private volatile int tHashCode;
 
-        public _iamalive_request() {
-        }
-
         private _iamalive_request(_Builder builder) {
         }
 
@@ -1829,9 +1822,6 @@ public class Calculator {
 
 
         private volatile int tHashCode;
-
-        public _ping_request() {
-        }
 
         private _ping_request(_Builder builder) {
         }

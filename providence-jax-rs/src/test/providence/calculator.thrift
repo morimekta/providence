@@ -19,12 +19,12 @@ union Operand {
 struct Operation {
     1: Operator operator;
     2: list<Operand> operands;
-}
+} (java.public.constructor = "")
 
 exception CalculateException {
     1: required string message;
     2: Operation operation;
-}
+} (java.public.constructor = "")
 
 service Calculator {
     Operand calculate(1: Operation op) throws (1: CalculateException ce);

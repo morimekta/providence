@@ -28,7 +28,8 @@ struct CompactFields {
     1: required string name
     2: required i32 id,
     3: optional string label;
-} (compact = "")
+} (compact = "",
+   java.public.constructor = "")
 
 const list<CompactFields> kDefaultCompactFields = [
   {"name": "Tut-Ankh-Amon", "id": 1333, "label": "dead"},
@@ -46,7 +47,7 @@ struct OptionalFields {
     8: optional binary binaryValue,
     9: optional Value enumValue;
     10: optional CompactFields compactValue;
-}
+} (java.public.constructor = "")
 
 struct RequiredFields {
     1: required bool booleanValue;

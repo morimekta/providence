@@ -31,6 +31,7 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -373,118 +374,123 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 }
             }
         } else {
-            String spaces = message.instanceType()
-                                   .replaceAll("[\\S]", " ");
-            writer.formatln("public %s(", message.instanceType())
-                  .begin("        " + spaces);
-            boolean first = true;
-            for (JField field : message.declaredOrderFields()) {
-                if (field.isVoid()) {
-                    // Void fields have no value.
-                    continue;
-                }
-                if (first) {
-                    first = false;
-                } else {
-                    writer.append(',')
-                          .appendln();
-                }
-                writer.format("%s %s", field.paramType(), field.param());
-            }
-            writer.end()
-                  .append(") {")
-                  .begin();
-
-            if (message.isException()) {
-                // If an exception class contains a field named 'message' (no caps), it will use that
-                // as the exception message unmodified.
-                Optional<JField> msg = message.exceptionMessageField();
-                if (msg.isPresent()) {
-                    writer.formatln("super(%s);", msg.get().param())
-                          .newline();
-                } else {
-                    writer.appendln("super(createMessage(")
-                          .begin("                    ");
-                    first = true;
-                    for (JField field : message.declaredOrderFields()) {
+            if (message.hasAnnotation(ThriftAnnotation.JAVA_PUBLIC_CONSTRUCTOR) ||
+                options.generate_public_constructors) {
+                String spaces = message.instanceType()
+                                       .replaceAll("[\\S]", " ");
+                writer.formatln("public %s(", message.instanceType())
+                      .begin("        " + spaces);
+                boolean first = true;
+                for (JField field : message.declaredOrderFields()) {
+                    if (field.isVoid()) {
                         // Void fields have no value.
-                        if (field.isVoid()) {
-                            continue;
-                        }
-
-                        if (first) {
-                            first = false;
-                        } else {
-                            writer.append(',')
-                                  .appendln();
-                        }
-                        writer.format("%s", field.param());
+                        continue;
                     }
-                    writer.append("));")
-                          .end()
-                          .newline();
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(',')
+                              .appendln();
+                    }
+                    writer.format("%s %s", field.paramType(), field.param());
                 }
-            }
+                writer.end()
+                      .append(") {")
+                      .begin();
 
-            for (JField field : message.declaredOrderFields()) {
-                // Void fields have no value.
-                if (field.isVoid()) {
-                    continue;
+                if (message.isException()) {
+                    // If an exception class contains a field named 'message' (no caps), it will use that
+                    // as the exception message unmodified.
+                    Optional<JField> msg = message.exceptionMessageField();
+                    if (msg.isPresent()) {
+                        writer.formatln("super(%s);",
+                                        msg.get()
+                                           .param())
+                              .newline();
+                    } else {
+                        writer.appendln("super(createMessage(")
+                              .begin("                    ");
+                        first = true;
+                        for (JField field : message.declaredOrderFields()) {
+                            // Void fields have no value.
+                            if (field.isVoid()) {
+                                continue;
+                            }
+
+                            if (first) {
+                                first = false;
+                            } else {
+                                writer.append(',')
+                                      .appendln();
+                            }
+                            writer.format("%s", field.param());
+                        }
+                        writer.append("));")
+                              .end()
+                              .newline();
+                    }
                 }
-                switch (field.type()) {
-                    case LIST: {
-                        writer.formatln("if (%s != null) {", field.param())
-                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
-                              .appendln("} else {");
-                        if (field.alwaysPresent()) {
-                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
-                        } else {
-                            writer.formatln("    %s = null;", field.member());
-                        }
-                        writer.appendln('}');
-                        break;
+
+                for (JField field : message.declaredOrderFields()) {
+                    // Void fields have no value.
+                    if (field.isVoid()) {
+                        continue;
                     }
-                    case SET: {
-                        writer.formatln("if (%s != null) {", field.param())
-                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
-                              .appendln("} else {");
-                        if (field.alwaysPresent()) {
-                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
-                        } else {
-                            writer.formatln("    %s = null;", field.member());
-                        }
-                        writer.appendln('}');
-                        break;
-                    }
-                    case MAP: {
-                        writer.formatln("if (%s != null) {", field.param())
-                              .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
-                              .appendln("} else {");
-                        if (field.alwaysPresent()) {
-                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
-                        } else {
-                            writer.formatln("    %s = null;", field.member());
-                        }
-                        writer.appendln('}');
-                        break;
-                    }
-                    default: {
-                        if (field.alwaysPresent() && !(field.isRequired() && field.isPrimitiveJavaValue())) {
+                    switch (field.type()) {
+                        case LIST: {
                             writer.formatln("if (%s != null) {", field.param())
-                                  .formatln("    %s = %s;", field.member(), field.param())
-                                  .appendln("} else {")
-                                  .formatln("    %s = %s;", field.member(), field.kDefault())
-                                  .appendln('}');
-                        } else {
-                            writer.formatln("%s = %s;", field.member(), field.param());
+                                  .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
+                                  .appendln("} else {");
+                            if (field.alwaysPresent()) {
+                                writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                            } else {
+                                writer.formatln("    %s = null;", field.member());
+                            }
+                            writer.appendln('}');
+                            break;
                         }
-                        break;
+                        case SET: {
+                            writer.formatln("if (%s != null) {", field.param())
+                                  .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
+                                  .appendln("} else {");
+                            if (field.alwaysPresent()) {
+                                writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                            } else {
+                                writer.formatln("    %s = null;", field.member());
+                            }
+                            writer.appendln('}');
+                            break;
+                        }
+                        case MAP: {
+                            writer.formatln("if (%s != null) {", field.param())
+                                  .formatln("    %s = %s;", field.member(), field.fieldInstanceCopy(field.param()))
+                                  .appendln("} else {");
+                            if (field.alwaysPresent()) {
+                                writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                            } else {
+                                writer.formatln("    %s = null;", field.member());
+                            }
+                            writer.appendln('}');
+                            break;
+                        }
+                        default: {
+                            if (field.alwaysPresent() && !(field.isRequired() && field.isPrimitiveJavaValue())) {
+                                writer.formatln("if (%s != null) {", field.param())
+                                      .formatln("    %s = %s;", field.member(), field.param())
+                                      .appendln("} else {")
+                                      .formatln("    %s = %s;", field.member(), field.kDefault())
+                                      .appendln('}');
+                            } else {
+                                writer.formatln("%s = %s;", field.member(), field.param());
+                            }
+                            break;
+                        }
                     }
                 }
+                writer.end()
+                      .appendln('}')
+                      .newline();
             }
-            writer.end()
-                  .appendln('}')
-                  .newline();
         }
     }
 }

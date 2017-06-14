@@ -17,18 +17,6 @@ public class CalculateException
 
     private volatile int tHashCode;
 
-    public CalculateException(String pMessage,
-                              net.morimekta.test.providence.reflect.calculator.Operation pOperation) {
-        super(pMessage);
-
-        if (pMessage != null) {
-            mMessage = pMessage;
-        } else {
-            mMessage = kDefaultMessage;
-        }
-        mOperation = pOperation;
-    }
-
     private CalculateException(_Builder builder) {
         super(builder.mMessage);
 

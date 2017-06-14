@@ -26,30 +26,6 @@ public class ServiceType
 
     private volatile int tHashCode;
 
-    public ServiceType(String pDocumentation,
-                       String pName,
-                       String pExtend,
-                       java.util.List<net.morimekta.providence.model.FunctionType> pMethods,
-                       java.util.Map<String,String> pAnnotations) {
-        mDocumentation = pDocumentation;
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        mExtend = pExtend;
-        if (pMethods != null) {
-            mMethods = com.google.common.collect.ImmutableList.copyOf(pMethods);
-        } else {
-            mMethods = kDefaultMethods;
-        }
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-    }
-
     private ServiceType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetName()) {

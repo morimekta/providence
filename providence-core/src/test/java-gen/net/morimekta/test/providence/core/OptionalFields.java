@@ -29,28 +29,6 @@ public class OptionalFields
 
     private volatile int tHashCode;
 
-    public OptionalFields(Boolean pBooleanValue,
-                          Byte pByteValue,
-                          Short pShortValue,
-                          Integer pIntegerValue,
-                          Long pLongValue,
-                          Double pDoubleValue,
-                          String pStringValue,
-                          net.morimekta.util.Binary pBinaryValue,
-                          net.morimekta.test.providence.core.Value pEnumValue,
-                          net.morimekta.test.providence.core.CompactFields pCompactValue) {
-        mBooleanValue = pBooleanValue;
-        mByteValue = pByteValue;
-        mShortValue = pShortValue;
-        mIntegerValue = pIntegerValue;
-        mLongValue = pLongValue;
-        mDoubleValue = pDoubleValue;
-        mStringValue = pStringValue;
-        mBinaryValue = pBinaryValue;
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
-
     private OptionalFields(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
         mByteValue = builder.mByteValue;

@@ -21,22 +21,6 @@ public class TypedefType
 
     private volatile int tHashCode;
 
-    public TypedefType(String pDocumentation,
-                       String pType,
-                       String pName) {
-        mDocumentation = pDocumentation;
-        if (pType != null) {
-            mType = pType;
-        } else {
-            mType = kDefaultType;
-        }
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-    }
-
     private TypedefType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetType()) {

@@ -28,7 +28,7 @@ struct CompactFields {
     1: required string name
     2: required i32 id,
     3: optional string label;
-} (compact = "")
+} (compact = "", java.public.constructor)
 
 /*
 const list<CompactFields> kDefaultCompactFields = [

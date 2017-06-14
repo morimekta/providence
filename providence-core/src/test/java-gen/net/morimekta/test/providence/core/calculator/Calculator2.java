@@ -292,9 +292,6 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
         private volatile int tHashCode;
 
-        public _extra_request() {
-        }
-
         private _extra_request(_Builder builder) {
         }
 

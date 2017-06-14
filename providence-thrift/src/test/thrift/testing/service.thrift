@@ -3,15 +3,15 @@ namespace java net.morimekta.test.thrift.thrift.service
 
 struct Request {
     1: string text;
-}
+} (java.public.constructor)
 
 struct Response {
     1: string text;
-}
+} (java.public.constructor)
 
 exception Failure {
     1: string text;
-}
+} (java.public.constructor)
 
 service MyService {
     oneway void ping();

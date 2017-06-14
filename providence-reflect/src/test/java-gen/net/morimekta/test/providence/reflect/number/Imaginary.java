@@ -17,16 +17,6 @@ public class Imaginary
 
     private volatile int tHashCode;
 
-    public Imaginary(double pV,
-                     Double pI) {
-        mV = pV;
-        if (pI != null) {
-            mI = pI;
-        } else {
-            mI = kDefaultI;
-        }
-    }
-
     private Imaginary(_Builder builder) {
         mV = builder.mV;
         mI = builder.mI;

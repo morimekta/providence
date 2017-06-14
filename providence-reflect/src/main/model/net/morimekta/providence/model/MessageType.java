@@ -27,30 +27,6 @@ public class MessageType
 
     private volatile int tHashCode;
 
-    public MessageType(String pDocumentation,
-                       net.morimekta.providence.model.MessageVariant pVariant,
-                       String pName,
-                       java.util.List<net.morimekta.providence.model.FieldType> pFields,
-                       java.util.Map<String,String> pAnnotations) {
-        mDocumentation = pDocumentation;
-        mVariant = pVariant;
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        if (pFields != null) {
-            mFields = com.google.common.collect.ImmutableList.copyOf(pFields);
-        } else {
-            mFields = kDefaultFields;
-        }
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-    }
-
     private MessageType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         mVariant = builder.mVariant;

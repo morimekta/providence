@@ -53,4 +53,10 @@ public class JavaOptions {
      * Keep the 'forName' and 'forValue' legacy static enum getters.
      */
     public boolean generate_legacy_enum_getters = false;
+
+    /**
+     * Generate public constructors for all structs and exceptions. Have no
+     * effect on unions.
+     */
+    public boolean generate_public_constructors = false;
 }

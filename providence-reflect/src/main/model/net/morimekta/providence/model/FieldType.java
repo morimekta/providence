@@ -40,38 +40,6 @@ public class FieldType
 
     private volatile int tHashCode;
 
-    public FieldType(String pDocumentation,
-                     int pId,
-                     net.morimekta.providence.model.FieldRequirement pRequirement,
-                     String pType,
-                     String pName,
-                     String pDefaultValue,
-                     java.util.Map<String,String> pAnnotations,
-                     Integer pStartLineNo,
-                     Integer pStartLinePos) {
-        mDocumentation = pDocumentation;
-        mId = pId;
-        mRequirement = pRequirement;
-        if (pType != null) {
-            mType = pType;
-        } else {
-            mType = kDefaultType;
-        }
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        mDefaultValue = pDefaultValue;
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-        mStartLineNo = pStartLineNo;
-        mStartLinePos = pStartLinePos;
-    }
-
     private FieldType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         mId = builder.mId;

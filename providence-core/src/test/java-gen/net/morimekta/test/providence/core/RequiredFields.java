@@ -31,36 +31,6 @@ public class RequiredFields
 
     private volatile int tHashCode;
 
-    public RequiredFields(boolean pBooleanValue,
-                          byte pByteValue,
-                          short pShortValue,
-                          int pIntegerValue,
-                          long pLongValue,
-                          double pDoubleValue,
-                          String pStringValue,
-                          net.morimekta.util.Binary pBinaryValue,
-                          net.morimekta.test.providence.core.Value pEnumValue,
-                          net.morimekta.test.providence.core.CompactFields pCompactValue) {
-        mBooleanValue = pBooleanValue;
-        mByteValue = pByteValue;
-        mShortValue = pShortValue;
-        mIntegerValue = pIntegerValue;
-        mLongValue = pLongValue;
-        mDoubleValue = pDoubleValue;
-        if (pStringValue != null) {
-            mStringValue = pStringValue;
-        } else {
-            mStringValue = kDefaultStringValue;
-        }
-        if (pBinaryValue != null) {
-            mBinaryValue = pBinaryValue;
-        } else {
-            mBinaryValue = kDefaultBinaryValue;
-        }
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
-
     private RequiredFields(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
         mByteValue = builder.mByteValue;

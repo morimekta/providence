@@ -25,28 +25,6 @@ public class EnumType
 
     private volatile int tHashCode;
 
-    public EnumType(String pDocumentation,
-                    String pName,
-                    java.util.List<net.morimekta.providence.model.EnumValue> pValues,
-                    java.util.Map<String,String> pAnnotations) {
-        mDocumentation = pDocumentation;
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        if (pValues != null) {
-            mValues = com.google.common.collect.ImmutableList.copyOf(pValues);
-        } else {
-            mValues = kDefaultValues;
-        }
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-    }
-
     private EnumType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetName()) {

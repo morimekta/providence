@@ -31,28 +31,6 @@ public class DefaultValues
 
     private volatile int tHashCode;
 
-    public DefaultValues(Boolean pBooleanValue,
-                         Byte pByteValue,
-                         Short pShortValue,
-                         Integer pIntegerValue,
-                         Long pLongValue,
-                         Double pDoubleValue,
-                         String pStringValue,
-                         net.morimekta.util.Binary pBinaryValue,
-                         net.morimekta.test.providence.reflect.Value pEnumValue,
-                         net.morimekta.test.providence.reflect.CompactFields pCompactValue) {
-        mBooleanValue = pBooleanValue;
-        mByteValue = pByteValue;
-        mShortValue = pShortValue;
-        mIntegerValue = pIntegerValue;
-        mLongValue = pLongValue;
-        mDoubleValue = pDoubleValue;
-        mStringValue = pStringValue;
-        mBinaryValue = pBinaryValue;
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
-
     private DefaultValues(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
         mByteValue = builder.mByteValue;

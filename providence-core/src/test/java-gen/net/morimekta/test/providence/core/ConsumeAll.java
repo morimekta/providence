@@ -12,9 +12,6 @@ public class ConsumeAll
 
     private volatile int tHashCode;
 
-    public ConsumeAll() {
-    }
-
     private ConsumeAll(_Builder builder) {
     }
 

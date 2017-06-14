@@ -2,15 +2,15 @@ namespace java net.morimekta.test.thrift.client
 
 struct Request {
     1: string text;
-}
+} (java.public.constructor)
 
 struct Response {
     1: string text;
-}
+} (java.public.constructor)
 
 exception Failure {
     1: string text;
-}
+} (java.public.constructor)
 
 service BaseTestService {
     i32 inBaseService();

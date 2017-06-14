@@ -204,10 +204,6 @@ public class ContainerService {
 
         private volatile int tHashCode;
 
-        public _load_request(net.morimekta.test.providence.reflect.Containers pC) {
-            mC = pC;
-        }
-
         private _load_request(_Builder builder) {
             mC = builder.mC_builder != null ? builder.mC_builder.build() : builder.mC;
         }

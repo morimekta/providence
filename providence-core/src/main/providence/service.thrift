@@ -113,4 +113,5 @@ exception PApplicationException {
      * The application exception type.
      */
     2: optional PApplicationExceptionType id = PApplicationExceptionType.UNKNOWN;
-} (java.exception.class = "java.io.IOException")
+} (java.exception.class = "java.io.IOException",
+   java.public.constructor = "")

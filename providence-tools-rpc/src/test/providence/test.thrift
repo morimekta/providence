@@ -7,11 +7,11 @@ struct Request {
 
 struct Response {
     1: string text;
-}
+} (java.public.constructor = "")
 
 exception Failure {
     1: string text;
-}
+} (java.public.constructor = "")
 
 service MyService {
     oneway void ping();

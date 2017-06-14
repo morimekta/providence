@@ -8,7 +8,7 @@ enum Value {
 struct Credentials {
     1: required string username;
     2: required string password;
-}
+} (java.public.constructor = "")
 
 struct Database {
     // The JDBC URI, e.g. "jdbc:mysql:localhost:1364:main_db"

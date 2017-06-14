@@ -39,7 +39,7 @@ struct CompactFields {
     1: required string name
     2: required i32 id,
     3: string label;
-} (compact = "")
+} (compact = "", java.public.constructor = "")
 
 const list<CompactFields> kDefaultCompactFields = [
   {"name": "Tut-Ankh-Amon", "id": 1333, "label": "dead"},

@@ -26,34 +26,6 @@ public class ProgramType
 
     private volatile int tHashCode;
 
-    public ProgramType(String pDocumentation,
-                       String pProgramName,
-                       java.util.List<String> pIncludes,
-                       java.util.Map<String,String> pNamespaces,
-                       java.util.List<net.morimekta.providence.model.Declaration> pDecl) {
-        mDocumentation = pDocumentation;
-        if (pProgramName != null) {
-            mProgramName = pProgramName;
-        } else {
-            mProgramName = kDefaultProgramName;
-        }
-        if (pIncludes != null) {
-            mIncludes = com.google.common.collect.ImmutableList.copyOf(pIncludes);
-        } else {
-            mIncludes = null;
-        }
-        if (pNamespaces != null) {
-            mNamespaces = com.google.common.collect.ImmutableSortedMap.copyOf(pNamespaces);
-        } else {
-            mNamespaces = kDefaultNamespaces;
-        }
-        if (pDecl != null) {
-            mDecl = com.google.common.collect.ImmutableList.copyOf(pDecl);
-        } else {
-            mDecl = kDefaultDecl;
-        }
-    }
-
     private ProgramType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetProgramName()) {

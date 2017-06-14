@@ -30,7 +30,9 @@ struct CompactFields {
     1: required string name
     2: required i32 id,
     3: optional string label;
-} (compact = "", hazelcast.class.id = "1")
+} (compact = "",
+   hazelcast.class.id = "1",
+   java.public.constructor = "")
 
 const list<CompactFields> kDefaultCompactFields = [
   {"name": "Tut-Ankh-Amon", "id": 1333, "label": "dead"},
@@ -48,7 +50,8 @@ struct OptionalFields {
     8: optional binary binaryValue;
     9: optional Value enumValue;
     10: optional CompactFields compactValue;
-} (hazelcast.class.id = "2")
+} (hazelcast.class.id = "2",
+   java.public.constructor = "")
 
 struct OptionalListFields {
     1: optional list<bool> booleanValues;
@@ -59,7 +62,8 @@ struct OptionalListFields {
     6: optional list<double> doubleValue;
     7: optional list<string> stringValue;
     10: optional list<CompactFields> compactValue;
-} (hazelcast.class.id = "3")
+} (hazelcast.class.id = "3",
+   java.public.constructor = "")
 
 struct RequiredFields {
     1: required bool booleanValue;

@@ -72,6 +72,12 @@ public enum ThriftAnnotation {
     JAVA_EXCEPTION_CLASS("java.exception.class"),
 
     /**
+     * For struct and exception. If true will add a public create constructor
+     * with all fields available as parameters. Default is not.
+     */
+    JAVA_PUBLIC_CONSTRUCTOR("java.public.constructor"),
+
+    /**
      * Specify an exception class to throw <b>instead</b> of the default
      * declared exceptions. This is only valid for the Service.Iface interface,
      * and not for the Service.Client implementation.

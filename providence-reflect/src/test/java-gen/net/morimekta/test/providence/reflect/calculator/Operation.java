@@ -14,16 +14,6 @@ public class Operation
 
     private volatile int tHashCode;
 
-    public Operation(net.morimekta.test.providence.reflect.calculator.Operator pOperator,
-                     java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> pOperands) {
-        mOperator = pOperator;
-        if (pOperands != null) {
-            mOperands = com.google.common.collect.ImmutableList.copyOf(pOperands);
-        } else {
-            mOperands = null;
-        }
-    }
-
     private Operation(_Builder builder) {
         mOperator = builder.mOperator;
         if (builder.isSetOperands()) {

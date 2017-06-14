@@ -22,24 +22,6 @@ public class EnumValue
 
     private volatile int tHashCode;
 
-    public EnumValue(String pDocumentation,
-                     String pName,
-                     Integer pId,
-                     java.util.Map<String,String> pAnnotations) {
-        mDocumentation = pDocumentation;
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        mId = pId;
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-    }
-
     private EnumValue(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetName()) {

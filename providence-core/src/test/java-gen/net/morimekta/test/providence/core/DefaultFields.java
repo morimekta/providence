@@ -31,60 +31,6 @@ public class DefaultFields
 
     private volatile int tHashCode;
 
-    public DefaultFields(Boolean pBooleanValue,
-                         Byte pByteValue,
-                         Short pShortValue,
-                         Integer pIntegerValue,
-                         Long pLongValue,
-                         Double pDoubleValue,
-                         String pStringValue,
-                         net.morimekta.util.Binary pBinaryValue,
-                         net.morimekta.test.providence.core.Value pEnumValue,
-                         net.morimekta.test.providence.core.CompactFields pCompactValue) {
-        if (pBooleanValue != null) {
-            mBooleanValue = pBooleanValue;
-        } else {
-            mBooleanValue = kDefaultBooleanValue;
-        }
-        if (pByteValue != null) {
-            mByteValue = pByteValue;
-        } else {
-            mByteValue = kDefaultByteValue;
-        }
-        if (pShortValue != null) {
-            mShortValue = pShortValue;
-        } else {
-            mShortValue = kDefaultShortValue;
-        }
-        if (pIntegerValue != null) {
-            mIntegerValue = pIntegerValue;
-        } else {
-            mIntegerValue = kDefaultIntegerValue;
-        }
-        if (pLongValue != null) {
-            mLongValue = pLongValue;
-        } else {
-            mLongValue = kDefaultLongValue;
-        }
-        if (pDoubleValue != null) {
-            mDoubleValue = pDoubleValue;
-        } else {
-            mDoubleValue = kDefaultDoubleValue;
-        }
-        if (pStringValue != null) {
-            mStringValue = pStringValue;
-        } else {
-            mStringValue = kDefaultStringValue;
-        }
-        if (pBinaryValue != null) {
-            mBinaryValue = pBinaryValue;
-        } else {
-            mBinaryValue = kDefaultBinaryValue;
-        }
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
-
     private DefaultFields(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
         mByteValue = builder.mByteValue;

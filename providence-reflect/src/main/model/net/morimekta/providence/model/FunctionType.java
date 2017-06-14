@@ -27,38 +27,6 @@ public class FunctionType
 
     private volatile int tHashCode;
 
-    public FunctionType(String pDocumentation,
-                        Boolean pOneWay,
-                        String pReturnType,
-                        String pName,
-                        java.util.List<net.morimekta.providence.model.FieldType> pParams,
-                        java.util.List<net.morimekta.providence.model.FieldType> pExceptions,
-                        java.util.Map<String,String> pAnnotations) {
-        mDocumentation = pDocumentation;
-        mOneWay = pOneWay;
-        mReturnType = pReturnType;
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        if (pParams != null) {
-            mParams = com.google.common.collect.ImmutableList.copyOf(pParams);
-        } else {
-            mParams = kDefaultParams;
-        }
-        if (pExceptions != null) {
-            mExceptions = com.google.common.collect.ImmutableList.copyOf(pExceptions);
-        } else {
-            mExceptions = null;
-        }
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-    }
-
     private FunctionType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         mOneWay = builder.mOneWay;

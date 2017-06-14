@@ -28,38 +28,6 @@ public class ConstType
 
     private volatile int tHashCode;
 
-    public ConstType(String pDocumentation,
-                     String pType,
-                     String pName,
-                     String pValue,
-                     java.util.Map<String,String> pAnnotations,
-                     Integer pStartLineNo,
-                     Integer pStartLinePos) {
-        mDocumentation = pDocumentation;
-        if (pType != null) {
-            mType = pType;
-        } else {
-            mType = kDefaultType;
-        }
-        if (pName != null) {
-            mName = pName;
-        } else {
-            mName = kDefaultName;
-        }
-        if (pValue != null) {
-            mValue = pValue;
-        } else {
-            mValue = kDefaultValue;
-        }
-        if (pAnnotations != null) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
-        } else {
-            mAnnotations = null;
-        }
-        mStartLineNo = pStartLineNo;
-        mStartLinePos = pStartLinePos;
-    }
-
     private ConstType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetType()) {
