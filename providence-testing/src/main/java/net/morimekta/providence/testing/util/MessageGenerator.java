@@ -85,7 +85,6 @@ public class MessageGenerator extends TestWatcher {
         this.globalWriter             = this.writer             = null;
         this.globalFillRate           = this.fillRate           = 1.0;
 
-        this.defaultFactory = this::getDefaultValueSupplier;
         this.generated = new LinkedList<>();
         this.started = false;
     }
@@ -511,8 +510,6 @@ public class MessageGenerator extends TestWatcher {
         fillRate = globalFillRate;
     }
 
-    // --- PRIVATE ---
-    private final ValueSupplierFactory defaultFactory;
     // --- Global: set before starting(),
     //             and copied below in starting().
     private Random                     globalRandom;
@@ -551,12 +548,22 @@ public class MessageGenerator extends TestWatcher {
                 return supplier;
             }
         }
-        return defaultFactory.get(field);
+        return getFillRateValueSupplier(field);
     }
 
-    private Supplier<Object> getDefaultValueSupplier(PField field) {
+    private Supplier<Object> getUnionValueSupplier(PField field) {
+        for (ValueSupplierFactory factory : factories) {
+            Supplier<Object> supplier = factory.get(field);
+            if (supplier != null) {
+                return supplier;
+            }
+        }
+        return getValueSupplier(field.getDescriptor());
+    }
+
+    private Supplier<Object> getFillRateValueSupplier(PField field) {
         if (field.getRequirement() != PRequirement.REQUIRED) {
-            if (fillRate < 1.0 && random.nextDouble() < fillRate) {
+            if (fillRate < 1.0 && random.nextDouble() >= fillRate) {
                 return () -> null;
             }
         }
@@ -566,15 +573,16 @@ public class MessageGenerator extends TestWatcher {
     private <M extends PMessage<M, F>, F extends PField> M generateInternal(PMessageDescriptor<M, F> descriptor) {
         PMessageBuilder<M, F> builder = descriptor.builder();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
-            F field = descriptor.getFields()[random.nextInt(descriptor.getFields().length)];
-            Supplier<Object> supplier = getValueSupplier(field);
+            // Select one random field.
+            F[] fields = descriptor.getFields();
+            F field = fields[random.nextInt(fields.length)];
+            Supplier<Object> supplier = getUnionValueSupplier(field);
             assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(), supplier);
 
-            // Only non-null values are set.
+            // Always set field in unions.
             Object value = supplier.get();
-            if (value != null) {
-                builder.set(field, value);
-            }
+            assertNotNull("No value for union field: " + descriptor.getQualifiedName() + "." + field.getName(), value);
+            builder.set(field, value);
         } else {
             for (F field : descriptor.getFields()) {
                 Supplier<Object> supplier = getValueSupplier(field);
@@ -587,6 +595,7 @@ public class MessageGenerator extends TestWatcher {
                 }
             }
         }
+        builder.validate();
         return builder.build();
     }
 }
