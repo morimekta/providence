@@ -41,8 +41,9 @@ public class SerializationIT {
     @Test
     public void testSerializationSpeed_consistentData() throws IOException {
         assertThat(it.run("--no_progress",
-                          "--runs", "10",
-                          containers.getAbsolutePath()), is(0));
+                          "--load", containers.getAbsolutePath(),
+                          "--runs", "5",
+                          "containers"), is(0));
 
         System.err.println(console.output());
     }

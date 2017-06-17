@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
 public class CompactFields implements org.apache.thrift.TBase<CompactFields, CompactFields._Fields>, java.io.Serializable, Cloneable, Comparable<CompactFields> {
@@ -19,7 +19,7 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
 
   private java.lang.String name; // required
   private int id; // required
-  private java.lang.String label; // required
+  private java.lang.String label; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -88,6 +88,7 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
   private byte __isset_bitfield = 0;
+  private static final _Fields optionals[] = {_Fields.LABEL};
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -95,7 +96,7 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.REQUIRED, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.LABEL, new org.apache.thrift.meta_data.FieldMetaData("label", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.LABEL, new org.apache.thrift.meta_data.FieldMetaData("label", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(CompactFields.class, metaDataMap);
@@ -106,14 +107,12 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
 
   public CompactFields(
     java.lang.String name,
-    int id,
-    java.lang.String label)
+    int id)
   {
     this();
     this.name = name;
     this.id = id;
     setIdIsSet(true);
-    this.label = label;
   }
 
   /**
@@ -405,14 +404,16 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
     sb.append("id:");
     sb.append(this.id);
     first = false;
-    if (!first) sb.append(", ");
-    sb.append("label:");
-    if (this.label == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.label);
+    if (isSetLabel()) {
+      if (!first) sb.append(", ");
+      sb.append("label:");
+      if (this.label == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.label);
+      }
+      first = false;
     }
-    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -513,9 +514,11 @@ public class CompactFields implements org.apache.thrift.TBase<CompactFields, Com
       oprot.writeI32(struct.id);
       oprot.writeFieldEnd();
       if (struct.label != null) {
-        oprot.writeFieldBegin(LABEL_FIELD_DESC);
-        oprot.writeString(struct.label);
-        oprot.writeFieldEnd();
+        if (struct.isSetLabel()) {
+          oprot.writeFieldBegin(LABEL_FIELD_DESC);
+          oprot.writeString(struct.label);
+          oprot.writeFieldEnd();
+        }
       }
       oprot.writeFieldStop();
       oprot.writeStructEnd();

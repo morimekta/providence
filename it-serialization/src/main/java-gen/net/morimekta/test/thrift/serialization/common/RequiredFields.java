@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
 public class RequiredFields implements org.apache.thrift.TBase<RequiredFields, RequiredFields._Fields>, java.io.Serializable, Cloneable, Comparable<RequiredFields> {
@@ -1108,7 +1108,7 @@ public class RequiredFields implements org.apache.thrift.TBase<RequiredFields, R
             break;
           case 9: // ENUM_VALUE
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+              struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
               struct.setEnumValueIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1242,7 +1242,7 @@ public class RequiredFields implements org.apache.thrift.TBase<RequiredFields, R
       struct.setStringValueIsSet(true);
       struct.binaryValue = iprot.readBinary();
       struct.setBinaryValueIsSet(true);
-      struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+      struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
       struct.setEnumValueIsSet(true);
       struct.compactValue = new CompactFields();
       struct.compactValue.read(iprot);

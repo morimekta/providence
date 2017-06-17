@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 
 import java.util.Map;

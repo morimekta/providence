@@ -4,11 +4,11 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.containers;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
-public class Containers implements org.apache.thrift.TBase<Containers, Containers._Fields>, java.io.Serializable, Cloneable, Comparable<Containers> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Containers");
+public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, ManyContainers._Fields>, java.io.Serializable, Cloneable, Comparable<ManyContainers> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ManyContainers");
 
   private static final org.apache.thrift.protocol.TField BOOLEAN_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("booleanList", org.apache.thrift.protocol.TType.LIST, (short)1);
   private static final org.apache.thrift.protocol.TField BYTE_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("byteList", org.apache.thrift.protocol.TType.LIST, (short)2);
@@ -47,8 +47,8 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
   private static final org.apache.thrift.protocol.TField EXCEPTION_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("exceptionFields", org.apache.thrift.protocol.TType.STRUCT, (short)55);
   private static final org.apache.thrift.protocol.TField DEFAULT_VALUES_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultValues", org.apache.thrift.protocol.TType.STRUCT, (short)56);
 
-  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ContainersStandardSchemeFactory();
-  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new ContainersTupleSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ManyContainersStandardSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new ManyContainersTupleSchemeFactory();
 
   private java.util.List<java.lang.Boolean> booleanList; // optional
   private java.util.List<java.lang.Byte> byteList; // optional
@@ -74,18 +74,18 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
   private java.util.Map<java.lang.Double,java.lang.Double> doubleMap; // optional
   private java.util.Map<java.lang.String,java.lang.String> stringMap; // optional
   private java.util.Map<java.nio.ByteBuffer,java.nio.ByteBuffer> binaryMap; // optional
-  private java.util.List<Value> enumList; // optional
-  private java.util.Set<Value> enumSet; // optional
-  private java.util.Map<Value,Value> enumMap; // optional
-  private java.util.List<DefaultFields> messageList; // optional
-  private java.util.Set<DefaultFields> messageSet; // optional
-  private java.util.Map<java.lang.String,DefaultFields> messageMap; // optional
-  private RequiredFields requiredFields; // optional
-  private DefaultFields defaultFields; // optional
-  private OptionalFields optionalFields; // optional
-  private UnionFields unionFields; // optional
-  private ExceptionFields exceptionFields; // optional
-  private DefaultValues defaultValues; // optional
+  private java.util.List<net.morimekta.test.thrift.serialization.common.Value> enumList; // optional
+  private java.util.Set<net.morimekta.test.thrift.serialization.common.Value> enumSet; // optional
+  private java.util.Map<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value> enumMap; // optional
+  private java.util.List<net.morimekta.test.thrift.serialization.common.DefaultFields> messageList; // optional
+  private java.util.Set<net.morimekta.test.thrift.serialization.common.DefaultFields> messageSet; // optional
+  private java.util.Map<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields> messageMap; // optional
+  private net.morimekta.test.thrift.serialization.common.RequiredFields requiredFields; // optional
+  private net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields; // optional
+  private net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields; // optional
+  private net.morimekta.test.thrift.serialization.common.UnionFields unionFields; // optional
+  private net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields; // optional
+  private net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -337,47 +337,47 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING            , true))));
     tmpMap.put(_Fields.ENUM_LIST, new org.apache.thrift.meta_data.FieldMetaData("enumList", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Value.class))));
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, net.morimekta.test.thrift.serialization.common.Value.class))));
     tmpMap.put(_Fields.ENUM_SET, new org.apache.thrift.meta_data.FieldMetaData("enumSet", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Value.class))));
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, net.morimekta.test.thrift.serialization.common.Value.class))));
     tmpMap.put(_Fields.ENUM_MAP, new org.apache.thrift.meta_data.FieldMetaData("enumMap", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Value.class), 
-            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Value.class))));
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, net.morimekta.test.thrift.serialization.common.Value.class), 
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, net.morimekta.test.thrift.serialization.common.Value.class))));
     tmpMap.put(_Fields.MESSAGE_LIST, new org.apache.thrift.meta_data.FieldMetaData("messageList", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DefaultFields.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultFields.class))));
     tmpMap.put(_Fields.MESSAGE_SET, new org.apache.thrift.meta_data.FieldMetaData("messageSet", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DefaultFields.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultFields.class))));
     tmpMap.put(_Fields.MESSAGE_MAP, new org.apache.thrift.meta_data.FieldMetaData("messageMap", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DefaultFields.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultFields.class))));
     tmpMap.put(_Fields.REQUIRED_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("requiredFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, RequiredFields.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.RequiredFields.class)));
     tmpMap.put(_Fields.DEFAULT_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("defaultFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DefaultFields.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultFields.class)));
     tmpMap.put(_Fields.OPTIONAL_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("optionalFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, OptionalFields.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.OptionalFields.class)));
     tmpMap.put(_Fields.UNION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("unionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UnionFields.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.UnionFields.class)));
     tmpMap.put(_Fields.EXCEPTION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("exceptionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ExceptionFields.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.ExceptionFields.class)));
     tmpMap.put(_Fields.DEFAULT_VALUES, new org.apache.thrift.meta_data.FieldMetaData("defaultValues", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DefaultValues.class)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultValues.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Containers.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ManyContainers.class, metaDataMap);
   }
 
-  public Containers() {
+  public ManyContainers() {
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public Containers(Containers other) {
+  public ManyContainers(ManyContainers other) {
     if (other.isSetBooleanList()) {
       java.util.List<java.lang.Boolean> __this__booleanList = new java.util.ArrayList<java.lang.Boolean>(other.booleanList);
       this.booleanList = __this__booleanList;
@@ -475,85 +475,85 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       this.binaryMap = __this__binaryMap;
     }
     if (other.isSetEnumList()) {
-      java.util.List<Value> __this__enumList = new java.util.ArrayList<Value>(other.enumList.size());
-      for (Value other_element : other.enumList) {
+      java.util.List<net.morimekta.test.thrift.serialization.common.Value> __this__enumList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.Value>(other.enumList.size());
+      for (net.morimekta.test.thrift.serialization.common.Value other_element : other.enumList) {
         __this__enumList.add(other_element);
       }
       this.enumList = __this__enumList;
     }
     if (other.isSetEnumSet()) {
-      java.util.Set<Value> __this__enumSet = new java.util.HashSet<Value>(other.enumSet.size());
-      for (Value other_element : other.enumSet) {
+      java.util.Set<net.morimekta.test.thrift.serialization.common.Value> __this__enumSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.Value>(other.enumSet.size());
+      for (net.morimekta.test.thrift.serialization.common.Value other_element : other.enumSet) {
         __this__enumSet.add(other_element);
       }
       this.enumSet = __this__enumSet;
     }
     if (other.isSetEnumMap()) {
-      java.util.Map<Value,Value> __this__enumMap = new java.util.HashMap<Value,Value>(other.enumMap.size());
-      for (java.util.Map.Entry<Value, Value> other_element : other.enumMap.entrySet()) {
+      java.util.Map<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value> __this__enumMap = new java.util.HashMap<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value>(other.enumMap.size());
+      for (java.util.Map.Entry<net.morimekta.test.thrift.serialization.common.Value, net.morimekta.test.thrift.serialization.common.Value> other_element : other.enumMap.entrySet()) {
 
-        Value other_element_key = other_element.getKey();
-        Value other_element_value = other_element.getValue();
+        net.morimekta.test.thrift.serialization.common.Value other_element_key = other_element.getKey();
+        net.morimekta.test.thrift.serialization.common.Value other_element_value = other_element.getValue();
 
-        Value __this__enumMap_copy_key = other_element_key;
+        net.morimekta.test.thrift.serialization.common.Value __this__enumMap_copy_key = other_element_key;
 
-        Value __this__enumMap_copy_value = other_element_value;
+        net.morimekta.test.thrift.serialization.common.Value __this__enumMap_copy_value = other_element_value;
 
         __this__enumMap.put(__this__enumMap_copy_key, __this__enumMap_copy_value);
       }
       this.enumMap = __this__enumMap;
     }
     if (other.isSetMessageList()) {
-      java.util.List<DefaultFields> __this__messageList = new java.util.ArrayList<DefaultFields>(other.messageList.size());
-      for (DefaultFields other_element : other.messageList) {
-        __this__messageList.add(new DefaultFields(other_element));
+      java.util.List<net.morimekta.test.thrift.serialization.common.DefaultFields> __this__messageList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.DefaultFields>(other.messageList.size());
+      for (net.morimekta.test.thrift.serialization.common.DefaultFields other_element : other.messageList) {
+        __this__messageList.add(new net.morimekta.test.thrift.serialization.common.DefaultFields(other_element));
       }
       this.messageList = __this__messageList;
     }
     if (other.isSetMessageSet()) {
-      java.util.Set<DefaultFields> __this__messageSet = new java.util.HashSet<DefaultFields>(other.messageSet.size());
-      for (DefaultFields other_element : other.messageSet) {
-        __this__messageSet.add(new DefaultFields(other_element));
+      java.util.Set<net.morimekta.test.thrift.serialization.common.DefaultFields> __this__messageSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.DefaultFields>(other.messageSet.size());
+      for (net.morimekta.test.thrift.serialization.common.DefaultFields other_element : other.messageSet) {
+        __this__messageSet.add(new net.morimekta.test.thrift.serialization.common.DefaultFields(other_element));
       }
       this.messageSet = __this__messageSet;
     }
     if (other.isSetMessageMap()) {
-      java.util.Map<java.lang.String,DefaultFields> __this__messageMap = new java.util.HashMap<java.lang.String,DefaultFields>(other.messageMap.size());
-      for (java.util.Map.Entry<java.lang.String, DefaultFields> other_element : other.messageMap.entrySet()) {
+      java.util.Map<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields> __this__messageMap = new java.util.HashMap<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields>(other.messageMap.size());
+      for (java.util.Map.Entry<java.lang.String, net.morimekta.test.thrift.serialization.common.DefaultFields> other_element : other.messageMap.entrySet()) {
 
         java.lang.String other_element_key = other_element.getKey();
-        DefaultFields other_element_value = other_element.getValue();
+        net.morimekta.test.thrift.serialization.common.DefaultFields other_element_value = other_element.getValue();
 
         java.lang.String __this__messageMap_copy_key = other_element_key;
 
-        DefaultFields __this__messageMap_copy_value = new DefaultFields(other_element_value);
+        net.morimekta.test.thrift.serialization.common.DefaultFields __this__messageMap_copy_value = new net.morimekta.test.thrift.serialization.common.DefaultFields(other_element_value);
 
         __this__messageMap.put(__this__messageMap_copy_key, __this__messageMap_copy_value);
       }
       this.messageMap = __this__messageMap;
     }
     if (other.isSetRequiredFields()) {
-      this.requiredFields = new RequiredFields(other.requiredFields);
+      this.requiredFields = new net.morimekta.test.thrift.serialization.common.RequiredFields(other.requiredFields);
     }
     if (other.isSetDefaultFields()) {
-      this.defaultFields = new DefaultFields(other.defaultFields);
+      this.defaultFields = new net.morimekta.test.thrift.serialization.common.DefaultFields(other.defaultFields);
     }
     if (other.isSetOptionalFields()) {
-      this.optionalFields = new OptionalFields(other.optionalFields);
+      this.optionalFields = new net.morimekta.test.thrift.serialization.common.OptionalFields(other.optionalFields);
     }
     if (other.isSetUnionFields()) {
-      this.unionFields = new UnionFields(other.unionFields);
+      this.unionFields = new net.morimekta.test.thrift.serialization.common.UnionFields(other.unionFields);
     }
     if (other.isSetExceptionFields()) {
-      this.exceptionFields = new ExceptionFields(other.exceptionFields);
+      this.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields(other.exceptionFields);
     }
     if (other.isSetDefaultValues()) {
-      this.defaultValues = new DefaultValues(other.defaultValues);
+      this.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues(other.defaultValues);
     }
   }
 
-  public Containers deepCopy() {
-    return new Containers(this);
+  public ManyContainers deepCopy() {
+    return new ManyContainers(this);
   }
 
   @Override
@@ -615,7 +615,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.booleanList;
   }
 
-  public Containers setBooleanList(java.util.List<java.lang.Boolean> booleanList) {
+  public ManyContainers setBooleanList(java.util.List<java.lang.Boolean> booleanList) {
     this.booleanList = booleanList;
     return this;
   }
@@ -654,7 +654,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.byteList;
   }
 
-  public Containers setByteList(java.util.List<java.lang.Byte> byteList) {
+  public ManyContainers setByteList(java.util.List<java.lang.Byte> byteList) {
     this.byteList = byteList;
     return this;
   }
@@ -693,7 +693,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.shortList;
   }
 
-  public Containers setShortList(java.util.List<java.lang.Short> shortList) {
+  public ManyContainers setShortList(java.util.List<java.lang.Short> shortList) {
     this.shortList = shortList;
     return this;
   }
@@ -732,7 +732,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.integerList;
   }
 
-  public Containers setIntegerList(java.util.List<java.lang.Integer> integerList) {
+  public ManyContainers setIntegerList(java.util.List<java.lang.Integer> integerList) {
     this.integerList = integerList;
     return this;
   }
@@ -771,7 +771,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.longList;
   }
 
-  public Containers setLongList(java.util.List<java.lang.Long> longList) {
+  public ManyContainers setLongList(java.util.List<java.lang.Long> longList) {
     this.longList = longList;
     return this;
   }
@@ -810,7 +810,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.doubleList;
   }
 
-  public Containers setDoubleList(java.util.List<java.lang.Double> doubleList) {
+  public ManyContainers setDoubleList(java.util.List<java.lang.Double> doubleList) {
     this.doubleList = doubleList;
     return this;
   }
@@ -849,7 +849,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.stringList;
   }
 
-  public Containers setStringList(java.util.List<java.lang.String> stringList) {
+  public ManyContainers setStringList(java.util.List<java.lang.String> stringList) {
     this.stringList = stringList;
     return this;
   }
@@ -888,7 +888,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.binaryList;
   }
 
-  public Containers setBinaryList(java.util.List<java.nio.ByteBuffer> binaryList) {
+  public ManyContainers setBinaryList(java.util.List<java.nio.ByteBuffer> binaryList) {
     this.binaryList = binaryList;
     return this;
   }
@@ -927,7 +927,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.booleanSet;
   }
 
-  public Containers setBooleanSet(java.util.Set<java.lang.Boolean> booleanSet) {
+  public ManyContainers setBooleanSet(java.util.Set<java.lang.Boolean> booleanSet) {
     this.booleanSet = booleanSet;
     return this;
   }
@@ -966,7 +966,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.byteSet;
   }
 
-  public Containers setByteSet(java.util.Set<java.lang.Byte> byteSet) {
+  public ManyContainers setByteSet(java.util.Set<java.lang.Byte> byteSet) {
     this.byteSet = byteSet;
     return this;
   }
@@ -1005,7 +1005,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.shortSet;
   }
 
-  public Containers setShortSet(java.util.Set<java.lang.Short> shortSet) {
+  public ManyContainers setShortSet(java.util.Set<java.lang.Short> shortSet) {
     this.shortSet = shortSet;
     return this;
   }
@@ -1044,7 +1044,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.integerSet;
   }
 
-  public Containers setIntegerSet(java.util.Set<java.lang.Integer> integerSet) {
+  public ManyContainers setIntegerSet(java.util.Set<java.lang.Integer> integerSet) {
     this.integerSet = integerSet;
     return this;
   }
@@ -1083,7 +1083,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.longSet;
   }
 
-  public Containers setLongSet(java.util.Set<java.lang.Long> longSet) {
+  public ManyContainers setLongSet(java.util.Set<java.lang.Long> longSet) {
     this.longSet = longSet;
     return this;
   }
@@ -1122,7 +1122,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.doubleSet;
   }
 
-  public Containers setDoubleSet(java.util.Set<java.lang.Double> doubleSet) {
+  public ManyContainers setDoubleSet(java.util.Set<java.lang.Double> doubleSet) {
     this.doubleSet = doubleSet;
     return this;
   }
@@ -1161,7 +1161,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.stringSet;
   }
 
-  public Containers setStringSet(java.util.Set<java.lang.String> stringSet) {
+  public ManyContainers setStringSet(java.util.Set<java.lang.String> stringSet) {
     this.stringSet = stringSet;
     return this;
   }
@@ -1200,7 +1200,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.binarySet;
   }
 
-  public Containers setBinarySet(java.util.Set<java.nio.ByteBuffer> binarySet) {
+  public ManyContainers setBinarySet(java.util.Set<java.nio.ByteBuffer> binarySet) {
     this.binarySet = binarySet;
     return this;
   }
@@ -1235,7 +1235,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.booleanMap;
   }
 
-  public Containers setBooleanMap(java.util.Map<java.lang.Boolean,java.lang.Boolean> booleanMap) {
+  public ManyContainers setBooleanMap(java.util.Map<java.lang.Boolean,java.lang.Boolean> booleanMap) {
     this.booleanMap = booleanMap;
     return this;
   }
@@ -1270,7 +1270,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.byteMap;
   }
 
-  public Containers setByteMap(java.util.Map<java.lang.Byte,java.lang.Byte> byteMap) {
+  public ManyContainers setByteMap(java.util.Map<java.lang.Byte,java.lang.Byte> byteMap) {
     this.byteMap = byteMap;
     return this;
   }
@@ -1305,7 +1305,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.shortMap;
   }
 
-  public Containers setShortMap(java.util.Map<java.lang.Short,java.lang.Short> shortMap) {
+  public ManyContainers setShortMap(java.util.Map<java.lang.Short,java.lang.Short> shortMap) {
     this.shortMap = shortMap;
     return this;
   }
@@ -1340,7 +1340,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.integerMap;
   }
 
-  public Containers setIntegerMap(java.util.Map<java.lang.Integer,java.lang.Integer> integerMap) {
+  public ManyContainers setIntegerMap(java.util.Map<java.lang.Integer,java.lang.Integer> integerMap) {
     this.integerMap = integerMap;
     return this;
   }
@@ -1375,7 +1375,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.longMap;
   }
 
-  public Containers setLongMap(java.util.Map<java.lang.Long,java.lang.Long> longMap) {
+  public ManyContainers setLongMap(java.util.Map<java.lang.Long,java.lang.Long> longMap) {
     this.longMap = longMap;
     return this;
   }
@@ -1410,7 +1410,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.doubleMap;
   }
 
-  public Containers setDoubleMap(java.util.Map<java.lang.Double,java.lang.Double> doubleMap) {
+  public ManyContainers setDoubleMap(java.util.Map<java.lang.Double,java.lang.Double> doubleMap) {
     this.doubleMap = doubleMap;
     return this;
   }
@@ -1445,7 +1445,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.stringMap;
   }
 
-  public Containers setStringMap(java.util.Map<java.lang.String,java.lang.String> stringMap) {
+  public ManyContainers setStringMap(java.util.Map<java.lang.String,java.lang.String> stringMap) {
     this.stringMap = stringMap;
     return this;
   }
@@ -1480,7 +1480,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return this.binaryMap;
   }
 
-  public Containers setBinaryMap(java.util.Map<java.nio.ByteBuffer,java.nio.ByteBuffer> binaryMap) {
+  public ManyContainers setBinaryMap(java.util.Map<java.nio.ByteBuffer,java.nio.ByteBuffer> binaryMap) {
     this.binaryMap = binaryMap;
     return this;
   }
@@ -1504,22 +1504,22 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.enumList == null) ? 0 : this.enumList.size();
   }
 
-  public java.util.Iterator<Value> getEnumListIterator() {
+  public java.util.Iterator<net.morimekta.test.thrift.serialization.common.Value> getEnumListIterator() {
     return (this.enumList == null) ? null : this.enumList.iterator();
   }
 
-  public void addToEnumList(Value elem) {
+  public void addToEnumList(net.morimekta.test.thrift.serialization.common.Value elem) {
     if (this.enumList == null) {
-      this.enumList = new java.util.ArrayList<Value>();
+      this.enumList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.Value>();
     }
     this.enumList.add(elem);
   }
 
-  public java.util.List<Value> getEnumList() {
+  public java.util.List<net.morimekta.test.thrift.serialization.common.Value> getEnumList() {
     return this.enumList;
   }
 
-  public Containers setEnumList(java.util.List<Value> enumList) {
+  public ManyContainers setEnumList(java.util.List<net.morimekta.test.thrift.serialization.common.Value> enumList) {
     this.enumList = enumList;
     return this;
   }
@@ -1543,22 +1543,22 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.enumSet == null) ? 0 : this.enumSet.size();
   }
 
-  public java.util.Iterator<Value> getEnumSetIterator() {
+  public java.util.Iterator<net.morimekta.test.thrift.serialization.common.Value> getEnumSetIterator() {
     return (this.enumSet == null) ? null : this.enumSet.iterator();
   }
 
-  public void addToEnumSet(Value elem) {
+  public void addToEnumSet(net.morimekta.test.thrift.serialization.common.Value elem) {
     if (this.enumSet == null) {
-      this.enumSet = new java.util.HashSet<Value>();
+      this.enumSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.Value>();
     }
     this.enumSet.add(elem);
   }
 
-  public java.util.Set<Value> getEnumSet() {
+  public java.util.Set<net.morimekta.test.thrift.serialization.common.Value> getEnumSet() {
     return this.enumSet;
   }
 
-  public Containers setEnumSet(java.util.Set<Value> enumSet) {
+  public ManyContainers setEnumSet(java.util.Set<net.morimekta.test.thrift.serialization.common.Value> enumSet) {
     this.enumSet = enumSet;
     return this;
   }
@@ -1582,18 +1582,18 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.enumMap == null) ? 0 : this.enumMap.size();
   }
 
-  public void putToEnumMap(Value key, Value val) {
+  public void putToEnumMap(net.morimekta.test.thrift.serialization.common.Value key, net.morimekta.test.thrift.serialization.common.Value val) {
     if (this.enumMap == null) {
-      this.enumMap = new java.util.HashMap<Value,Value>();
+      this.enumMap = new java.util.HashMap<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value>();
     }
     this.enumMap.put(key, val);
   }
 
-  public java.util.Map<Value,Value> getEnumMap() {
+  public java.util.Map<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value> getEnumMap() {
     return this.enumMap;
   }
 
-  public Containers setEnumMap(java.util.Map<Value,Value> enumMap) {
+  public ManyContainers setEnumMap(java.util.Map<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value> enumMap) {
     this.enumMap = enumMap;
     return this;
   }
@@ -1617,22 +1617,22 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.messageList == null) ? 0 : this.messageList.size();
   }
 
-  public java.util.Iterator<DefaultFields> getMessageListIterator() {
+  public java.util.Iterator<net.morimekta.test.thrift.serialization.common.DefaultFields> getMessageListIterator() {
     return (this.messageList == null) ? null : this.messageList.iterator();
   }
 
-  public void addToMessageList(DefaultFields elem) {
+  public void addToMessageList(net.morimekta.test.thrift.serialization.common.DefaultFields elem) {
     if (this.messageList == null) {
-      this.messageList = new java.util.ArrayList<DefaultFields>();
+      this.messageList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.DefaultFields>();
     }
     this.messageList.add(elem);
   }
 
-  public java.util.List<DefaultFields> getMessageList() {
+  public java.util.List<net.morimekta.test.thrift.serialization.common.DefaultFields> getMessageList() {
     return this.messageList;
   }
 
-  public Containers setMessageList(java.util.List<DefaultFields> messageList) {
+  public ManyContainers setMessageList(java.util.List<net.morimekta.test.thrift.serialization.common.DefaultFields> messageList) {
     this.messageList = messageList;
     return this;
   }
@@ -1656,22 +1656,22 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.messageSet == null) ? 0 : this.messageSet.size();
   }
 
-  public java.util.Iterator<DefaultFields> getMessageSetIterator() {
+  public java.util.Iterator<net.morimekta.test.thrift.serialization.common.DefaultFields> getMessageSetIterator() {
     return (this.messageSet == null) ? null : this.messageSet.iterator();
   }
 
-  public void addToMessageSet(DefaultFields elem) {
+  public void addToMessageSet(net.morimekta.test.thrift.serialization.common.DefaultFields elem) {
     if (this.messageSet == null) {
-      this.messageSet = new java.util.HashSet<DefaultFields>();
+      this.messageSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.DefaultFields>();
     }
     this.messageSet.add(elem);
   }
 
-  public java.util.Set<DefaultFields> getMessageSet() {
+  public java.util.Set<net.morimekta.test.thrift.serialization.common.DefaultFields> getMessageSet() {
     return this.messageSet;
   }
 
-  public Containers setMessageSet(java.util.Set<DefaultFields> messageSet) {
+  public ManyContainers setMessageSet(java.util.Set<net.morimekta.test.thrift.serialization.common.DefaultFields> messageSet) {
     this.messageSet = messageSet;
     return this;
   }
@@ -1695,18 +1695,18 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     return (this.messageMap == null) ? 0 : this.messageMap.size();
   }
 
-  public void putToMessageMap(java.lang.String key, DefaultFields val) {
+  public void putToMessageMap(java.lang.String key, net.morimekta.test.thrift.serialization.common.DefaultFields val) {
     if (this.messageMap == null) {
-      this.messageMap = new java.util.HashMap<java.lang.String,DefaultFields>();
+      this.messageMap = new java.util.HashMap<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields>();
     }
     this.messageMap.put(key, val);
   }
 
-  public java.util.Map<java.lang.String,DefaultFields> getMessageMap() {
+  public java.util.Map<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields> getMessageMap() {
     return this.messageMap;
   }
 
-  public Containers setMessageMap(java.util.Map<java.lang.String,DefaultFields> messageMap) {
+  public ManyContainers setMessageMap(java.util.Map<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields> messageMap) {
     this.messageMap = messageMap;
     return this;
   }
@@ -1726,11 +1726,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public RequiredFields getRequiredFields() {
+  public net.morimekta.test.thrift.serialization.common.RequiredFields getRequiredFields() {
     return this.requiredFields;
   }
 
-  public Containers setRequiredFields(RequiredFields requiredFields) {
+  public ManyContainers setRequiredFields(net.morimekta.test.thrift.serialization.common.RequiredFields requiredFields) {
     this.requiredFields = requiredFields;
     return this;
   }
@@ -1750,11 +1750,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public DefaultFields getDefaultFields() {
+  public net.morimekta.test.thrift.serialization.common.DefaultFields getDefaultFields() {
     return this.defaultFields;
   }
 
-  public Containers setDefaultFields(DefaultFields defaultFields) {
+  public ManyContainers setDefaultFields(net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields) {
     this.defaultFields = defaultFields;
     return this;
   }
@@ -1774,11 +1774,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public OptionalFields getOptionalFields() {
+  public net.morimekta.test.thrift.serialization.common.OptionalFields getOptionalFields() {
     return this.optionalFields;
   }
 
-  public Containers setOptionalFields(OptionalFields optionalFields) {
+  public ManyContainers setOptionalFields(net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields) {
     this.optionalFields = optionalFields;
     return this;
   }
@@ -1798,11 +1798,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public UnionFields getUnionFields() {
+  public net.morimekta.test.thrift.serialization.common.UnionFields getUnionFields() {
     return this.unionFields;
   }
 
-  public Containers setUnionFields(UnionFields unionFields) {
+  public ManyContainers setUnionFields(net.morimekta.test.thrift.serialization.common.UnionFields unionFields) {
     this.unionFields = unionFields;
     return this;
   }
@@ -1822,11 +1822,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public ExceptionFields getExceptionFields() {
+  public net.morimekta.test.thrift.serialization.common.ExceptionFields getExceptionFields() {
     return this.exceptionFields;
   }
 
-  public Containers setExceptionFields(ExceptionFields exceptionFields) {
+  public ManyContainers setExceptionFields(net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields) {
     this.exceptionFields = exceptionFields;
     return this;
   }
@@ -1846,11 +1846,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  public DefaultValues getDefaultValues() {
+  public net.morimekta.test.thrift.serialization.common.DefaultValues getDefaultValues() {
     return this.defaultValues;
   }
 
-  public Containers setDefaultValues(DefaultValues defaultValues) {
+  public ManyContainers setDefaultValues(net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues) {
     this.defaultValues = defaultValues;
     return this;
   }
@@ -2068,7 +2068,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetEnumList();
       } else {
-        setEnumList((java.util.List<Value>)value);
+        setEnumList((java.util.List<net.morimekta.test.thrift.serialization.common.Value>)value);
       }
       break;
 
@@ -2076,7 +2076,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetEnumSet();
       } else {
-        setEnumSet((java.util.Set<Value>)value);
+        setEnumSet((java.util.Set<net.morimekta.test.thrift.serialization.common.Value>)value);
       }
       break;
 
@@ -2084,7 +2084,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetEnumMap();
       } else {
-        setEnumMap((java.util.Map<Value,Value>)value);
+        setEnumMap((java.util.Map<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value>)value);
       }
       break;
 
@@ -2092,7 +2092,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetMessageList();
       } else {
-        setMessageList((java.util.List<DefaultFields>)value);
+        setMessageList((java.util.List<net.morimekta.test.thrift.serialization.common.DefaultFields>)value);
       }
       break;
 
@@ -2100,7 +2100,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetMessageSet();
       } else {
-        setMessageSet((java.util.Set<DefaultFields>)value);
+        setMessageSet((java.util.Set<net.morimekta.test.thrift.serialization.common.DefaultFields>)value);
       }
       break;
 
@@ -2108,7 +2108,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetMessageMap();
       } else {
-        setMessageMap((java.util.Map<java.lang.String,DefaultFields>)value);
+        setMessageMap((java.util.Map<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields>)value);
       }
       break;
 
@@ -2116,7 +2116,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetRequiredFields();
       } else {
-        setRequiredFields((RequiredFields)value);
+        setRequiredFields((net.morimekta.test.thrift.serialization.common.RequiredFields)value);
       }
       break;
 
@@ -2124,7 +2124,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetDefaultFields();
       } else {
-        setDefaultFields((DefaultFields)value);
+        setDefaultFields((net.morimekta.test.thrift.serialization.common.DefaultFields)value);
       }
       break;
 
@@ -2132,7 +2132,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetOptionalFields();
       } else {
-        setOptionalFields((OptionalFields)value);
+        setOptionalFields((net.morimekta.test.thrift.serialization.common.OptionalFields)value);
       }
       break;
 
@@ -2140,7 +2140,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetUnionFields();
       } else {
-        setUnionFields((UnionFields)value);
+        setUnionFields((net.morimekta.test.thrift.serialization.common.UnionFields)value);
       }
       break;
 
@@ -2148,7 +2148,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetExceptionFields();
       } else {
-        setExceptionFields((ExceptionFields)value);
+        setExceptionFields((net.morimekta.test.thrift.serialization.common.ExceptionFields)value);
       }
       break;
 
@@ -2156,7 +2156,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (value == null) {
         unsetDefaultValues();
       } else {
-        setDefaultValues((DefaultValues)value);
+        setDefaultValues((net.morimekta.test.thrift.serialization.common.DefaultValues)value);
       }
       break;
 
@@ -2364,12 +2364,12 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
   public boolean equals(java.lang.Object that) {
     if (that == null)
       return false;
-    if (that instanceof Containers)
-      return this.equals((Containers)that);
+    if (that instanceof ManyContainers)
+      return this.equals((ManyContainers)that);
     return false;
   }
 
-  public boolean equals(Containers that) {
+  public boolean equals(ManyContainers that) {
     if (that == null)
       return false;
     if (this == that)
@@ -2854,7 +2854,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
   }
 
   @Override
-  public int compareTo(Containers other) {
+  public int compareTo(ManyContainers other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -3238,7 +3238,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
 
   @Override
   public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("Containers(");
+    java.lang.StringBuilder sb = new java.lang.StringBuilder("ManyContainers(");
     boolean first = true;
 
     if (isSetBooleanList()) {
@@ -3637,15 +3637,15 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
   }
 
-  private static class ContainersStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public ContainersStandardScheme getScheme() {
-      return new ContainersStandardScheme();
+  private static class ManyContainersStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public ManyContainersStandardScheme getScheme() {
+      return new ManyContainersStandardScheme();
     }
   }
 
-  private static class ContainersStandardScheme extends org.apache.thrift.scheme.StandardScheme<Containers> {
+  private static class ManyContainersStandardScheme extends org.apache.thrift.scheme.StandardScheme<ManyContainers> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, Containers struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, ManyContainers struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -4107,11 +4107,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list80 = iprot.readListBegin();
-                struct.enumList = new java.util.ArrayList<Value>(_list80.size);
-                Value _elem81;
+                struct.enumList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.Value>(_list80.size);
+                net.morimekta.test.thrift.serialization.common.Value _elem81;
                 for (int _i82 = 0; _i82 < _list80.size; ++_i82)
                 {
-                  _elem81 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+                  _elem81 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
                   struct.enumList.add(_elem81);
                 }
                 iprot.readListEnd();
@@ -4125,11 +4125,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
                 org.apache.thrift.protocol.TSet _set83 = iprot.readSetBegin();
-                struct.enumSet = new java.util.HashSet<Value>(2*_set83.size);
-                Value _elem84;
+                struct.enumSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.Value>(2*_set83.size);
+                net.morimekta.test.thrift.serialization.common.Value _elem84;
                 for (int _i85 = 0; _i85 < _set83.size; ++_i85)
                 {
-                  _elem84 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+                  _elem84 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
                   struct.enumSet.add(_elem84);
                 }
                 iprot.readSetEnd();
@@ -4143,13 +4143,13 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
               {
                 org.apache.thrift.protocol.TMap _map86 = iprot.readMapBegin();
-                struct.enumMap = new java.util.HashMap<Value,Value>(2*_map86.size);
-                Value _key87;
-                Value _val88;
+                struct.enumMap = new java.util.HashMap<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value>(2*_map86.size);
+                net.morimekta.test.thrift.serialization.common.Value _key87;
+                net.morimekta.test.thrift.serialization.common.Value _val88;
                 for (int _i89 = 0; _i89 < _map86.size; ++_i89)
                 {
-                  _key87 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
-                  _val88 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+                  _key87 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
+                  _val88 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
                   struct.enumMap.put(_key87, _val88);
                 }
                 iprot.readMapEnd();
@@ -4163,11 +4163,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list90 = iprot.readListBegin();
-                struct.messageList = new java.util.ArrayList<DefaultFields>(_list90.size);
-                DefaultFields _elem91;
+                struct.messageList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.DefaultFields>(_list90.size);
+                net.morimekta.test.thrift.serialization.common.DefaultFields _elem91;
                 for (int _i92 = 0; _i92 < _list90.size; ++_i92)
                 {
-                  _elem91 = new DefaultFields();
+                  _elem91 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
                   _elem91.read(iprot);
                   struct.messageList.add(_elem91);
                 }
@@ -4182,11 +4182,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
                 org.apache.thrift.protocol.TSet _set93 = iprot.readSetBegin();
-                struct.messageSet = new java.util.HashSet<DefaultFields>(2*_set93.size);
-                DefaultFields _elem94;
+                struct.messageSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.DefaultFields>(2*_set93.size);
+                net.morimekta.test.thrift.serialization.common.DefaultFields _elem94;
                 for (int _i95 = 0; _i95 < _set93.size; ++_i95)
                 {
-                  _elem94 = new DefaultFields();
+                  _elem94 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
                   _elem94.read(iprot);
                   struct.messageSet.add(_elem94);
                 }
@@ -4201,13 +4201,13 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
               {
                 org.apache.thrift.protocol.TMap _map96 = iprot.readMapBegin();
-                struct.messageMap = new java.util.HashMap<java.lang.String,DefaultFields>(2*_map96.size);
+                struct.messageMap = new java.util.HashMap<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields>(2*_map96.size);
                 java.lang.String _key97;
-                DefaultFields _val98;
+                net.morimekta.test.thrift.serialization.common.DefaultFields _val98;
                 for (int _i99 = 0; _i99 < _map96.size; ++_i99)
                 {
                   _key97 = iprot.readString();
-                  _val98 = new DefaultFields();
+                  _val98 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
                   _val98.read(iprot);
                   struct.messageMap.put(_key97, _val98);
                 }
@@ -4220,7 +4220,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 51: // REQUIRED_FIELDS
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.requiredFields = new RequiredFields();
+              struct.requiredFields = new net.morimekta.test.thrift.serialization.common.RequiredFields();
               struct.requiredFields.read(iprot);
               struct.setRequiredFieldsIsSet(true);
             } else { 
@@ -4229,7 +4229,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 52: // DEFAULT_FIELDS
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.defaultFields = new DefaultFields();
+              struct.defaultFields = new net.morimekta.test.thrift.serialization.common.DefaultFields();
               struct.defaultFields.read(iprot);
               struct.setDefaultFieldsIsSet(true);
             } else { 
@@ -4238,7 +4238,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 53: // OPTIONAL_FIELDS
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.optionalFields = new OptionalFields();
+              struct.optionalFields = new net.morimekta.test.thrift.serialization.common.OptionalFields();
               struct.optionalFields.read(iprot);
               struct.setOptionalFieldsIsSet(true);
             } else { 
@@ -4247,7 +4247,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 54: // UNION_FIELDS
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.unionFields = new UnionFields();
+              struct.unionFields = new net.morimekta.test.thrift.serialization.common.UnionFields();
               struct.unionFields.read(iprot);
               struct.setUnionFieldsIsSet(true);
             } else { 
@@ -4256,7 +4256,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 55: // EXCEPTION_FIELDS
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.exceptionFields = new ExceptionFields();
+              struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
               struct.exceptionFields.read(iprot);
               struct.setExceptionFieldsIsSet(true);
             } else { 
@@ -4265,7 +4265,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
             break;
           case 56: // DEFAULT_VALUES
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.defaultValues = new DefaultValues();
+              struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
               struct.defaultValues.read(iprot);
               struct.setDefaultValuesIsSet(true);
             } else { 
@@ -4283,7 +4283,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, Containers struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, ManyContainers struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -4636,7 +4636,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(ENUM_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, struct.enumList.size()));
-            for (Value _iter124 : struct.enumList)
+            for (net.morimekta.test.thrift.serialization.common.Value _iter124 : struct.enumList)
             {
               oprot.writeI32(_iter124.getValue());
             }
@@ -4650,7 +4650,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(ENUM_SET_FIELD_DESC);
           {
             oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I32, struct.enumSet.size()));
-            for (Value _iter125 : struct.enumSet)
+            for (net.morimekta.test.thrift.serialization.common.Value _iter125 : struct.enumSet)
             {
               oprot.writeI32(_iter125.getValue());
             }
@@ -4664,7 +4664,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(ENUM_MAP_FIELD_DESC);
           {
             oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I32, struct.enumMap.size()));
-            for (java.util.Map.Entry<Value, Value> _iter126 : struct.enumMap.entrySet())
+            for (java.util.Map.Entry<net.morimekta.test.thrift.serialization.common.Value, net.morimekta.test.thrift.serialization.common.Value> _iter126 : struct.enumMap.entrySet())
             {
               oprot.writeI32(_iter126.getKey().getValue());
               oprot.writeI32(_iter126.getValue().getValue());
@@ -4679,7 +4679,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(MESSAGE_LIST_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.messageList.size()));
-            for (DefaultFields _iter127 : struct.messageList)
+            for (net.morimekta.test.thrift.serialization.common.DefaultFields _iter127 : struct.messageList)
             {
               _iter127.write(oprot);
             }
@@ -4693,7 +4693,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(MESSAGE_SET_FIELD_DESC);
           {
             oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.messageSet.size()));
-            for (DefaultFields _iter128 : struct.messageSet)
+            for (net.morimekta.test.thrift.serialization.common.DefaultFields _iter128 : struct.messageSet)
             {
               _iter128.write(oprot);
             }
@@ -4707,7 +4707,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
           oprot.writeFieldBegin(MESSAGE_MAP_FIELD_DESC);
           {
             oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRUCT, struct.messageMap.size()));
-            for (java.util.Map.Entry<java.lang.String, DefaultFields> _iter129 : struct.messageMap.entrySet())
+            for (java.util.Map.Entry<java.lang.String, net.morimekta.test.thrift.serialization.common.DefaultFields> _iter129 : struct.messageMap.entrySet())
             {
               oprot.writeString(_iter129.getKey());
               _iter129.getValue().write(oprot);
@@ -4765,16 +4765,16 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
 
   }
 
-  private static class ContainersTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public ContainersTupleScheme getScheme() {
-      return new ContainersTupleScheme();
+  private static class ManyContainersTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public ManyContainersTupleScheme getScheme() {
+      return new ManyContainersTupleScheme();
     }
   }
 
-  private static class ContainersTupleScheme extends org.apache.thrift.scheme.TupleScheme<Containers> {
+  private static class ManyContainersTupleScheme extends org.apache.thrift.scheme.TupleScheme<ManyContainers> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, Containers struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, ManyContainers struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet optionals = new java.util.BitSet();
       if (struct.isSetBooleanList()) {
@@ -5113,7 +5113,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetEnumList()) {
         {
           oprot.writeI32(struct.enumList.size());
-          for (Value _iter154 : struct.enumList)
+          for (net.morimekta.test.thrift.serialization.common.Value _iter154 : struct.enumList)
           {
             oprot.writeI32(_iter154.getValue());
           }
@@ -5122,7 +5122,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetEnumSet()) {
         {
           oprot.writeI32(struct.enumSet.size());
-          for (Value _iter155 : struct.enumSet)
+          for (net.morimekta.test.thrift.serialization.common.Value _iter155 : struct.enumSet)
           {
             oprot.writeI32(_iter155.getValue());
           }
@@ -5131,7 +5131,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetEnumMap()) {
         {
           oprot.writeI32(struct.enumMap.size());
-          for (java.util.Map.Entry<Value, Value> _iter156 : struct.enumMap.entrySet())
+          for (java.util.Map.Entry<net.morimekta.test.thrift.serialization.common.Value, net.morimekta.test.thrift.serialization.common.Value> _iter156 : struct.enumMap.entrySet())
           {
             oprot.writeI32(_iter156.getKey().getValue());
             oprot.writeI32(_iter156.getValue().getValue());
@@ -5141,7 +5141,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetMessageList()) {
         {
           oprot.writeI32(struct.messageList.size());
-          for (DefaultFields _iter157 : struct.messageList)
+          for (net.morimekta.test.thrift.serialization.common.DefaultFields _iter157 : struct.messageList)
           {
             _iter157.write(oprot);
           }
@@ -5150,7 +5150,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetMessageSet()) {
         {
           oprot.writeI32(struct.messageSet.size());
-          for (DefaultFields _iter158 : struct.messageSet)
+          for (net.morimekta.test.thrift.serialization.common.DefaultFields _iter158 : struct.messageSet)
           {
             _iter158.write(oprot);
           }
@@ -5159,7 +5159,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (struct.isSetMessageMap()) {
         {
           oprot.writeI32(struct.messageMap.size());
-          for (java.util.Map.Entry<java.lang.String, DefaultFields> _iter159 : struct.messageMap.entrySet())
+          for (java.util.Map.Entry<java.lang.String, net.morimekta.test.thrift.serialization.common.DefaultFields> _iter159 : struct.messageMap.entrySet())
           {
             oprot.writeString(_iter159.getKey());
             _iter159.getValue().write(oprot);
@@ -5187,7 +5187,7 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, Containers struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, ManyContainers struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet incoming = iprot.readBitSet(36);
       if (incoming.get(0)) {
@@ -5521,11 +5521,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(24)) {
         {
           org.apache.thrift.protocol.TList _list240 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-          struct.enumList = new java.util.ArrayList<Value>(_list240.size);
-          Value _elem241;
+          struct.enumList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.Value>(_list240.size);
+          net.morimekta.test.thrift.serialization.common.Value _elem241;
           for (int _i242 = 0; _i242 < _list240.size; ++_i242)
           {
-            _elem241 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+            _elem241 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
             struct.enumList.add(_elem241);
           }
         }
@@ -5534,11 +5534,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(25)) {
         {
           org.apache.thrift.protocol.TSet _set243 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-          struct.enumSet = new java.util.HashSet<Value>(2*_set243.size);
-          Value _elem244;
+          struct.enumSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.Value>(2*_set243.size);
+          net.morimekta.test.thrift.serialization.common.Value _elem244;
           for (int _i245 = 0; _i245 < _set243.size; ++_i245)
           {
-            _elem244 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+            _elem244 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
             struct.enumSet.add(_elem244);
           }
         }
@@ -5547,13 +5547,13 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(26)) {
         {
           org.apache.thrift.protocol.TMap _map246 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I32, iprot.readI32());
-          struct.enumMap = new java.util.HashMap<Value,Value>(2*_map246.size);
-          Value _key247;
-          Value _val248;
+          struct.enumMap = new java.util.HashMap<net.morimekta.test.thrift.serialization.common.Value,net.morimekta.test.thrift.serialization.common.Value>(2*_map246.size);
+          net.morimekta.test.thrift.serialization.common.Value _key247;
+          net.morimekta.test.thrift.serialization.common.Value _val248;
           for (int _i249 = 0; _i249 < _map246.size; ++_i249)
           {
-            _key247 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
-            _val248 = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+            _key247 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
+            _val248 = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
             struct.enumMap.put(_key247, _val248);
           }
         }
@@ -5562,11 +5562,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(27)) {
         {
           org.apache.thrift.protocol.TList _list250 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.messageList = new java.util.ArrayList<DefaultFields>(_list250.size);
-          DefaultFields _elem251;
+          struct.messageList = new java.util.ArrayList<net.morimekta.test.thrift.serialization.common.DefaultFields>(_list250.size);
+          net.morimekta.test.thrift.serialization.common.DefaultFields _elem251;
           for (int _i252 = 0; _i252 < _list250.size; ++_i252)
           {
-            _elem251 = new DefaultFields();
+            _elem251 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
             _elem251.read(iprot);
             struct.messageList.add(_elem251);
           }
@@ -5576,11 +5576,11 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(28)) {
         {
           org.apache.thrift.protocol.TSet _set253 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.messageSet = new java.util.HashSet<DefaultFields>(2*_set253.size);
-          DefaultFields _elem254;
+          struct.messageSet = new java.util.HashSet<net.morimekta.test.thrift.serialization.common.DefaultFields>(2*_set253.size);
+          net.morimekta.test.thrift.serialization.common.DefaultFields _elem254;
           for (int _i255 = 0; _i255 < _set253.size; ++_i255)
           {
-            _elem254 = new DefaultFields();
+            _elem254 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
             _elem254.read(iprot);
             struct.messageSet.add(_elem254);
           }
@@ -5590,13 +5590,13 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
       if (incoming.get(29)) {
         {
           org.apache.thrift.protocol.TMap _map256 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.messageMap = new java.util.HashMap<java.lang.String,DefaultFields>(2*_map256.size);
+          struct.messageMap = new java.util.HashMap<java.lang.String,net.morimekta.test.thrift.serialization.common.DefaultFields>(2*_map256.size);
           java.lang.String _key257;
-          DefaultFields _val258;
+          net.morimekta.test.thrift.serialization.common.DefaultFields _val258;
           for (int _i259 = 0; _i259 < _map256.size; ++_i259)
           {
             _key257 = iprot.readString();
-            _val258 = new DefaultFields();
+            _val258 = new net.morimekta.test.thrift.serialization.common.DefaultFields();
             _val258.read(iprot);
             struct.messageMap.put(_key257, _val258);
           }
@@ -5604,32 +5604,32 @@ public class Containers implements org.apache.thrift.TBase<Containers, Container
         struct.setMessageMapIsSet(true);
       }
       if (incoming.get(30)) {
-        struct.requiredFields = new RequiredFields();
+        struct.requiredFields = new net.morimekta.test.thrift.serialization.common.RequiredFields();
         struct.requiredFields.read(iprot);
         struct.setRequiredFieldsIsSet(true);
       }
       if (incoming.get(31)) {
-        struct.defaultFields = new DefaultFields();
+        struct.defaultFields = new net.morimekta.test.thrift.serialization.common.DefaultFields();
         struct.defaultFields.read(iprot);
         struct.setDefaultFieldsIsSet(true);
       }
       if (incoming.get(32)) {
-        struct.optionalFields = new OptionalFields();
+        struct.optionalFields = new net.morimekta.test.thrift.serialization.common.OptionalFields();
         struct.optionalFields.read(iprot);
         struct.setOptionalFieldsIsSet(true);
       }
       if (incoming.get(33)) {
-        struct.unionFields = new UnionFields();
+        struct.unionFields = new net.morimekta.test.thrift.serialization.common.UnionFields();
         struct.unionFields.read(iprot);
         struct.setUnionFieldsIsSet(true);
       }
       if (incoming.get(34)) {
-        struct.exceptionFields = new ExceptionFields();
+        struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
         struct.exceptionFields.read(iprot);
         struct.setExceptionFieldsIsSet(true);
       }
       if (incoming.get(35)) {
-        struct.defaultValues = new DefaultValues();
+        struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
         struct.defaultValues.read(iprot);
         struct.setDefaultValuesIsSet(true);
       }

@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
 public class UnionFields extends org.apache.thrift.TUnion<UnionFields, UnionFields._Fields> {
@@ -356,7 +356,7 @@ public class UnionFields extends org.apache.thrift.TUnion<UnionFields, UnionFiel
         case ENUM_VALUE:
           if (field.type == ENUM_VALUE_FIELD_DESC.type) {
             Value enumValue;
-            enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+            enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
             return enumValue;
           } else {
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
@@ -468,7 +468,7 @@ public class UnionFields extends org.apache.thrift.TUnion<UnionFields, UnionFiel
           return binaryValue;
         case ENUM_VALUE:
           Value enumValue;
-          enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+          enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
           return enumValue;
         case COMPACT_VALUE:
           CompactFields compactValue;

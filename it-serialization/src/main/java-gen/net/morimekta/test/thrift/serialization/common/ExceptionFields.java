@@ -4,11 +4,11 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
-public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, DefaultValues._Fields>, java.io.Serializable, Cloneable, Comparable<DefaultValues> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("DefaultValues");
+public class ExceptionFields extends org.apache.thrift.TException implements org.apache.thrift.TBase<ExceptionFields, ExceptionFields._Fields>, java.io.Serializable, Cloneable, Comparable<ExceptionFields> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ExceptionFields");
 
   private static final org.apache.thrift.protocol.TField BOOLEAN_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("booleanValue", org.apache.thrift.protocol.TType.BOOL, (short)1);
   private static final org.apache.thrift.protocol.TField BYTE_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("byteValue", org.apache.thrift.protocol.TType.BYTE, (short)2);
@@ -21,8 +21,8 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
   private static final org.apache.thrift.protocol.TField ENUM_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("enumValue", org.apache.thrift.protocol.TType.I32, (short)9);
   private static final org.apache.thrift.protocol.TField COMPACT_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("compactValue", org.apache.thrift.protocol.TType.STRUCT, (short)10);
 
-  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new DefaultValuesStandardSchemeFactory();
-  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new DefaultValuesTupleSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ExceptionFieldsStandardSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new ExceptionFieldsTupleSchemeFactory();
 
   private boolean booleanValue; // required
   private byte byteValue; // required
@@ -146,7 +146,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     tmpMap.put(_Fields.LONG_VALUE, new org.apache.thrift.meta_data.FieldMetaData("longValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.DOUBLE_VALUE, new org.apache.thrift.meta_data.FieldMetaData("doubleValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE        , "real")));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.STRING_VALUE, new org.apache.thrift.meta_data.FieldMetaData("stringValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.BINARY_VALUE, new org.apache.thrift.meta_data.FieldMetaData("binaryValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -156,29 +156,13 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     tmpMap.put(_Fields.COMPACT_VALUE, new org.apache.thrift.meta_data.FieldMetaData("compactValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, CompactFields.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DefaultValues.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ExceptionFields.class, metaDataMap);
   }
 
-  public DefaultValues() {
-    this.booleanValue = true;
-
-    this.byteValue = (byte)-125;
-
-    this.shortValue = (short)13579;
-
-    this.integerValue = 1234567890;
-
-    this.longValue = 1234567891L;
-
-    this.doubleValue = 2.99792e+08;
-
-    this.stringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
-
-    this.enumValue = net.morimekta.test.thrift.Value.SECOND;
-
+  public ExceptionFields() {
   }
 
-  public DefaultValues(
+  public ExceptionFields(
     boolean booleanValue,
     byte byteValue,
     short shortValue,
@@ -212,7 +196,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public DefaultValues(DefaultValues other) {
+  public ExceptionFields(ExceptionFields other) {
     __isset_bitfield = other.__isset_bitfield;
     this.booleanValue = other.booleanValue;
     this.byteValue = other.byteValue;
@@ -234,29 +218,27 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     }
   }
 
-  public DefaultValues deepCopy() {
-    return new DefaultValues(this);
+  public ExceptionFields deepCopy() {
+    return new ExceptionFields(this);
   }
 
   @Override
   public void clear() {
-    this.booleanValue = true;
-
-    this.byteValue = (byte)-125;
-
-    this.shortValue = (short)13579;
-
-    this.integerValue = 1234567890;
-
-    this.longValue = 1234567891L;
-
-    this.doubleValue = 2.99792e+08;
-
-    this.stringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
-
+    setBooleanValueIsSet(false);
+    this.booleanValue = false;
+    setByteValueIsSet(false);
+    this.byteValue = 0;
+    setShortValueIsSet(false);
+    this.shortValue = 0;
+    setIntegerValueIsSet(false);
+    this.integerValue = 0;
+    setLongValueIsSet(false);
+    this.longValue = 0;
+    setDoubleValueIsSet(false);
+    this.doubleValue = 0.0;
+    this.stringValue = null;
     this.binaryValue = null;
-    this.enumValue = net.morimekta.test.thrift.Value.SECOND;
-
+    this.enumValue = null;
     this.compactValue = null;
   }
 
@@ -264,7 +246,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.booleanValue;
   }
 
-  public DefaultValues setBooleanValue(boolean booleanValue) {
+  public ExceptionFields setBooleanValue(boolean booleanValue) {
     this.booleanValue = booleanValue;
     setBooleanValueIsSet(true);
     return this;
@@ -287,7 +269,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.byteValue;
   }
 
-  public DefaultValues setByteValue(byte byteValue) {
+  public ExceptionFields setByteValue(byte byteValue) {
     this.byteValue = byteValue;
     setByteValueIsSet(true);
     return this;
@@ -310,7 +292,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.shortValue;
   }
 
-  public DefaultValues setShortValue(short shortValue) {
+  public ExceptionFields setShortValue(short shortValue) {
     this.shortValue = shortValue;
     setShortValueIsSet(true);
     return this;
@@ -333,7 +315,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.integerValue;
   }
 
-  public DefaultValues setIntegerValue(int integerValue) {
+  public ExceptionFields setIntegerValue(int integerValue) {
     this.integerValue = integerValue;
     setIntegerValueIsSet(true);
     return this;
@@ -356,7 +338,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.longValue;
   }
 
-  public DefaultValues setLongValue(long longValue) {
+  public ExceptionFields setLongValue(long longValue) {
     this.longValue = longValue;
     setLongValueIsSet(true);
     return this;
@@ -379,7 +361,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.doubleValue;
   }
 
-  public DefaultValues setDoubleValue(double doubleValue) {
+  public ExceptionFields setDoubleValue(double doubleValue) {
     this.doubleValue = doubleValue;
     setDoubleValueIsSet(true);
     return this;
@@ -402,7 +384,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.stringValue;
   }
 
-  public DefaultValues setStringValue(java.lang.String stringValue) {
+  public ExceptionFields setStringValue(java.lang.String stringValue) {
     this.stringValue = stringValue;
     return this;
   }
@@ -431,12 +413,12 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return org.apache.thrift.TBaseHelper.copyBinary(binaryValue);
   }
 
-  public DefaultValues setBinaryValue(byte[] binaryValue) {
+  public ExceptionFields setBinaryValue(byte[] binaryValue) {
     this.binaryValue = binaryValue == null ? (java.nio.ByteBuffer)null : java.nio.ByteBuffer.wrap(binaryValue.clone());
     return this;
   }
 
-  public DefaultValues setBinaryValue(java.nio.ByteBuffer binaryValue) {
+  public ExceptionFields setBinaryValue(java.nio.ByteBuffer binaryValue) {
     this.binaryValue = org.apache.thrift.TBaseHelper.copyBinary(binaryValue);
     return this;
   }
@@ -468,7 +450,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
    * 
    * @see Value
    */
-  public DefaultValues setEnumValue(Value enumValue) {
+  public ExceptionFields setEnumValue(Value enumValue) {
     this.enumValue = enumValue;
     return this;
   }
@@ -492,7 +474,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     return this.compactValue;
   }
 
-  public DefaultValues setCompactValue(CompactFields compactValue) {
+  public ExceptionFields setCompactValue(CompactFields compactValue) {
     this.compactValue = compactValue;
     return this;
   }
@@ -672,12 +654,12 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
   public boolean equals(java.lang.Object that) {
     if (that == null)
       return false;
-    if (that instanceof DefaultValues)
-      return this.equals((DefaultValues)that);
+    if (that instanceof ExceptionFields)
+      return this.equals((ExceptionFields)that);
     return false;
   }
 
-  public boolean equals(DefaultValues that) {
+  public boolean equals(ExceptionFields that) {
     if (that == null)
       return false;
     if (this == that)
@@ -812,7 +794,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
   }
 
   @Override
-  public int compareTo(DefaultValues other) {
+  public int compareTo(ExceptionFields other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -936,7 +918,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
 
   @Override
   public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("DefaultValues(");
+    java.lang.StringBuilder sb = new java.lang.StringBuilder("ExceptionFields(");
     boolean first = true;
 
     sb.append("booleanValue:");
@@ -1024,15 +1006,15 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     }
   }
 
-  private static class DefaultValuesStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public DefaultValuesStandardScheme getScheme() {
-      return new DefaultValuesStandardScheme();
+  private static class ExceptionFieldsStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public ExceptionFieldsStandardScheme getScheme() {
+      return new ExceptionFieldsStandardScheme();
     }
   }
 
-  private static class DefaultValuesStandardScheme extends org.apache.thrift.scheme.StandardScheme<DefaultValues> {
+  private static class ExceptionFieldsStandardScheme extends org.apache.thrift.scheme.StandardScheme<ExceptionFields> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, DefaultValues struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, ExceptionFields struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -1108,7 +1090,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
             break;
           case 9: // ENUM_VALUE
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+              struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
               struct.setEnumValueIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1134,7 +1116,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, DefaultValues struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, ExceptionFields struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -1182,16 +1164,16 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
 
   }
 
-  private static class DefaultValuesTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public DefaultValuesTupleScheme getScheme() {
-      return new DefaultValuesTupleScheme();
+  private static class ExceptionFieldsTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public ExceptionFieldsTupleScheme getScheme() {
+      return new ExceptionFieldsTupleScheme();
     }
   }
 
-  private static class DefaultValuesTupleScheme extends org.apache.thrift.scheme.TupleScheme<DefaultValues> {
+  private static class ExceptionFieldsTupleScheme extends org.apache.thrift.scheme.TupleScheme<ExceptionFields> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, DefaultValues struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, ExceptionFields struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet optionals = new java.util.BitSet();
       if (struct.isSetBooleanValue()) {
@@ -1258,7 +1240,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, DefaultValues struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, ExceptionFields struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet incoming = iprot.readBitSet(10);
       if (incoming.get(0)) {
@@ -1294,7 +1276,7 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
         struct.setBinaryValueIsSet(true);
       }
       if (incoming.get(8)) {
-        struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+        struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
         struct.setEnumValueIsSet(true);
       }
       if (incoming.get(9)) {

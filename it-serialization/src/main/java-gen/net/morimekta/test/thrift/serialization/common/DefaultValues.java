@@ -4,11 +4,11 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package net.morimekta.test.thrift;
+package net.morimekta.test.thrift.serialization.common;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
-public class ExceptionFields extends org.apache.thrift.TException implements org.apache.thrift.TBase<ExceptionFields, ExceptionFields._Fields>, java.io.Serializable, Cloneable, Comparable<ExceptionFields> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ExceptionFields");
+public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, DefaultValues._Fields>, java.io.Serializable, Cloneable, Comparable<DefaultValues> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("DefaultValues");
 
   private static final org.apache.thrift.protocol.TField BOOLEAN_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("booleanValue", org.apache.thrift.protocol.TType.BOOL, (short)1);
   private static final org.apache.thrift.protocol.TField BYTE_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("byteValue", org.apache.thrift.protocol.TType.BYTE, (short)2);
@@ -21,8 +21,8 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
   private static final org.apache.thrift.protocol.TField ENUM_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("enumValue", org.apache.thrift.protocol.TType.I32, (short)9);
   private static final org.apache.thrift.protocol.TField COMPACT_VALUE_FIELD_DESC = new org.apache.thrift.protocol.TField("compactValue", org.apache.thrift.protocol.TType.STRUCT, (short)10);
 
-  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ExceptionFieldsStandardSchemeFactory();
-  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new ExceptionFieldsTupleSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new DefaultValuesStandardSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new DefaultValuesTupleSchemeFactory();
 
   private boolean booleanValue; // required
   private byte byteValue; // required
@@ -156,13 +156,29 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     tmpMap.put(_Fields.COMPACT_VALUE, new org.apache.thrift.meta_data.FieldMetaData("compactValue", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, CompactFields.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ExceptionFields.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DefaultValues.class, metaDataMap);
   }
 
-  public ExceptionFields() {
+  public DefaultValues() {
+    this.booleanValue = true;
+
+    this.byteValue = (byte)-125;
+
+    this.shortValue = (short)13579;
+
+    this.integerValue = 1234567890;
+
+    this.longValue = 1234567891L;
+
+    this.doubleValue = 2.99792e+08;
+
+    this.stringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
+
+    this.enumValue = net.morimekta.test.thrift.serialization.common.Value.SECOND;
+
   }
 
-  public ExceptionFields(
+  public DefaultValues(
     boolean booleanValue,
     byte byteValue,
     short shortValue,
@@ -196,7 +212,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public ExceptionFields(ExceptionFields other) {
+  public DefaultValues(DefaultValues other) {
     __isset_bitfield = other.__isset_bitfield;
     this.booleanValue = other.booleanValue;
     this.byteValue = other.byteValue;
@@ -218,27 +234,29 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     }
   }
 
-  public ExceptionFields deepCopy() {
-    return new ExceptionFields(this);
+  public DefaultValues deepCopy() {
+    return new DefaultValues(this);
   }
 
   @Override
   public void clear() {
-    setBooleanValueIsSet(false);
-    this.booleanValue = false;
-    setByteValueIsSet(false);
-    this.byteValue = 0;
-    setShortValueIsSet(false);
-    this.shortValue = 0;
-    setIntegerValueIsSet(false);
-    this.integerValue = 0;
-    setLongValueIsSet(false);
-    this.longValue = 0;
-    setDoubleValueIsSet(false);
-    this.doubleValue = 0.0;
-    this.stringValue = null;
+    this.booleanValue = true;
+
+    this.byteValue = (byte)-125;
+
+    this.shortValue = (short)13579;
+
+    this.integerValue = 1234567890;
+
+    this.longValue = 1234567891L;
+
+    this.doubleValue = 2.99792e+08;
+
+    this.stringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
+
     this.binaryValue = null;
-    this.enumValue = null;
+    this.enumValue = net.morimekta.test.thrift.serialization.common.Value.SECOND;
+
     this.compactValue = null;
   }
 
@@ -246,7 +264,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.booleanValue;
   }
 
-  public ExceptionFields setBooleanValue(boolean booleanValue) {
+  public DefaultValues setBooleanValue(boolean booleanValue) {
     this.booleanValue = booleanValue;
     setBooleanValueIsSet(true);
     return this;
@@ -269,7 +287,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.byteValue;
   }
 
-  public ExceptionFields setByteValue(byte byteValue) {
+  public DefaultValues setByteValue(byte byteValue) {
     this.byteValue = byteValue;
     setByteValueIsSet(true);
     return this;
@@ -292,7 +310,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.shortValue;
   }
 
-  public ExceptionFields setShortValue(short shortValue) {
+  public DefaultValues setShortValue(short shortValue) {
     this.shortValue = shortValue;
     setShortValueIsSet(true);
     return this;
@@ -315,7 +333,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.integerValue;
   }
 
-  public ExceptionFields setIntegerValue(int integerValue) {
+  public DefaultValues setIntegerValue(int integerValue) {
     this.integerValue = integerValue;
     setIntegerValueIsSet(true);
     return this;
@@ -338,7 +356,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.longValue;
   }
 
-  public ExceptionFields setLongValue(long longValue) {
+  public DefaultValues setLongValue(long longValue) {
     this.longValue = longValue;
     setLongValueIsSet(true);
     return this;
@@ -361,7 +379,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.doubleValue;
   }
 
-  public ExceptionFields setDoubleValue(double doubleValue) {
+  public DefaultValues setDoubleValue(double doubleValue) {
     this.doubleValue = doubleValue;
     setDoubleValueIsSet(true);
     return this;
@@ -384,7 +402,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.stringValue;
   }
 
-  public ExceptionFields setStringValue(java.lang.String stringValue) {
+  public DefaultValues setStringValue(java.lang.String stringValue) {
     this.stringValue = stringValue;
     return this;
   }
@@ -413,12 +431,12 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return org.apache.thrift.TBaseHelper.copyBinary(binaryValue);
   }
 
-  public ExceptionFields setBinaryValue(byte[] binaryValue) {
+  public DefaultValues setBinaryValue(byte[] binaryValue) {
     this.binaryValue = binaryValue == null ? (java.nio.ByteBuffer)null : java.nio.ByteBuffer.wrap(binaryValue.clone());
     return this;
   }
 
-  public ExceptionFields setBinaryValue(java.nio.ByteBuffer binaryValue) {
+  public DefaultValues setBinaryValue(java.nio.ByteBuffer binaryValue) {
     this.binaryValue = org.apache.thrift.TBaseHelper.copyBinary(binaryValue);
     return this;
   }
@@ -450,7 +468,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
    * 
    * @see Value
    */
-  public ExceptionFields setEnumValue(Value enumValue) {
+  public DefaultValues setEnumValue(Value enumValue) {
     this.enumValue = enumValue;
     return this;
   }
@@ -474,7 +492,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     return this.compactValue;
   }
 
-  public ExceptionFields setCompactValue(CompactFields compactValue) {
+  public DefaultValues setCompactValue(CompactFields compactValue) {
     this.compactValue = compactValue;
     return this;
   }
@@ -654,12 +672,12 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
   public boolean equals(java.lang.Object that) {
     if (that == null)
       return false;
-    if (that instanceof ExceptionFields)
-      return this.equals((ExceptionFields)that);
+    if (that instanceof DefaultValues)
+      return this.equals((DefaultValues)that);
     return false;
   }
 
-  public boolean equals(ExceptionFields that) {
+  public boolean equals(DefaultValues that) {
     if (that == null)
       return false;
     if (this == that)
@@ -794,7 +812,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
   }
 
   @Override
-  public int compareTo(ExceptionFields other) {
+  public int compareTo(DefaultValues other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -918,7 +936,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
 
   @Override
   public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("ExceptionFields(");
+    java.lang.StringBuilder sb = new java.lang.StringBuilder("DefaultValues(");
     boolean first = true;
 
     sb.append("booleanValue:");
@@ -1006,15 +1024,15 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     }
   }
 
-  private static class ExceptionFieldsStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public ExceptionFieldsStandardScheme getScheme() {
-      return new ExceptionFieldsStandardScheme();
+  private static class DefaultValuesStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public DefaultValuesStandardScheme getScheme() {
+      return new DefaultValuesStandardScheme();
     }
   }
 
-  private static class ExceptionFieldsStandardScheme extends org.apache.thrift.scheme.StandardScheme<ExceptionFields> {
+  private static class DefaultValuesStandardScheme extends org.apache.thrift.scheme.StandardScheme<DefaultValues> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, ExceptionFields struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, DefaultValues struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -1090,7 +1108,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
             break;
           case 9: // ENUM_VALUE
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+              struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
               struct.setEnumValueIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1116,7 +1134,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, ExceptionFields struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, DefaultValues struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -1164,16 +1182,16 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
 
   }
 
-  private static class ExceptionFieldsTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public ExceptionFieldsTupleScheme getScheme() {
-      return new ExceptionFieldsTupleScheme();
+  private static class DefaultValuesTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public DefaultValuesTupleScheme getScheme() {
+      return new DefaultValuesTupleScheme();
     }
   }
 
-  private static class ExceptionFieldsTupleScheme extends org.apache.thrift.scheme.TupleScheme<ExceptionFields> {
+  private static class DefaultValuesTupleScheme extends org.apache.thrift.scheme.TupleScheme<DefaultValues> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, ExceptionFields struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, DefaultValues struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet optionals = new java.util.BitSet();
       if (struct.isSetBooleanValue()) {
@@ -1240,7 +1258,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, ExceptionFields struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, DefaultValues struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet incoming = iprot.readBitSet(10);
       if (incoming.get(0)) {
@@ -1276,7 +1294,7 @@ public class ExceptionFields extends org.apache.thrift.TException implements org
         struct.setBinaryValueIsSet(true);
       }
       if (incoming.get(8)) {
-        struct.enumValue = net.morimekta.test.thrift.Value.findByValue(iprot.readI32());
+        struct.enumValue = net.morimekta.test.thrift.serialization.common.Value.findByValue(iprot.readI32());
         struct.setEnumValueIsSet(true);
       }
       if (incoming.get(9)) {
