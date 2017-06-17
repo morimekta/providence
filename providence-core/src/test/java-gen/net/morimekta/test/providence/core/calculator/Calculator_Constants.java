@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.core.calculator;
 
+@javax.annotation.Generated("providence-maven-plugin")
 @SuppressWarnings("unused")
 public class Calculator_Constants {
     private Calculator_Constants() {}

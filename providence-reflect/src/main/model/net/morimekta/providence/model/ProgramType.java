@@ -4,7 +4,7 @@ package net.morimekta.providence.model;
  * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class ProgramType
         implements net.morimekta.providence.PMessage<ProgramType,ProgramType._Field>,
                    Comparable<ProgramType>,

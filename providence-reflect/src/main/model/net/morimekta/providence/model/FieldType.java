@@ -13,7 +13,7 @@ package net.morimekta.providence.model;
  * Consts are always given the key &#39;0&#39;.
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class FieldType
         implements net.morimekta.providence.PMessage<FieldType,FieldType._Field>,
                    Comparable<FieldType>,

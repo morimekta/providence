@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.reflect;
 
+@javax.annotation.Generated("providence-maven-plugin")
 @SuppressWarnings("unused")
 public class Providence_Constants {
     private Providence_Constants() {}

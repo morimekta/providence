@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.reflect.number;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class Imaginary
         implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
                    Comparable<Imaginary>,

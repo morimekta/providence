@@ -6,7 +6,7 @@ package net.morimekta.providence.model;
  * }
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class ServiceType
         implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
                    Comparable<ServiceType>,

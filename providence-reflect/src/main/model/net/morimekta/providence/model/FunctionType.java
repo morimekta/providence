@@ -4,7 +4,7 @@ package net.morimekta.providence.model;
  * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class FunctionType
         implements net.morimekta.providence.PMessage<FunctionType,FunctionType._Field>,
                    Comparable<FunctionType>,

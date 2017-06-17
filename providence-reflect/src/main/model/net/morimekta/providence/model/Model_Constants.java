@@ -10,6 +10,7 @@ package net.morimekta.providence.model;
  * - Block comments replace the entire comment.
  *   The first space after &#39;*&#39; on each line is ignored.
  */
+@javax.annotation.Generated("providence-maven-plugin")
 @SuppressWarnings("unused")
 public class Model_Constants {
     private Model_Constants() {}

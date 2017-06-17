@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
                    net.morimekta.providence.serializer.json.JsonCompactible,

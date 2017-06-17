@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class ExceptionFields
         extends Exception
         implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,

@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class OptionalFields
         implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>,
                    Comparable<OptionalFields>,

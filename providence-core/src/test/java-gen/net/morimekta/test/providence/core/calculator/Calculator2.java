@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class Calculator2 extends net.morimekta.test.providence.core.calculator.Calculator {
     public interface Iface extends net.morimekta.test.providence.core.calculator.Calculator.Iface {
         /**
@@ -281,7 +281,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
     // type --> Calculator2.extra.request
     @SuppressWarnings("unused")
-    @javax.annotation.Generated("providence java generator")
+    @javax.annotation.Generated("providence-maven-plugin")
     protected static class _extra_request
             implements net.morimekta.providence.PMessage<_extra_request,_extra_request._Field>,
                        Comparable<_extra_request>,
@@ -646,7 +646,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
     // type <-- Calculator2.extra.response
     @SuppressWarnings("unused")
-    @javax.annotation.Generated("providence java generator")
+    @javax.annotation.Generated("providence-maven-plugin")
     protected static class _extra_response
             implements net.morimekta.providence.PUnion<_extra_response,_extra_response._Field>,
                        Comparable<_extra_response>,

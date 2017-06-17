@@ -8,7 +8,7 @@ package net.morimekta.providence.model;
  * UNION: No required fields. Only one field set to be valid.
  * EXCEPTION: No &#39;cause&#39; field, &#39;message&#39; field *must* be a string (java).
  */
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public enum MessageVariant
         implements net.morimekta.providence.PEnumValue<MessageVariant> {
     STRUCT(1, "STRUCT"),

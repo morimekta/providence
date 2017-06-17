@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class UnionFields
         implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
                    Comparable<UnionFields>,

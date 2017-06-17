@@ -6,7 +6,7 @@ package net.morimekta.providence.model;
  * }
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class EnumType
         implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
                    Comparable<EnumType>,

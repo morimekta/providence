@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.reflect.calculator;
 
+@javax.annotation.Generated("providence-maven-plugin")
 @SuppressWarnings("unused")
 public class Calculator_Constants {
     private Calculator_Constants() {}
@@ -14,8 +15,8 @@ public class Calculator_Constants {
     public static final java.util.Set<net.morimekta.test.providence.reflect.calculator.Operator> kComplexOperands;
     static {
         kComplexOperands = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.test.providence.reflect.calculator.Operator>()
-                .add(net.morimekta.test.providence.reflect.calculator.Operator.DIVIDE)
                 .add(net.morimekta.test.providence.reflect.calculator.Operator.MULTIPLY)
+                .add(net.morimekta.test.providence.reflect.calculator.Operator.DIVIDE)
                 .build();
     }
 }

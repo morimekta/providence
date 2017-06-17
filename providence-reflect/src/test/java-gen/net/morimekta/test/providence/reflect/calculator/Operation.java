@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class Operation
         implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
                    Comparable<Operation>,

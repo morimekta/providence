@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,
@@ -5960,7 +5960,7 @@ public class Containers
                             if (t_3 == 2) {
                                 final int len_2 = reader.expectUInt32();
                                 for (int i_4 = 0; i_4 < len_2; ++i_4) {
-                                    Boolean key_5 = reader.expectUInt8() == 1;
+                                    boolean key_5 = reader.expectUInt8() == 1;
                                     b_1.add(key_5);
                                 }
                                 mBooleanList = b_1.build();
@@ -5980,7 +5980,7 @@ public class Containers
                             if (t_8 == 3) {
                                 final int len_7 = reader.expectUInt32();
                                 for (int i_9 = 0; i_9 < len_7; ++i_9) {
-                                    Byte key_10 = reader.expectByte();
+                                    byte key_10 = reader.expectByte();
                                     b_6.add(key_10);
                                 }
                                 mByteList = b_6.build();
@@ -6000,7 +6000,7 @@ public class Containers
                             if (t_13 == 6) {
                                 final int len_12 = reader.expectUInt32();
                                 for (int i_14 = 0; i_14 < len_12; ++i_14) {
-                                    Short key_15 = reader.expectShort();
+                                    short key_15 = reader.expectShort();
                                     b_11.add(key_15);
                                 }
                                 mShortList = b_11.build();
@@ -6020,7 +6020,7 @@ public class Containers
                             if (t_18 == 8) {
                                 final int len_17 = reader.expectUInt32();
                                 for (int i_19 = 0; i_19 < len_17; ++i_19) {
-                                    Integer key_20 = reader.expectInt();
+                                    int key_20 = reader.expectInt();
                                     b_16.add(key_20);
                                 }
                                 mIntegerList = b_16.build();
@@ -6040,7 +6040,7 @@ public class Containers
                             if (t_23 == 10) {
                                 final int len_22 = reader.expectUInt32();
                                 for (int i_24 = 0; i_24 < len_22; ++i_24) {
-                                    Long key_25 = reader.expectLong();
+                                    long key_25 = reader.expectLong();
                                     b_21.add(key_25);
                                 }
                                 mLongList = b_21.build();
@@ -6060,7 +6060,7 @@ public class Containers
                             if (t_28 == 4) {
                                 final int len_27 = reader.expectUInt32();
                                 for (int i_29 = 0; i_29 < len_27; ++i_29) {
-                                    Double key_30 = reader.expectDouble();
+                                    double key_30 = reader.expectDouble();
                                     b_26.add(key_30);
                                 }
                                 mDoubleList = b_26.build();
@@ -6122,7 +6122,7 @@ public class Containers
                             if (t_45 == 2) {
                                 final int len_44 = reader.expectUInt32();
                                 for (int i_46 = 0; i_46 < len_44; ++i_46) {
-                                    Boolean key_47 = reader.expectUInt8() == 1;
+                                    boolean key_47 = reader.expectUInt8() == 1;
                                     b_43.add(key_47);
                                 }
                                 mBooleanSet = b_43.build();
@@ -6142,7 +6142,7 @@ public class Containers
                             if (t_50 == 3) {
                                 final int len_49 = reader.expectUInt32();
                                 for (int i_51 = 0; i_51 < len_49; ++i_51) {
-                                    Byte key_52 = reader.expectByte();
+                                    byte key_52 = reader.expectByte();
                                     b_48.add(key_52);
                                 }
                                 mByteSet = b_48.build();
@@ -6162,7 +6162,7 @@ public class Containers
                             if (t_55 == 6) {
                                 final int len_54 = reader.expectUInt32();
                                 for (int i_56 = 0; i_56 < len_54; ++i_56) {
-                                    Short key_57 = reader.expectShort();
+                                    short key_57 = reader.expectShort();
                                     b_53.add(key_57);
                                 }
                                 mShortSet = b_53.build();
@@ -6182,7 +6182,7 @@ public class Containers
                             if (t_60 == 8) {
                                 final int len_59 = reader.expectUInt32();
                                 for (int i_61 = 0; i_61 < len_59; ++i_61) {
-                                    Integer key_62 = reader.expectInt();
+                                    int key_62 = reader.expectInt();
                                     b_58.add(key_62);
                                 }
                                 mIntegerSet = b_58.build();
@@ -6202,7 +6202,7 @@ public class Containers
                             if (t_65 == 10) {
                                 final int len_64 = reader.expectUInt32();
                                 for (int i_66 = 0; i_66 < len_64; ++i_66) {
-                                    Long key_67 = reader.expectLong();
+                                    long key_67 = reader.expectLong();
                                     b_63.add(key_67);
                                 }
                                 mLongSet = b_63.build();
@@ -6222,7 +6222,7 @@ public class Containers
                             if (t_70 == 4) {
                                 final int len_69 = reader.expectUInt32();
                                 for (int i_71 = 0; i_71 < len_69; ++i_71) {
-                                    Double key_72 = reader.expectDouble();
+                                    double key_72 = reader.expectDouble();
                                     b_68.add(key_72);
                                 }
                                 mDoubleSet = b_68.build();
@@ -6285,8 +6285,8 @@ public class Containers
                             if (t_87 == 2 && t_88 == 2) {
                                 final int len_86 = reader.expectUInt32();
                                 for (int i_89 = 0; i_89 < len_86; ++i_89) {
-                                    Boolean key_90 = reader.expectUInt8() == 1;
-                                    Boolean val_91 = reader.expectUInt8() == 1;
+                                    boolean key_90 = reader.expectUInt8() == 1;
+                                    boolean val_91 = reader.expectUInt8() == 1;
                                     b_85.put(key_90, val_91);
                                 }
                                 mBooleanMap = b_85.build();
@@ -6310,8 +6310,8 @@ public class Containers
                             if (t_94 == 3 && t_95 == 3) {
                                 final int len_93 = reader.expectUInt32();
                                 for (int i_96 = 0; i_96 < len_93; ++i_96) {
-                                    Byte key_97 = reader.expectByte();
-                                    Byte val_98 = reader.expectByte();
+                                    byte key_97 = reader.expectByte();
+                                    byte val_98 = reader.expectByte();
                                     b_92.put(key_97, val_98);
                                 }
                                 mByteMap = b_92.build();
@@ -6335,8 +6335,8 @@ public class Containers
                             if (t_101 == 6 && t_102 == 6) {
                                 final int len_100 = reader.expectUInt32();
                                 for (int i_103 = 0; i_103 < len_100; ++i_103) {
-                                    Short key_104 = reader.expectShort();
-                                    Short val_105 = reader.expectShort();
+                                    short key_104 = reader.expectShort();
+                                    short val_105 = reader.expectShort();
                                     b_99.put(key_104, val_105);
                                 }
                                 mShortMap = b_99.build();
@@ -6360,8 +6360,8 @@ public class Containers
                             if (t_108 == 8 && t_109 == 8) {
                                 final int len_107 = reader.expectUInt32();
                                 for (int i_110 = 0; i_110 < len_107; ++i_110) {
-                                    Integer key_111 = reader.expectInt();
-                                    Integer val_112 = reader.expectInt();
+                                    int key_111 = reader.expectInt();
+                                    int val_112 = reader.expectInt();
                                     b_106.put(key_111, val_112);
                                 }
                                 mIntegerMap = b_106.build();
@@ -6385,8 +6385,8 @@ public class Containers
                             if (t_115 == 10 && t_116 == 10) {
                                 final int len_114 = reader.expectUInt32();
                                 for (int i_117 = 0; i_117 < len_114; ++i_117) {
-                                    Long key_118 = reader.expectLong();
-                                    Long val_119 = reader.expectLong();
+                                    long key_118 = reader.expectLong();
+                                    long val_119 = reader.expectLong();
                                     b_113.put(key_118, val_119);
                                 }
                                 mLongMap = b_113.build();
@@ -6410,8 +6410,8 @@ public class Containers
                             if (t_122 == 4 && t_123 == 4) {
                                 final int len_121 = reader.expectUInt32();
                                 for (int i_124 = 0; i_124 < len_121; ++i_124) {
-                                    Double key_125 = reader.expectDouble();
-                                    Double val_126 = reader.expectDouble();
+                                    double key_125 = reader.expectDouble();
+                                    double val_126 = reader.expectDouble();
                                     b_120.put(key_125, val_126);
                                 }
                                 mDoubleMap = b_120.build();

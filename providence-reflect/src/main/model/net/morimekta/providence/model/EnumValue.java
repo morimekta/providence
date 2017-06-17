@@ -4,7 +4,7 @@ package net.morimekta.providence.model;
  * &lt;name&gt; (= &lt;value&gt;)
  */
 @SuppressWarnings("unused")
-@javax.annotation.Generated("providence java generator")
+@javax.annotation.Generated("providence-maven-plugin")
 public class EnumValue
         implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>,
                    Comparable<EnumValue>,
