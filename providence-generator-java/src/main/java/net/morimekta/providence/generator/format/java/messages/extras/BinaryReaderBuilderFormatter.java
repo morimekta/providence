@@ -151,10 +151,10 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 String value = "val_" + nextId.getAndIncrement();
 
                 String keyMember = String.format("%s %s",
-                                                 helper.getFieldType(pMap.keyDescriptor()),
+                                                 helper.getValueType(pMap.keyDescriptor()),
                                                  key);
                 String valueMember = String.format("%s %s",
-                                                 helper.getFieldType(pMap.itemDescriptor()),
+                                                 helper.getValueType(pMap.itemDescriptor()),
                                                  value);
 
                 appendReadFieldValue(keyMember, null, null, pMap.keyDescriptor());
@@ -225,7 +225,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 String item = "key_" + nextId.getAndIncrement();
 
                 String itemMember = String.format("%s %s",
-                                                 helper.getFieldType(pCont.itemDescriptor()),
+                                                 helper.getValueType(pCont.itemDescriptor()),
                                                  item);
 
                 appendReadFieldValue(itemMember, null, null, pCont.itemDescriptor());
