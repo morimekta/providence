@@ -49,6 +49,10 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
         this.options = options;
     }
 
+    public boolean filterFormats(Format format) {
+        return options.format.get() == null || format.equals(options.format.get());
+    }
+
     public void run() throws IOException, TException, InterruptedException {
         ITGenerator<PM, PF, TM, TF> generator = new ITGenerator<>(
                 descriptor, supplier, options.generator);
@@ -61,6 +65,7 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                 descriptor, supplier, generator.getProvidence(), generator.getThrift());
 
         List<FormatStatistics> formats = Arrays.stream(Format.values())
+                                               .filter(this::filterFormats)
                                                .map(FormatStatistics::new)
                                                .collect(Collectors.toList());
 
@@ -140,6 +145,9 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
             parser.add(new Option("--load", null, "FILE",
                                   "File to load data from. Required test to match content",
                                   file(options.file::set)));
+            parser.add(new Option("--format", null, "FMT",
+                                  "Which format to test",
+                                  oneOf(Format.class, options.format::set), "all"));
             parser.add(new Argument("test", "Which test to run",
                                     oneOf(TestOptions.Test.class, options.test::set), "all"));
 

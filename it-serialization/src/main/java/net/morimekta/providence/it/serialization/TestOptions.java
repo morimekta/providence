@@ -17,10 +17,11 @@ public class TestOptions {
         deep,
     }
 
-    AtomicBoolean         no_progress = new AtomicBoolean();
-    AtomicInteger         runs        = new AtomicInteger(100);
-    AtomicInteger         generate    = new AtomicInteger(10);
-    MessageGenerator      generator   = new MessageGenerator();
-    AtomicReference<Test> test        = new AtomicReference<>();
-    AtomicReference<File> file        = new AtomicReference<>();
+    AtomicBoolean           no_progress = new AtomicBoolean();
+    AtomicInteger           runs        = new AtomicInteger(100);
+    AtomicInteger           generate    = new AtomicInteger(10);
+    MessageGenerator        generator   = new MessageGenerator();
+    AtomicReference<Test>   test        = new AtomicReference<>();
+    AtomicReference<File>   file        = new AtomicReference<>();
+    AtomicReference<Format> format      = new AtomicReference<>();
 }
