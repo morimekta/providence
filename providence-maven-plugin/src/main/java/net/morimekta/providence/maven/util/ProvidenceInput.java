@@ -1,14 +1,19 @@
 package net.morimekta.providence.maven.util;
 
+import net.morimekta.providence.reflect.util.ReflectionUtils;
+
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.DirectoryScanner;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static net.morimekta.providence.reflect.util.ReflectionUtils.isThriftFile;
 
@@ -19,23 +24,34 @@ public class ProvidenceInput {
     /**
      * Get the set of input files.
      * @param project The maven project
-     * @param files The input-exclude selector.
+     * @param inputSelector The input-exclude selector.
      * @param defaultInputInclude The default input include (if not specified).
      * @return The set of input files.
      */
-    public static Set<File> getInputFiles(MavenProject project,
-                                          IncludeExcludeFileSelector files,
-                                          String defaultInputInclude) throws MojoExecutionException {
+    public static Set<File> getInputFiles(@Nonnull MavenProject project,
+                                          IncludeExcludeFileSelector inputSelector,
+                                          @Nonnull String defaultInputInclude,
+                                          @Nonnull Log log) throws MojoExecutionException {
         try {
             TreeSet<File> inputs = new TreeSet<>();
 
             DirectoryScanner inputScanner = new DirectoryScanner();
-            if (files != null) {
-                inputScanner.setIncludes(files.getIncludes());
-                if (files.getExcludes() != null) {
-                    inputScanner.setExcludes(files.getExcludes());
+            if (inputSelector != null) {
+                if (inputSelector.getIncludes() != null &&
+                        inputSelector.getIncludes().length > 0) {
+                    log.info("Specified includes...");
+                    inputScanner.setIncludes(inputSelector.getIncludes());
+                } else {
+                    log.info("Default includes: " + defaultInputInclude);
+                    inputScanner.setIncludes(new String[]{defaultInputInclude});
+                }
+
+                if (inputSelector.getExcludes() != null &&
+                        inputSelector.getExcludes().length > 0) {
+                    inputScanner.setExcludes(inputSelector.getExcludes());
                 }
             } else {
+                log.info("Default input: " + defaultInputInclude);
                 inputScanner.setIncludes(new String[]{defaultInputInclude});
             }
 
@@ -67,7 +83,9 @@ public class ProvidenceInput {
                 inputs.removeIf(f -> f.toString().startsWith(path + File.separator));
             }
 
-            return inputs;
+            return inputs.stream()
+                         .filter(ReflectionUtils::isThriftFile)
+                         .collect(Collectors.toSet());
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

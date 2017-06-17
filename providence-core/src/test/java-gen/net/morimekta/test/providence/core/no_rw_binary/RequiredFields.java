@@ -1,8 +1,9 @@
-package net.morimekta.providence.test_internal;
+package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class RequiredFields
-        implements net.morimekta.providence.PMessage<RequiredFields, RequiredFields._Field>,
+        implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
                    Comparable<RequiredFields>,
                    java.io.Serializable {
     private final static long serialVersionUID = -7378845554576050657L;
@@ -16,48 +17,18 @@ public class RequiredFields
     private final static String kDefaultStringValue = "";
     private final static net.morimekta.util.Binary kDefaultBinaryValue = net.morimekta.util.Binary.wrap(new byte[]{});
 
-    private final boolean                   mBooleanValue;
-    private final byte                      mByteValue;
-    private final short                     mShortValue;
-    private final int                       mIntegerValue;
-    private final long                      mLongValue;
-    private final double                    mDoubleValue;
-    private final String                    mStringValue;
+    private final boolean mBooleanValue;
+    private final byte mByteValue;
+    private final short mShortValue;
+    private final int mIntegerValue;
+    private final long mLongValue;
+    private final double mDoubleValue;
+    private final String mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
-    private final Value                     mEnumValue;
-    private final CompactFields             mCompactValue;
+    private final net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+    private final net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
 
     private volatile int tHashCode;
-
-    public RequiredFields(boolean pBooleanValue,
-                          byte pByteValue,
-                          short pShortValue,
-                          int pIntegerValue,
-                          long pLongValue,
-                          double pDoubleValue,
-                          String pStringValue,
-                          net.morimekta.util.Binary pBinaryValue,
-                          Value pEnumValue,
-                          CompactFields pCompactValue) {
-        mBooleanValue = pBooleanValue;
-        mByteValue = pByteValue;
-        mShortValue = pShortValue;
-        mIntegerValue = pIntegerValue;
-        mLongValue = pLongValue;
-        mDoubleValue = pDoubleValue;
-        if (pStringValue != null) {
-            mStringValue = pStringValue;
-        } else {
-            mStringValue = kDefaultStringValue;
-        }
-        if (pBinaryValue != null) {
-            mBinaryValue = pBinaryValue;
-        } else {
-            mBinaryValue = kDefaultBinaryValue;
-        }
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
 
     private RequiredFields(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
@@ -153,6 +124,7 @@ public class RequiredFields
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getStringValue() {
         return mStringValue;
     }
@@ -164,6 +136,7 @@ public class RequiredFields
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
     }
@@ -175,7 +148,7 @@ public class RequiredFields
     /**
      * @return The field value
      */
-    public Value getEnumValue() {
+    public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
         return mEnumValue;
     }
 
@@ -186,7 +159,7 @@ public class RequiredFields
     /**
      * @return The field value
      */
-    public CompactFields getCompactValue() {
+    public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {
         return mCompactValue;
     }
 
@@ -283,6 +256,7 @@ public class RequiredFields
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -388,18 +362,18 @@ public class RequiredFields
         DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
         STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "enumValue", Value.provider(), null),
-        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "compactValue", CompactFields.provider(), null),
+        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "enumValue", net.morimekta.test.providence.core.no_rw_binary.Value.provider(), null),
+        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "compactValue", net.morimekta.test.providence.core.no_rw_binary.CompactFields.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -407,7 +381,7 @@ public class RequiredFields
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -431,8 +405,12 @@ public class RequiredFields
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.BOOLEAN_VALUE;
                 case 2: return _Field.BYTE_VALUE;
                 case 3: return _Field.SHORT_VALUE;
@@ -447,7 +425,11 @@ public class RequiredFields
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "booleanValue": return _Field.BOOLEAN_VALUE;
                 case "byteValue": return _Field.BYTE_VALUE;
@@ -462,6 +444,32 @@ public class RequiredFields
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in providence.RequiredFields");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.RequiredFields");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<RequiredFields,_Field> provider() {
@@ -482,18 +490,21 @@ public class RequiredFields
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 
@@ -521,17 +532,17 @@ public class RequiredFields
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private boolean                   mBooleanValue;
-        private byte                      mByteValue;
-        private short                     mShortValue;
-        private int                       mIntegerValue;
-        private long                      mLongValue;
-        private double                    mDoubleValue;
-        private String                    mStringValue;
+        private boolean mBooleanValue;
+        private byte mByteValue;
+        private short mShortValue;
+        private int mIntegerValue;
+        private long mLongValue;
+        private double mDoubleValue;
+        private String mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
-        private Value                     mEnumValue;
-        private CompactFields             mCompactValue;
-        private CompactFields._Builder    mCompactValue_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mCompactValue_builder;
 
         /**
          * Make a providence.RequiredFields builder.
@@ -1086,7 +1097,7 @@ public class RequiredFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumValue(Value value) {
+        public _Builder setEnumValue(net.morimekta.test.providence.core.no_rw_binary.Value value) {
             if (value == null) {
                 return clearEnumValue();
             }
@@ -1133,7 +1144,7 @@ public class RequiredFields
          *
          * @return The field value
          */
-        public Value getEnumValue() {
+        public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
             return mEnumValue;
         }
 
@@ -1144,7 +1155,7 @@ public class RequiredFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setCompactValue(CompactFields value) {
+        public _Builder setCompactValue(net.morimekta.test.providence.core.no_rw_binary.CompactFields value) {
             if (value == null) {
                 return clearCompactValue();
             }
@@ -1193,7 +1204,8 @@ public class RequiredFields
          *
          * @return The field builder
          */
-        public CompactFields._Builder mutableCompactValue() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mutableCompactValue() {
             optionals.set(9);
             modified.set(9);
 
@@ -1201,7 +1213,7 @@ public class RequiredFields
                 mCompactValue_builder = mCompactValue.mutate();
                 mCompactValue = null;
             } else if (mCompactValue_builder == null) {
-                mCompactValue_builder = CompactFields.builder();
+                mCompactValue_builder = net.morimekta.test.providence.core.no_rw_binary.CompactFields.builder();
             }
             return mCompactValue_builder;
         }
@@ -1263,8 +1275,8 @@ public class RequiredFields
                 case 6: setDoubleValue((double) value); break;
                 case 7: setStringValue((String) value); break;
                 case 8: setBinaryValue((net.morimekta.util.Binary) value); break;
-                case 9: setEnumValue((Value) value); break;
-                case 10: setCompactValue((CompactFields) value); break;
+                case 9: setEnumValue((net.morimekta.test.providence.core.no_rw_binary.Value) value); break;
+                case 10: setCompactValue((net.morimekta.test.providence.core.no_rw_binary.CompactFields) value); break;
                 default: break;
             }
             return this;
@@ -1392,7 +1404,7 @@ public class RequiredFields
                     missing.add("compactValue");
                 }
 
-                throw new IllegalStateException(
+                throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
                         " in message providence.RequiredFields");

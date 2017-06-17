@@ -20,16 +20,17 @@
  */
 package net.morimekta.providence;
 
-import net.morimekta.providence.test_internal.CompactFields;
-import net.morimekta.providence.test_internal.Containers;
-import net.morimekta.providence.test_internal.OptionalFields;
+
+import net.morimekta.test.providence.core.no_rw_binary.CompactFields;
+import net.morimekta.test.providence.core.no_rw_binary.Containers;
+import net.morimekta.test.providence.core.no_rw_binary.OptionalFields;
 
 import org.junit.Test;
 
-import static net.morimekta.providence.test_internal.Containers._Field.STRING_SET;
-import static net.morimekta.providence.test_internal.OptionalFields._Field.BOOLEAN_VALUE;
-import static net.morimekta.providence.test_internal.OptionalFields._Field.COMPACT_VALUE;
 import static net.morimekta.providence.util_internal.EqualToMessage.equalToMessage;
+import static net.morimekta.test.providence.core.no_rw_binary.Containers._Field.STRING_SET;
+import static net.morimekta.test.providence.core.no_rw_binary.OptionalFields._Field.BOOLEAN_VALUE;
+import static net.morimekta.test.providence.core.no_rw_binary.OptionalFields._Field.COMPACT_VALUE;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

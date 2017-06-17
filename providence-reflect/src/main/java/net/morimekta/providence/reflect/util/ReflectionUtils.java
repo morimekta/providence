@@ -21,11 +21,16 @@
 package net.morimekta.providence.reflect.util;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 
 /**
  * Simple utility for type checking and matching.
  */
 public class ReflectionUtils {
+    public static boolean isThriftFile(@Nonnull File file) {
+        return isThriftFile(file.getName());
+    }
+
     public static boolean isThriftFile(@Nonnull String filePath) {
         // This is in case windows has default upper-cased the file name.
         return programNameFromPath(filePath).length() > 0;

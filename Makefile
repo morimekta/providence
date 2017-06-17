@@ -5,6 +5,7 @@ compile:
 
 test-compile:
 	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	mvn -Dprovidence.gen.rw_binary=false -Dprovidence.test.input=src/test/no_rw_binary/**/*.thrift net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 
 models: compile
 	rm -rf providence-reflect/src/main/model/*

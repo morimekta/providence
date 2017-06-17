@@ -26,12 +26,12 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.binary.BinaryType;
-import net.morimekta.providence.test_internal.Containers;
-import net.morimekta.providence.test_internal.OptionalFields;
-import net.morimekta.providence.test_internal.RequiredFields;
-import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
+import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.test.providence.core.calculator.CalculateException;
+import net.morimekta.test.providence.core.no_rw_binary.Containers;
+import net.morimekta.test.providence.core.no_rw_binary.OptionalFields;
+import net.morimekta.test.providence.core.no_rw_binary.RequiredFields;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryWriter;
 
@@ -56,13 +56,13 @@ import static org.junit.Assert.fail;
 
 public class BinarySerializerTest {
     private static ArrayList<Containers> containers;
-    private JsonSerializer json;
-    private BinarySerializer lenient;
-    private BinarySerializer strict;
-    private BinarySerializer unversioned;
-    private ByteArrayOutputStream tmp;
-    private BigEndianBinaryWriter writer;
-    private Random random;
+    private JsonSerializer               json;
+    private BinarySerializer             lenient;
+    private BinarySerializer             strict;
+    private BinarySerializer             unversioned;
+    private ByteArrayOutputStream        tmp;
+    private BigEndianBinaryWriter        writer;
+    private Random                       random;
 
     @Before
     public void setUp() throws IOException {

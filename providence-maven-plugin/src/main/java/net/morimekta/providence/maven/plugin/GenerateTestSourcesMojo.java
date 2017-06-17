@@ -40,29 +40,45 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
     /**
      * Skip the providence test compile step for this module.
      */
-    @Parameter(alias = "skip", defaultValue = "false")
+    @Parameter(alias = "skip",
+               property = "providence.skip",
+               defaultValue = "false")
     protected boolean skipTestCompile = false;
 
     /**
      * Location of the output java source.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/providence")
-    private File outputDir = null;
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/providence",
+               property = "providence.test.output",
+               alias = "testOutputDir")
+    private File testOutput = null;
 
     /**
      * Files to compile. By default will select all '.thrift' files in
-     * 'src/test/providence/' and subdirectories.
+     * 'src/test/providence/' and subdirectories. Simple includes can be
+     * specified by property <code>providence.test.input</code>.
      */
-    @Parameter(alias = "inputFiles")
-    protected IncludeExcludeFileSelector testFiles;
+    @Parameter(alias = "testFiles")
+    protected IncludeExcludeFileSelector testInput;
+
+    /**
+     * Additional directories to find include files for thrift compilation.
+     * The extra files there will not be compiled into source code.
+     */
+    @Parameter(alias = "testIncludeDirs")
+    protected IncludeExcludeFileSelector testIncludes;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skipTestCompile) {
             getLog().info("Skipping providence:testCompile");
             return;
         }
-        if (executeInternal(outputDir, testFiles, "src/test/providence/**/*.thrift", true)) {
-            project.addTestCompileSourceRoot(outputDir.getPath());
+
+        String defaultInputIncludes = System.getProperties()
+                                            .getProperty("providence.test.input",
+                                                         "src/test/providence/**/*.thrift");
+        if (executeInternal(testIncludes, testOutput, testInput, defaultInputIncludes, true)) {
+            project.addTestCompileSourceRoot(testOutput.getPath());
         }
     }
 }

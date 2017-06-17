@@ -65,15 +65,18 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     /**
      * Skip the providence assembly step for this module.
      */
-    @Parameter(alias = "skip", defaultValue = "false")
+    @Parameter(alias = "skip",
+               property = "providence.skip",
+               defaultValue = "false")
     protected boolean skipAssembly = false;
 
     /**
-     * Files to assemble. By default will select all '.thrift' testFiles in
+     * Files to compile. By default will select all '.thrift' files in
      * 'src/main/providence/' and subdirectories.
      */
-    @Parameter(alias = "inputFiles")
-    protected IncludeExcludeFileSelector files = null;
+    @Parameter(alias = "files",
+               property = "providence.main.input")
+    protected IncludeExcludeFileSelector input;
 
     /**
      * Classifier name to use for the artifact. By default it's 'providence', but it can
@@ -99,9 +102,9 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
 
     public void execute() throws MojoFailureException, MojoExecutionException {
         if (!skipAssembly) {
-            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, files, "src/main/providence/**/*.thrift");
+            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, input, "src/main/providence/**/*.thrift", getLog());
             if (inputFiles.isEmpty()) {
-                getLog().info("No providence testFiles, skipping assembly");
+                getLog().info("No providence testInput, skipping assembly");
                 return;
             }
 
@@ -150,7 +153,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
                 throw new MojoFailureException("Unable to write providence assembly: " + ie.getMessage(), ie);
             }
 
-            getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " testFiles.");
+            getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " files.");
             projectHelper.attachArtifact(project, TYPE, classifier, target);
         }
     }

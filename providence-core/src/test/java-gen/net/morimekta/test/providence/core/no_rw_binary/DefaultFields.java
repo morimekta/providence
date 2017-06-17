@@ -1,11 +1,12 @@
-package net.morimekta.providence.test_internal;
+package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
-public class UnionFields
-        implements net.morimekta.providence.PUnion<UnionFields, UnionFields._Field>,
-                   Comparable<UnionFields>,
+@javax.annotation.Generated("providence java generator")
+public class DefaultFields
+        implements net.morimekta.providence.PMessage<DefaultFields,DefaultFields._Field>,
+                   Comparable<DefaultFields>,
                    java.io.Serializable {
-    private final static long serialVersionUID = -4125227148631020921L;
+    private final static long serialVersionUID = 734242388421949515L;
 
     private final static boolean kDefaultBooleanValue = false;
     private final static byte kDefaultByteValue = (byte)0;
@@ -13,240 +14,166 @@ public class UnionFields
     private final static int kDefaultIntegerValue = 0;
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
+    private final static String kDefaultStringValue = "";
+    private final static net.morimekta.util.Binary kDefaultBinaryValue = net.morimekta.util.Binary.wrap(new byte[]{});
 
-    private final Boolean                   mBooleanValue;
-    private final Byte                      mByteValue;
-    private final Short                     mShortValue;
-    private final Integer                   mIntegerValue;
-    private final Long                      mLongValue;
-    private final Double                    mDoubleValue;
-    private final String                    mStringValue;
+    private final boolean mBooleanValue;
+    private final byte mByteValue;
+    private final short mShortValue;
+    private final int mIntegerValue;
+    private final long mLongValue;
+    private final double mDoubleValue;
+    private final String mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
-    private final Value                     mEnumValue;
-    private final CompactFields             mCompactValue;
-
-    private final _Field tUnionField;
+    private final net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+    private final net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
 
     private volatile int tHashCode;
 
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withBooleanValue(boolean value) {
-        return new _Builder().setBooleanValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withByteValue(byte value) {
-        return new _Builder().setByteValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withShortValue(short value) {
-        return new _Builder().setShortValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withIntegerValue(int value) {
-        return new _Builder().setIntegerValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withLongValue(long value) {
-        return new _Builder().setLongValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withDoubleValue(double value) {
-        return new _Builder().setDoubleValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withStringValue(String value) {
-        return new _Builder().setStringValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withBinaryValue(net.morimekta.util.Binary value) {
-        return new _Builder().setBinaryValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withEnumValue(Value value) {
-        return new _Builder().setEnumValue(value).build();
-    }
-
-    /**
-     * @param value The union value
-     * @return The created union.
-     */
-    public static UnionFields withCompactValue(CompactFields value) {
-        return new _Builder().setCompactValue(value).build();
-    }
-
-    private UnionFields(_Builder builder) {
-        tUnionField = builder.tUnionField;
-
-        mBooleanValue = tUnionField == _Field.BOOLEAN_VALUE ? builder.mBooleanValue : null;
-        mByteValue = tUnionField == _Field.BYTE_VALUE ? builder.mByteValue : null;
-        mShortValue = tUnionField == _Field.SHORT_VALUE ? builder.mShortValue : null;
-        mIntegerValue = tUnionField == _Field.INTEGER_VALUE ? builder.mIntegerValue : null;
-        mLongValue = tUnionField == _Field.LONG_VALUE ? builder.mLongValue : null;
-        mDoubleValue = tUnionField == _Field.DOUBLE_VALUE ? builder.mDoubleValue : null;
-        mStringValue = tUnionField == _Field.STRING_VALUE ? builder.mStringValue : null;
-        mBinaryValue = tUnionField == _Field.BINARY_VALUE ? builder.mBinaryValue : null;
-        mEnumValue = tUnionField == _Field.ENUM_VALUE ? builder.mEnumValue : null;
-        mCompactValue = tUnionField != _Field.COMPACT_VALUE
-                ? null
-                : builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
+    private DefaultFields(_Builder builder) {
+        mBooleanValue = builder.mBooleanValue;
+        mByteValue = builder.mByteValue;
+        mShortValue = builder.mShortValue;
+        mIntegerValue = builder.mIntegerValue;
+        mLongValue = builder.mLongValue;
+        mDoubleValue = builder.mDoubleValue;
+        if (builder.isSetStringValue()) {
+            mStringValue = builder.mStringValue;
+        } else {
+            mStringValue = kDefaultStringValue;
+        }
+        if (builder.isSetBinaryValue()) {
+            mBinaryValue = builder.mBinaryValue;
+        } else {
+            mBinaryValue = kDefaultBinaryValue;
+        }
+        mEnumValue = builder.mEnumValue;
+        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     public boolean hasBooleanValue() {
-        return tUnionField == _Field.BOOLEAN_VALUE && mBooleanValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public boolean isBooleanValue() {
-        return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
+        return mBooleanValue;
     }
 
     public boolean hasByteValue() {
-        return tUnionField == _Field.BYTE_VALUE && mByteValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public byte getByteValue() {
-        return hasByteValue() ? mByteValue : kDefaultByteValue;
+        return mByteValue;
     }
 
     public boolean hasShortValue() {
-        return tUnionField == _Field.SHORT_VALUE && mShortValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public short getShortValue() {
-        return hasShortValue() ? mShortValue : kDefaultShortValue;
+        return mShortValue;
     }
 
     public boolean hasIntegerValue() {
-        return tUnionField == _Field.INTEGER_VALUE && mIntegerValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public int getIntegerValue() {
-        return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
+        return mIntegerValue;
     }
 
     public boolean hasLongValue() {
-        return tUnionField == _Field.LONG_VALUE && mLongValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public long getLongValue() {
-        return hasLongValue() ? mLongValue : kDefaultLongValue;
+        return mLongValue;
     }
 
     public boolean hasDoubleValue() {
-        return tUnionField == _Field.DOUBLE_VALUE && mDoubleValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
     public double getDoubleValue() {
-        return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
+        return mDoubleValue;
     }
 
     public boolean hasStringValue() {
-        return tUnionField == _Field.STRING_VALUE && mStringValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public String getStringValue() {
         return mStringValue;
     }
 
     public boolean hasBinaryValue() {
-        return tUnionField == _Field.BINARY_VALUE && mBinaryValue != null;
+        return true;
     }
 
     /**
      * @return The field value
      */
+    @javax.annotation.Nonnull
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
     }
 
     public boolean hasEnumValue() {
-        return tUnionField == _Field.ENUM_VALUE && mEnumValue != null;
+        return mEnumValue != null;
     }
 
     /**
      * @return The field value
      */
-    public Value getEnumValue() {
+    public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
         return mEnumValue;
     }
 
     public boolean hasCompactValue() {
-        return tUnionField == _Field.COMPACT_VALUE && mCompactValue != null;
+        return mCompactValue != null;
     }
 
     /**
      * @return The field value
      */
-    public CompactFields getCompactValue() {
+    public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {
         return mCompactValue;
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasBooleanValue();
-            case 2: return hasByteValue();
-            case 3: return hasShortValue();
-            case 4: return hasIntegerValue();
-            case 5: return hasLongValue();
-            case 6: return hasDoubleValue();
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
+            case 1: return true;
+            case 2: return true;
+            case 3: return true;
+            case 4: return true;
+            case 5: return true;
+            case 6: return true;
+            case 7: return true;
+            case 8: return true;
             case 9: return hasEnumValue();
             case 10: return hasCompactValue();
             default: return false;
@@ -256,14 +183,14 @@ public class UnionFields
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasBooleanValue() ? 1 : 0;
-            case 2: return hasByteValue() ? 1 : 0;
-            case 3: return hasShortValue() ? 1 : 0;
-            case 4: return hasIntegerValue() ? 1 : 0;
-            case 5: return hasLongValue() ? 1 : 0;
-            case 6: return hasDoubleValue() ? 1 : 0;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
+            case 1: return 1;
+            case 2: return 1;
+            case 3: return 1;
+            case 4: return 1;
+            case 5: return 1;
+            case 6: return 1;
+            case 7: return 1;
+            case 8: return 1;
             case 9: return hasEnumValue() ? 1 : 0;
             case 10: return hasCompactValue() ? 1 : 0;
             default: return 0;
@@ -288,17 +215,11 @@ public class UnionFields
     }
 
     @Override
-    public _Field unionField() {
-        return tUnionField;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        UnionFields other = (UnionFields) o;
-        return java.util.Objects.equals(tUnionField, other.tUnionField) &&
-               java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
+        DefaultFields other = (DefaultFields) o;
+        return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
                java.util.Objects.equals(mByteValue, other.mByteValue) &&
                java.util.Objects.equals(mShortValue, other.mShortValue) &&
                java.util.Objects.equals(mIntegerValue, other.mIntegerValue) &&
@@ -314,7 +235,7 @@ public class UnionFields
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    UnionFields.class,
+                    DefaultFields.class,
                     _Field.BOOLEAN_VALUE, mBooleanValue,
                     _Field.BYTE_VALUE, mByteValue,
                     _Field.SHORT_VALUE, mShortValue,
@@ -331,98 +252,99 @@ public class UnionFields
 
     @Override
     public String toString() {
-        return "providence.UnionFields" + asString();
+        return "providence.DefaultFields" + asString();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        switch (tUnionField) {
-            case BOOLEAN_VALUE: {
-                out.append("booleanValue:")
-                   .append(mBooleanValue);
-                break;
-            }
-            case BYTE_VALUE: {
-                out.append("byteValue:")
-                   .append((int) mByteValue);
-                break;
-            }
-            case SHORT_VALUE: {
-                out.append("shortValue:")
-                   .append((int) mShortValue);
-                break;
-            }
-            case INTEGER_VALUE: {
-                out.append("integerValue:")
-                   .append(mIntegerValue);
-                break;
-            }
-            case LONG_VALUE: {
-                out.append("longValue:")
-                   .append(mLongValue);
-                break;
-            }
-            case DOUBLE_VALUE: {
-                out.append("doubleValue:")
-                   .append(net.morimekta.util.Strings.asString(mDoubleValue));
-                break;
-            }
-            case STRING_VALUE: {
-                out.append("stringValue:")
-                   .append('\"').append(net.morimekta.util.Strings.escape(mStringValue)).append('\"');
-                break;
-            }
-            case BINARY_VALUE: {
-                out.append("binaryValue:")
-                   .append("b64(").append(mBinaryValue.toBase64()).append(')');
-                break;
-            }
-            case ENUM_VALUE: {
-                out.append("enumValue:")
-                   .append(mEnumValue.asString());
-                break;
-            }
-            case COMPACT_VALUE: {
-                out.append("compactValue:")
-                   .append(mCompactValue.asString());
-                break;
-            }
+        out.append("booleanValue:")
+           .append(mBooleanValue);
+        out.append(',');
+        out.append("byteValue:")
+           .append((int) mByteValue);
+        out.append(',');
+        out.append("shortValue:")
+           .append((int) mShortValue);
+        out.append(',');
+        out.append("integerValue:")
+           .append(mIntegerValue);
+        out.append(',');
+        out.append("longValue:")
+           .append(mLongValue);
+        out.append(',');
+        out.append("doubleValue:")
+           .append(net.morimekta.util.Strings.asString(mDoubleValue));
+        out.append(',');
+        out.append("stringValue:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mStringValue))
+           .append('\"');
+        out.append(',');
+        out.append("binaryValue:")
+           .append("b64(")
+           .append(mBinaryValue.toBase64())
+           .append(')');
+        if (hasEnumValue()) {
+            out.append(',');
+            out.append("enumValue:")
+               .append(mEnumValue.asString());
+        }
+        if (hasCompactValue()) {
+            out.append(',');
+            out.append("compactValue:")
+               .append(mCompactValue.asString());
         }
         out.append('}');
         return out.toString();
     }
 
     @Override
-    public int compareTo(UnionFields other) {
-        int c = tUnionField.compareTo(other.tUnionField);
+    public int compareTo(DefaultFields other) {
+        int c;
+
+        c = Boolean.compare(mBooleanValue, other.mBooleanValue);
         if (c != 0) return c;
 
-        switch (tUnionField) {
-            case BOOLEAN_VALUE:
-                return Boolean.compare(mBooleanValue, other.mBooleanValue);
-            case BYTE_VALUE:
-                return Byte.compare(mByteValue, other.mByteValue);
-            case SHORT_VALUE:
-                return Short.compare(mShortValue, other.mShortValue);
-            case INTEGER_VALUE:
-                return Integer.compare(mIntegerValue, other.mIntegerValue);
-            case LONG_VALUE:
-                return Long.compare(mLongValue, other.mLongValue);
-            case DOUBLE_VALUE:
-                return Double.compare(mDoubleValue, other.mDoubleValue);
-            case STRING_VALUE:
-                return mStringValue.compareTo(other.mStringValue);
-            case BINARY_VALUE:
-                return mBinaryValue.compareTo(other.mBinaryValue);
-            case ENUM_VALUE:
-                return Integer.compare(mEnumValue.asInteger(), other.mEnumValue.asInteger());
-            case COMPACT_VALUE:
-                return mCompactValue.compareTo(other.mCompactValue);
-            default: return 0;
+        c = Byte.compare(mByteValue, other.mByteValue);
+        if (c != 0) return c;
+
+        c = Short.compare(mShortValue, other.mShortValue);
+        if (c != 0) return c;
+
+        c = Integer.compare(mIntegerValue, other.mIntegerValue);
+        if (c != 0) return c;
+
+        c = Long.compare(mLongValue, other.mLongValue);
+        if (c != 0) return c;
+
+        c = Double.compare(mDoubleValue, other.mDoubleValue);
+        if (c != 0) return c;
+
+        c = mStringValue.compareTo(other.mStringValue);
+        if (c != 0) return c;
+
+        c = mBinaryValue.compareTo(other.mBinaryValue);
+        if (c != 0) return c;
+
+        c = Boolean.compare(mEnumValue != null, other.mEnumValue != null);
+        if (c != 0) return c;
+        if (mEnumValue != null) {
+            c = Integer.compare(mEnumValue.ordinal(), mEnumValue.ordinal());
+            if (c != 0) return c;
         }
+
+        c = Boolean.compare(mCompactValue != null, other.mCompactValue != null);
+        if (c != 0) return c;
+        if (mCompactValue != null) {
+            c = mCompactValue.compareTo(other.mCompactValue);
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     @javax.annotation.Nonnull
@@ -432,26 +354,26 @@ public class UnionFields
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), null),
-        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), null),
-        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), null),
-        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), null),
-        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
-        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumValue", Value.provider(), null),
-        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "compactValue", CompactFields.provider(), null),
+        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), null),
+        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), null),
+        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), null),
+        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), null),
+        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
+        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
+        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "enumValue", net.morimekta.test.providence.core.no_rw_binary.Value.provider(), null),
+        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "compactValue", net.morimekta.test.providence.core.no_rw_binary.CompactFields.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -459,7 +381,7 @@ public class UnionFields
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -483,8 +405,12 @@ public class UnionFields
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.BOOLEAN_VALUE;
                 case 2: return _Field.BYTE_VALUE;
                 case 3: return _Field.SHORT_VALUE;
@@ -499,7 +425,11 @@ public class UnionFields
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "booleanValue": return _Field.BOOLEAN_VALUE;
                 case "byteValue": return _Field.BYTE_VALUE;
@@ -514,38 +444,67 @@ public class UnionFields
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in providence.DefaultFields");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.DefaultFields");
+            }
+            return field;
+        }
+
     }
 
-    public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<UnionFields,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultFields,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> {
         public _Descriptor() {
-            super("providence", "UnionFields", _Builder::new, false);
+            super("providence", "DefaultFields", _Builder::new, false);
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 
@@ -553,15 +512,15 @@ public class UnionFields
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<UnionFields,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultFields,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a providence.UnionFields builder.
+     * Make a providence.DefaultFields builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -569,103 +528,123 @@ public class UnionFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<UnionFields,_Field> {
-        private _Field tUnionField;
+            extends net.morimekta.providence.PMessageBuilder<DefaultFields,_Field> {
+        private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
-        private boolean modified;
-
-        private Boolean                   mBooleanValue;
-        private Byte                      mByteValue;
-        private Short                     mShortValue;
-        private Integer                   mIntegerValue;
-        private Long                      mLongValue;
-        private Double                    mDoubleValue;
-        private String                    mStringValue;
+        private boolean mBooleanValue;
+        private byte mByteValue;
+        private short mShortValue;
+        private int mIntegerValue;
+        private long mLongValue;
+        private double mDoubleValue;
+        private String mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
-        private Value                     mEnumValue;
-        private CompactFields             mCompactValue;
-        private CompactFields._Builder    mCompactValue_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mCompactValue_builder;
 
         /**
-         * Make a providence.UnionFields builder.
+         * Make a providence.DefaultFields builder.
          */
         public _Builder() {
-            modified = false;
+            optionals = new java.util.BitSet(10);
+            modified = new java.util.BitSet(10);
+            mBooleanValue = kDefaultBooleanValue;
+            mByteValue = kDefaultByteValue;
+            mShortValue = kDefaultShortValue;
+            mIntegerValue = kDefaultIntegerValue;
+            mLongValue = kDefaultLongValue;
+            mDoubleValue = kDefaultDoubleValue;
+            mStringValue = kDefaultStringValue;
+            mBinaryValue = kDefaultBinaryValue;
         }
 
         /**
-         * Make a mutating builder off a base providence.UnionFields.
+         * Make a mutating builder off a base providence.DefaultFields.
          *
-         * @param base The base UnionFields
+         * @param base The base DefaultFields
          */
-        public _Builder(UnionFields base) {
+        public _Builder(DefaultFields base) {
             this();
 
-            tUnionField = base.tUnionField;
-
+            optionals.set(0);
             mBooleanValue = base.mBooleanValue;
+            optionals.set(1);
             mByteValue = base.mByteValue;
+            optionals.set(2);
             mShortValue = base.mShortValue;
+            optionals.set(3);
             mIntegerValue = base.mIntegerValue;
+            optionals.set(4);
             mLongValue = base.mLongValue;
+            optionals.set(5);
             mDoubleValue = base.mDoubleValue;
+            optionals.set(6);
             mStringValue = base.mStringValue;
+            optionals.set(7);
             mBinaryValue = base.mBinaryValue;
-            mEnumValue = base.mEnumValue;
-            mCompactValue = base.mCompactValue;
+            if (base.hasEnumValue()) {
+                optionals.set(8);
+                mEnumValue = base.mEnumValue;
+            }
+            if (base.hasCompactValue()) {
+                optionals.set(9);
+                mCompactValue = base.mCompactValue;
+            }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(UnionFields from) {
-            if (from.unionField() == null) {
-                return this;
+        public _Builder merge(DefaultFields from) {
+            optionals.set(0);
+            modified.set(0);
+            mBooleanValue = from.isBooleanValue();
+
+            optionals.set(1);
+            modified.set(1);
+            mByteValue = from.getByteValue();
+
+            optionals.set(2);
+            modified.set(2);
+            mShortValue = from.getShortValue();
+
+            optionals.set(3);
+            modified.set(3);
+            mIntegerValue = from.getIntegerValue();
+
+            optionals.set(4);
+            modified.set(4);
+            mLongValue = from.getLongValue();
+
+            optionals.set(5);
+            modified.set(5);
+            mDoubleValue = from.getDoubleValue();
+
+            optionals.set(6);
+            modified.set(6);
+            mStringValue = from.getStringValue();
+
+            optionals.set(7);
+            modified.set(7);
+            mBinaryValue = from.getBinaryValue();
+
+            if (from.hasEnumValue()) {
+                optionals.set(8);
+                modified.set(8);
+                mEnumValue = from.getEnumValue();
             }
 
-            switch (from.unionField()) {
-                case BOOLEAN_VALUE: {
-                    setBooleanValue(from.isBooleanValue());
-                    break;
-                }
-                case BYTE_VALUE: {
-                    setByteValue(from.getByteValue());
-                    break;
-                }
-                case SHORT_VALUE: {
-                    setShortValue(from.getShortValue());
-                    break;
-                }
-                case INTEGER_VALUE: {
-                    setIntegerValue(from.getIntegerValue());
-                    break;
-                }
-                case LONG_VALUE: {
-                    setLongValue(from.getLongValue());
-                    break;
-                }
-                case DOUBLE_VALUE: {
-                    setDoubleValue(from.getDoubleValue());
-                    break;
-                }
-                case STRING_VALUE: {
-                    setStringValue(from.getStringValue());
-                    break;
-                }
-                case BINARY_VALUE: {
-                    setBinaryValue(from.getBinaryValue());
-                    break;
-                }
-                case ENUM_VALUE: {
-                    setEnumValue(from.getEnumValue());
-                    break;
-                }
-                case COMPACT_VALUE: {
-                    if (tUnionField == _Field.COMPACT_VALUE && mCompactValue != null) {
-                        mCompactValue = mCompactValue.mutate().merge(from.getCompactValue()).build();
-                    } else {
-                        setCompactValue(from.getCompactValue());
-                    }
-                    break;
+            if (from.hasCompactValue()) {
+                optionals.set(9);
+                modified.set(9);
+                if (mCompactValue_builder != null) {
+                    mCompactValue_builder.merge(from.getCompactValue());
+                } else if (mCompactValue != null) {
+                    mCompactValue_builder = mCompactValue.mutate().merge(from.getCompactValue());
+                    mCompactValue = null;
+                } else {
+                    mCompactValue = from.getCompactValue();
                 }
             }
             return this;
@@ -679,8 +658,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setBooleanValue(boolean value) {
-            tUnionField = _Field.BOOLEAN_VALUE;
-            modified = true;
+            optionals.set(0);
+            modified.set(0);
             mBooleanValue = value;
             return this;
         }
@@ -691,7 +670,16 @@ public class UnionFields
          * @return True if booleanValue has been set.
          */
         public boolean isSetBooleanValue() {
-            return tUnionField == _Field.BOOLEAN_VALUE;
+            return optionals.get(0);
+        }
+
+        /**
+         * Checks if booleanValue has been modified since the _Builder was created.
+         *
+         * @return True if booleanValue has been modified.
+         */
+        public boolean isModifiedBooleanValue() {
+            return modified.get(0);
         }
 
         /**
@@ -701,9 +689,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearBooleanValue() {
-            if (tUnionField == _Field.BOOLEAN_VALUE) tUnionField = null;
-            modified = true;
-            mBooleanValue = null;
+            optionals.clear(0);
+            modified.set(0);
+            mBooleanValue = kDefaultBooleanValue;
             return this;
         }
 
@@ -713,7 +701,7 @@ public class UnionFields
          * @return The field value
          */
         public boolean getBooleanValue() {
-            return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
+            return mBooleanValue;
         }
 
         /**
@@ -724,8 +712,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setByteValue(byte value) {
-            tUnionField = _Field.BYTE_VALUE;
-            modified = true;
+            optionals.set(1);
+            modified.set(1);
             mByteValue = value;
             return this;
         }
@@ -736,7 +724,16 @@ public class UnionFields
          * @return True if byteValue has been set.
          */
         public boolean isSetByteValue() {
-            return tUnionField == _Field.BYTE_VALUE;
+            return optionals.get(1);
+        }
+
+        /**
+         * Checks if byteValue has been modified since the _Builder was created.
+         *
+         * @return True if byteValue has been modified.
+         */
+        public boolean isModifiedByteValue() {
+            return modified.get(1);
         }
 
         /**
@@ -746,9 +743,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearByteValue() {
-            if (tUnionField == _Field.BYTE_VALUE) tUnionField = null;
-            modified = true;
-            mByteValue = null;
+            optionals.clear(1);
+            modified.set(1);
+            mByteValue = kDefaultByteValue;
             return this;
         }
 
@@ -758,7 +755,7 @@ public class UnionFields
          * @return The field value
          */
         public byte getByteValue() {
-            return isSetByteValue() ? mByteValue : kDefaultByteValue;
+            return mByteValue;
         }
 
         /**
@@ -769,8 +766,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setShortValue(short value) {
-            tUnionField = _Field.SHORT_VALUE;
-            modified = true;
+            optionals.set(2);
+            modified.set(2);
             mShortValue = value;
             return this;
         }
@@ -781,7 +778,16 @@ public class UnionFields
          * @return True if shortValue has been set.
          */
         public boolean isSetShortValue() {
-            return tUnionField == _Field.SHORT_VALUE;
+            return optionals.get(2);
+        }
+
+        /**
+         * Checks if shortValue has been modified since the _Builder was created.
+         *
+         * @return True if shortValue has been modified.
+         */
+        public boolean isModifiedShortValue() {
+            return modified.get(2);
         }
 
         /**
@@ -791,9 +797,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearShortValue() {
-            if (tUnionField == _Field.SHORT_VALUE) tUnionField = null;
-            modified = true;
-            mShortValue = null;
+            optionals.clear(2);
+            modified.set(2);
+            mShortValue = kDefaultShortValue;
             return this;
         }
 
@@ -803,7 +809,7 @@ public class UnionFields
          * @return The field value
          */
         public short getShortValue() {
-            return isSetShortValue() ? mShortValue : kDefaultShortValue;
+            return mShortValue;
         }
 
         /**
@@ -814,8 +820,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setIntegerValue(int value) {
-            tUnionField = _Field.INTEGER_VALUE;
-            modified = true;
+            optionals.set(3);
+            modified.set(3);
             mIntegerValue = value;
             return this;
         }
@@ -826,7 +832,16 @@ public class UnionFields
          * @return True if integerValue has been set.
          */
         public boolean isSetIntegerValue() {
-            return tUnionField == _Field.INTEGER_VALUE;
+            return optionals.get(3);
+        }
+
+        /**
+         * Checks if integerValue has been modified since the _Builder was created.
+         *
+         * @return True if integerValue has been modified.
+         */
+        public boolean isModifiedIntegerValue() {
+            return modified.get(3);
         }
 
         /**
@@ -836,9 +851,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearIntegerValue() {
-            if (tUnionField == _Field.INTEGER_VALUE) tUnionField = null;
-            modified = true;
-            mIntegerValue = null;
+            optionals.clear(3);
+            modified.set(3);
+            mIntegerValue = kDefaultIntegerValue;
             return this;
         }
 
@@ -848,7 +863,7 @@ public class UnionFields
          * @return The field value
          */
         public int getIntegerValue() {
-            return isSetIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
+            return mIntegerValue;
         }
 
         /**
@@ -859,8 +874,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setLongValue(long value) {
-            tUnionField = _Field.LONG_VALUE;
-            modified = true;
+            optionals.set(4);
+            modified.set(4);
             mLongValue = value;
             return this;
         }
@@ -871,7 +886,16 @@ public class UnionFields
          * @return True if longValue has been set.
          */
         public boolean isSetLongValue() {
-            return tUnionField == _Field.LONG_VALUE;
+            return optionals.get(4);
+        }
+
+        /**
+         * Checks if longValue has been modified since the _Builder was created.
+         *
+         * @return True if longValue has been modified.
+         */
+        public boolean isModifiedLongValue() {
+            return modified.get(4);
         }
 
         /**
@@ -881,9 +905,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearLongValue() {
-            if (tUnionField == _Field.LONG_VALUE) tUnionField = null;
-            modified = true;
-            mLongValue = null;
+            optionals.clear(4);
+            modified.set(4);
+            mLongValue = kDefaultLongValue;
             return this;
         }
 
@@ -893,7 +917,7 @@ public class UnionFields
          * @return The field value
          */
         public long getLongValue() {
-            return isSetLongValue() ? mLongValue : kDefaultLongValue;
+            return mLongValue;
         }
 
         /**
@@ -904,8 +928,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setDoubleValue(double value) {
-            tUnionField = _Field.DOUBLE_VALUE;
-            modified = true;
+            optionals.set(5);
+            modified.set(5);
             mDoubleValue = value;
             return this;
         }
@@ -916,7 +940,16 @@ public class UnionFields
          * @return True if doubleValue has been set.
          */
         public boolean isSetDoubleValue() {
-            return tUnionField == _Field.DOUBLE_VALUE;
+            return optionals.get(5);
+        }
+
+        /**
+         * Checks if doubleValue has been modified since the _Builder was created.
+         *
+         * @return True if doubleValue has been modified.
+         */
+        public boolean isModifiedDoubleValue() {
+            return modified.get(5);
         }
 
         /**
@@ -926,9 +959,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearDoubleValue() {
-            if (tUnionField == _Field.DOUBLE_VALUE) tUnionField = null;
-            modified = true;
-            mDoubleValue = null;
+            optionals.clear(5);
+            modified.set(5);
+            mDoubleValue = kDefaultDoubleValue;
             return this;
         }
 
@@ -938,7 +971,7 @@ public class UnionFields
          * @return The field value
          */
         public double getDoubleValue() {
-            return isSetDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
+            return mDoubleValue;
         }
 
         /**
@@ -953,8 +986,8 @@ public class UnionFields
                 return clearStringValue();
             }
 
-            tUnionField = _Field.STRING_VALUE;
-            modified = true;
+            optionals.set(6);
+            modified.set(6);
             mStringValue = value;
             return this;
         }
@@ -965,7 +998,16 @@ public class UnionFields
          * @return True if stringValue has been set.
          */
         public boolean isSetStringValue() {
-            return tUnionField == _Field.STRING_VALUE;
+            return optionals.get(6);
+        }
+
+        /**
+         * Checks if stringValue has been modified since the _Builder was created.
+         *
+         * @return True if stringValue has been modified.
+         */
+        public boolean isModifiedStringValue() {
+            return modified.get(6);
         }
 
         /**
@@ -975,9 +1017,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearStringValue() {
-            if (tUnionField == _Field.STRING_VALUE) tUnionField = null;
-            modified = true;
-            mStringValue = null;
+            optionals.clear(6);
+            modified.set(6);
+            mStringValue = kDefaultStringValue;
             return this;
         }
 
@@ -1002,8 +1044,8 @@ public class UnionFields
                 return clearBinaryValue();
             }
 
-            tUnionField = _Field.BINARY_VALUE;
-            modified = true;
+            optionals.set(7);
+            modified.set(7);
             mBinaryValue = value;
             return this;
         }
@@ -1014,7 +1056,16 @@ public class UnionFields
          * @return True if binaryValue has been set.
          */
         public boolean isSetBinaryValue() {
-            return tUnionField == _Field.BINARY_VALUE;
+            return optionals.get(7);
+        }
+
+        /**
+         * Checks if binaryValue has been modified since the _Builder was created.
+         *
+         * @return True if binaryValue has been modified.
+         */
+        public boolean isModifiedBinaryValue() {
+            return modified.get(7);
         }
 
         /**
@@ -1024,9 +1075,9 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearBinaryValue() {
-            if (tUnionField == _Field.BINARY_VALUE) tUnionField = null;
-            modified = true;
-            mBinaryValue = null;
+            optionals.clear(7);
+            modified.set(7);
+            mBinaryValue = kDefaultBinaryValue;
             return this;
         }
 
@@ -1046,13 +1097,13 @@ public class UnionFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumValue(Value value) {
+        public _Builder setEnumValue(net.morimekta.test.providence.core.no_rw_binary.Value value) {
             if (value == null) {
                 return clearEnumValue();
             }
 
-            tUnionField = _Field.ENUM_VALUE;
-            modified = true;
+            optionals.set(8);
+            modified.set(8);
             mEnumValue = value;
             return this;
         }
@@ -1063,7 +1114,16 @@ public class UnionFields
          * @return True if enumValue has been set.
          */
         public boolean isSetEnumValue() {
-            return tUnionField == _Field.ENUM_VALUE;
+            return optionals.get(8);
+        }
+
+        /**
+         * Checks if enumValue has been modified since the _Builder was created.
+         *
+         * @return True if enumValue has been modified.
+         */
+        public boolean isModifiedEnumValue() {
+            return modified.get(8);
         }
 
         /**
@@ -1073,8 +1133,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearEnumValue() {
-            if (tUnionField == _Field.ENUM_VALUE) tUnionField = null;
-            modified = true;
+            optionals.clear(8);
+            modified.set(8);
             mEnumValue = null;
             return this;
         }
@@ -1084,7 +1144,7 @@ public class UnionFields
          *
          * @return The field value
          */
-        public Value getEnumValue() {
+        public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
             return mEnumValue;
         }
 
@@ -1095,13 +1155,13 @@ public class UnionFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setCompactValue(CompactFields value) {
+        public _Builder setCompactValue(net.morimekta.test.providence.core.no_rw_binary.CompactFields value) {
             if (value == null) {
                 return clearCompactValue();
             }
 
-            tUnionField = _Field.COMPACT_VALUE;
-            modified = true;
+            optionals.set(9);
+            modified.set(9);
             mCompactValue = value;
             mCompactValue_builder = null;
             return this;
@@ -1113,7 +1173,16 @@ public class UnionFields
          * @return True if compactValue has been set.
          */
         public boolean isSetCompactValue() {
-            return tUnionField == _Field.COMPACT_VALUE;
+            return optionals.get(9);
+        }
+
+        /**
+         * Checks if compactValue has been modified since the _Builder was created.
+         *
+         * @return True if compactValue has been modified.
+         */
+        public boolean isModifiedCompactValue() {
+            return modified.get(9);
         }
 
         /**
@@ -1123,8 +1192,8 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder clearCompactValue() {
-            if (tUnionField == _Field.COMPACT_VALUE) tUnionField = null;
-            modified = true;
+            optionals.clear(9);
+            modified.set(9);
             mCompactValue = null;
             mCompactValue_builder = null;
             return this;
@@ -1135,37 +1204,26 @@ public class UnionFields
          *
          * @return The field builder
          */
-        public CompactFields._Builder mutableCompactValue() {
-            if (tUnionField != _Field.COMPACT_VALUE) {
-                clearCompactValue();
-            }
-            tUnionField = _Field.COMPACT_VALUE;
-            modified = true;
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mutableCompactValue() {
+            optionals.set(9);
+            modified.set(9);
 
             if (mCompactValue != null) {
                 mCompactValue_builder = mCompactValue.mutate();
                 mCompactValue = null;
             } else if (mCompactValue_builder == null) {
-                mCompactValue_builder = CompactFields.builder();
+                mCompactValue_builder = net.morimekta.test.providence.core.no_rw_binary.CompactFields.builder();
             }
             return mCompactValue_builder;
-        }
-
-        /**
-         * Checks if UnionFields has been modified since the _Builder was created.
-         *
-         * @return True if UnionFields has been modified.
-         */
-        public boolean isUnionModified() {
-            return modified;
         }
 
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            UnionFields._Builder other = (UnionFields._Builder) o;
-            return java.util.Objects.equals(tUnionField, other.tUnionField) &&
+            DefaultFields._Builder other = (DefaultFields._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
                    java.util.Objects.equals(mByteValue, other.mByteValue) &&
                    java.util.Objects.equals(mShortValue, other.mShortValue) &&
@@ -1181,7 +1239,7 @@ public class UnionFields
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    UnionFields.class,
+                    DefaultFields.class, optionals,
                     _Field.BOOLEAN_VALUE, mBooleanValue,
                     _Field.BYTE_VALUE, mByteValue,
                     _Field.SHORT_VALUE, mShortValue,
@@ -1217,8 +1275,8 @@ public class UnionFields
                 case 6: setDoubleValue((double) value); break;
                 case 7: setStringValue((String) value); break;
                 case 8: setBinaryValue((net.morimekta.util.Binary) value); break;
-                case 9: setEnumValue((Value) value); break;
-                case 10: setCompactValue((CompactFields) value); break;
+                case 9: setEnumValue((net.morimekta.test.providence.core.no_rw_binary.Value) value); break;
+                case 10: setCompactValue((net.morimekta.test.providence.core.no_rw_binary.CompactFields) value); break;
                 default: break;
             }
             return this;
@@ -1227,16 +1285,16 @@ public class UnionFields
         @Override
         public boolean isSet(int key) {
             switch (key) {
-                case 1: return tUnionField == _Field.BOOLEAN_VALUE;
-                case 2: return tUnionField == _Field.BYTE_VALUE;
-                case 3: return tUnionField == _Field.SHORT_VALUE;
-                case 4: return tUnionField == _Field.INTEGER_VALUE;
-                case 5: return tUnionField == _Field.LONG_VALUE;
-                case 6: return tUnionField == _Field.DOUBLE_VALUE;
-                case 7: return tUnionField == _Field.STRING_VALUE;
-                case 8: return tUnionField == _Field.BINARY_VALUE;
-                case 9: return tUnionField == _Field.ENUM_VALUE;
-                case 10: return tUnionField == _Field.COMPACT_VALUE;
+                case 1: return optionals.get(0);
+                case 2: return optionals.get(1);
+                case 3: return optionals.get(2);
+                case 4: return optionals.get(3);
+                case 5: return optionals.get(4);
+                case 6: return optionals.get(5);
+                case 7: return optionals.get(6);
+                case 8: return optionals.get(7);
+                case 9: return optionals.get(8);
+                case 10: return optionals.get(9);
                 default: break;
             }
             return false;
@@ -1244,7 +1302,20 @@ public class UnionFields
 
         @Override
         public boolean isModified(int key) {
-            return modified;
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
+                case 6: return modified.get(5);
+                case 7: return modified.get(6);
+                case 8: return modified.get(7);
+                case 9: return modified.get(8);
+                case 10: return modified.get(9);
+                default: break;
+            }
+            return false;
         }
 
         @Override
@@ -1276,41 +1347,22 @@ public class UnionFields
 
         @Override
         public boolean valid() {
-            if (tUnionField == null) {
-                return false;
-            }
-
-            switch (tUnionField) {
-                case BOOLEAN_VALUE: return mBooleanValue != null;
-                case BYTE_VALUE: return mByteValue != null;
-                case SHORT_VALUE: return mShortValue != null;
-                case INTEGER_VALUE: return mIntegerValue != null;
-                case LONG_VALUE: return mLongValue != null;
-                case DOUBLE_VALUE: return mDoubleValue != null;
-                case STRING_VALUE: return mStringValue != null;
-                case BINARY_VALUE: return mBinaryValue != null;
-                case ENUM_VALUE: return mEnumValue != null;
-                case COMPACT_VALUE: return mCompactValue != null || mCompactValue_builder != null;
-                default: return true;
-            }
+            return true;
         }
 
         @Override
         public void validate() {
-            if (!valid()) {
-                throw new IllegalStateException("No union field set in providence.UnionFields");
-            }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
             return kDescriptor;
         }
 
         @Override
-        public UnionFields build() {
-            return new UnionFields(this);
+        public DefaultFields build() {
+            return new DefaultFields(this);
         }
     }
 }

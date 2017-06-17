@@ -40,30 +40,45 @@ public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
     /**
      * Skip the providence compile step for this module.
      */
-    @Parameter(alias = "skip", defaultValue = "false")
+    @Parameter(alias = "skip",
+               property = "providence.skip",
+               defaultValue = "false")
     protected boolean skipCompile = false;
 
     /**
      * Location of the output java source.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence")
-    protected File outputDir = null;
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence",
+               property = "providence.main.output",
+               alias = "outputDir")
+    protected File output = null;
 
     /**
      * Files to compile. By default will select all '.thrift' files in
-     * 'src/main/providence/' and subdirectories.
+     * 'src/main/providence/' and subdirectories. Simple includes can be
+     * specified by property <code>providence.main.input</code>.
      */
-    @Parameter(alias = "inputFiles")
-    protected IncludeExcludeFileSelector files;
+    @Parameter(alias = "files")
+    protected IncludeExcludeFileSelector input;
+
+    /**
+     * Additional directories to find include files for thrift compilation.
+     * The extra files there will not be compiled into source code.
+     */
+    @Parameter(alias = "includeDirs")
+    protected IncludeExcludeFileSelector includes;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skipCompile) {
-            getLog().info("Skipping providence:testCompile");
+            getLog().info("Skipping providence:compile");
             return;
         }
 
-        if (executeInternal(outputDir, files, "src/main/providence/**/*.thrift", false)) {
-            project.addCompileSourceRoot(outputDir.getPath());
+        String defaultInputIncludes = System.getProperties()
+                                            .getProperty("providence.main.input",
+                                                         "src/main/providence/**/*.thrift");
+        if (executeInternal(includes, output, input, defaultInputIncludes, false)) {
+            project.addCompileSourceRoot(output.getPath());
         }
     }
 }

@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -79,11 +80,13 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
+    // -----------    GENERATE OPTIONS    ----------- //
     /**
      * Adds android.os.Parcelable support. Requires android dependencies, or
      * can use <code>net.morimekta.utils:android-util</code> for testing.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.android")
     protected boolean android;
 
     /**
@@ -95,7 +98,8 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
      *     <li><code>com.fasterxml.jackson.extra:jackson-databind:2.x</code>
      * </ul>
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.jackson")
     protected boolean jackson;
 
     /**
@@ -104,20 +108,56 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
      * will work regardless, but keeping this enabled speeds up the binary
      * serialization significantly.
      */
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "true",
+               property = "providence.gen.rw_binary")
     protected boolean rw_binary = true;
 
     /**
      * If set to true will add hazelcast annotations to messages and enums.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.hazelcast_portable")
     protected boolean hazelcast_portable;
 
     /**
      * If true add version to generated annotations.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "true",
+               property = "providence.gen.generated_annotation_version")
     protected boolean generated_annotation_version;
+
+    /**
+     * If the thrift program parser should fail if field ID is missing for any
+     * field definitions parsed.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.requireFieldId")
+    protected boolean requireFieldId;
+
+    /**
+     * If the thrift program parser should fail if enum value is missing for
+     * any enum value definition parsed.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.requireEnumValue")
+    protected boolean requireEnumValue;
+
+    /**
+     * Generate the legacy 'forValue' and 'forName' static enum getters.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.generate_legacy_enum_getters")
+    protected boolean generate_legacy_enum_getters;
+
+    /**
+     * Generate public constructors with all fields as arguments for structs and
+     * exceptions.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.generate_public_constructors")
+    protected boolean generate_public_constructors;
+
+    // ----------------------------
 
     /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
@@ -131,40 +171,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "true")
     protected boolean compileOutput;
-
-    /**
-     * Additional directories to find include files for thrift compilation.
-     * The extra files there will not be compiled into source code.
-     */
-    @Parameter
-    protected IncludeExcludeFileSelector includeDirs;
-
-    /**
-     * If the thrift program parser should fail if field ID is missing for any
-     * field definitions parsed.
-     */
-    @Parameter
-    protected boolean requireFieldId = false;
-
-    /**
-     * If the thrift program parser should fail if enum value is missing for
-     * any enum value definition parsed.
-     */
-    @Parameter
-    protected boolean requireEnumValue = false;
-
-    /**
-     * Generate the legacy 'forValue' and 'forName' static enum getters.
-     */
-    @Parameter
-    protected boolean generate_legacy_enum_getters = false;
-
-    /**
-     * Generate public constructors with all fields as arguments for structs and
-     * exceptions.
-     */
-    @Parameter
-    protected boolean generate_public_constructors = false;
 
     // --- After here are internals, components and maven-set params.
 
@@ -193,13 +199,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @SuppressFBWarnings("URF_UNREAD_FIELD")
     private RepositorySystem repositorySystem = null;
 
-    boolean executeInternal(File outputDir,
-                            IncludeExcludeFileSelector files,
+    boolean executeInternal(IncludeExcludeFileSelector includeDirs,
+                            File outputDir,
+                            IncludeExcludeFileSelector inputSelector,
                             String defaultInputIncludes,
                             boolean testCompile) throws MojoExecutionException, MojoFailureException {
-
-        Set<File> inputs = ProvidenceInput.getInputFiles(project, files, defaultInputIncludes);
-        if (inputs.isEmpty()) {
+        Set<File> inputFiles = ProvidenceInput.getInputFiles(project, inputSelector, defaultInputIncludes, getLog());
+        if (inputFiles.isEmpty()) {
             return false;
         }
 
@@ -233,7 +239,9 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             if (isNullOrEmpty(dep.getClassifier())) {
                 dep.setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
             }
-            resolveDependency(dep, includes, workingDir, resolvedArtifacts);
+            if (testCompile || !"test".equalsIgnoreCase(dep.getScope())) {
+                resolveDependency(dep, includes, workingDir, resolvedArtifacts);
+            }
         }
 
         if (includeDirs != null) {
@@ -251,7 +259,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                 includes.remove(new File(project.getBasedir(), dir));
             }
         }
-        inputs.stream().map(File::getParentFile).forEach(includes::add);
 
         FileManager fileManager = new FileManager(outputDir);
         ProgramParser parser = new ThriftProgramParser(requireFieldId, requireEnumValue);
@@ -259,17 +266,31 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         LinkedList<CProgram> documents = new LinkedList<>();
 
-        for (File in : inputs) {
+        inputFiles.stream()
+                  .map(file -> {
+                      try {
+                          return file.getAbsoluteFile()
+                                     .getCanonicalPath();
+                      } catch (IOException e) {
+                          e.printStackTrace();
+                          return null;
+                      }
+                  }).filter(Objects::nonNull)
+                  .sorted()
+                  .forEach(f -> getLog().info("Compiling: " + f));
+
+        for (File in : inputFiles) {
             try {
                 documents.add(loader.load(in));
             } catch (SerializerException e) {
                 // ParseException is a SerializerException. And serialize exceptions can come from
                 // failing to make sense of constant definitions.
-                getLog().warn("    ============ >> PROVIDENCE << ============");
-                getLog().warn("");
-                Arrays.stream(e.asString().split("\r?\n")).forEach(l -> getLog().warn(l));
-                getLog().warn("");
-                getLog().warn("    ============ << PROVIDENCE >> ============");
+                getLog().error("    ============ >> PROVIDENCE << ============");
+                getLog().error("");
+                Arrays.stream(e.asString().split("\r?\n"))
+                      .forEach(l -> getLog().error(l));
+                getLog().error("");
+                getLog().error("    ============ << PROVIDENCE >> ============");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
@@ -317,6 +338,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         ArtifactResolutionRequest request = new ArtifactResolutionRequest();
         request.setLocalRepository(localRepository);
         request.setRemoteRepositories(remoteRepositories);
+        request.setManagedVersionMap(project.getManagedVersionMap());
         request.setResolveTransitively(false);
         request.setArtifact(artifact);
 
@@ -351,7 +373,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         if (artifact.getFile().isDirectory()) {
             // Otherwise the dependency is a local module, and not packaged.
-            // In this case the we need to try to find thrift testFiles in the
+            // In this case the we need to try to find thrift files in the
             // file tree under that directly.
             DirectoryScanner includeScanner = new DirectoryScanner();
             includeScanner.setBasedir(artifact.getFile());
@@ -360,10 +382,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             includeScanner.setIncludes(new String[]{
                     "**/*.*",
             });
-            // Skip java class testFiles. These cannot be used as includes anyway, and
-            // is hte most common content of the default artifacts.
+            // Skip basic java files. These cannot be used as includes anyway, and
+            // is the most common content of the default artifacts.
             includeScanner.setExcludes(new String[]{
                     "**/*.class",
+                    "**/*.java",
+                    "**/*.properties",
             });
             includeScanner.scan();
 

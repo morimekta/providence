@@ -1,188 +1,127 @@
-package net.morimekta.providence.test_internal;
+package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
-public class DefaultFields
-        implements net.morimekta.providence.PMessage<DefaultFields, DefaultFields._Field>,
-                   Comparable<DefaultFields>,
+@javax.annotation.Generated("providence java generator")
+public class DefaultValues
+        implements net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field>,
+                   Comparable<DefaultValues>,
                    java.io.Serializable {
-    private final static long serialVersionUID = 734242388421949515L;
+    private final static long serialVersionUID = 1589448735484096354L;
 
-    private final static boolean kDefaultBooleanValue = false;
-    private final static byte kDefaultByteValue = (byte)0;
-    private final static short kDefaultShortValue = (short)0;
-    private final static int kDefaultIntegerValue = 0;
-    private final static long kDefaultLongValue = 0L;
-    private final static double kDefaultDoubleValue = 0.0d;
-    private final static String kDefaultStringValue = "";
-    private final static net.morimekta.util.Binary kDefaultBinaryValue = net.morimekta.util.Binary.wrap(new byte[]{});
+    private final static boolean kDefaultBooleanValue = true;
+    private final static byte kDefaultByteValue = (byte)-125;
+    private final static short kDefaultShortValue = (short)13579;
+    private final static int kDefaultIntegerValue = 1234567890;
+    private final static long kDefaultLongValue = 1234567891L;
+    private final static double kDefaultDoubleValue = 2.99792458E8d;
+    private final static String kDefaultStringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
+    private final static net.morimekta.test.providence.core.no_rw_binary.Value kDefaultEnumValue = net.morimekta.test.providence.core.no_rw_binary.Value.SECOND;
 
-    private final boolean                   mBooleanValue;
-    private final byte                      mByteValue;
-    private final short                     mShortValue;
-    private final int                       mIntegerValue;
-    private final long                      mLongValue;
-    private final double                    mDoubleValue;
-    private final String                    mStringValue;
+    private final Boolean mBooleanValue;
+    private final Byte mByteValue;
+    private final Short mShortValue;
+    private final Integer mIntegerValue;
+    private final Long mLongValue;
+    private final Double mDoubleValue;
+    private final String mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
-    private final Value                     mEnumValue;
-    private final CompactFields             mCompactValue;
+    private final net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+    private final net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
 
     private volatile int tHashCode;
 
-    public DefaultFields(Boolean pBooleanValue,
-                         Byte pByteValue,
-                         Short pShortValue,
-                         Integer pIntegerValue,
-                         Long pLongValue,
-                         Double pDoubleValue,
-                         String pStringValue,
-                         net.morimekta.util.Binary pBinaryValue,
-                         Value pEnumValue,
-                         CompactFields pCompactValue) {
-        if (pBooleanValue != null) {
-            mBooleanValue = pBooleanValue;
-        } else {
-            mBooleanValue = kDefaultBooleanValue;
-        }
-        if (pByteValue != null) {
-            mByteValue = pByteValue;
-        } else {
-            mByteValue = kDefaultByteValue;
-        }
-        if (pShortValue != null) {
-            mShortValue = pShortValue;
-        } else {
-            mShortValue = kDefaultShortValue;
-        }
-        if (pIntegerValue != null) {
-            mIntegerValue = pIntegerValue;
-        } else {
-            mIntegerValue = kDefaultIntegerValue;
-        }
-        if (pLongValue != null) {
-            mLongValue = pLongValue;
-        } else {
-            mLongValue = kDefaultLongValue;
-        }
-        if (pDoubleValue != null) {
-            mDoubleValue = pDoubleValue;
-        } else {
-            mDoubleValue = kDefaultDoubleValue;
-        }
-        if (pStringValue != null) {
-            mStringValue = pStringValue;
-        } else {
-            mStringValue = kDefaultStringValue;
-        }
-        if (pBinaryValue != null) {
-            mBinaryValue = pBinaryValue;
-        } else {
-            mBinaryValue = kDefaultBinaryValue;
-        }
-        mEnumValue = pEnumValue;
-        mCompactValue = pCompactValue;
-    }
-
-    private DefaultFields(_Builder builder) {
+    private DefaultValues(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
         mByteValue = builder.mByteValue;
         mShortValue = builder.mShortValue;
         mIntegerValue = builder.mIntegerValue;
         mLongValue = builder.mLongValue;
         mDoubleValue = builder.mDoubleValue;
-        if (builder.isSetStringValue()) {
-            mStringValue = builder.mStringValue;
-        } else {
-            mStringValue = kDefaultStringValue;
-        }
-        if (builder.isSetBinaryValue()) {
-            mBinaryValue = builder.mBinaryValue;
-        } else {
-            mBinaryValue = kDefaultBinaryValue;
-        }
+        mStringValue = builder.mStringValue;
+        mBinaryValue = builder.mBinaryValue;
         mEnumValue = builder.mEnumValue;
         mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     public boolean hasBooleanValue() {
-        return true;
+        return mBooleanValue != null;
     }
 
     /**
      * @return The field value
      */
     public boolean isBooleanValue() {
-        return mBooleanValue;
+        return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
     }
 
     public boolean hasByteValue() {
-        return true;
+        return mByteValue != null;
     }
 
     /**
      * @return The field value
      */
     public byte getByteValue() {
-        return mByteValue;
+        return hasByteValue() ? mByteValue : kDefaultByteValue;
     }
 
     public boolean hasShortValue() {
-        return true;
+        return mShortValue != null;
     }
 
     /**
      * @return The field value
      */
     public short getShortValue() {
-        return mShortValue;
+        return hasShortValue() ? mShortValue : kDefaultShortValue;
     }
 
     public boolean hasIntegerValue() {
-        return true;
+        return mIntegerValue != null;
     }
 
     /**
      * @return The field value
      */
     public int getIntegerValue() {
-        return mIntegerValue;
+        return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
     }
 
     public boolean hasLongValue() {
-        return true;
+        return mLongValue != null;
     }
 
     /**
      * @return The field value
      */
     public long getLongValue() {
-        return mLongValue;
+        return hasLongValue() ? mLongValue : kDefaultLongValue;
     }
 
     public boolean hasDoubleValue() {
-        return true;
+        return mDoubleValue != null;
     }
 
     /**
      * @return The field value
      */
     public double getDoubleValue() {
-        return mDoubleValue;
+        return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
     }
 
     public boolean hasStringValue() {
-        return true;
+        return mStringValue != null;
     }
 
     /**
      * @return The field value
      */
     public String getStringValue() {
-        return mStringValue;
+        return hasStringValue() ? mStringValue : kDefaultStringValue;
     }
 
     public boolean hasBinaryValue() {
-        return true;
+        return mBinaryValue != null;
     }
 
     /**
@@ -199,8 +138,8 @@ public class DefaultFields
     /**
      * @return The field value
      */
-    public Value getEnumValue() {
-        return mEnumValue;
+    public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
+        return hasEnumValue() ? mEnumValue : kDefaultEnumValue;
     }
 
     public boolean hasCompactValue() {
@@ -210,21 +149,21 @@ public class DefaultFields
     /**
      * @return The field value
      */
-    public CompactFields getCompactValue() {
+    public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {
         return mCompactValue;
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return true;
-            case 2: return true;
-            case 3: return true;
-            case 4: return true;
-            case 5: return true;
-            case 6: return true;
-            case 7: return true;
-            case 8: return true;
+            case 1: return hasBooleanValue();
+            case 2: return hasByteValue();
+            case 3: return hasShortValue();
+            case 4: return hasIntegerValue();
+            case 5: return hasLongValue();
+            case 6: return hasDoubleValue();
+            case 7: return hasStringValue();
+            case 8: return hasBinaryValue();
             case 9: return hasEnumValue();
             case 10: return hasCompactValue();
             default: return false;
@@ -234,14 +173,14 @@ public class DefaultFields
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return 1;
-            case 8: return 1;
+            case 1: return hasBooleanValue() ? 1 : 0;
+            case 2: return hasByteValue() ? 1 : 0;
+            case 3: return hasShortValue() ? 1 : 0;
+            case 4: return hasIntegerValue() ? 1 : 0;
+            case 5: return hasLongValue() ? 1 : 0;
+            case 6: return hasDoubleValue() ? 1 : 0;
+            case 7: return hasStringValue() ? 1 : 0;
+            case 8: return hasBinaryValue() ? 1 : 0;
             case 9: return hasEnumValue() ? 1 : 0;
             case 10: return hasCompactValue() ? 1 : 0;
             default: return 0;
@@ -269,7 +208,7 @@ public class DefaultFields
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        DefaultFields other = (DefaultFields) o;
+        DefaultValues other = (DefaultValues) o;
         return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
                java.util.Objects.equals(mByteValue, other.mByteValue) &&
                java.util.Objects.equals(mShortValue, other.mShortValue) &&
@@ -286,7 +225,7 @@ public class DefaultFields
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    DefaultFields.class,
+                    DefaultValues.class,
                     _Field.BOOLEAN_VALUE, mBooleanValue,
                     _Field.BYTE_VALUE, mByteValue,
                     _Field.SHORT_VALUE, mShortValue,
@@ -303,48 +242,75 @@ public class DefaultFields
 
     @Override
     public String toString() {
-        return "providence.DefaultFields" + asString();
+        return "providence.DefaultValues" + asString();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        out.append("booleanValue:")
-           .append(mBooleanValue);
-        out.append(',');
-        out.append("byteValue:")
-           .append((int) mByteValue);
-        out.append(',');
-        out.append("shortValue:")
-           .append((int) mShortValue);
-        out.append(',');
-        out.append("integerValue:")
-           .append(mIntegerValue);
-        out.append(',');
-        out.append("longValue:")
-           .append(mLongValue);
-        out.append(',');
-        out.append("doubleValue:")
-           .append(net.morimekta.util.Strings.asString(mDoubleValue));
-        out.append(',');
-        out.append("stringValue:")
-           .append('\"')
-           .append(net.morimekta.util.Strings.escape(mStringValue))
-           .append('\"');
-        out.append(',');
-        out.append("binaryValue:")
-           .append("b64(")
-           .append(mBinaryValue.toBase64())
-           .append(')');
+        boolean first = true;
+        if (hasBooleanValue()) {
+            first = false;
+            out.append("booleanValue:")
+               .append(mBooleanValue);
+        }
+        if (hasByteValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("byteValue:")
+               .append((int) mByteValue);
+        }
+        if (hasShortValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("shortValue:")
+               .append((int) mShortValue);
+        }
+        if (hasIntegerValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("integerValue:")
+               .append(mIntegerValue);
+        }
+        if (hasLongValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("longValue:")
+               .append(mLongValue);
+        }
+        if (hasDoubleValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("doubleValue:")
+               .append(net.morimekta.util.Strings.asString(mDoubleValue));
+        }
+        if (hasStringValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("stringValue:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mStringValue))
+               .append('\"');
+        }
+        if (hasBinaryValue()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("binaryValue:")
+               .append("b64(")
+               .append(mBinaryValue.toBase64())
+               .append(')');
+        }
         if (hasEnumValue()) {
-            out.append(',');
+            if (first) first = false;
+            else out.append(',');
             out.append("enumValue:")
                .append(mEnumValue.asString());
         }
         if (hasCompactValue()) {
-            out.append(',');
+            if (!first) out.append(',');
             out.append("compactValue:")
                .append(mCompactValue.asString());
         }
@@ -353,32 +319,64 @@ public class DefaultFields
     }
 
     @Override
-    public int compareTo(DefaultFields other) {
+    public int compareTo(DefaultValues other) {
         int c;
 
-        c = Boolean.compare(mBooleanValue, other.mBooleanValue);
+        c = Boolean.compare(mBooleanValue != null, other.mBooleanValue != null);
         if (c != 0) return c;
+        if (mBooleanValue != null) {
+            c = Boolean.compare(mBooleanValue, other.mBooleanValue);
+            if (c != 0) return c;
+        }
 
-        c = Byte.compare(mByteValue, other.mByteValue);
+        c = Boolean.compare(mByteValue != null, other.mByteValue != null);
         if (c != 0) return c;
+        if (mByteValue != null) {
+            c = Byte.compare(mByteValue, other.mByteValue);
+            if (c != 0) return c;
+        }
 
-        c = Short.compare(mShortValue, other.mShortValue);
+        c = Boolean.compare(mShortValue != null, other.mShortValue != null);
         if (c != 0) return c;
+        if (mShortValue != null) {
+            c = Short.compare(mShortValue, other.mShortValue);
+            if (c != 0) return c;
+        }
 
-        c = Integer.compare(mIntegerValue, other.mIntegerValue);
+        c = Boolean.compare(mIntegerValue != null, other.mIntegerValue != null);
         if (c != 0) return c;
+        if (mIntegerValue != null) {
+            c = Integer.compare(mIntegerValue, other.mIntegerValue);
+            if (c != 0) return c;
+        }
 
-        c = Long.compare(mLongValue, other.mLongValue);
+        c = Boolean.compare(mLongValue != null, other.mLongValue != null);
         if (c != 0) return c;
+        if (mLongValue != null) {
+            c = Long.compare(mLongValue, other.mLongValue);
+            if (c != 0) return c;
+        }
 
-        c = Double.compare(mDoubleValue, other.mDoubleValue);
+        c = Boolean.compare(mDoubleValue != null, other.mDoubleValue != null);
         if (c != 0) return c;
+        if (mDoubleValue != null) {
+            c = Double.compare(mDoubleValue, other.mDoubleValue);
+            if (c != 0) return c;
+        }
 
-        c = mStringValue.compareTo(other.mStringValue);
+        c = Boolean.compare(mStringValue != null, other.mStringValue != null);
         if (c != 0) return c;
+        if (mStringValue != null) {
+            c = mStringValue.compareTo(other.mStringValue);
+            if (c != 0) return c;
+        }
 
-        c = mBinaryValue.compareTo(other.mBinaryValue);
+        c = Boolean.compare(mBinaryValue != null, other.mBinaryValue != null);
         if (c != 0) return c;
+        if (mBinaryValue != null) {
+            c = mBinaryValue.compareTo(other.mBinaryValue);
+            if (c != 0) return c;
+        }
 
         c = Boolean.compare(mEnumValue != null, other.mEnumValue != null);
         if (c != 0) return c;
@@ -404,26 +402,26 @@ public class DefaultFields
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), null),
-        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), null),
-        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), null),
-        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), null),
-        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
-        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "enumValue", Value.provider(), null),
-        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "compactValue", CompactFields.provider(), null),
+        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultBooleanValue)),
+        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultByteValue)),
+        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultShortValue)),
+        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultIntegerValue)),
+        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultLongValue)),
+        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultDoubleValue)),
+        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultStringValue)),
+        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
+        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumValue", net.morimekta.test.providence.core.no_rw_binary.Value.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultEnumValue)),
+        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "compactValue", net.morimekta.test.providence.core.no_rw_binary.CompactFields.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -431,7 +429,7 @@ public class DefaultFields
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -455,8 +453,12 @@ public class DefaultFields
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.BOOLEAN_VALUE;
                 case 2: return _Field.BYTE_VALUE;
                 case 3: return _Field.SHORT_VALUE;
@@ -471,7 +473,11 @@ public class DefaultFields
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "booleanValue": return _Field.BOOLEAN_VALUE;
                 case "byteValue": return _Field.BYTE_VALUE;
@@ -486,38 +492,67 @@ public class DefaultFields
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in providence.DefaultValues");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.DefaultValues");
+            }
+            return field;
+        }
+
     }
 
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultFields,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultValues,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> {
         public _Descriptor() {
-            super("providence", "DefaultFields", _Builder::new, false);
+            super("providence", "DefaultValues", _Builder::new, false);
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 
@@ -525,15 +560,15 @@ public class DefaultFields
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultFields,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultValues,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a providence.DefaultFields builder.
+     * Make a providence.DefaultValues builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -541,62 +576,70 @@ public class DefaultFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<DefaultFields,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<DefaultValues,_Field> {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private boolean                   mBooleanValue;
-        private byte                      mByteValue;
-        private short                     mShortValue;
-        private int                       mIntegerValue;
-        private long                      mLongValue;
-        private double                    mDoubleValue;
-        private String                    mStringValue;
+        private Boolean mBooleanValue;
+        private Byte mByteValue;
+        private Short mShortValue;
+        private Integer mIntegerValue;
+        private Long mLongValue;
+        private Double mDoubleValue;
+        private String mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
-        private Value                     mEnumValue;
-        private CompactFields             mCompactValue;
-        private CompactFields._Builder    mCompactValue_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
+        private net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mCompactValue_builder;
 
         /**
-         * Make a providence.DefaultFields builder.
+         * Make a providence.DefaultValues builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(10);
             modified = new java.util.BitSet(10);
-            mBooleanValue = kDefaultBooleanValue;
-            mByteValue = kDefaultByteValue;
-            mShortValue = kDefaultShortValue;
-            mIntegerValue = kDefaultIntegerValue;
-            mLongValue = kDefaultLongValue;
-            mDoubleValue = kDefaultDoubleValue;
-            mStringValue = kDefaultStringValue;
-            mBinaryValue = kDefaultBinaryValue;
         }
 
         /**
-         * Make a mutating builder off a base providence.DefaultFields.
+         * Make a mutating builder off a base providence.DefaultValues.
          *
-         * @param base The base DefaultFields
+         * @param base The base DefaultValues
          */
-        public _Builder(DefaultFields base) {
+        public _Builder(DefaultValues base) {
             this();
 
-            optionals.set(0);
-            mBooleanValue = base.mBooleanValue;
-            optionals.set(1);
-            mByteValue = base.mByteValue;
-            optionals.set(2);
-            mShortValue = base.mShortValue;
-            optionals.set(3);
-            mIntegerValue = base.mIntegerValue;
-            optionals.set(4);
-            mLongValue = base.mLongValue;
-            optionals.set(5);
-            mDoubleValue = base.mDoubleValue;
-            optionals.set(6);
-            mStringValue = base.mStringValue;
-            optionals.set(7);
-            mBinaryValue = base.mBinaryValue;
+            if (base.hasBooleanValue()) {
+                optionals.set(0);
+                mBooleanValue = base.mBooleanValue;
+            }
+            if (base.hasByteValue()) {
+                optionals.set(1);
+                mByteValue = base.mByteValue;
+            }
+            if (base.hasShortValue()) {
+                optionals.set(2);
+                mShortValue = base.mShortValue;
+            }
+            if (base.hasIntegerValue()) {
+                optionals.set(3);
+                mIntegerValue = base.mIntegerValue;
+            }
+            if (base.hasLongValue()) {
+                optionals.set(4);
+                mLongValue = base.mLongValue;
+            }
+            if (base.hasDoubleValue()) {
+                optionals.set(5);
+                mDoubleValue = base.mDoubleValue;
+            }
+            if (base.hasStringValue()) {
+                optionals.set(6);
+                mStringValue = base.mStringValue;
+            }
+            if (base.hasBinaryValue()) {
+                optionals.set(7);
+                mBinaryValue = base.mBinaryValue;
+            }
             if (base.hasEnumValue()) {
                 optionals.set(8);
                 mEnumValue = base.mEnumValue;
@@ -609,38 +652,54 @@ public class DefaultFields
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(DefaultFields from) {
-            optionals.set(0);
-            modified.set(0);
-            mBooleanValue = from.isBooleanValue();
+        public _Builder merge(DefaultValues from) {
+            if (from.hasBooleanValue()) {
+                optionals.set(0);
+                modified.set(0);
+                mBooleanValue = from.isBooleanValue();
+            }
 
-            optionals.set(1);
-            modified.set(1);
-            mByteValue = from.getByteValue();
+            if (from.hasByteValue()) {
+                optionals.set(1);
+                modified.set(1);
+                mByteValue = from.getByteValue();
+            }
 
-            optionals.set(2);
-            modified.set(2);
-            mShortValue = from.getShortValue();
+            if (from.hasShortValue()) {
+                optionals.set(2);
+                modified.set(2);
+                mShortValue = from.getShortValue();
+            }
 
-            optionals.set(3);
-            modified.set(3);
-            mIntegerValue = from.getIntegerValue();
+            if (from.hasIntegerValue()) {
+                optionals.set(3);
+                modified.set(3);
+                mIntegerValue = from.getIntegerValue();
+            }
 
-            optionals.set(4);
-            modified.set(4);
-            mLongValue = from.getLongValue();
+            if (from.hasLongValue()) {
+                optionals.set(4);
+                modified.set(4);
+                mLongValue = from.getLongValue();
+            }
 
-            optionals.set(5);
-            modified.set(5);
-            mDoubleValue = from.getDoubleValue();
+            if (from.hasDoubleValue()) {
+                optionals.set(5);
+                modified.set(5);
+                mDoubleValue = from.getDoubleValue();
+            }
 
-            optionals.set(6);
-            modified.set(6);
-            mStringValue = from.getStringValue();
+            if (from.hasStringValue()) {
+                optionals.set(6);
+                modified.set(6);
+                mStringValue = from.getStringValue();
+            }
 
-            optionals.set(7);
-            modified.set(7);
-            mBinaryValue = from.getBinaryValue();
+            if (from.hasBinaryValue()) {
+                optionals.set(7);
+                modified.set(7);
+                mBinaryValue = from.getBinaryValue();
+            }
 
             if (from.hasEnumValue()) {
                 optionals.set(8);
@@ -704,7 +763,7 @@ public class DefaultFields
         public _Builder clearBooleanValue() {
             optionals.clear(0);
             modified.set(0);
-            mBooleanValue = kDefaultBooleanValue;
+            mBooleanValue = null;
             return this;
         }
 
@@ -714,7 +773,7 @@ public class DefaultFields
          * @return The field value
          */
         public boolean getBooleanValue() {
-            return mBooleanValue;
+            return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
         }
 
         /**
@@ -758,7 +817,7 @@ public class DefaultFields
         public _Builder clearByteValue() {
             optionals.clear(1);
             modified.set(1);
-            mByteValue = kDefaultByteValue;
+            mByteValue = null;
             return this;
         }
 
@@ -768,7 +827,7 @@ public class DefaultFields
          * @return The field value
          */
         public byte getByteValue() {
-            return mByteValue;
+            return isSetByteValue() ? mByteValue : kDefaultByteValue;
         }
 
         /**
@@ -812,7 +871,7 @@ public class DefaultFields
         public _Builder clearShortValue() {
             optionals.clear(2);
             modified.set(2);
-            mShortValue = kDefaultShortValue;
+            mShortValue = null;
             return this;
         }
 
@@ -822,7 +881,7 @@ public class DefaultFields
          * @return The field value
          */
         public short getShortValue() {
-            return mShortValue;
+            return isSetShortValue() ? mShortValue : kDefaultShortValue;
         }
 
         /**
@@ -866,7 +925,7 @@ public class DefaultFields
         public _Builder clearIntegerValue() {
             optionals.clear(3);
             modified.set(3);
-            mIntegerValue = kDefaultIntegerValue;
+            mIntegerValue = null;
             return this;
         }
 
@@ -876,7 +935,7 @@ public class DefaultFields
          * @return The field value
          */
         public int getIntegerValue() {
-            return mIntegerValue;
+            return isSetIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
         }
 
         /**
@@ -920,7 +979,7 @@ public class DefaultFields
         public _Builder clearLongValue() {
             optionals.clear(4);
             modified.set(4);
-            mLongValue = kDefaultLongValue;
+            mLongValue = null;
             return this;
         }
 
@@ -930,7 +989,7 @@ public class DefaultFields
          * @return The field value
          */
         public long getLongValue() {
-            return mLongValue;
+            return isSetLongValue() ? mLongValue : kDefaultLongValue;
         }
 
         /**
@@ -974,7 +1033,7 @@ public class DefaultFields
         public _Builder clearDoubleValue() {
             optionals.clear(5);
             modified.set(5);
-            mDoubleValue = kDefaultDoubleValue;
+            mDoubleValue = null;
             return this;
         }
 
@@ -984,7 +1043,7 @@ public class DefaultFields
          * @return The field value
          */
         public double getDoubleValue() {
-            return mDoubleValue;
+            return isSetDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
         }
 
         /**
@@ -1032,7 +1091,7 @@ public class DefaultFields
         public _Builder clearStringValue() {
             optionals.clear(6);
             modified.set(6);
-            mStringValue = kDefaultStringValue;
+            mStringValue = null;
             return this;
         }
 
@@ -1042,7 +1101,7 @@ public class DefaultFields
          * @return The field value
          */
         public String getStringValue() {
-            return mStringValue;
+            return isSetStringValue() ? mStringValue : kDefaultStringValue;
         }
 
         /**
@@ -1090,7 +1149,7 @@ public class DefaultFields
         public _Builder clearBinaryValue() {
             optionals.clear(7);
             modified.set(7);
-            mBinaryValue = kDefaultBinaryValue;
+            mBinaryValue = null;
             return this;
         }
 
@@ -1110,7 +1169,7 @@ public class DefaultFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumValue(Value value) {
+        public _Builder setEnumValue(net.morimekta.test.providence.core.no_rw_binary.Value value) {
             if (value == null) {
                 return clearEnumValue();
             }
@@ -1157,8 +1216,8 @@ public class DefaultFields
          *
          * @return The field value
          */
-        public Value getEnumValue() {
-            return mEnumValue;
+        public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
+            return isSetEnumValue() ? mEnumValue : kDefaultEnumValue;
         }
 
         /**
@@ -1168,7 +1227,7 @@ public class DefaultFields
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setCompactValue(CompactFields value) {
+        public _Builder setCompactValue(net.morimekta.test.providence.core.no_rw_binary.CompactFields value) {
             if (value == null) {
                 return clearCompactValue();
             }
@@ -1217,7 +1276,8 @@ public class DefaultFields
          *
          * @return The field builder
          */
-        public CompactFields._Builder mutableCompactValue() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mutableCompactValue() {
             optionals.set(9);
             modified.set(9);
 
@@ -1225,7 +1285,7 @@ public class DefaultFields
                 mCompactValue_builder = mCompactValue.mutate();
                 mCompactValue = null;
             } else if (mCompactValue_builder == null) {
-                mCompactValue_builder = CompactFields.builder();
+                mCompactValue_builder = net.morimekta.test.providence.core.no_rw_binary.CompactFields.builder();
             }
             return mCompactValue_builder;
         }
@@ -1234,7 +1294,7 @@ public class DefaultFields
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            DefaultFields._Builder other = (DefaultFields._Builder) o;
+            DefaultValues._Builder other = (DefaultValues._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
                    java.util.Objects.equals(mByteValue, other.mByteValue) &&
@@ -1251,7 +1311,7 @@ public class DefaultFields
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    DefaultFields.class, optionals,
+                    DefaultValues.class, optionals,
                     _Field.BOOLEAN_VALUE, mBooleanValue,
                     _Field.BYTE_VALUE, mByteValue,
                     _Field.SHORT_VALUE, mShortValue,
@@ -1287,8 +1347,8 @@ public class DefaultFields
                 case 6: setDoubleValue((double) value); break;
                 case 7: setStringValue((String) value); break;
                 case 8: setBinaryValue((net.morimekta.util.Binary) value); break;
-                case 9: setEnumValue((Value) value); break;
-                case 10: setCompactValue((CompactFields) value); break;
+                case 9: setEnumValue((net.morimekta.test.providence.core.no_rw_binary.Value) value); break;
+                case 10: setCompactValue((net.morimekta.test.providence.core.no_rw_binary.CompactFields) value); break;
                 default: break;
             }
             return this;
@@ -1368,13 +1428,13 @@ public class DefaultFields
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
             return kDescriptor;
         }
 
         @Override
-        public DefaultFields build() {
-            return new DefaultFields(this);
+        public DefaultValues build() {
+            return new DefaultValues(this);
         }
     }
 }

@@ -1,18 +1,19 @@
-package net.morimekta.providence.test_internal;
+package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Containers
-        implements net.morimekta.providence.PMessage<Containers, Containers._Field>,
+        implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,
                    java.io.Serializable {
     private final static long serialVersionUID = 3106880629763954881L;
 
-    private final java.util.List<Boolean>                                            mBooleanList;
-    private final java.util.List<Byte>                                               mByteList;
-    private final java.util.List<Short>                                              mShortList;
-    private final java.util.List<Integer>                                            mIntegerList;
-    private final java.util.List<Long>                                               mLongList;
-    private final java.util.List<Double>                                             mDoubleList;
+    private final java.util.List<Boolean> mBooleanList;
+    private final java.util.List<Byte> mByteList;
+    private final java.util.List<Short> mShortList;
+    private final java.util.List<Integer> mIntegerList;
+    private final java.util.List<Long> mLongList;
+    private final java.util.List<Double> mDoubleList;
     private final java.util.List<String> mStringList;
     private final java.util.List<net.morimekta.util.Binary> mBinaryList;
     private final java.util.Set<Boolean> mBooleanSet;
@@ -23,229 +24,29 @@ public class Containers
     private final java.util.Set<Double> mDoubleSet;
     private final java.util.Set<String> mStringSet;
     private final java.util.Set<net.morimekta.util.Binary> mBinarySet;
-    private final java.util.Map<Boolean,Boolean>                                     mBooleanMap;
-    private final java.util.Map<Byte,Byte>                                           mByteMap;
-    private final java.util.Map<Short,Short>                                         mShortMap;
-    private final java.util.Map<Integer,Integer>                                     mIntegerMap;
-    private final java.util.Map<Long,Long>                                           mLongMap;
-    private final java.util.Map<Double,Double>                                       mDoubleMap;
-    private final java.util.Map<String,String>                                       mStringMap;
+    private final java.util.Map<Boolean,Boolean> mBooleanMap;
+    private final java.util.Map<Byte,Byte> mByteMap;
+    private final java.util.Map<Short,Short> mShortMap;
+    private final java.util.Map<Integer,Integer> mIntegerMap;
+    private final java.util.Map<Long,Long> mLongMap;
+    private final java.util.Map<Double,Double> mDoubleMap;
+    private final java.util.Map<String,String> mStringMap;
     private final java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
-    private final java.util.List<Value>                                              mEnumList;
-    private final java.util.Set<Value>                                               mEnumSet;
-    private final java.util.Map<Value,Value>                                         mEnumMap;
-    private final java.util.List<DefaultFields>                                      mMessageList;
-    private final java.util.Set<DefaultFields>                                       mMessageSet;
-    private final java.util.Map<String,DefaultFields>                                mMessageMap;
-    private final java.util.Map<CompactFields,String>                                mMessageKeyMap;
-    private final RequiredFields                                                     mRequiredFields;
-    private final DefaultFields                                                      mDefaultFields;
-    private final OptionalFields                                                     mOptionalFields;
-    private final UnionFields                                                        mUnionFields;
-    private final ExceptionFields                                                    mExceptionFields;
-    private final DefaultValues                                                      mDefaultValues;
+    private final java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value> mEnumList;
+    private final java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value> mEnumSet;
+    private final java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> mEnumMap;
+    private final java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageList;
+    private final java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageSet;
+    private final java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageMap;
+    private final java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String> mMessageKeyMap;
+    private final net.morimekta.test.providence.core.no_rw_binary.RequiredFields mRequiredFields;
+    private final net.morimekta.test.providence.core.no_rw_binary.DefaultFields mDefaultFields;
+    private final net.morimekta.test.providence.core.no_rw_binary.OptionalFields mOptionalFields;
+    private final net.morimekta.test.providence.core.no_rw_binary.UnionFields mUnionFields;
+    private final net.morimekta.test.providence.core.no_rw_binary.ExceptionFields mExceptionFields;
+    private final net.morimekta.test.providence.core.no_rw_binary.DefaultValues mDefaultValues;
 
     private volatile int tHashCode;
-
-    public Containers(java.util.List<Boolean> pBooleanList,
-                      java.util.List<Byte> pByteList,
-                      java.util.List<Short> pShortList,
-                      java.util.List<Integer> pIntegerList,
-                      java.util.List<Long> pLongList,
-                      java.util.List<Double> pDoubleList,
-                      java.util.List<String> pStringList,
-                      java.util.List<net.morimekta.util.Binary> pBinaryList,
-                      java.util.Set<Boolean> pBooleanSet,
-                      java.util.Set<Byte> pByteSet,
-                      java.util.Set<Short> pShortSet,
-                      java.util.Set<Integer> pIntegerSet,
-                      java.util.Set<Long> pLongSet,
-                      java.util.Set<Double> pDoubleSet,
-                      java.util.Set<String> pStringSet,
-                      java.util.Set<net.morimekta.util.Binary> pBinarySet,
-                      java.util.Map<Boolean,Boolean> pBooleanMap,
-                      java.util.Map<Byte,Byte> pByteMap,
-                      java.util.Map<Short,Short> pShortMap,
-                      java.util.Map<Integer,Integer> pIntegerMap,
-                      java.util.Map<Long,Long> pLongMap,
-                      java.util.Map<Double,Double> pDoubleMap,
-                      java.util.Map<String,String> pStringMap,
-                      java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> pBinaryMap,
-                      java.util.List<Value> pEnumList,
-                      java.util.Set<Value> pEnumSet,
-                      java.util.Map<Value,Value> pEnumMap,
-                      java.util.List<DefaultFields> pMessageList,
-                      java.util.Set<DefaultFields> pMessageSet,
-                      java.util.Map<String,DefaultFields> pMessageMap,
-                      java.util.Map<CompactFields,String> pMessageKeyMap,
-                      RequiredFields pRequiredFields,
-                      DefaultFields pDefaultFields,
-                      OptionalFields pOptionalFields,
-                      UnionFields pUnionFields,
-                      ExceptionFields pExceptionFields,
-                      DefaultValues pDefaultValues) {
-        if (pBooleanList != null) {
-            mBooleanList = com.google.common.collect.ImmutableList.copyOf(pBooleanList);
-        } else {
-            mBooleanList = null;
-        }
-        if (pByteList != null) {
-            mByteList = com.google.common.collect.ImmutableList.copyOf(pByteList);
-        } else {
-            mByteList = null;
-        }
-        if (pShortList != null) {
-            mShortList = com.google.common.collect.ImmutableList.copyOf(pShortList);
-        } else {
-            mShortList = null;
-        }
-        if (pIntegerList != null) {
-            mIntegerList = com.google.common.collect.ImmutableList.copyOf(pIntegerList);
-        } else {
-            mIntegerList = null;
-        }
-        if (pLongList != null) {
-            mLongList = com.google.common.collect.ImmutableList.copyOf(pLongList);
-        } else {
-            mLongList = null;
-        }
-        if (pDoubleList != null) {
-            mDoubleList = com.google.common.collect.ImmutableList.copyOf(pDoubleList);
-        } else {
-            mDoubleList = null;
-        }
-        if (pStringList != null) {
-            mStringList = com.google.common.collect.ImmutableList.copyOf(pStringList);
-        } else {
-            mStringList = null;
-        }
-        if (pBinaryList != null) {
-            mBinaryList = com.google.common.collect.ImmutableList.copyOf(pBinaryList);
-        } else {
-            mBinaryList = null;
-        }
-        if (pBooleanSet != null) {
-            mBooleanSet = com.google.common.collect.ImmutableSet.copyOf(pBooleanSet);
-        } else {
-            mBooleanSet = null;
-        }
-        if (pByteSet != null) {
-            mByteSet = com.google.common.collect.ImmutableSortedSet.copyOf(pByteSet);
-        } else {
-            mByteSet = null;
-        }
-        if (pShortSet != null) {
-            mShortSet = com.google.common.collect.ImmutableSet.copyOf(pShortSet);
-        } else {
-            mShortSet = null;
-        }
-        if (pIntegerSet != null) {
-            mIntegerSet = com.google.common.collect.ImmutableSet.copyOf(pIntegerSet);
-        } else {
-            mIntegerSet = null;
-        }
-        if (pLongSet != null) {
-            mLongSet = com.google.common.collect.ImmutableSet.copyOf(pLongSet);
-        } else {
-            mLongSet = null;
-        }
-        if (pDoubleSet != null) {
-            mDoubleSet = com.google.common.collect.ImmutableSet.copyOf(pDoubleSet);
-        } else {
-            mDoubleSet = null;
-        }
-        if (pStringSet != null) {
-            mStringSet = com.google.common.collect.ImmutableSet.copyOf(pStringSet);
-        } else {
-            mStringSet = null;
-        }
-        if (pBinarySet != null) {
-            mBinarySet = com.google.common.collect.ImmutableSet.copyOf(pBinarySet);
-        } else {
-            mBinarySet = null;
-        }
-        if (pBooleanMap != null) {
-            mBooleanMap = com.google.common.collect.ImmutableMap.copyOf(pBooleanMap);
-        } else {
-            mBooleanMap = null;
-        }
-        if (pByteMap != null) {
-            mByteMap = com.google.common.collect.ImmutableSortedMap.copyOf(pByteMap);
-        } else {
-            mByteMap = null;
-        }
-        if (pShortMap != null) {
-            mShortMap = com.google.common.collect.ImmutableMap.copyOf(pShortMap);
-        } else {
-            mShortMap = null;
-        }
-        if (pIntegerMap != null) {
-            mIntegerMap = com.google.common.collect.ImmutableMap.copyOf(pIntegerMap);
-        } else {
-            mIntegerMap = null;
-        }
-        if (pLongMap != null) {
-            mLongMap = com.google.common.collect.ImmutableMap.copyOf(pLongMap);
-        } else {
-            mLongMap = null;
-        }
-        if (pDoubleMap != null) {
-            mDoubleMap = com.google.common.collect.ImmutableMap.copyOf(pDoubleMap);
-        } else {
-            mDoubleMap = null;
-        }
-        if (pStringMap != null) {
-            mStringMap = com.google.common.collect.ImmutableMap.copyOf(pStringMap);
-        } else {
-            mStringMap = null;
-        }
-        if (pBinaryMap != null) {
-            mBinaryMap = com.google.common.collect.ImmutableMap.copyOf(pBinaryMap);
-        } else {
-            mBinaryMap = null;
-        }
-        if (pEnumList != null) {
-            mEnumList = com.google.common.collect.ImmutableList.copyOf(pEnumList);
-        } else {
-            mEnumList = null;
-        }
-        if (pEnumSet != null) {
-            mEnumSet = com.google.common.collect.ImmutableSet.copyOf(pEnumSet);
-        } else {
-            mEnumSet = null;
-        }
-        if (pEnumMap != null) {
-            mEnumMap = com.google.common.collect.ImmutableMap.copyOf(pEnumMap);
-        } else {
-            mEnumMap = null;
-        }
-        if (pMessageList != null) {
-            mMessageList = com.google.common.collect.ImmutableList.copyOf(pMessageList);
-        } else {
-            mMessageList = null;
-        }
-        if (pMessageSet != null) {
-            mMessageSet = com.google.common.collect.ImmutableSet.copyOf(pMessageSet);
-        } else {
-            mMessageSet = null;
-        }
-        if (pMessageMap != null) {
-            mMessageMap = com.google.common.collect.ImmutableMap.copyOf(pMessageMap);
-        } else {
-            mMessageMap = null;
-        }
-        if (pMessageKeyMap != null) {
-            mMessageKeyMap = com.google.common.collect.ImmutableMap.copyOf(pMessageKeyMap);
-        } else {
-            mMessageKeyMap = null;
-        }
-        mRequiredFields = pRequiredFields;
-        mDefaultFields = pDefaultFields;
-        mOptionalFields = pOptionalFields;
-        mUnionFields = pUnionFields;
-        mExceptionFields = pExceptionFields;
-        mDefaultValues = pDefaultValues;
-    }
 
     private Containers(_Builder builder) {
         if (builder.isSetBooleanList()) {
@@ -790,7 +591,7 @@ public class Containers
      *
      * @return The field value
      */
-    public java.util.List<Value> getEnumList() {
+    public java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value> getEnumList() {
         return mEnumList;
     }
 
@@ -805,7 +606,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public java.util.Set<Value> getEnumSet() {
+    public java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value> getEnumSet() {
         return mEnumSet;
     }
 
@@ -820,7 +621,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public java.util.Map<Value,Value> getEnumMap() {
+    public java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> getEnumMap() {
         return mEnumMap;
     }
 
@@ -837,7 +638,7 @@ public class Containers
      *
      * @return The field value
      */
-    public java.util.List<DefaultFields> getMessageList() {
+    public java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> getMessageList() {
         return mMessageList;
     }
 
@@ -852,7 +653,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public java.util.Set<DefaultFields> getMessageSet() {
+    public java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> getMessageSet() {
         return mMessageSet;
     }
 
@@ -867,7 +668,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public java.util.Map<String,DefaultFields> getMessageMap() {
+    public java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields> getMessageMap() {
         return mMessageMap;
     }
 
@@ -882,7 +683,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public java.util.Map<CompactFields,String> getMessageKeyMap() {
+    public java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String> getMessageKeyMap() {
         return mMessageKeyMap;
     }
 
@@ -893,7 +694,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public RequiredFields getRequiredFields() {
+    public net.morimekta.test.providence.core.no_rw_binary.RequiredFields getRequiredFields() {
         return mRequiredFields;
     }
 
@@ -904,7 +705,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public DefaultFields getDefaultFields() {
+    public net.morimekta.test.providence.core.no_rw_binary.DefaultFields getDefaultFields() {
         return mDefaultFields;
     }
 
@@ -915,7 +716,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public OptionalFields getOptionalFields() {
+    public net.morimekta.test.providence.core.no_rw_binary.OptionalFields getOptionalFields() {
         return mOptionalFields;
     }
 
@@ -926,7 +727,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public UnionFields getUnionFields() {
+    public net.morimekta.test.providence.core.no_rw_binary.UnionFields getUnionFields() {
         return mUnionFields;
     }
 
@@ -937,7 +738,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public ExceptionFields getExceptionFields() {
+    public net.morimekta.test.providence.core.no_rw_binary.ExceptionFields getExceptionFields() {
         return mExceptionFields;
     }
 
@@ -948,7 +749,7 @@ public class Containers
     /**
      * @return The field value
      */
-    public DefaultValues getDefaultValues() {
+    public net.morimekta.test.providence.core.no_rw_binary.DefaultValues getDefaultValues() {
         return mDefaultValues;
     }
 
@@ -1180,6 +981,7 @@ public class Containers
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         StringBuilder out = new StringBuilder();
         out.append("{");
@@ -1706,37 +1508,29 @@ public class Containers
         DOUBLE_MAP(26, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "doubleMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(),net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider()), null),
         STRING_MAP(27, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "stringMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         BINARY_MAP(28, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "binaryMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(),net.morimekta.providence.descriptor.PPrimitive.BINARY.provider()), null),
-        ENUM_LIST(31, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumList", net.morimekta.providence.descriptor.PList.provider(
-                Value.provider()), null),
-        ENUM_SET(32, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumSet", net.morimekta.providence.descriptor.PSet.provider(
-                Value.provider()), null),
-        ENUM_MAP(33, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumMap", net.morimekta.providence.descriptor.PMap.provider(
-                Value.provider(),
-                Value.provider()), null),
-        MESSAGE_LIST(41, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageList", net.morimekta.providence.descriptor.PList.provider(
-                DefaultFields.provider()), null),
-        MESSAGE_SET(42, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageSet", net.morimekta.providence.descriptor.PSet.provider(
-                DefaultFields.provider()), null),
-        MESSAGE_MAP(43, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),
-                                                                                                                                                   DefaultFields.provider()), null),
-        MESSAGE_KEY_MAP(44, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageKeyMap", net.morimekta.providence.descriptor.PMap.provider(
-                CompactFields.provider(), net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        REQUIRED_FIELDS(51, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requiredFields", RequiredFields.provider(), null),
-        DEFAULT_FIELDS(52, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultFields", DefaultFields.provider(), null),
-        OPTIONAL_FIELDS(53, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "optionalFields", OptionalFields.provider(), null),
-        UNION_FIELDS(54, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "unionFields", UnionFields.provider(), null),
-        EXCEPTION_FIELDS(55, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptionFields", ExceptionFields.provider(), null),
-        DEFAULT_VALUES(56, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultValues", DefaultValues.provider(), null),
+        ENUM_LIST(31, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumList", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.no_rw_binary.Value.provider()), null),
+        ENUM_SET(32, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumSet", net.morimekta.providence.descriptor.PSet.provider(net.morimekta.test.providence.core.no_rw_binary.Value.provider()), null),
+        ENUM_MAP(33, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.test.providence.core.no_rw_binary.Value.provider(),net.morimekta.test.providence.core.no_rw_binary.Value.provider()), null),
+        MESSAGE_LIST(41, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageList", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.no_rw_binary.DefaultFields.provider()), null),
+        MESSAGE_SET(42, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageSet", net.morimekta.providence.descriptor.PSet.provider(net.morimekta.test.providence.core.no_rw_binary.DefaultFields.provider()), null),
+        MESSAGE_MAP(43, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.test.providence.core.no_rw_binary.DefaultFields.provider()), null),
+        MESSAGE_KEY_MAP(44, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageKeyMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.test.providence.core.no_rw_binary.CompactFields.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        REQUIRED_FIELDS(51, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requiredFields", net.morimekta.test.providence.core.no_rw_binary.RequiredFields.provider(), null),
+        DEFAULT_FIELDS(52, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultFields", net.morimekta.test.providence.core.no_rw_binary.DefaultFields.provider(), null),
+        OPTIONAL_FIELDS(53, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "optionalFields", net.morimekta.test.providence.core.no_rw_binary.OptionalFields.provider(), null),
+        UNION_FIELDS(54, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "unionFields", net.morimekta.test.providence.core.no_rw_binary.UnionFields.provider(), null),
+        EXCEPTION_FIELDS(55, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptionFields", net.morimekta.test.providence.core.no_rw_binary.ExceptionFields.provider(), null),
+        DEFAULT_VALUES(56, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultValues", net.morimekta.test.providence.core.no_rw_binary.DefaultValues.provider(), null),
         ;
 
-        private final int mKey;
+        private final int mId;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
         private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
-            mKey = key;
+        _Field(int id, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+            mId = id;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
@@ -1744,7 +1538,7 @@ public class Containers
         }
 
         @Override
-        public int getId() { return mKey; }
+        public int getId() { return mId; }
 
         @Override
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
@@ -1768,8 +1562,12 @@ public class Containers
             return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
-        public static _Field forKey(int key) {
-            switch (key) {
+        /**
+         * @param id Field name
+         * @return The identified field or null
+         */
+        public static _Field findById(int id) {
+            switch (id) {
                 case 1: return _Field.BOOLEAN_LIST;
                 case 2: return _Field.BYTE_LIST;
                 case 3: return _Field.SHORT_LIST;
@@ -1811,7 +1609,11 @@ public class Containers
             return null;
         }
 
-        public static _Field forName(String name) {
+        /**
+         * @param name Field name
+         * @return The named field or null
+         */
+        public static _Field findByName(String name) {
             switch (name) {
                 case "booleanList": return _Field.BOOLEAN_LIST;
                 case "byteList": return _Field.BYTE_LIST;
@@ -1853,6 +1655,32 @@ public class Containers
             }
             return null;
         }
+        /**
+         * @param id Field name
+         * @return The identified field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForId(int id) {
+            _Field field = findById(id);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field id " + id + " in providence.Containers");
+            }
+            return field;
+        }
+
+        /**
+         * @param name Field name
+         * @return The named field
+         * @throws IllegalArgumentException If no such field
+         */
+        public static _Field fieldForName(String name) {
+            _Field field = findByName(name);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.Containers");
+            }
+            return field;
+        }
+
     }
 
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Containers,_Field> provider() {
@@ -1873,18 +1701,21 @@ public class Containers
         }
 
         @Override
+        @javax.annotation.Nonnull
         public _Field[] getFields() {
             return _Field.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldByName(String name) {
-            return _Field.forName(name);
+            return _Field.findByName(name);
         }
 
         @Override
+        @javax.annotation.Nullable
         public _Field findFieldById(int id) {
-            return _Field.forKey(id);
+            return _Field.findById(id);
         }
     }
 
@@ -1912,13 +1743,13 @@ public class Containers
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private java.util.List<Boolean>                                            mBooleanList;
-        private java.util.List<Byte>                                               mByteList;
-        private java.util.List<Short>                                              mShortList;
-        private java.util.List<Integer>                                            mIntegerList;
-        private java.util.List<Long>                                               mLongList;
-        private java.util.List<Double>                                             mDoubleList;
-        private java.util.List<String>                                             mStringList;
+        private java.util.List<Boolean> mBooleanList;
+        private java.util.List<Byte> mByteList;
+        private java.util.List<Short> mShortList;
+        private java.util.List<Integer> mIntegerList;
+        private java.util.List<Long> mLongList;
+        private java.util.List<Double> mDoubleList;
+        private java.util.List<String> mStringList;
         private java.util.List<net.morimekta.util.Binary> mBinaryList;
         private java.util.Set<Boolean> mBooleanSet;
         private java.util.Set<Byte> mByteSet;
@@ -1928,33 +1759,33 @@ public class Containers
         private java.util.Set<Double> mDoubleSet;
         private java.util.Set<String> mStringSet;
         private java.util.Set<net.morimekta.util.Binary> mBinarySet;
-        private java.util.Map<Boolean,Boolean>                                     mBooleanMap;
-        private java.util.Map<Byte,Byte>                                           mByteMap;
-        private java.util.Map<Short,Short>                                         mShortMap;
-        private java.util.Map<Integer,Integer>                                     mIntegerMap;
-        private java.util.Map<Long,Long>                                           mLongMap;
-        private java.util.Map<Double,Double>                                       mDoubleMap;
-        private java.util.Map<String,String>                                       mStringMap;
+        private java.util.Map<Boolean,Boolean> mBooleanMap;
+        private java.util.Map<Byte,Byte> mByteMap;
+        private java.util.Map<Short,Short> mShortMap;
+        private java.util.Map<Integer,Integer> mIntegerMap;
+        private java.util.Map<Long,Long> mLongMap;
+        private java.util.Map<Double,Double> mDoubleMap;
+        private java.util.Map<String,String> mStringMap;
         private java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
-        private java.util.List<Value>                                              mEnumList;
-        private java.util.Set<Value>                                               mEnumSet;
-        private java.util.Map<Value,Value>                                         mEnumMap;
-        private java.util.List<DefaultFields>                                      mMessageList;
-        private java.util.Set<DefaultFields>                                       mMessageSet;
-        private java.util.Map<String,DefaultFields>                                mMessageMap;
-        private java.util.Map<CompactFields,String>                                mMessageKeyMap;
-        private RequiredFields                                                     mRequiredFields;
-        private RequiredFields._Builder                                            mRequiredFields_builder;
-        private DefaultFields                                                      mDefaultFields;
-        private DefaultFields._Builder                                             mDefaultFields_builder;
-        private OptionalFields                                                     mOptionalFields;
-        private OptionalFields._Builder                                            mOptionalFields_builder;
-        private UnionFields                                                        mUnionFields;
-        private UnionFields._Builder                                               mUnionFields_builder;
-        private ExceptionFields                                                    mExceptionFields;
-        private ExceptionFields._Builder                                           mExceptionFields_builder;
-        private DefaultValues                                                      mDefaultValues;
-        private DefaultValues._Builder                                             mDefaultValues_builder;
+        private java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value> mEnumList;
+        private java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value> mEnumSet;
+        private java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> mEnumMap;
+        private java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageList;
+        private java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageSet;
+        private java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mMessageMap;
+        private java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String> mMessageKeyMap;
+        private net.morimekta.test.providence.core.no_rw_binary.RequiredFields mRequiredFields;
+        private net.morimekta.test.providence.core.no_rw_binary.RequiredFields._Builder mRequiredFields_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.DefaultFields mDefaultFields;
+        private net.morimekta.test.providence.core.no_rw_binary.DefaultFields._Builder mDefaultFields_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.OptionalFields mOptionalFields;
+        private net.morimekta.test.providence.core.no_rw_binary.OptionalFields._Builder mOptionalFields_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.UnionFields mUnionFields;
+        private net.morimekta.test.providence.core.no_rw_binary.UnionFields._Builder mUnionFields_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.ExceptionFields mExceptionFields;
+        private net.morimekta.test.providence.core.no_rw_binary.ExceptionFields._Builder mExceptionFields_builder;
+        private net.morimekta.test.providence.core.no_rw_binary.DefaultValues mDefaultValues;
+        private net.morimekta.test.providence.core.no_rw_binary.DefaultValues._Builder mDefaultValues_builder;
 
         /**
          * Make a providence.Containers builder.
@@ -2462,6 +2293,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Boolean> mutableBooleanList() {
             optionals.set(0);
             modified.set(0);
@@ -2545,6 +2377,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Byte> mutableByteList() {
             optionals.set(1);
             modified.set(1);
@@ -2628,6 +2461,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Short> mutableShortList() {
             optionals.set(2);
             modified.set(2);
@@ -2711,6 +2545,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Integer> mutableIntegerList() {
             optionals.set(3);
             modified.set(3);
@@ -2794,6 +2629,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Long> mutableLongList() {
             optionals.set(4);
             modified.set(4);
@@ -2877,6 +2713,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<Double> mutableDoubleList() {
             optionals.set(5);
             modified.set(5);
@@ -2960,6 +2797,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<String> mutableStringList() {
             optionals.set(6);
             modified.set(6);
@@ -3043,6 +2881,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.List<net.morimekta.util.Binary> mutableBinaryList() {
             optionals.set(7);
             modified.set(7);
@@ -3126,6 +2965,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Boolean> mutableBooleanSet() {
             optionals.set(8);
             modified.set(8);
@@ -3209,6 +3049,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Byte> mutableByteSet() {
             optionals.set(9);
             modified.set(9);
@@ -3292,6 +3133,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Short> mutableShortSet() {
             optionals.set(10);
             modified.set(10);
@@ -3375,6 +3217,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Integer> mutableIntegerSet() {
             optionals.set(11);
             modified.set(11);
@@ -3458,6 +3301,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Long> mutableLongSet() {
             optionals.set(12);
             modified.set(12);
@@ -3541,6 +3385,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<Double> mutableDoubleSet() {
             optionals.set(13);
             modified.set(13);
@@ -3624,6 +3469,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<String> mutableStringSet() {
             optionals.set(14);
             modified.set(14);
@@ -3707,6 +3553,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Set<net.morimekta.util.Binary> mutableBinarySet() {
             optionals.set(15);
             modified.set(15);
@@ -3788,6 +3635,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Boolean,Boolean> mutableBooleanMap() {
             optionals.set(16);
             modified.set(16);
@@ -3869,6 +3717,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Byte,Byte> mutableByteMap() {
             optionals.set(17);
             modified.set(17);
@@ -3950,6 +3799,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Short,Short> mutableShortMap() {
             optionals.set(18);
             modified.set(18);
@@ -4031,6 +3881,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Integer,Integer> mutableIntegerMap() {
             optionals.set(19);
             modified.set(19);
@@ -4112,6 +3963,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Long,Long> mutableLongMap() {
             optionals.set(20);
             modified.set(20);
@@ -4193,6 +4045,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<Double,Double> mutableDoubleMap() {
             optionals.set(21);
             modified.set(21);
@@ -4274,6 +4127,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableStringMap() {
             optionals.set(22);
             modified.set(22);
@@ -4355,6 +4209,7 @@ public class Containers
          *
          * @return The field builder
          */
+        @javax.annotation.Nonnull
         public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
             optionals.set(23);
             modified.set(23);
@@ -4374,7 +4229,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumList(java.util.Collection<Value> value) {
+        public _Builder setEnumList(java.util.Collection<net.morimekta.test.providence.core.no_rw_binary.Value> value) {
             if (value == null) {
                 return clearEnumList();
             }
@@ -4392,11 +4247,11 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToEnumList(Value... values) {
+        public _Builder addToEnumList(net.morimekta.test.providence.core.no_rw_binary.Value... values) {
             optionals.set(24);
             modified.set(24);
-            java.util.List<Value> _container = mutableEnumList();
-            for (Value item : values) {
+            java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value> _container = mutableEnumList();
+            for (net.morimekta.test.providence.core.no_rw_binary.Value item : values) {
                 _container.add(item);
             }
             return this;
@@ -4438,7 +4293,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.List<Value> mutableEnumList() {
+        @javax.annotation.Nonnull
+        public java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value> mutableEnumList() {
             optionals.set(24);
             modified.set(24);
 
@@ -4457,7 +4313,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumSet(java.util.Collection<Value> value) {
+        public _Builder setEnumSet(java.util.Collection<net.morimekta.test.providence.core.no_rw_binary.Value> value) {
             if (value == null) {
                 return clearEnumSet();
             }
@@ -4475,11 +4331,11 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToEnumSet(Value... values) {
+        public _Builder addToEnumSet(net.morimekta.test.providence.core.no_rw_binary.Value... values) {
             optionals.set(25);
             modified.set(25);
-            java.util.Set<Value> _container = mutableEnumSet();
-            for (Value item : values) {
+            java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value> _container = mutableEnumSet();
+            for (net.morimekta.test.providence.core.no_rw_binary.Value item : values) {
                 _container.add(item);
             }
             return this;
@@ -4521,7 +4377,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.Set<Value> mutableEnumSet() {
+        @javax.annotation.Nonnull
+        public java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value> mutableEnumSet() {
             optionals.set(25);
             modified.set(25);
 
@@ -4540,7 +4397,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setEnumMap(java.util.Map<Value,Value> value) {
+        public _Builder setEnumMap(java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> value) {
             if (value == null) {
                 return clearEnumMap();
             }
@@ -4559,7 +4416,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder putInEnumMap(Value key, Value value) {
+        public _Builder putInEnumMap(net.morimekta.test.providence.core.no_rw_binary.Value key, net.morimekta.test.providence.core.no_rw_binary.Value value) {
             optionals.set(26);
             modified.set(26);
             mutableEnumMap().put(key, value);
@@ -4602,7 +4459,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.Map<Value,Value> mutableEnumMap() {
+        @javax.annotation.Nonnull
+        public java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> mutableEnumMap() {
             optionals.set(26);
             modified.set(26);
 
@@ -4621,7 +4479,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setMessageList(java.util.Collection<DefaultFields> value) {
+        public _Builder setMessageList(java.util.Collection<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> value) {
             if (value == null) {
                 return clearMessageList();
             }
@@ -4639,11 +4497,11 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToMessageList(DefaultFields... values) {
+        public _Builder addToMessageList(net.morimekta.test.providence.core.no_rw_binary.DefaultFields... values) {
             optionals.set(27);
             modified.set(27);
-            java.util.List<DefaultFields> _container = mutableMessageList();
-            for (DefaultFields item : values) {
+            java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> _container = mutableMessageList();
+            for (net.morimekta.test.providence.core.no_rw_binary.DefaultFields item : values) {
                 _container.add(item);
             }
             return this;
@@ -4685,7 +4543,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.List<DefaultFields> mutableMessageList() {
+        @javax.annotation.Nonnull
+        public java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mutableMessageList() {
             optionals.set(27);
             modified.set(27);
 
@@ -4704,7 +4563,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setMessageSet(java.util.Collection<DefaultFields> value) {
+        public _Builder setMessageSet(java.util.Collection<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> value) {
             if (value == null) {
                 return clearMessageSet();
             }
@@ -4722,11 +4581,11 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToMessageSet(DefaultFields... values) {
+        public _Builder addToMessageSet(net.morimekta.test.providence.core.no_rw_binary.DefaultFields... values) {
             optionals.set(28);
             modified.set(28);
-            java.util.Set<DefaultFields> _container = mutableMessageSet();
-            for (DefaultFields item : values) {
+            java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> _container = mutableMessageSet();
+            for (net.morimekta.test.providence.core.no_rw_binary.DefaultFields item : values) {
                 _container.add(item);
             }
             return this;
@@ -4768,7 +4627,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.Set<DefaultFields> mutableMessageSet() {
+        @javax.annotation.Nonnull
+        public java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mutableMessageSet() {
             optionals.set(28);
             modified.set(28);
 
@@ -4787,7 +4647,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setMessageMap(java.util.Map<String,DefaultFields> value) {
+        public _Builder setMessageMap(java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields> value) {
             if (value == null) {
                 return clearMessageMap();
             }
@@ -4806,7 +4666,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder putInMessageMap(String key, DefaultFields value) {
+        public _Builder putInMessageMap(String key, net.morimekta.test.providence.core.no_rw_binary.DefaultFields value) {
             optionals.set(29);
             modified.set(29);
             mutableMessageMap().put(key, value);
@@ -4849,7 +4709,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.Map<String,DefaultFields> mutableMessageMap() {
+        @javax.annotation.Nonnull
+        public java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields> mutableMessageMap() {
             optionals.set(29);
             modified.set(29);
 
@@ -4868,7 +4729,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setMessageKeyMap(java.util.Map<CompactFields,String> value) {
+        public _Builder setMessageKeyMap(java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String> value) {
             if (value == null) {
                 return clearMessageKeyMap();
             }
@@ -4887,7 +4748,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder putInMessageKeyMap(CompactFields key, String value) {
+        public _Builder putInMessageKeyMap(net.morimekta.test.providence.core.no_rw_binary.CompactFields key, String value) {
             optionals.set(30);
             modified.set(30);
             mutableMessageKeyMap().put(key, value);
@@ -4930,7 +4791,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public java.util.Map<CompactFields,String> mutableMessageKeyMap() {
+        @javax.annotation.Nonnull
+        public java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String> mutableMessageKeyMap() {
             optionals.set(30);
             modified.set(30);
 
@@ -4949,7 +4811,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setRequiredFields(RequiredFields value) {
+        public _Builder setRequiredFields(net.morimekta.test.providence.core.no_rw_binary.RequiredFields value) {
             if (value == null) {
                 return clearRequiredFields();
             }
@@ -4998,7 +4860,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public RequiredFields._Builder mutableRequiredFields() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.RequiredFields._Builder mutableRequiredFields() {
             optionals.set(31);
             modified.set(31);
 
@@ -5006,7 +4869,7 @@ public class Containers
                 mRequiredFields_builder = mRequiredFields.mutate();
                 mRequiredFields = null;
             } else if (mRequiredFields_builder == null) {
-                mRequiredFields_builder = RequiredFields.builder();
+                mRequiredFields_builder = net.morimekta.test.providence.core.no_rw_binary.RequiredFields.builder();
             }
             return mRequiredFields_builder;
         }
@@ -5018,7 +4881,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setDefaultFields(DefaultFields value) {
+        public _Builder setDefaultFields(net.morimekta.test.providence.core.no_rw_binary.DefaultFields value) {
             if (value == null) {
                 return clearDefaultFields();
             }
@@ -5067,7 +4930,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public DefaultFields._Builder mutableDefaultFields() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.DefaultFields._Builder mutableDefaultFields() {
             optionals.set(32);
             modified.set(32);
 
@@ -5075,7 +4939,7 @@ public class Containers
                 mDefaultFields_builder = mDefaultFields.mutate();
                 mDefaultFields = null;
             } else if (mDefaultFields_builder == null) {
-                mDefaultFields_builder = DefaultFields.builder();
+                mDefaultFields_builder = net.morimekta.test.providence.core.no_rw_binary.DefaultFields.builder();
             }
             return mDefaultFields_builder;
         }
@@ -5087,7 +4951,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setOptionalFields(OptionalFields value) {
+        public _Builder setOptionalFields(net.morimekta.test.providence.core.no_rw_binary.OptionalFields value) {
             if (value == null) {
                 return clearOptionalFields();
             }
@@ -5136,7 +5000,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public OptionalFields._Builder mutableOptionalFields() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.OptionalFields._Builder mutableOptionalFields() {
             optionals.set(33);
             modified.set(33);
 
@@ -5144,7 +5009,7 @@ public class Containers
                 mOptionalFields_builder = mOptionalFields.mutate();
                 mOptionalFields = null;
             } else if (mOptionalFields_builder == null) {
-                mOptionalFields_builder = OptionalFields.builder();
+                mOptionalFields_builder = net.morimekta.test.providence.core.no_rw_binary.OptionalFields.builder();
             }
             return mOptionalFields_builder;
         }
@@ -5156,7 +5021,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setUnionFields(UnionFields value) {
+        public _Builder setUnionFields(net.morimekta.test.providence.core.no_rw_binary.UnionFields value) {
             if (value == null) {
                 return clearUnionFields();
             }
@@ -5205,7 +5070,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public UnionFields._Builder mutableUnionFields() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.UnionFields._Builder mutableUnionFields() {
             optionals.set(34);
             modified.set(34);
 
@@ -5213,7 +5079,7 @@ public class Containers
                 mUnionFields_builder = mUnionFields.mutate();
                 mUnionFields = null;
             } else if (mUnionFields_builder == null) {
-                mUnionFields_builder = UnionFields.builder();
+                mUnionFields_builder = net.morimekta.test.providence.core.no_rw_binary.UnionFields.builder();
             }
             return mUnionFields_builder;
         }
@@ -5225,7 +5091,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setExceptionFields(ExceptionFields value) {
+        public _Builder setExceptionFields(net.morimekta.test.providence.core.no_rw_binary.ExceptionFields value) {
             if (value == null) {
                 return clearExceptionFields();
             }
@@ -5274,7 +5140,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public ExceptionFields._Builder mutableExceptionFields() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.ExceptionFields._Builder mutableExceptionFields() {
             optionals.set(35);
             modified.set(35);
 
@@ -5282,7 +5149,7 @@ public class Containers
                 mExceptionFields_builder = mExceptionFields.mutate();
                 mExceptionFields = null;
             } else if (mExceptionFields_builder == null) {
-                mExceptionFields_builder = ExceptionFields.builder();
+                mExceptionFields_builder = net.morimekta.test.providence.core.no_rw_binary.ExceptionFields.builder();
             }
             return mExceptionFields_builder;
         }
@@ -5294,7 +5161,7 @@ public class Containers
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setDefaultValues(DefaultValues value) {
+        public _Builder setDefaultValues(net.morimekta.test.providence.core.no_rw_binary.DefaultValues value) {
             if (value == null) {
                 return clearDefaultValues();
             }
@@ -5343,7 +5210,8 @@ public class Containers
          *
          * @return The field builder
          */
-        public DefaultValues._Builder mutableDefaultValues() {
+        @javax.annotation.Nonnull
+        public net.morimekta.test.providence.core.no_rw_binary.DefaultValues._Builder mutableDefaultValues() {
             optionals.set(36);
             modified.set(36);
 
@@ -5351,7 +5219,7 @@ public class Containers
                 mDefaultValues_builder = mDefaultValues.mutate();
                 mDefaultValues = null;
             } else if (mDefaultValues_builder == null) {
-                mDefaultValues_builder = DefaultValues.builder();
+                mDefaultValues_builder = net.morimekta.test.providence.core.no_rw_binary.DefaultValues.builder();
             }
             return mDefaultValues_builder;
         }
@@ -5488,19 +5356,19 @@ public class Containers
                 case 26: setDoubleMap((java.util.Map<Double,Double>) value); break;
                 case 27: setStringMap((java.util.Map<String,String>) value); break;
                 case 28: setBinaryMap((java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary>) value); break;
-                case 31: setEnumList((java.util.List<Value>) value); break;
-                case 32: setEnumSet((java.util.Set<Value>) value); break;
-                case 33: setEnumMap((java.util.Map<Value,Value>) value); break;
-                case 41: setMessageList((java.util.List<DefaultFields>) value); break;
-                case 42: setMessageSet((java.util.Set<DefaultFields>) value); break;
-                case 43: setMessageMap((java.util.Map<String,DefaultFields>) value); break;
-                case 44: setMessageKeyMap((java.util.Map<CompactFields,String>) value); break;
-                case 51: setRequiredFields((RequiredFields) value); break;
-                case 52: setDefaultFields((DefaultFields) value); break;
-                case 53: setOptionalFields((OptionalFields) value); break;
-                case 54: setUnionFields((UnionFields) value); break;
-                case 55: setExceptionFields((ExceptionFields) value); break;
-                case 56: setDefaultValues((DefaultValues) value); break;
+                case 31: setEnumList((java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value>) value); break;
+                case 32: setEnumSet((java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value>) value); break;
+                case 33: setEnumMap((java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value>) value); break;
+                case 41: setMessageList((java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields>) value); break;
+                case 42: setMessageSet((java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields>) value); break;
+                case 43: setMessageMap((java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields>) value); break;
+                case 44: setMessageKeyMap((java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String>) value); break;
+                case 51: setRequiredFields((net.morimekta.test.providence.core.no_rw_binary.RequiredFields) value); break;
+                case 52: setDefaultFields((net.morimekta.test.providence.core.no_rw_binary.DefaultFields) value); break;
+                case 53: setOptionalFields((net.morimekta.test.providence.core.no_rw_binary.OptionalFields) value); break;
+                case 54: setUnionFields((net.morimekta.test.providence.core.no_rw_binary.UnionFields) value); break;
+                case 55: setExceptionFields((net.morimekta.test.providence.core.no_rw_binary.ExceptionFields) value); break;
+                case 56: setDefaultValues((net.morimekta.test.providence.core.no_rw_binary.DefaultValues) value); break;
                 default: break;
             }
             return this;
@@ -5615,10 +5483,10 @@ public class Containers
                 case 16: addToDoubleSet((double) value); break;
                 case 17: addToStringSet((String) value); break;
                 case 18: addToBinarySet((net.morimekta.util.Binary) value); break;
-                case 31: addToEnumList((Value) value); break;
-                case 32: addToEnumSet((Value) value); break;
-                case 41: addToMessageList((DefaultFields) value); break;
-                case 42: addToMessageSet((DefaultFields) value); break;
+                case 31: addToEnumList((net.morimekta.test.providence.core.no_rw_binary.Value) value); break;
+                case 32: addToEnumSet((net.morimekta.test.providence.core.no_rw_binary.Value) value); break;
+                case 41: addToMessageList((net.morimekta.test.providence.core.no_rw_binary.DefaultFields) value); break;
+                case 42: addToMessageSet((net.morimekta.test.providence.core.no_rw_binary.DefaultFields) value); break;
                 default: break;
             }
             return this;

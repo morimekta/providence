@@ -109,11 +109,11 @@ config.
                 <goal>compile</goal>
             </goals>
             <configuration>
-                <files>
+                <input>
                     <includes>
                         <include>idl/**/*.thrift</include>
                     </includes>
-                </files>
+                </input>
             </configuration>
         </execution>
     </executions>

@@ -141,15 +141,15 @@
                         <configuration>
                             <jackson>true</jackson>
                             <rw_binary>false</rw_binary>
-                            <inputFiles>
+                            <testInput>
                                 <includes>
                                     <include>src/test/jackson/**/*.thrift</include>
                                 </includes>
                                 <excludes>
                                     <exclude>src/test/jackson/excluded.thrift</exclude>
                                 </excludes>
-                            </inputFiles>
-                            <outputDir>target/generated-test-sources/jackson</outputDir>
+                            </testInput>
+                            <testOutput>target/generated-test-sources/jackson</testOutput>
                         </configuration>
                     </execution>
                     <execution>
@@ -160,12 +160,12 @@
                         </goals>
                         <configuration>
                             <android>true</android>
-                            <inputFiles>
+                            <testInput>
                                 <includes>
                                     <include>src/test/android/**/*.thrift</include>
                                 </includes>
-                            </inputFiles>
-                            <outputDir>target/generated-test-sources/android</outputDir>
+                            </testInput>
+                            <testOutput>target/generated-test-sources/android</testOutput>
                         </configuration>
                     </execution>
                     <execution>
@@ -176,12 +176,12 @@
                         </goals>
                         <configuration>
                             <hazelcast_portable>true</hazelcast_portable>
-                            <inputFiles>
+                            <testInput>
                                 <includes>
                                     <include>src/test/hazelcast/**/*.thrift</include>
                                 </includes>
-                            </inputFiles>
-                            <outputDir>target/generated-test-sources/hazelcast</outputDir>
+                            </testInput>
+                            <testOutput>target/generated-test-sources/hazelcast</testOutput>
                         </configuration>
                     </execution>
                     <execution>
@@ -191,22 +191,7 @@
                             <goal>testCompile</goal>
                         </goals>
                         <configuration>
-                            <generated_annotation>true</generated_annotation>
-                            <inputFiles>
-                                <includes>
-                                    <include>src/test/providence/**/*.thrift</include>
-                                </includes>
-                            </inputFiles>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-model-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <outputDir>target/generated-sources/model</outputDir>
+                            <generated_annotation_version>true</generated_annotation_version>
                         </configuration>
                     </execution>
                 </executions>

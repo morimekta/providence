@@ -1,7 +1,6 @@
-package net.morimekta.providence.test_internal;
+package net.morimekta.test.providence.core.no_rw_binary;
 
-import javax.annotation.Nonnull;
-
+@javax.annotation.Generated("providence java generator")
 public enum Value
         implements net.morimekta.providence.PEnumValue<Value> {
     FIRST(1, "FIRST"),
@@ -29,26 +28,33 @@ public enum Value
     TWENTIETH(10946, "TWENTIETH"),
     ;
 
-    private final int mValue;
+    private final int    mId;
     private final String mName;
 
-    Value(int value, String name) {
-        mValue = value;
+    Value(int id, String name) {
+        mId = id;
         mName = name;
     }
 
     @Override
     public int asInteger() {
-        return mValue;
+        return mId;
     }
 
     @Override
+    @javax.annotation.Nonnull
     public String asString() {
         return mName;
     }
 
-    public static Value forValue(int value) {
-        switch (value) {
+    /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     */
+    public static Value findById(int id) {
+        switch (id) {
             case 1: return Value.FIRST;
             case 2: return Value.SECOND;
             case 3: return Value.THIRD;
@@ -73,7 +79,16 @@ public enum Value
         }
     }
 
-    public static Value forName(String name) {
+    /**
+     * Find a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found or null
+     */
+    public static Value findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Null name given");
+        }
         switch (name) {
             case "FIRST": return Value.FIRST;
             case "SECOND": return Value.SECOND;
@@ -99,20 +114,52 @@ public enum Value
         }
     }
 
+    /**
+     * Get a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for id is found
+     */
+    @javax.annotation.Nonnull
+    public static Value valueForId(int id) {
+        Value value = findById(id);
+        if (value == null) {
+            throw new IllegalArgumentException("No providence.Value for id " + id);
+        }
+        return value;
+    }
+
+    /**
+     * Get a value based in its name
+     *
+     * @param name Name of value
+     * @return Value found
+     * @throws IllegalArgumentException If no value for name is found, or null name
+     */
+    @javax.annotation.Nonnull
+    public static Value valueForName(String name) {
+        Value value = findByName(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No providence.Value for name \"" + name + "\"");
+        }
+        return value;
+    }
+
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<Value> {
         Value mValue;
 
-        @Nonnull
         @Override
+        @javax.annotation.Nonnull
         public _Builder setById(int value) {
-            mValue = Value.forValue(value);
+            mValue = Value.findById(value);
             return this;
         }
 
-        @Nonnull
         @Override
+        @javax.annotation.Nonnull
         public _Builder setByName(String name) {
-            mValue = Value.forName(name);
+            mValue = Value.findByName(name);
             return this;
         }
 
@@ -144,20 +191,22 @@ public enum Value
             super("providence", "Value", _Builder::new);
         }
 
-        @Nonnull
         @Override
+        @javax.annotation.Nonnull
         public Value[] getValues() {
             return Value.values();
         }
 
         @Override
+        @javax.annotation.Nullable
         public Value findById(int id) {
-            return Value.forValue(id);
+            return Value.findById(id);
         }
 
         @Override
+        @javax.annotation.Nullable
         public Value findByName(String name) {
-            return Value.forName(name);
+            return Value.findByName(name);
         }
     }
 
