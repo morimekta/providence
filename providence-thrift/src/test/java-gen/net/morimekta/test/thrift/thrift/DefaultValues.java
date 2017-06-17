@@ -176,6 +176,8 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
 
     this.enumValue = net.morimekta.test.thrift.thrift.Value.SECOND;
 
+    this.compactValue = new CompactFields();
+
   }
 
   public DefaultValues(
@@ -257,7 +259,8 @@ public class DefaultValues implements org.apache.thrift.TBase<DefaultValues, Def
     this.binaryValue = null;
     this.enumValue = net.morimekta.test.thrift.thrift.Value.SECOND;
 
-    this.compactValue = null;
+    this.compactValue = new CompactFields();
+
   }
 
   public boolean isBooleanValue() {

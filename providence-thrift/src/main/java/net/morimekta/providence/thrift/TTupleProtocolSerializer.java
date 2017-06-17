@@ -60,6 +60,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,15 +73,15 @@ import java.util.Set;
 public class TTupleProtocolSerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.tuple";
 
-    private final boolean          readStrict;
+    private final boolean          strict;
     private final TProtocolFactory protocolFactory;
 
     public TTupleProtocolSerializer() {
         this(DEFAULT_STRICT);
     }
 
-    public TTupleProtocolSerializer(boolean readStrict) {
-        this.readStrict = readStrict;
+    public TTupleProtocolSerializer(boolean strict) {
+        this.strict = strict;
         this.protocolFactory = new TTupleProtocol.Factory();
     }
 
@@ -202,11 +203,15 @@ public class TTupleProtocolSerializer extends Serializer {
         PMessageDescriptor<?, ?> descriptor = message.descriptor();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             PField fld = ((PUnion<?,?>) message).unionField();
-            protocol.writeI16((short) fld.getId());
-            writeTypedValue(message.get(fld.getId()), fld.getDescriptor(), protocol);
+            if (fld != null) {
+                protocol.writeI16((short) fld.getId());
+                writeTypedValue(message.get(fld.getId()), fld.getDescriptor(), protocol);
+            } else {
+                throw new SerializerException("Unable to write " + descriptor.getQualifiedName() + " without set union field.");
+            }
         } else {
             PField[] fields = descriptor.getFields();
-            Arrays.sort(fields, (a, b) -> Integer.compare(a.getId(), b.getId()));
+            Arrays.sort(fields, Comparator.comparingInt(PField::getId));
             int numOptionals = countOptionals(fields);
             BitSet optionals = new BitSet();
             if (numOptionals > 0) {
@@ -261,7 +266,11 @@ public class TTupleProtocolSerializer extends Serializer {
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             int fieldId = protocol.readI16();
             PField fld = descriptor.findFieldById(fieldId);
-            builder.set(fld.getId(), readTypedValue(fld.getDescriptor(), protocol));
+            if (fld != null) {
+                builder.set(fld.getId(), readTypedValue(fld.getDescriptor(), protocol));
+            } else {
+                throw new SerializerException("Unable to read unknown union field " + fieldId + " in " + descriptor.getQualifiedName());
+            }
         } else {
             PField[] fields = descriptor.getFields();
             int numOptionals = countOptionals(fields);
@@ -283,7 +292,7 @@ public class TTupleProtocolSerializer extends Serializer {
             }
         }
 
-        if (readStrict) {
+        if (strict) {
             try {
                 builder.validate();
             } catch (IllegalStateException e) {
@@ -320,7 +329,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 PEnumBuilder<?> eb = et.builder();
                 final int value = protocol.readI32();
                 eb.setById(value);
-                if (readStrict && !eb.valid()) {
+                if (strict && !eb.valid()) {
                     throw new SerializerException("Invalid enum value " + value + " for " +
                                                   et.getQualifiedName());
                 }
