@@ -14,9 +14,11 @@ public class TestOptions {
     public enum Test {
         containers,
         fields,
+        r_fields,
         deep,
     }
 
+    AtomicBoolean           help        = new AtomicBoolean();
     AtomicBoolean           no_progress = new AtomicBoolean();
     AtomicInteger           runs        = new AtomicInteger(100);
     AtomicInteger           generate    = new AtomicInteger(10);

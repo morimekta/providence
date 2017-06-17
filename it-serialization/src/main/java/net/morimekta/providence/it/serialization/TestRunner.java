@@ -1,6 +1,7 @@
 package net.morimekta.providence.it.serialization;
 
 import net.morimekta.console.args.Argument;
+import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
@@ -125,11 +126,13 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
     }
 
     public static void main(String... args) throws InterruptedException, TException, IOException {
+        ArgumentParser parser = new ArgumentParser("it-serialization",
+                                                   "SNAPSHOT",
+                                                   "Serialization speed Integration test");
+        TestOptions options = new TestOptions();
         try {
-            TestOptions options = new TestOptions();
-            ArgumentParser parser = new ArgumentParser("it-serialization",
-                                                       "SNAPSHOT",
-                                                       "Serialization speed Integration test");
+            parser.add(new Flag("--flag", "h?", "Show this help message",
+                                options.help::set));
             parser.add(new Flag("--no_progress", "s",
                                 "No progress output",
                                 options.no_progress::set));
@@ -152,6 +155,13 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                     oneOf(TestOptions.Test.class, options.test::set), "all"));
 
             parser.parse(args);
+            if (options.help.get()) {
+                System.out.println("Usage: " + parser.getSingleLineUsage());
+                System.out.println();
+                parser.printUsage(System.out);
+                System.exit(0);
+            }
+
             parser.validate();
 
             if (options.test.get() == null ||
@@ -167,21 +177,32 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                  options).run();
             }
             if (options.test.get() == null ||
+                options.test.get() == TestOptions.Test.r_fields) {
+                new TestRunner<>(net.morimekta.test.providence.serialization.messages.ManyRequiredFields.kDescriptor,
+                                 net.morimekta.test.thrift.serialization.messages.ManyRequiredFields::new,
+                                 options).run();
+            }
+            if (options.test.get() == null ||
                 options.test.get() == TestOptions.Test.deep) {
                 new TestRunner<>(net.morimekta.test.providence.serialization.deep.DeepStructure.kDescriptor,
                                  net.morimekta.test.thrift.serialization.deep.DeepStructure::new,
                                  options).run();
             }
+
+            System.out.println();
+            System.exit(0);
+        } catch (ArgumentException e) {
+            System.err.println("Argument: " + e.getMessage());
+            System.err.println();
+            System.err.println("Usage: " + parser.getSingleLineUsage());
+            System.err.println();
+            parser.printUsage(System.err);
         } catch (TException e) {
             e.printStackTrace();
             System.err.println("TException" + e.getMessage());
-            System.exit(1);
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(1);
         }
-
-        System.out.println();
-        System.exit(0);
+        System.exit(1);
     }
 }
