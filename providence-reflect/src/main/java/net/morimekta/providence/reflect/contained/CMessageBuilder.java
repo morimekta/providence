@@ -203,8 +203,6 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             }
             list.add(value);
         } else if (field.getType() == PType.SET) {
-            ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
-
             Set<Object> set = (Set<Object>) values.get(field.getId());
             if (set == null) {
                 set = new LinkedHashSet<>();
