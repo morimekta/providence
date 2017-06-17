@@ -945,6 +945,13 @@
                 <module>it-hazelcast</module>
             </modules>
         </profile>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>it-serialization</module>
+                <module>it-hazelcast</module>
+            </modules>
+        </profile>
         <!-- release process modifications -->
         <profile>
             <id>release-sign-artifacts</id>
