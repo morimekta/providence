@@ -7,22 +7,22 @@
 package net.morimekta.test.thrift.serialization.deep;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
-public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, DeepStructure._Fields>, java.io.Serializable, Cloneable, Comparable<DeepStructure> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("DeepStructure");
+public class LevelTree implements org.apache.thrift.TBase<LevelTree, LevelTree._Fields>, java.io.Serializable, Cloneable, Comparable<LevelTree> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("LevelTree");
 
-  private static final org.apache.thrift.protocol.TField TWO1_FIELD_DESC = new org.apache.thrift.protocol.TField("two1", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-  private static final org.apache.thrift.protocol.TField TWO2_FIELD_DESC = new org.apache.thrift.protocol.TField("two2", org.apache.thrift.protocol.TType.STRUCT, (short)2);
+  private static final org.apache.thrift.protocol.TField FOUR1_FIELD_DESC = new org.apache.thrift.protocol.TField("four1", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+  private static final org.apache.thrift.protocol.TField FOUR2_FIELD_DESC = new org.apache.thrift.protocol.TField("four2", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
-  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new DeepStructureStandardSchemeFactory();
-  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new DeepStructureTupleSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new LevelTreeStandardSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new LevelTreeTupleSchemeFactory();
 
-  private LevelTwo two1; // required
-  private LevelTwo two2; // required
+  private LevelFour four1; // required
+  private LevelFour four2; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    TWO1((short)1, "two1"),
-    TWO2((short)2, "two2");
+    FOUR1((short)1, "four1"),
+    FOUR2((short)2, "four2");
 
     private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
 
@@ -37,10 +37,10 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // TWO1
-          return TWO1;
-        case 2: // TWO2
-          return TWO2;
+        case 1: // FOUR1
+          return FOUR1;
+        case 2: // FOUR2
+          return FOUR2;
         default:
           return null;
       }
@@ -84,111 +84,111 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.TWO1, new org.apache.thrift.meta_data.FieldMetaData("two1", org.apache.thrift.TFieldRequirementType.REQUIRED, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, LevelTwo.class)));
-    tmpMap.put(_Fields.TWO2, new org.apache.thrift.meta_data.FieldMetaData("two2", org.apache.thrift.TFieldRequirementType.REQUIRED, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, LevelTwo.class)));
+    tmpMap.put(_Fields.FOUR1, new org.apache.thrift.meta_data.FieldMetaData("four1", org.apache.thrift.TFieldRequirementType.REQUIRED, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, LevelFour.class)));
+    tmpMap.put(_Fields.FOUR2, new org.apache.thrift.meta_data.FieldMetaData("four2", org.apache.thrift.TFieldRequirementType.REQUIRED, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, LevelFour.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DeepStructure.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(LevelTree.class, metaDataMap);
   }
 
-  public DeepStructure() {
+  public LevelTree() {
   }
 
-  public DeepStructure(
-    LevelTwo two1,
-    LevelTwo two2)
+  public LevelTree(
+    LevelFour four1,
+    LevelFour four2)
   {
     this();
-    this.two1 = two1;
-    this.two2 = two2;
+    this.four1 = four1;
+    this.four2 = four2;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public DeepStructure(DeepStructure other) {
-    if (other.isSetTwo1()) {
-      this.two1 = new LevelTwo(other.two1);
+  public LevelTree(LevelTree other) {
+    if (other.isSetFour1()) {
+      this.four1 = new LevelFour(other.four1);
     }
-    if (other.isSetTwo2()) {
-      this.two2 = new LevelTwo(other.two2);
+    if (other.isSetFour2()) {
+      this.four2 = new LevelFour(other.four2);
     }
   }
 
-  public DeepStructure deepCopy() {
-    return new DeepStructure(this);
+  public LevelTree deepCopy() {
+    return new LevelTree(this);
   }
 
   @Override
   public void clear() {
-    this.two1 = null;
-    this.two2 = null;
+    this.four1 = null;
+    this.four2 = null;
   }
 
-  public LevelTwo getTwo1() {
-    return this.two1;
+  public LevelFour getFour1() {
+    return this.four1;
   }
 
-  public DeepStructure setTwo1(LevelTwo two1) {
-    this.two1 = two1;
+  public LevelTree setFour1(LevelFour four1) {
+    this.four1 = four1;
     return this;
   }
 
-  public void unsetTwo1() {
-    this.two1 = null;
+  public void unsetFour1() {
+    this.four1 = null;
   }
 
-  /** Returns true if field two1 is set (has been assigned a value) and false otherwise */
-  public boolean isSetTwo1() {
-    return this.two1 != null;
+  /** Returns true if field four1 is set (has been assigned a value) and false otherwise */
+  public boolean isSetFour1() {
+    return this.four1 != null;
   }
 
-  public void setTwo1IsSet(boolean value) {
+  public void setFour1IsSet(boolean value) {
     if (!value) {
-      this.two1 = null;
+      this.four1 = null;
     }
   }
 
-  public LevelTwo getTwo2() {
-    return this.two2;
+  public LevelFour getFour2() {
+    return this.four2;
   }
 
-  public DeepStructure setTwo2(LevelTwo two2) {
-    this.two2 = two2;
+  public LevelTree setFour2(LevelFour four2) {
+    this.four2 = four2;
     return this;
   }
 
-  public void unsetTwo2() {
-    this.two2 = null;
+  public void unsetFour2() {
+    this.four2 = null;
   }
 
-  /** Returns true if field two2 is set (has been assigned a value) and false otherwise */
-  public boolean isSetTwo2() {
-    return this.two2 != null;
+  /** Returns true if field four2 is set (has been assigned a value) and false otherwise */
+  public boolean isSetFour2() {
+    return this.four2 != null;
   }
 
-  public void setTwo2IsSet(boolean value) {
+  public void setFour2IsSet(boolean value) {
     if (!value) {
-      this.two2 = null;
+      this.four2 = null;
     }
   }
 
   public void setFieldValue(_Fields field, java.lang.Object value) {
     switch (field) {
-    case TWO1:
+    case FOUR1:
       if (value == null) {
-        unsetTwo1();
+        unsetFour1();
       } else {
-        setTwo1((LevelTwo)value);
+        setFour1((LevelFour)value);
       }
       break;
 
-    case TWO2:
+    case FOUR2:
       if (value == null) {
-        unsetTwo2();
+        unsetFour2();
       } else {
-        setTwo2((LevelTwo)value);
+        setFour2((LevelFour)value);
       }
       break;
 
@@ -197,11 +197,11 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
 
   public java.lang.Object getFieldValue(_Fields field) {
     switch (field) {
-    case TWO1:
-      return getTwo1();
+    case FOUR1:
+      return getFour1();
 
-    case TWO2:
-      return getTwo2();
+    case FOUR2:
+      return getFour2();
 
     }
     throw new java.lang.IllegalStateException();
@@ -214,10 +214,10 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
     }
 
     switch (field) {
-    case TWO1:
-      return isSetTwo1();
-    case TWO2:
-      return isSetTwo2();
+    case FOUR1:
+      return isSetFour1();
+    case FOUR2:
+      return isSetFour2();
     }
     throw new java.lang.IllegalStateException();
   }
@@ -226,32 +226,32 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
   public boolean equals(java.lang.Object that) {
     if (that == null)
       return false;
-    if (that instanceof DeepStructure)
-      return this.equals((DeepStructure)that);
+    if (that instanceof LevelTree)
+      return this.equals((LevelTree)that);
     return false;
   }
 
-  public boolean equals(DeepStructure that) {
+  public boolean equals(LevelTree that) {
     if (that == null)
       return false;
     if (this == that)
       return true;
 
-    boolean this_present_two1 = true && this.isSetTwo1();
-    boolean that_present_two1 = true && that.isSetTwo1();
-    if (this_present_two1 || that_present_two1) {
-      if (!(this_present_two1 && that_present_two1))
+    boolean this_present_four1 = true && this.isSetFour1();
+    boolean that_present_four1 = true && that.isSetFour1();
+    if (this_present_four1 || that_present_four1) {
+      if (!(this_present_four1 && that_present_four1))
         return false;
-      if (!this.two1.equals(that.two1))
+      if (!this.four1.equals(that.four1))
         return false;
     }
 
-    boolean this_present_two2 = true && this.isSetTwo2();
-    boolean that_present_two2 = true && that.isSetTwo2();
-    if (this_present_two2 || that_present_two2) {
-      if (!(this_present_two2 && that_present_two2))
+    boolean this_present_four2 = true && this.isSetFour2();
+    boolean that_present_four2 = true && that.isSetFour2();
+    if (this_present_four2 || that_present_four2) {
+      if (!(this_present_four2 && that_present_four2))
         return false;
-      if (!this.two2.equals(that.two2))
+      if (!this.four2.equals(that.four2))
         return false;
     }
 
@@ -262,41 +262,41 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
   public int hashCode() {
     int hashCode = 1;
 
-    hashCode = hashCode * 8191 + ((isSetTwo1()) ? 131071 : 524287);
-    if (isSetTwo1())
-      hashCode = hashCode * 8191 + two1.hashCode();
+    hashCode = hashCode * 8191 + ((isSetFour1()) ? 131071 : 524287);
+    if (isSetFour1())
+      hashCode = hashCode * 8191 + four1.hashCode();
 
-    hashCode = hashCode * 8191 + ((isSetTwo2()) ? 131071 : 524287);
-    if (isSetTwo2())
-      hashCode = hashCode * 8191 + two2.hashCode();
+    hashCode = hashCode * 8191 + ((isSetFour2()) ? 131071 : 524287);
+    if (isSetFour2())
+      hashCode = hashCode * 8191 + four2.hashCode();
 
     return hashCode;
   }
 
   @Override
-  public int compareTo(DeepStructure other) {
+  public int compareTo(LevelTree other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
 
     int lastComparison = 0;
 
-    lastComparison = java.lang.Boolean.valueOf(isSetTwo1()).compareTo(other.isSetTwo1());
+    lastComparison = java.lang.Boolean.valueOf(isSetFour1()).compareTo(other.isSetFour1());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTwo1()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.two1, other.two1);
+    if (isSetFour1()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.four1, other.four1);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = java.lang.Boolean.valueOf(isSetTwo2()).compareTo(other.isSetTwo2());
+    lastComparison = java.lang.Boolean.valueOf(isSetFour2()).compareTo(other.isSetFour2());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTwo2()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.two2, other.two2);
+    if (isSetFour2()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.four2, other.four2);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -318,22 +318,22 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
 
   @Override
   public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("DeepStructure(");
+    java.lang.StringBuilder sb = new java.lang.StringBuilder("LevelTree(");
     boolean first = true;
 
-    sb.append("two1:");
-    if (this.two1 == null) {
+    sb.append("four1:");
+    if (this.four1 == null) {
       sb.append("null");
     } else {
-      sb.append(this.two1);
+      sb.append(this.four1);
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("two2:");
-    if (this.two2 == null) {
+    sb.append("four2:");
+    if (this.four2 == null) {
       sb.append("null");
     } else {
-      sb.append(this.two2);
+      sb.append(this.four2);
     }
     first = false;
     sb.append(")");
@@ -342,18 +342,18 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
 
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
-    if (two1 == null) {
-      throw new org.apache.thrift.protocol.TProtocolException("Required field 'two1' was not present! Struct: " + toString());
+    if (four1 == null) {
+      throw new org.apache.thrift.protocol.TProtocolException("Required field 'four1' was not present! Struct: " + toString());
     }
-    if (two2 == null) {
-      throw new org.apache.thrift.protocol.TProtocolException("Required field 'two2' was not present! Struct: " + toString());
+    if (four2 == null) {
+      throw new org.apache.thrift.protocol.TProtocolException("Required field 'four2' was not present! Struct: " + toString());
     }
     // check for sub-struct validity
-    if (two1 != null) {
-      two1.validate();
+    if (four1 != null) {
+      four1.validate();
     }
-    if (two2 != null) {
-      two2.validate();
+    if (four2 != null) {
+      four2.validate();
     }
   }
 
@@ -373,15 +373,15 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
     }
   }
 
-  private static class DeepStructureStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public DeepStructureStandardScheme getScheme() {
-      return new DeepStructureStandardScheme();
+  private static class LevelTreeStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public LevelTreeStandardScheme getScheme() {
+      return new LevelTreeStandardScheme();
     }
   }
 
-  private static class DeepStructureStandardScheme extends org.apache.thrift.scheme.StandardScheme<DeepStructure> {
+  private static class LevelTreeStandardScheme extends org.apache.thrift.scheme.StandardScheme<LevelTree> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, DeepStructure struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, LevelTree struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -391,20 +391,20 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
           break;
         }
         switch (schemeField.id) {
-          case 1: // TWO1
+          case 1: // FOUR1
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.two1 = new LevelTwo();
-              struct.two1.read(iprot);
-              struct.setTwo1IsSet(true);
+              struct.four1 = new LevelFour();
+              struct.four1.read(iprot);
+              struct.setFour1IsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // TWO2
+          case 2: // FOUR2
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.two2 = new LevelTwo();
-              struct.two2.read(iprot);
-              struct.setTwo2IsSet(true);
+              struct.four2 = new LevelFour();
+              struct.four2.read(iprot);
+              struct.setFour2IsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -420,18 +420,18 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, DeepStructure struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, LevelTree struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.two1 != null) {
-        oprot.writeFieldBegin(TWO1_FIELD_DESC);
-        struct.two1.write(oprot);
+      if (struct.four1 != null) {
+        oprot.writeFieldBegin(FOUR1_FIELD_DESC);
+        struct.four1.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.two2 != null) {
-        oprot.writeFieldBegin(TWO2_FIELD_DESC);
-        struct.two2.write(oprot);
+      if (struct.four2 != null) {
+        oprot.writeFieldBegin(FOUR2_FIELD_DESC);
+        struct.four2.write(oprot);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -440,30 +440,30 @@ public class DeepStructure implements org.apache.thrift.TBase<DeepStructure, Dee
 
   }
 
-  private static class DeepStructureTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public DeepStructureTupleScheme getScheme() {
-      return new DeepStructureTupleScheme();
+  private static class LevelTreeTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public LevelTreeTupleScheme getScheme() {
+      return new LevelTreeTupleScheme();
     }
   }
 
-  private static class DeepStructureTupleScheme extends org.apache.thrift.scheme.TupleScheme<DeepStructure> {
+  private static class LevelTreeTupleScheme extends org.apache.thrift.scheme.TupleScheme<LevelTree> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, DeepStructure struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, LevelTree struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-      struct.two1.write(oprot);
-      struct.two2.write(oprot);
+      struct.four1.write(oprot);
+      struct.four2.write(oprot);
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, DeepStructure struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, LevelTree struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-      struct.two1 = new LevelTwo();
-      struct.two1.read(iprot);
-      struct.setTwo1IsSet(true);
-      struct.two2 = new LevelTwo();
-      struct.two2.read(iprot);
-      struct.setTwo2IsSet(true);
+      struct.four1 = new LevelFour();
+      struct.four1.read(iprot);
+      struct.setFour1IsSet(true);
+      struct.four2 = new LevelFour();
+      struct.four2.read(iprot);
+      struct.setFour2IsSet(true);
     }
   }
 

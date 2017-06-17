@@ -7,25 +7,23 @@
 package net.morimekta.test.thrift.serialization.deep;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
-public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fields>, java.io.Serializable, Cloneable, Comparable<OneLevel> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("OneLevel");
+public class LevelFour implements org.apache.thrift.TBase<LevelFour, LevelFour._Fields>, java.io.Serializable, Cloneable, Comparable<LevelFour> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("LevelFour");
 
   private static final org.apache.thrift.protocol.TField REQUIRED_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("requiredFields", org.apache.thrift.protocol.TType.STRUCT, (short)1);
   private static final org.apache.thrift.protocol.TField DEFAULT_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultFields", org.apache.thrift.protocol.TType.STRUCT, (short)2);
   private static final org.apache.thrift.protocol.TField OPTIONAL_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("optionalFields", org.apache.thrift.protocol.TType.STRUCT, (short)3);
   private static final org.apache.thrift.protocol.TField UNION_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("unionFields", org.apache.thrift.protocol.TType.STRUCT, (short)4);
-  private static final org.apache.thrift.protocol.TField EXCEPTION_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("exceptionFields", org.apache.thrift.protocol.TType.STRUCT, (short)5);
   private static final org.apache.thrift.protocol.TField DEFAULT_VALUES_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultValues", org.apache.thrift.protocol.TType.STRUCT, (short)6);
   private static final org.apache.thrift.protocol.TField COMPACT_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("compactFields", org.apache.thrift.protocol.TType.STRUCT, (short)7);
 
-  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new OneLevelStandardSchemeFactory();
-  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new OneLevelTupleSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new LevelFourStandardSchemeFactory();
+  private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new LevelFourTupleSchemeFactory();
 
   private net.morimekta.test.thrift.serialization.common.RequiredFields requiredFields; // optional
   private net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields; // optional
   private net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields; // optional
   private net.morimekta.test.thrift.serialization.common.UnionFields unionFields; // optional
-  private net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields; // optional
   private net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues; // optional
   private net.morimekta.test.thrift.serialization.common.CompactFields compactFields; // optional
 
@@ -35,7 +33,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     DEFAULT_FIELDS((short)2, "defaultFields"),
     OPTIONAL_FIELDS((short)3, "optionalFields"),
     UNION_FIELDS((short)4, "unionFields"),
-    EXCEPTION_FIELDS((short)5, "exceptionFields"),
     DEFAULT_VALUES((short)6, "defaultValues"),
     COMPACT_FIELDS((short)7, "compactFields");
 
@@ -60,8 +57,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
           return OPTIONAL_FIELDS;
         case 4: // UNION_FIELDS
           return UNION_FIELDS;
-        case 5: // EXCEPTION_FIELDS
-          return EXCEPTION_FIELDS;
         case 6: // DEFAULT_VALUES
           return DEFAULT_VALUES;
         case 7: // COMPACT_FIELDS
@@ -106,7 +101,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
   }
 
   // isset id assignments
-  private static final _Fields optionals[] = {_Fields.REQUIRED_FIELDS,_Fields.DEFAULT_FIELDS,_Fields.OPTIONAL_FIELDS,_Fields.UNION_FIELDS,_Fields.EXCEPTION_FIELDS,_Fields.DEFAULT_VALUES,_Fields.COMPACT_FIELDS};
+  private static final _Fields optionals[] = {_Fields.REQUIRED_FIELDS,_Fields.DEFAULT_FIELDS,_Fields.OPTIONAL_FIELDS,_Fields.UNION_FIELDS,_Fields.DEFAULT_VALUES,_Fields.COMPACT_FIELDS};
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -118,23 +113,21 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.OptionalFields.class)));
     tmpMap.put(_Fields.UNION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("unionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.UnionFields.class)));
-    tmpMap.put(_Fields.EXCEPTION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("exceptionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.ExceptionFields.class)));
     tmpMap.put(_Fields.DEFAULT_VALUES, new org.apache.thrift.meta_data.FieldMetaData("defaultValues", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultValues.class)));
     tmpMap.put(_Fields.COMPACT_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("compactFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.CompactFields.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(OneLevel.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(LevelFour.class, metaDataMap);
   }
 
-  public OneLevel() {
+  public LevelFour() {
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public OneLevel(OneLevel other) {
+  public LevelFour(LevelFour other) {
     if (other.isSetRequiredFields()) {
       this.requiredFields = new net.morimekta.test.thrift.serialization.common.RequiredFields(other.requiredFields);
     }
@@ -147,9 +140,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     if (other.isSetUnionFields()) {
       this.unionFields = new net.morimekta.test.thrift.serialization.common.UnionFields(other.unionFields);
     }
-    if (other.isSetExceptionFields()) {
-      this.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields(other.exceptionFields);
-    }
     if (other.isSetDefaultValues()) {
       this.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues(other.defaultValues);
     }
@@ -158,8 +148,8 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     }
   }
 
-  public OneLevel deepCopy() {
-    return new OneLevel(this);
+  public LevelFour deepCopy() {
+    return new LevelFour(this);
   }
 
   @Override
@@ -168,7 +158,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     this.defaultFields = null;
     this.optionalFields = null;
     this.unionFields = null;
-    this.exceptionFields = null;
     this.defaultValues = null;
     this.compactFields = null;
   }
@@ -177,7 +166,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     return this.requiredFields;
   }
 
-  public OneLevel setRequiredFields(net.morimekta.test.thrift.serialization.common.RequiredFields requiredFields) {
+  public LevelFour setRequiredFields(net.morimekta.test.thrift.serialization.common.RequiredFields requiredFields) {
     this.requiredFields = requiredFields;
     return this;
   }
@@ -201,7 +190,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     return this.defaultFields;
   }
 
-  public OneLevel setDefaultFields(net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields) {
+  public LevelFour setDefaultFields(net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields) {
     this.defaultFields = defaultFields;
     return this;
   }
@@ -225,7 +214,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     return this.optionalFields;
   }
 
-  public OneLevel setOptionalFields(net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields) {
+  public LevelFour setOptionalFields(net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields) {
     this.optionalFields = optionalFields;
     return this;
   }
@@ -249,7 +238,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     return this.unionFields;
   }
 
-  public OneLevel setUnionFields(net.morimekta.test.thrift.serialization.common.UnionFields unionFields) {
+  public LevelFour setUnionFields(net.morimekta.test.thrift.serialization.common.UnionFields unionFields) {
     this.unionFields = unionFields;
     return this;
   }
@@ -269,35 +258,11 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     }
   }
 
-  public net.morimekta.test.thrift.serialization.common.ExceptionFields getExceptionFields() {
-    return this.exceptionFields;
-  }
-
-  public OneLevel setExceptionFields(net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields) {
-    this.exceptionFields = exceptionFields;
-    return this;
-  }
-
-  public void unsetExceptionFields() {
-    this.exceptionFields = null;
-  }
-
-  /** Returns true if field exceptionFields is set (has been assigned a value) and false otherwise */
-  public boolean isSetExceptionFields() {
-    return this.exceptionFields != null;
-  }
-
-  public void setExceptionFieldsIsSet(boolean value) {
-    if (!value) {
-      this.exceptionFields = null;
-    }
-  }
-
   public net.morimekta.test.thrift.serialization.common.DefaultValues getDefaultValues() {
     return this.defaultValues;
   }
 
-  public OneLevel setDefaultValues(net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues) {
+  public LevelFour setDefaultValues(net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues) {
     this.defaultValues = defaultValues;
     return this;
   }
@@ -321,7 +286,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     return this.compactFields;
   }
 
-  public OneLevel setCompactFields(net.morimekta.test.thrift.serialization.common.CompactFields compactFields) {
+  public LevelFour setCompactFields(net.morimekta.test.thrift.serialization.common.CompactFields compactFields) {
     this.compactFields = compactFields;
     return this;
   }
@@ -375,14 +340,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       }
       break;
 
-    case EXCEPTION_FIELDS:
-      if (value == null) {
-        unsetExceptionFields();
-      } else {
-        setExceptionFields((net.morimekta.test.thrift.serialization.common.ExceptionFields)value);
-      }
-      break;
-
     case DEFAULT_VALUES:
       if (value == null) {
         unsetDefaultValues();
@@ -416,9 +373,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     case UNION_FIELDS:
       return getUnionFields();
 
-    case EXCEPTION_FIELDS:
-      return getExceptionFields();
-
     case DEFAULT_VALUES:
       return getDefaultValues();
 
@@ -444,8 +398,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       return isSetOptionalFields();
     case UNION_FIELDS:
       return isSetUnionFields();
-    case EXCEPTION_FIELDS:
-      return isSetExceptionFields();
     case DEFAULT_VALUES:
       return isSetDefaultValues();
     case COMPACT_FIELDS:
@@ -458,12 +410,12 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
   public boolean equals(java.lang.Object that) {
     if (that == null)
       return false;
-    if (that instanceof OneLevel)
-      return this.equals((OneLevel)that);
+    if (that instanceof LevelFour)
+      return this.equals((LevelFour)that);
     return false;
   }
 
-  public boolean equals(OneLevel that) {
+  public boolean equals(LevelFour that) {
     if (that == null)
       return false;
     if (this == that)
@@ -502,15 +454,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       if (!(this_present_unionFields && that_present_unionFields))
         return false;
       if (!this.unionFields.equals(that.unionFields))
-        return false;
-    }
-
-    boolean this_present_exceptionFields = true && this.isSetExceptionFields();
-    boolean that_present_exceptionFields = true && that.isSetExceptionFields();
-    if (this_present_exceptionFields || that_present_exceptionFields) {
-      if (!(this_present_exceptionFields && that_present_exceptionFields))
-        return false;
-      if (!this.exceptionFields.equals(that.exceptionFields))
         return false;
     }
 
@@ -555,10 +498,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     if (isSetUnionFields())
       hashCode = hashCode * 8191 + unionFields.hashCode();
 
-    hashCode = hashCode * 8191 + ((isSetExceptionFields()) ? 131071 : 524287);
-    if (isSetExceptionFields())
-      hashCode = hashCode * 8191 + exceptionFields.hashCode();
-
     hashCode = hashCode * 8191 + ((isSetDefaultValues()) ? 131071 : 524287);
     if (isSetDefaultValues())
       hashCode = hashCode * 8191 + defaultValues.hashCode();
@@ -571,7 +510,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
   }
 
   @Override
-  public int compareTo(OneLevel other) {
+  public int compareTo(LevelFour other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -618,16 +557,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
         return lastComparison;
       }
     }
-    lastComparison = java.lang.Boolean.valueOf(isSetExceptionFields()).compareTo(other.isSetExceptionFields());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetExceptionFields()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exceptionFields, other.exceptionFields);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     lastComparison = java.lang.Boolean.valueOf(isSetDefaultValues()).compareTo(other.isSetDefaultValues());
     if (lastComparison != 0) {
       return lastComparison;
@@ -665,7 +594,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
 
   @Override
   public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("OneLevel(");
+    java.lang.StringBuilder sb = new java.lang.StringBuilder("LevelFour(");
     boolean first = true;
 
     if (isSetRequiredFields()) {
@@ -704,16 +633,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
         sb.append("null");
       } else {
         sb.append(this.unionFields);
-      }
-      first = false;
-    }
-    if (isSetExceptionFields()) {
-      if (!first) sb.append(", ");
-      sb.append("exceptionFields:");
-      if (this.exceptionFields == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.exceptionFields);
       }
       first = false;
     }
@@ -777,15 +696,15 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     }
   }
 
-  private static class OneLevelStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public OneLevelStandardScheme getScheme() {
-      return new OneLevelStandardScheme();
+  private static class LevelFourStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public LevelFourStandardScheme getScheme() {
+      return new LevelFourStandardScheme();
     }
   }
 
-  private static class OneLevelStandardScheme extends org.apache.thrift.scheme.StandardScheme<OneLevel> {
+  private static class LevelFourStandardScheme extends org.apache.thrift.scheme.StandardScheme<LevelFour> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, OneLevel struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, LevelFour struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -831,15 +750,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // EXCEPTION_FIELDS
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
-              struct.exceptionFields.read(iprot);
-              struct.setExceptionFieldsIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
           case 6: // DEFAULT_VALUES
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
               struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
@@ -869,7 +779,7 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, OneLevel struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, LevelFour struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -901,13 +811,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
           oprot.writeFieldEnd();
         }
       }
-      if (struct.exceptionFields != null) {
-        if (struct.isSetExceptionFields()) {
-          oprot.writeFieldBegin(EXCEPTION_FIELDS_FIELD_DESC);
-          struct.exceptionFields.write(oprot);
-          oprot.writeFieldEnd();
-        }
-      }
       if (struct.defaultValues != null) {
         if (struct.isSetDefaultValues()) {
           oprot.writeFieldBegin(DEFAULT_VALUES_FIELD_DESC);
@@ -928,16 +831,16 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
 
   }
 
-  private static class OneLevelTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-    public OneLevelTupleScheme getScheme() {
-      return new OneLevelTupleScheme();
+  private static class LevelFourTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+    public LevelFourTupleScheme getScheme() {
+      return new LevelFourTupleScheme();
     }
   }
 
-  private static class OneLevelTupleScheme extends org.apache.thrift.scheme.TupleScheme<OneLevel> {
+  private static class LevelFourTupleScheme extends org.apache.thrift.scheme.TupleScheme<LevelFour> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, OneLevel struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, LevelFour struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
       java.util.BitSet optionals = new java.util.BitSet();
       if (struct.isSetRequiredFields()) {
@@ -952,16 +855,13 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       if (struct.isSetUnionFields()) {
         optionals.set(3);
       }
-      if (struct.isSetExceptionFields()) {
+      if (struct.isSetDefaultValues()) {
         optionals.set(4);
       }
-      if (struct.isSetDefaultValues()) {
+      if (struct.isSetCompactFields()) {
         optionals.set(5);
       }
-      if (struct.isSetCompactFields()) {
-        optionals.set(6);
-      }
-      oprot.writeBitSet(optionals, 7);
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetRequiredFields()) {
         struct.requiredFields.write(oprot);
       }
@@ -974,9 +874,6 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
       if (struct.isSetUnionFields()) {
         struct.unionFields.write(oprot);
       }
-      if (struct.isSetExceptionFields()) {
-        struct.exceptionFields.write(oprot);
-      }
       if (struct.isSetDefaultValues()) {
         struct.defaultValues.write(oprot);
       }
@@ -986,9 +883,9 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, OneLevel struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, LevelFour struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-      java.util.BitSet incoming = iprot.readBitSet(7);
+      java.util.BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.requiredFields = new net.morimekta.test.thrift.serialization.common.RequiredFields();
         struct.requiredFields.read(iprot);
@@ -1010,16 +907,11 @@ public class OneLevel implements org.apache.thrift.TBase<OneLevel, OneLevel._Fie
         struct.setUnionFieldsIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
-        struct.exceptionFields.read(iprot);
-        struct.setExceptionFieldsIsSet(true);
-      }
-      if (incoming.get(5)) {
         struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
         struct.defaultValues.read(iprot);
         struct.setDefaultValuesIsSet(true);
       }
-      if (incoming.get(6)) {
+      if (incoming.get(5)) {
         struct.compactFields = new net.morimekta.test.thrift.serialization.common.CompactFields();
         struct.compactFields.read(iprot);
         struct.setCompactFieldsIsSet(true);

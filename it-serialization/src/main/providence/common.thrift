@@ -82,19 +82,6 @@ union UnionFields {
     10: CompactFields compactValue;
 }
 
-exception ExceptionFields {
-    1: bool booleanValue;
-    2: byte byteValue,
-    3: i16 shortValue
-    4: i32 integerValue;
-    5: i64 longValue,
-    6: double doubleValue
-    7: string stringValue;
-    8: binary binaryValue,
-    9: Value enumValue;
-    10: CompactFields compactValue;
-}
-
 struct DefaultValues {
     1:  bool          booleanValue = true;
     2:  byte          byteValue    = -125,

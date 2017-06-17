@@ -2,27 +2,26 @@ namespace java net.morimekta.test.thrift.serialization.deep
 
 include "common.thrift"
 
-struct OneLevel {
+struct LevelFour {
     1: optional common.RequiredFields requiredFields;
     2: optional common.DefaultFields defaultFields;
     3: optional common.OptionalFields optionalFields;
     4: optional common.UnionFields unionFields;
-    5: optional common.ExceptionFields exceptionFields;
     6: optional common.DefaultValues defaultValues;
     7: optional common.CompactFields compactFields;
 }
 
-struct TwoLevels {
-    1: optional OneLevel one1;
-    2: optional OneLevel one2;
+struct LevelTree {
+    1: required LevelFour four1;
+    2: required LevelFour four2;
 }
 
-struct ThreeLevels {
-    1: optional TwoLevels two1;
-    2: optional TwoLevels two2;
+struct LevelTwo {
+    1: required LevelTree tree1;
+    2: required LevelTree tree2;
 }
 
 struct DeepStructure {
-    1: optional ThreeLevels three1;
-    2: optional ThreeLevels three2;
+    1: required LevelTwo two1;
+    2: required LevelTwo two2;
 }

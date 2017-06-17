@@ -44,7 +44,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
   private static final org.apache.thrift.protocol.TField DEFAULT_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultFields", org.apache.thrift.protocol.TType.STRUCT, (short)52);
   private static final org.apache.thrift.protocol.TField OPTIONAL_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("optionalFields", org.apache.thrift.protocol.TType.STRUCT, (short)53);
   private static final org.apache.thrift.protocol.TField UNION_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("unionFields", org.apache.thrift.protocol.TType.STRUCT, (short)54);
-  private static final org.apache.thrift.protocol.TField EXCEPTION_FIELDS_FIELD_DESC = new org.apache.thrift.protocol.TField("exceptionFields", org.apache.thrift.protocol.TType.STRUCT, (short)55);
   private static final org.apache.thrift.protocol.TField DEFAULT_VALUES_FIELD_DESC = new org.apache.thrift.protocol.TField("defaultValues", org.apache.thrift.protocol.TType.STRUCT, (short)56);
 
   private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new ManyContainersStandardSchemeFactory();
@@ -84,7 +83,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
   private net.morimekta.test.thrift.serialization.common.DefaultFields defaultFields; // optional
   private net.morimekta.test.thrift.serialization.common.OptionalFields optionalFields; // optional
   private net.morimekta.test.thrift.serialization.common.UnionFields unionFields; // optional
-  private net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields; // optional
   private net.morimekta.test.thrift.serialization.common.DefaultValues defaultValues; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -123,7 +121,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     DEFAULT_FIELDS((short)52, "defaultFields"),
     OPTIONAL_FIELDS((short)53, "optionalFields"),
     UNION_FIELDS((short)54, "unionFields"),
-    EXCEPTION_FIELDS((short)55, "exceptionFields"),
     DEFAULT_VALUES((short)56, "defaultValues");
 
     private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
@@ -207,8 +204,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
           return OPTIONAL_FIELDS;
         case 54: // UNION_FIELDS
           return UNION_FIELDS;
-        case 55: // EXCEPTION_FIELDS
-          return EXCEPTION_FIELDS;
         case 56: // DEFAULT_VALUES
           return DEFAULT_VALUES;
         default:
@@ -251,7 +246,7 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
   }
 
   // isset id assignments
-  private static final _Fields optionals[] = {_Fields.BOOLEAN_LIST,_Fields.BYTE_LIST,_Fields.SHORT_LIST,_Fields.INTEGER_LIST,_Fields.LONG_LIST,_Fields.DOUBLE_LIST,_Fields.STRING_LIST,_Fields.BINARY_LIST,_Fields.BOOLEAN_SET,_Fields.BYTE_SET,_Fields.SHORT_SET,_Fields.INTEGER_SET,_Fields.LONG_SET,_Fields.DOUBLE_SET,_Fields.STRING_SET,_Fields.BINARY_SET,_Fields.BOOLEAN_MAP,_Fields.BYTE_MAP,_Fields.SHORT_MAP,_Fields.INTEGER_MAP,_Fields.LONG_MAP,_Fields.DOUBLE_MAP,_Fields.STRING_MAP,_Fields.BINARY_MAP,_Fields.ENUM_LIST,_Fields.ENUM_SET,_Fields.ENUM_MAP,_Fields.MESSAGE_LIST,_Fields.MESSAGE_SET,_Fields.MESSAGE_MAP,_Fields.REQUIRED_FIELDS,_Fields.DEFAULT_FIELDS,_Fields.OPTIONAL_FIELDS,_Fields.UNION_FIELDS,_Fields.EXCEPTION_FIELDS,_Fields.DEFAULT_VALUES};
+  private static final _Fields optionals[] = {_Fields.BOOLEAN_LIST,_Fields.BYTE_LIST,_Fields.SHORT_LIST,_Fields.INTEGER_LIST,_Fields.LONG_LIST,_Fields.DOUBLE_LIST,_Fields.STRING_LIST,_Fields.BINARY_LIST,_Fields.BOOLEAN_SET,_Fields.BYTE_SET,_Fields.SHORT_SET,_Fields.INTEGER_SET,_Fields.LONG_SET,_Fields.DOUBLE_SET,_Fields.STRING_SET,_Fields.BINARY_SET,_Fields.BOOLEAN_MAP,_Fields.BYTE_MAP,_Fields.SHORT_MAP,_Fields.INTEGER_MAP,_Fields.LONG_MAP,_Fields.DOUBLE_MAP,_Fields.STRING_MAP,_Fields.BINARY_MAP,_Fields.ENUM_LIST,_Fields.ENUM_SET,_Fields.ENUM_MAP,_Fields.MESSAGE_LIST,_Fields.MESSAGE_SET,_Fields.MESSAGE_MAP,_Fields.REQUIRED_FIELDS,_Fields.DEFAULT_FIELDS,_Fields.OPTIONAL_FIELDS,_Fields.UNION_FIELDS,_Fields.DEFAULT_VALUES};
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -363,8 +358,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.OptionalFields.class)));
     tmpMap.put(_Fields.UNION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("unionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.UnionFields.class)));
-    tmpMap.put(_Fields.EXCEPTION_FIELDS, new org.apache.thrift.meta_data.FieldMetaData("exceptionFields", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.ExceptionFields.class)));
     tmpMap.put(_Fields.DEFAULT_VALUES, new org.apache.thrift.meta_data.FieldMetaData("defaultValues", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, net.morimekta.test.thrift.serialization.common.DefaultValues.class)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
@@ -544,9 +537,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     if (other.isSetUnionFields()) {
       this.unionFields = new net.morimekta.test.thrift.serialization.common.UnionFields(other.unionFields);
     }
-    if (other.isSetExceptionFields()) {
-      this.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields(other.exceptionFields);
-    }
     if (other.isSetDefaultValues()) {
       this.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues(other.defaultValues);
     }
@@ -592,7 +582,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     this.defaultFields = null;
     this.optionalFields = null;
     this.unionFields = null;
-    this.exceptionFields = null;
     this.defaultValues = null;
   }
 
@@ -1822,30 +1811,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     }
   }
 
-  public net.morimekta.test.thrift.serialization.common.ExceptionFields getExceptionFields() {
-    return this.exceptionFields;
-  }
-
-  public ManyContainers setExceptionFields(net.morimekta.test.thrift.serialization.common.ExceptionFields exceptionFields) {
-    this.exceptionFields = exceptionFields;
-    return this;
-  }
-
-  public void unsetExceptionFields() {
-    this.exceptionFields = null;
-  }
-
-  /** Returns true if field exceptionFields is set (has been assigned a value) and false otherwise */
-  public boolean isSetExceptionFields() {
-    return this.exceptionFields != null;
-  }
-
-  public void setExceptionFieldsIsSet(boolean value) {
-    if (!value) {
-      this.exceptionFields = null;
-    }
-  }
-
   public net.morimekta.test.thrift.serialization.common.DefaultValues getDefaultValues() {
     return this.defaultValues;
   }
@@ -2144,14 +2109,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
       }
       break;
 
-    case EXCEPTION_FIELDS:
-      if (value == null) {
-        unsetExceptionFields();
-      } else {
-        setExceptionFields((net.morimekta.test.thrift.serialization.common.ExceptionFields)value);
-      }
-      break;
-
     case DEFAULT_VALUES:
       if (value == null) {
         unsetDefaultValues();
@@ -2267,9 +2224,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     case UNION_FIELDS:
       return getUnionFields();
 
-    case EXCEPTION_FIELDS:
-      return getExceptionFields();
-
     case DEFAULT_VALUES:
       return getDefaultValues();
 
@@ -2352,8 +2306,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
       return isSetOptionalFields();
     case UNION_FIELDS:
       return isSetUnionFields();
-    case EXCEPTION_FIELDS:
-      return isSetExceptionFields();
     case DEFAULT_VALUES:
       return isSetDefaultValues();
     }
@@ -2681,15 +2633,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
         return false;
     }
 
-    boolean this_present_exceptionFields = true && this.isSetExceptionFields();
-    boolean that_present_exceptionFields = true && that.isSetExceptionFields();
-    if (this_present_exceptionFields || that_present_exceptionFields) {
-      if (!(this_present_exceptionFields && that_present_exceptionFields))
-        return false;
-      if (!this.exceptionFields.equals(that.exceptionFields))
-        return false;
-    }
-
     boolean this_present_defaultValues = true && this.isSetDefaultValues();
     boolean that_present_defaultValues = true && that.isSetDefaultValues();
     if (this_present_defaultValues || that_present_defaultValues) {
@@ -2841,10 +2784,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     hashCode = hashCode * 8191 + ((isSetUnionFields()) ? 131071 : 524287);
     if (isSetUnionFields())
       hashCode = hashCode * 8191 + unionFields.hashCode();
-
-    hashCode = hashCode * 8191 + ((isSetExceptionFields()) ? 131071 : 524287);
-    if (isSetExceptionFields())
-      hashCode = hashCode * 8191 + exceptionFields.hashCode();
 
     hashCode = hashCode * 8191 + ((isSetDefaultValues()) ? 131071 : 524287);
     if (isSetDefaultValues())
@@ -3197,16 +3136,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     }
     if (isSetUnionFields()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unionFields, other.unionFields);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = java.lang.Boolean.valueOf(isSetExceptionFields()).compareTo(other.isSetExceptionFields());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetExceptionFields()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exceptionFields, other.exceptionFields);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -3577,16 +3506,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
         sb.append("null");
       } else {
         sb.append(this.unionFields);
-      }
-      first = false;
-    }
-    if (isSetExceptionFields()) {
-      if (!first) sb.append(", ");
-      sb.append("exceptionFields:");
-      if (this.exceptionFields == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.exceptionFields);
       }
       first = false;
     }
@@ -4254,15 +4173,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 55: // EXCEPTION_FIELDS
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
-              struct.exceptionFields.read(iprot);
-              struct.setExceptionFieldsIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
           case 56: // DEFAULT_VALUES
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
               struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
@@ -4745,13 +4655,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
           oprot.writeFieldEnd();
         }
       }
-      if (struct.exceptionFields != null) {
-        if (struct.isSetExceptionFields()) {
-          oprot.writeFieldBegin(EXCEPTION_FIELDS_FIELD_DESC);
-          struct.exceptionFields.write(oprot);
-          oprot.writeFieldEnd();
-        }
-      }
       if (struct.defaultValues != null) {
         if (struct.isSetDefaultValues()) {
           oprot.writeFieldBegin(DEFAULT_VALUES_FIELD_DESC);
@@ -4879,13 +4782,10 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
       if (struct.isSetUnionFields()) {
         optionals.set(33);
       }
-      if (struct.isSetExceptionFields()) {
+      if (struct.isSetDefaultValues()) {
         optionals.set(34);
       }
-      if (struct.isSetDefaultValues()) {
-        optionals.set(35);
-      }
-      oprot.writeBitSet(optionals, 36);
+      oprot.writeBitSet(optionals, 35);
       if (struct.isSetBooleanList()) {
         {
           oprot.writeI32(struct.booleanList.size());
@@ -5178,9 +5078,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
       if (struct.isSetUnionFields()) {
         struct.unionFields.write(oprot);
       }
-      if (struct.isSetExceptionFields()) {
-        struct.exceptionFields.write(oprot);
-      }
       if (struct.isSetDefaultValues()) {
         struct.defaultValues.write(oprot);
       }
@@ -5189,7 +5086,7 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, ManyContainers struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-      java.util.BitSet incoming = iprot.readBitSet(36);
+      java.util.BitSet incoming = iprot.readBitSet(35);
       if (incoming.get(0)) {
         {
           org.apache.thrift.protocol.TList _list160 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.BOOL, iprot.readI32());
@@ -5624,11 +5521,6 @@ public class ManyContainers implements org.apache.thrift.TBase<ManyContainers, M
         struct.setUnionFieldsIsSet(true);
       }
       if (incoming.get(34)) {
-        struct.exceptionFields = new net.morimekta.test.thrift.serialization.common.ExceptionFields();
-        struct.exceptionFields.read(iprot);
-        struct.setExceptionFieldsIsSet(true);
-      }
-      if (incoming.get(35)) {
         struct.defaultValues = new net.morimekta.test.thrift.serialization.common.DefaultValues();
         struct.defaultValues.read(iprot);
         struct.setDefaultValuesIsSet(true);

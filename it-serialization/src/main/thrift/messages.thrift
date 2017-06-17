@@ -58,7 +58,6 @@ struct ManyFields {
     52: optional common.DefaultFields defaultFields;
     53: optional common.OptionalFields optionalFields;
     54: optional common.UnionFields unionFields;
-    55: optional common.ExceptionFields exceptionFields;
     56: optional common.DefaultValues defaultValues;
     57: optional common.CompactFields compactFields;
 }
