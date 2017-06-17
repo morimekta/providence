@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
@@ -36,10 +37,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import javax.annotation.Generated;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Optional;
-import java.util.Properties;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -52,23 +50,18 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
  */
 public class CommonMemberFormatter implements MessageMemberFormatter {
     protected final IndentedPrintWriter writer;
-    private final JHelper helper;
-    private final String version;
-    private final JavaOptions options;
+    private final JHelper               helper;
+    private final JavaOptions           javaOptions;
+    private final GeneratorOptions      generatorOptions;
 
-    public CommonMemberFormatter(IndentedPrintWriter writer, JHelper helper, JavaOptions options) {
+    public CommonMemberFormatter(IndentedPrintWriter writer,
+                                 JHelper helper,
+                                 GeneratorOptions generatorOptions,
+                                 JavaOptions javaOptions) {
         this.writer = writer;
         this.helper = helper;
-        this.options = options;
-
-        try {
-            Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("/java_generator_version.properties"));
-
-            this.version = properties.getProperty("java_generator_version");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        this.generatorOptions = generatorOptions;
+        this.javaOptions = javaOptions;
     }
 
     @Override
@@ -77,10 +70,15 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
         writer.appendln("@SuppressWarnings(\"unused\")");
-        if (options.generated_annotation_version) {
-            writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        if (javaOptions.generated_annotation_version) {
+            writer.formatln("@%s(\"%s %s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name,
+                            generatorOptions.program_version);
         } else {
-            writer.formatln("@%s(\"providence java generator\")", Generated.class.getName());
+            writer.formatln("@%s(\"%s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name);
         }
     }
 
@@ -375,7 +373,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             }
         } else {
             if (message.hasAnnotation(ThriftAnnotation.JAVA_PUBLIC_CONSTRUCTOR) ||
-                options.generate_public_constructors) {
+                javaOptions.public_constructors) {
                 String spaces = message.instanceType()
                                        .replaceAll("[\\S]", " ");
                 writer.formatln("public %s(", message.instanceType())

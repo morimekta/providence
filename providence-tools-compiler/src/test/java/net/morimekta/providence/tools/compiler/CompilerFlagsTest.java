@@ -79,16 +79,19 @@ public class CompilerFlagsTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(),
-                     is(equalToLines("Providence compiler - " + version + "\n" +
-                     "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "\n" +
-                     "java : Main java (1.8+) code generator.\n" +
-                     "Available options\n" +
-                     "\n" +
-                     " - android            : Add android parcelable interface to model classes.\n" +
-                     " - jackson            : Add jackson 2 annotations to model classes.\n" +
-                     " - no_rw_binary       : Skip adding the binary RW methods to generated code.\n" +
-                     " - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.\n")));
+                   is(equalToLines("Providence compiler - " + version + "\n" +
+                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
+                                   "java : Main java (1.8+) code generator.\n" + "Available options\n" + "\n" +
+                                   " - android             : Add android parcelable interface to model classes.\n" +
+                                   " - jackson             : Add jackson 2 annotations to model classes.\n" +
+                                   " - no_rw_binary        : Skip adding the binary RW methods to generated code. [Default on]\n" +
+                                   " - hazelcast_portable  : Add hazelcast portable to annotated model classes, and add portable\n" +
+                                   "                         factories.\n" +
+                                   " - no_generated_annotation_version : Remove providence version from the <code>@Generated</code>\n" +
+                                   "                         annotation for each generated class. [Default on]\n" +
+                                   " - legacy_enum_getters : Keep the 'forName' and 'forValue' legacy static enum getters.\n" +
+                                   " - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
+                                   "                         effect on unions.\n")));
         assertThat(exitCode, is(0));
     }
 

@@ -22,6 +22,7 @@ package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.messages.BuilderCommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.BuilderCoreOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonBuilderFormatter;
@@ -49,16 +50,18 @@ import java.util.List;
 public class JavaMessageFormatter extends BaseMessageFormatter {
     public JavaMessageFormatter(IndentedPrintWriter writer,
                                 JHelper helper,
+                                GeneratorOptions generatorOptions,
                                 JavaOptions options) {
-        this(false, false, writer, helper, options);
+        this(false, false, writer, helper, generatorOptions, options);
     }
 
     public JavaMessageFormatter(boolean inner,
                                 boolean makeProtected,
                                 IndentedPrintWriter writer,
                                 JHelper helper,
+                                GeneratorOptions generatorOptions,
                                 JavaOptions options) {
-        super(inner, makeProtected, writer, helper, getFormatters(writer, helper, options));
+        super(inner, makeProtected, writer, helper, getFormatters(writer, helper, generatorOptions, options));
     }
 
     public String getClassName(JMessage<?> message) {
@@ -67,27 +70,28 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
 
     private static List<MessageMemberFormatter> getFormatters(IndentedPrintWriter writer,
                                                               JHelper helper,
-                                                              JavaOptions options) {
+                                                              GeneratorOptions generatorOptions,
+                                                              JavaOptions javaOptions) {
         ImmutableList.Builder<MessageMemberFormatter> builderFormatters = ImmutableList.builder();
         builderFormatters.add(new BuilderCommonMemberFormatter(writer, helper))
                          .add(new BuilderCoreOverridesFormatter(writer, helper));
 
-        if (options.hazelcast_portable) {
+        if (javaOptions.hazelcast_portable) {
             builderFormatters.add(new HazelcastPortableMessageFormatter(writer, helper));
         }
 
         ImmutableList.Builder<MessageMemberFormatter> formatters = ImmutableList.builder();
-        formatters.add(new CommonMemberFormatter(writer, helper, options))
+        formatters.add(new CommonMemberFormatter(writer, helper, generatorOptions, javaOptions))
                   .add(new CoreOverridesFormatter(writer))
                   .add(new CommonOverridesFormatter(writer));
 
-        if (options.android) {
+        if (javaOptions.android) {
             formatters.add(new AndroidMessageFormatter(writer));
         }
-        if (options.jackson) {
+        if (javaOptions.jackson) {
             formatters.add(new JacksonMessageFormatter(writer, helper));
         }
-        if (options.rw_binary) {
+        if (javaOptions.rw_binary) {
             formatters.add(new BinaryWriterFormatter(writer, helper));
             builderFormatters.add(new BinaryReaderBuilderFormatter(writer, helper));
         }

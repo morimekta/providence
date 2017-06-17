@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
@@ -40,11 +41,15 @@ import java.io.OutputStream;
  * Base generator for all java classes.
  */
 public abstract class BaseGenerator extends Generator {
-    protected final JHelper helper;
+    protected final JHelper          helper;
+    protected final GeneratorOptions generatorOptions;
 
-    public BaseGenerator(FileManager manager, ProgramRegistry registry) throws GeneratorException {
+    public BaseGenerator(FileManager manager,
+                         ProgramRegistry registry,
+                         GeneratorOptions generatorOptions) throws GeneratorException {
         super(manager);
 
+        this.generatorOptions = generatorOptions;
         this.helper = new JHelper(registry);
     }
 

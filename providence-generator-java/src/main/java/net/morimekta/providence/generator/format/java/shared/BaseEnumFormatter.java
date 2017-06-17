@@ -41,7 +41,8 @@ public class BaseEnumFormatter {
     private final IndentedPrintWriter       writer;
     private final List<EnumMemberFormatter> formatters;
 
-    public BaseEnumFormatter(IndentedPrintWriter writer, List<EnumMemberFormatter> formatters) {
+    public BaseEnumFormatter(IndentedPrintWriter writer,
+                             List<EnumMemberFormatter> formatters) {
         this.writer = writer;
         this.formatters = ImmutableList.copyOf(formatters);
     }

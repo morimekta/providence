@@ -22,6 +22,7 @@ package net.morimekta.providence.maven.plugin;
 
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
@@ -80,6 +81,26 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
+    // -----------    PARSER OPTIONS    ----------- //
+
+    /**
+     * If the thrift program parser should fail if enum value is missing for
+     * any enum value definition parsed.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.require_enum_value",
+               alias = "requireEnumValue")
+    protected boolean require_enum_value;
+
+    /**
+     * If the thrift program parser should fail if field ID is missing for any
+     * field definitions parsed.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.require_field_id",
+               alias = "requireFieldId")
+    protected boolean require_field_id;
+
     // -----------    GENERATE OPTIONS    ----------- //
     /**
      * Adds android.os.Parcelable support. Requires android dependencies, or
@@ -127,35 +148,19 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean generated_annotation_version;
 
     /**
-     * If the thrift program parser should fail if field ID is missing for any
-     * field definitions parsed.
-     */
-    @Parameter(defaultValue = "false",
-               property = "providence.gen.requireFieldId")
-    protected boolean requireFieldId;
-
-    /**
-     * If the thrift program parser should fail if enum value is missing for
-     * any enum value definition parsed.
-     */
-    @Parameter(defaultValue = "false",
-               property = "providence.gen.requireEnumValue")
-    protected boolean requireEnumValue;
-
-    /**
      * Generate the legacy 'forValue' and 'forName' static enum getters.
      */
     @Parameter(defaultValue = "false",
-               property = "providence.gen.generate_legacy_enum_getters")
-    protected boolean generate_legacy_enum_getters;
+               property = "providence.gen.legacy_enum_getters")
+    protected boolean legacy_enum_getters;
 
     /**
      * Generate public constructors with all fields as arguments for structs and
      * exceptions.
      */
     @Parameter(defaultValue = "false",
-               property = "providence.gen.generate_public_constructors")
-    protected boolean generate_public_constructors;
+               property = "providence.gen.public_constructors")
+    protected boolean public_constructors;
 
     // ----------------------------
 
@@ -261,7 +266,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         FileManager fileManager = new FileManager(outputDir);
-        ProgramParser parser = new ThriftProgramParser(requireFieldId, requireEnumValue);
+        ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value);
         TypeLoader loader = new TypeLoader(includes, parser);
 
         LinkedList<CProgram> documents = new LinkedList<>();
@@ -298,16 +303,19 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         try {
-            JavaOptions options = new JavaOptions();
-            options.android = android;
-            options.jackson = jackson;
-            options.rw_binary = rw_binary;
-            options.hazelcast_portable = hazelcast_portable;
-            options.generated_annotation_version = generated_annotation_version;
-            options.generate_legacy_enum_getters = generate_legacy_enum_getters;
-            options.generate_public_constructors = generate_public_constructors;
+            JavaOptions javaOptions = new JavaOptions();
+            javaOptions.android = android;
+            javaOptions.jackson = jackson;
+            javaOptions.rw_binary = rw_binary;
+            javaOptions.hazelcast_portable = hazelcast_portable;
+            javaOptions.generated_annotation_version = generated_annotation_version;
+            javaOptions.legacy_enum_getters = legacy_enum_getters;
+            javaOptions.public_constructors = public_constructors;
+            GeneratorOptions generatorOptions = new GeneratorOptions();
+            generatorOptions.generator_program_name = "providence-maven-plugin";
+            generatorOptions.program_version = project.getVersion();
 
-            Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
+            Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), generatorOptions, javaOptions);
 
             for (CProgram doc : documents) {
                 try {

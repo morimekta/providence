@@ -68,10 +68,17 @@ public class Compiler {
                     System.out.println();
                     switch (options.help.generator) {
                         case java:
-                            System.out.println(" - android            : Add android parcelable interface to model classes.");
-                            System.out.println(" - jackson            : Add jackson 2 annotations to model classes.");
-                            System.out.println(" - no_rw_binary       : Skip adding the binary RW methods to generated code.");
-                            System.out.println(" - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.");
+                            System.out.println(" - android             : Add android parcelable interface to model classes.");
+                            System.out.println(" - jackson             : Add jackson 2 annotations to model classes.");
+                            System.out.println(" - no_rw_binary        : Skip adding the binary RW methods to generated code. [Default on]");
+                            System.out.println(" - hazelcast_portable  : Add hazelcast portable to annotated model classes, and add portable\n" +
+                                               "                         factories.");
+
+                            System.out.println(" - no_generated_annotation_version : Remove providence version from the <code>@Generated</code>\n" +
+                                               "                         annotation for each generated class. [Default on]");
+                            System.out.println(" - legacy_enum_getters : Keep the 'forName' and 'forValue' legacy static enum getters.");
+                            System.out.println(" - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
+                                               "                         effect on unions.");
                             break;
                         default:
                             System.out.println("No options available for " + options.help.generator + ".");

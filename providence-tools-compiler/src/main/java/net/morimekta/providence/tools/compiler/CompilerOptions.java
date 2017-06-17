@@ -28,6 +28,7 @@ import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
@@ -154,7 +155,10 @@ public class CompilerOptions {
         }
     }
 
-    public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException {
+    public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
+        GeneratorOptions generatorOptions = new GeneratorOptions();
+        generatorOptions.generator_program_name = "pvdc";
+        generatorOptions.program_version = Utils.getVersionString();
         switch (gen.generator) {
             case json:
                 return new JsonGenerator(getFileManager(), loader);
@@ -174,11 +178,20 @@ public class CompilerOptions {
                         case "hazelcast_portable":
                             options.hazelcast_portable = true;
                             break;
+                        case "no_generated_annotation_version":
+                            options.generated_annotation_version = false;
+                            break;
+                        case "legacy_enum_getters":
+                            options.legacy_enum_getters = true;
+                            break;
+                        case "public_constructors":
+                            options.public_constructors = true;
+                            break;
                         default:
                             throw new ArgumentException("No such option for java generator: " + opt);
                     }
                 }
-                return new JavaGenerator(getFileManager(), loader.getRegistry(), options);
+                return new JavaGenerator(getFileManager(), loader.getRegistry(), generatorOptions, options);
             }
             default:
                 throw new ArgumentException("Unknown language %s.", gen.generator.name());

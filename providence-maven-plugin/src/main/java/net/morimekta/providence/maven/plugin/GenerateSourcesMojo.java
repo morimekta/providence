@@ -58,7 +58,7 @@ public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
      * 'src/main/providence/' and subdirectories. Simple includes can be
      * specified by property <code>providence.main.input</code>.
      */
-    @Parameter(alias = "files")
+    @Parameter(alias = "inputFiles")
     protected IncludeExcludeFileSelector input;
 
     /**

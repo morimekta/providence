@@ -45,18 +45,20 @@ public class JavaOptions {
     public boolean hazelcast_portable = false;
 
     /**
-     * Add the <code>@Generated</code> annotation to each generated class.
+     * Add providence version to the <code>@Generated</code> annotation for each
+     * generated class.
      */
-    public boolean generated_annotation_version = false;
+    public boolean generated_annotation_version = true;
 
     /**
      * Keep the 'forName' and 'forValue' legacy static enum getters.
      */
-    public boolean generate_legacy_enum_getters = false;
+    public boolean legacy_enum_getters = false;
 
     /**
      * Generate public constructors for all structs and exceptions. Have no
-     * effect on unions.
+     * effect on unions. Can be overridden per class with the
+     * <code>java.public.constructor = ""</code> annotation.
      */
-    public boolean generate_public_constructors = false;
+    public boolean public_constructors = false;
 }

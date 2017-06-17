@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.program.extras.HazelcastPortableProgramFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseEnumFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseGenerator;
@@ -36,36 +37,49 @@ import net.morimekta.util.io.IndentedPrintWriter;
  * @since 05.09.15
  */
 public class JavaGenerator extends BaseGenerator {
-    private final JavaOptions options;
+    private final JavaOptions javaOptions;
 
-    public JavaGenerator(FileManager manager, ProgramRegistry registry, JavaOptions options) throws GeneratorException {
-        super(manager, registry);
+    public JavaGenerator(FileManager manager,
+                         ProgramRegistry registry,
+                         GeneratorOptions generatorOptions,
+                         JavaOptions javaOptions) throws GeneratorException {
+        super(manager, registry, generatorOptions);
 
-        this.options = options;
+        this.javaOptions = javaOptions;
     }
 
     @Override
     protected BaseMessageFormatter messageFormatter(IndentedPrintWriter writer) {
-        return new JavaMessageFormatter(writer, helper, options);
+        return new JavaMessageFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
     @Override
     protected BaseEnumFormatter enumFormatter(IndentedPrintWriter writer) {
-        return new JavaEnumFormatter(writer, options);
+        return new JavaEnumFormatter(writer, generatorOptions, javaOptions);
     }
 
     @Override
     protected BaseProgramFormatter constFomatter(IndentedPrintWriter writer) {
-        return new JavaConstantsFormatter(writer, helper);
+        return new JavaConstantsFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
     @Override
     protected BaseProgramFormatter hazelcastFomatter(IndentedPrintWriter writer) {
-        return new HazelcastPortableProgramFormatter(writer, helper);
+        return new HazelcastPortableProgramFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
     @Override
     protected BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer) {
-        return new JavaServiceFormatter(writer, helper, new JavaMessageFormatter(true, true, writer, helper, options), options);
+        return new JavaServiceFormatter(
+                writer,
+                helper,
+                new JavaMessageFormatter(true,
+                                         true,
+                                         writer,
+                                         helper,
+                                         generatorOptions,
+                                         javaOptions),
+                generatorOptions,
+                javaOptions);
     }
 }

@@ -6,6 +6,8 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
+import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseProgramFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
@@ -24,6 +26,7 @@ import com.hazelcast.nio.serialization.ClassDefinitionBuilder;
 import com.hazelcast.nio.serialization.Portable;
 import com.hazelcast.nio.serialization.PortableFactory;
 
+import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,10 +45,17 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
 
     private final JHelper             helper;
     private final IndentedPrintWriter writer;
+    private final GeneratorOptions    generatorOptions;
+    private final JavaOptions         javaOptions;
 
-    public HazelcastPortableProgramFormatter(IndentedPrintWriter writer, JHelper helper) {
+    public HazelcastPortableProgramFormatter(IndentedPrintWriter writer,
+                                             JHelper helper,
+                                             GeneratorOptions generatorOptions,
+                                             JavaOptions javaOptions) {
         this.writer = writer;
         this.helper = helper;
+        this.generatorOptions = generatorOptions;
+        this.javaOptions = javaOptions;
     }
 
     @Override
@@ -53,6 +63,17 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
         if (document.getDocumentation() != null) {
             new BlockCommentBuilder(writer).comment(document.getDocumentation())
                                            .finish();
+        }
+
+        if (javaOptions.generated_annotation_version) {
+            writer.formatln("@%s(\"%s %s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name,
+                            generatorOptions.program_version);
+        } else {
+            writer.formatln("@%s(\"%s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name);
         }
 
         writer.formatln("public class %s {", helper.getHazelcastFactoryClassName(document))

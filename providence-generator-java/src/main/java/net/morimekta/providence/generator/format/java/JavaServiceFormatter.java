@@ -35,6 +35,7 @@ import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.shared.BaseServiceFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
@@ -50,34 +51,24 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import javax.annotation.Generated;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Properties;
 
 public class JavaServiceFormatter implements BaseServiceFormatter {
     private final JHelper              helper;
     private final JavaMessageFormatter messageFormat;
     private final IndentedPrintWriter  writer;
-    private final JavaOptions          options;
-    private final String               version;
+    private final JavaOptions          javaOptions;
+    private final GeneratorOptions     generatorOptions;
 
     JavaServiceFormatter(IndentedPrintWriter writer,
                          JHelper helper,
                          JavaMessageFormatter messageFormat,
-                         JavaOptions options) {
+                         GeneratorOptions generatorOptions,
+                         JavaOptions javaOptions) {
         this.writer = writer;
         this.helper = helper;
         this.messageFormat = messageFormat;
-        this.options = options;
-
-        try {
-            Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("/java_generator_version.properties"));
-
-            this.version = properties.getProperty("java_generator_version");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-
+        this.generatorOptions = generatorOptions;
+        this.javaOptions = javaOptions;
     }
 
     @Override
@@ -98,10 +89,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")");
-        if (options.generated_annotation_version) {
-            writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        if (javaOptions.generated_annotation_version) {
+            writer.formatln("@%s(\"%s %s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name,
+                            generatorOptions.program_version);
         } else {
-            writer.formatln("@%s(\"providence java generator\")", Generated.class.getName());
+            writer.formatln("@%s(\"%s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name);
         }
 
         writer.formatln("public class %s %s{", service.className(), inherits)

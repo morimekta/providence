@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.enums.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.enums.CoreMemberFormatter;
 import net.morimekta.providence.generator.format.java.enums.extras.JacksonEnumFormatter;
@@ -37,14 +38,17 @@ import java.util.List;
  */
 public class JavaEnumFormatter extends BaseEnumFormatter {
     JavaEnumFormatter(IndentedPrintWriter writer,
+                      GeneratorOptions generatorOptions,
                       JavaOptions options) {
-        super(writer, getFormatters(writer, options));
+        super(writer, getFormatters(writer, generatorOptions, options));
     }
 
-    private static List<EnumMemberFormatter> getFormatters(IndentedPrintWriter writer, JavaOptions options) {
+    private static List<EnumMemberFormatter> getFormatters(IndentedPrintWriter writer,
+                                                           GeneratorOptions generatorOptions,
+                                                           JavaOptions options) {
         ImmutableList.Builder<EnumMemberFormatter> builder = ImmutableList.builder();
 
-        builder.add(new CommonMemberFormatter(writer, options))
+        builder.add(new CommonMemberFormatter(writer, generatorOptions, options))
                .add(new CoreMemberFormatter(writer));
 
         if (options.jackson) {

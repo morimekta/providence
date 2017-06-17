@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.shared.BaseProgramFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
@@ -29,17 +30,26 @@ import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Generated;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
 public class JavaConstantsFormatter implements BaseProgramFormatter {
-    private final JHelper  helper;
+    private final JHelper             helper;
     private final IndentedPrintWriter writer;
+    private final GeneratorOptions    generatorOptions;
+    private final JavaOptions         javaOptions;
 
-    public JavaConstantsFormatter(IndentedPrintWriter writer, JHelper helper) {
+    public JavaConstantsFormatter(IndentedPrintWriter writer,
+                                  JHelper helper,
+                                  GeneratorOptions generatorOptions,
+                                  JavaOptions javaOptions) {
         this.writer = writer;
         this.helper = helper;
+        this.generatorOptions = generatorOptions;
+        this.javaOptions = javaOptions;
     }
 
     @Override
@@ -50,6 +60,16 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
             new BlockCommentBuilder(writer)
                     .comment(program.getDocumentation())
                     .finish();
+        }
+        if (javaOptions.generated_annotation_version) {
+            writer.formatln("@%s(\"%s %s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name,
+                            generatorOptions.program_version);
+        } else {
+            writer.formatln("@%s(\"%s\")",
+                            Generated.class.getName(),
+                            generatorOptions.generator_program_name);
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
