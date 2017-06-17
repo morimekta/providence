@@ -1,17 +1,14 @@
 package net.morimekta.providence.it.serialization;
 
-import net.morimekta.util.Stringable;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
  * Kept statistics for a given format.
  */
-public class FormatStatistics implements Stringable, Comparable<FormatStatistics> {
+public class FormatStatistics implements Comparable<FormatStatistics> {
     /**
      * Which format was tested.
      */
@@ -58,9 +55,7 @@ public class FormatStatistics implements Stringable, Comparable<FormatStatistics
             return c;
         }
         // If the same, sort DESC after original read + write time.
-        c = Double.compare(other.format.read + other.format.write,
-                           format.read + format.write);
-        return c != 0 ? c : format.compareTo(other.format);
+        return format.compareTo(other.format);
     }
 
     @Override
@@ -77,74 +72,14 @@ public class FormatStatistics implements Stringable, Comparable<FormatStatistics
         return Objects.hash(FormatStatistics.class, format);
     }
 
-    @Override
-    public String asString() {
-        if (read_thrift > 0 || write_thrift > 0) {
-            return String.format(
-                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f  (%3d kB)",
-                    format.name(),
-                    read,
-                    read_thrift,
-                    write,
-                    write_thrift,
-                    read + write,
-                    read_thrift + write_thrift);
-
-        } else {
-            return String.format(
-                    "%20s:  %5.2f       -- %5.2f        =  %5.2f        (%3d kB)",
-                    format.name(),
-                    read,
-                    write,
-                    read + write);
-        }
-    }
-
-    public void verify(FormatStatistics rel) {
-        if (format == Format.pretty) {
-            // This format cannot become too slow, as it's whole purpose is debugging
-            // and human readability.
-            return;
-        }
-
-        double r = read / rel.read_thrift;
-        double w = write / rel.write_thrift;
-
-        double ro = (r / format.read) - 1.00;
-        double wo = (w / format.write) - 1.00;
-
-        if (ro > 0.10) {
-            System.out.format(Locale.ENGLISH,
-                              "-- %20s read time increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
-                              format.toString(),
-                              (ro * 100),
-                              format.read,
-                              r);
-        }
-        if (wo > 0.10) {
-            System.out.format(Locale.ENGLISH,
-                              "-- %20s write time increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
-                              format.toString(),
-                              (wo * 100),
-                              format.write,
-                              w);
-        }
-        if (ro < -0.10) {
-            System.out.format(Locale.ENGLISH,
-                              "++ %20s read time reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
-                              format.toString(),
-                              (-ro * 100),
-                              format.read,
-                              r);
-        }
-        if (wo < -0.10) {
-            System.out.format(Locale.ENGLISH,
-                              "++ %20s write time reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
-                              format.toString(),
-                              (-wo * 100),
-                              format.write,
-                              w);
-        }
+    /**
+     * Header string that matches the asString output.
+     *
+     * @return The asString header.
+     */
+    public static String header() {
+        return  "                           read          write            SUM\n" +
+                "        name        :   pvd   thr  --  pvd   thr   =   pvd   thr";
     }
 
     public String statistics(FormatStatistics rel) {
