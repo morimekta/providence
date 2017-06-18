@@ -38,7 +38,7 @@ Latest output from the serialization speed IT, sorted by the SUM of the providen
 serialization time. Lower is better.
 
 ```
-                           read          write            SUM
+                           READ          WRITE            SUM
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr
               binary:   1.18  1.00 --  0.84  1.00  =   1.01  1.00
          fast_binary:   1.46       --  1.45        =   1.45

@@ -69,6 +69,7 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
         }
 
         statistics.PtotalWriteStat.addValue(totalTime);
+        statistics.size = baos.size();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 

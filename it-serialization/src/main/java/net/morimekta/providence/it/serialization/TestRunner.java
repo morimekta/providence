@@ -117,8 +117,12 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                              .findFirst().orElseThrow(() -> new IllegalStateException("Oops"));
         formats.sort(FormatStatistics::compareTo);
 
-        System.out.println(FormatStatistics.header());
-        System.out.println();
+        if (options.no_progress.get()) {
+            System.out.println(FormatStatistics.header());
+            System.out.println();
+        } else {
+            System.out.println(FormatStatistics.colorHeader());
+        }
         formats.forEach(f -> System.out.println(f.statistics(relativeTo)));
         System.out.println();
     }

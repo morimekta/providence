@@ -35,14 +35,20 @@ public enum Format implements Comparable<Format> {
     json("json", "Compact JSON",
          new JsonSerializer(true),
          null),
-    pretty("cfg", "Pretty / Config",
-           new PrettySerializer(true),
+    config("cfg", "Pretty / Config",
+           new PrettySerializer(true).config(),
+           null),
+    pretty("cfg", "Pretty / Compact",
+           new PrettySerializer(true).compact(),
            null),
     fast_binary("bin", "Fast Binary",
                 new FastBinarySerializer(true),
                 null),
 
-    // Unique thrift formats.
+    // Thrift formats.
+    binary_protocol("bin", "Thrift Binary Protocol (wrapper)",
+                    new TBinaryProtocolSerializer(true),
+                    null),
     json_protocol("json", "Thrift JSON Protocol (wrapper)",
                   new TJsonProtocolSerializer(true),
                   TJSONProtocol::new),

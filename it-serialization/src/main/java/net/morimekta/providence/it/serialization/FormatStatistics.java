@@ -1,5 +1,7 @@
 package net.morimekta.providence.it.serialization;
 
+import net.morimekta.console.chr.Color;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.annotation.Nonnull;
@@ -27,6 +29,7 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
     public double read_thrift;
     public double write;
     public double write_thrift;
+    public int    size;
 
     public FormatStatistics(Format format) {
         this.format = format;
@@ -77,15 +80,31 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
      *
      * @return The asString header.
      */
-    public static String header() {
-        return  "                           read          write            SUM\n" +
-                "        name        :   pvd   thr  --  pvd   thr   =   pvd   thr";
+    public static String colorHeader() {
+        return  Color.BOLD +
+                HEADER_L1 + "\n" +
+                new Color(Color.YELLOW, Color.UNDERLINE) +
+                HEADER_L2 + "    " +
+                Color.CLEAR;
     }
+
+    /**
+     * Header string that matches the asString output.
+     *
+     * @return The asString header.
+     */
+    public static String header() {
+        return  HEADER_L1 + "\n" + HEADER_L2;
+    }
+
+    private static final String HEADER_L1 = "                           READ          WRITE            SUM            SIZE";
+    private static final String HEADER_L2 = "        name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)";
 
     public String statistics(FormatStatistics rel) {
         double r = read / rel.read_thrift;
         double w = write / rel.write_thrift;
         double rw = (r + w) / 2;
+        double size_ratio = ((double) size / (double) rel.size);
 
         if (read_thrift > 0 || write_thrift > 0) {
             double rt = read_thrift / rel.read_thrift;
@@ -93,22 +112,35 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
             double rwt = (rt + wt) / 2;
 
             return String.format(
-                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f",
+                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f -- (%5.2f / %s)",
                     format.name(),
                     r,
                     rt,
                     w,
                     wt,
                     rw,
-                    rwt);
+                    rwt,
+                    size_ratio,
+                    humanReadableByteCount(size, false));
         } else {
             return String.format(
-                    "%20s:  %5.2f       -- %5.2f        =  %5.2f",
+                    "%20s:  %5.2f       -- %5.2f        =  %5.2f       -- (%5.2f / %s)",
                     format.name(),
                     r,
                     w,
-                    rw);
+                    rw,
+                    size_ratio,
+                    humanReadableByteCount(size, false));
         }
+    }
+
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit)
+            return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public void calculate() {
