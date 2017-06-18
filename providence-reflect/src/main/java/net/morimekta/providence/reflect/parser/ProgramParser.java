@@ -37,6 +37,7 @@ public interface ProgramParser {
      *
      * @param in The stream to parse.
      * @param file The file that is being parsed.
+     * @param includeDirs Included directories that can be referenced directly.
      * @return The declared document model.
      * @throws IOException When the stream was unreadable.
      * @throws ParseException When the document could not be parsed.

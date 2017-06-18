@@ -120,6 +120,7 @@ public class JUtils {
      * Format a prefixed name as camelCase. The prefix is kept verbatim, while
      * tha name is split on '_' chars, and joined with each part capitalized.
      *
+     * @param prefix Name prefix, not modified.
      * @param name   The name to camel-case.
      * @return theCamelCasedName
      */

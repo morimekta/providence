@@ -157,6 +157,7 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
      * Prints a jsonCompact string representation of the message.
      *
      * @param message The message to stringify.
+     * @param <Message> The contained message type.
      * @return The resulting string.
      */
     protected static <Message extends PMessage<Message, CField>>

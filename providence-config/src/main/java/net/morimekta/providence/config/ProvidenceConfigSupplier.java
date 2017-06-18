@@ -32,9 +32,9 @@ import java.util.function.Supplier;
 /**
  * A reloadable supplier of a providence config based on a config file.
  *
- * <code>{@code
+ * <pre>{@code
  *     ProvidenceConfigSupplier supplier = new ProvidenceConfigSupplier(configFile, configLoader);
- * }</code>
+ * }</pre>
  */
 public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
         implements ReloadableSupplier<Message> {

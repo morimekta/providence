@@ -358,6 +358,8 @@ public class MessageGenerator extends TestWatcher {
 
     /**
      * Dump all generated messages on failure for this test only.
+     *
+     * @return The message generator.
      */
     public MessageGenerator dumpOnFailure() {
         if (started) {

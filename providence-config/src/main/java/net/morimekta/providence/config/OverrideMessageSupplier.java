@@ -73,7 +73,8 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      * @param overrides The message override values.
      * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Properties overrides) {
+    public OverrideMessageSupplier(Supplier<Message> parent, Properties overrides)
+            throws ConfigException {
         this(parent, propertiesMap(overrides), false);
     }
 
@@ -85,7 +86,8 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      * @param overrides The message override values.
      * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides) {
+    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides)
+            throws ConfigException {
         this(parent, overrides, false);
     }
 
@@ -95,9 +97,11 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
+     * @param strict If config should be read strictly.
      * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides, boolean strict) {
+    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides, boolean strict)
+            throws ConfigException {
         this.parent = parent;
         this.overrides = overrides;
         this.strict = strict;
@@ -122,7 +126,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
         instance.set(loadInternal());
     }
 
-    private Message loadInternal() {
+    private Message loadInternal() throws ConfigException {
         PMessageBuilder<Message, Field> builder = parent.get()
                                                         .mutate();
         for (Map.Entry<String, String> override : overrides.entrySet()) {

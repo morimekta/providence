@@ -252,6 +252,7 @@ public class ProvidenceConfig {
      * Load providence config from the given file.
      *
      * @param file The file to load.
+     * @param descriptor Descriptor of type to load.
      * @param <M> The message type.
      * @param <F> The message field type.
      * @return Supplier for the parsed and merged config.
@@ -260,6 +261,9 @@ public class ProvidenceConfig {
      */
     public <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
         try {
+            if (descriptor != null) {
+                registry.registerRecursively(descriptor);
+            }
             Supplier<M> supplier = getSupplier(file);
             if (descriptor != null && !supplier.get().descriptor().equals(descriptor)) {
                 throw new TokenizerException(
@@ -281,6 +285,7 @@ public class ProvidenceConfig {
      * Trigger reloading of the given file, and run recursively <i>up</i> through dependencies.
      *
      * @param file The file that may need to be reloaded.
+     * @throws IOException If reloading failed for any reason.
      */
     public void reload(File file) throws IOException {
         String canonicalPath = file.getCanonicalFile()
@@ -306,7 +311,7 @@ public class ProvidenceConfig {
                 reload(new File(dep));
             }
         } catch (IOException e) {
-            // Reinstate the old value if we failed to reload it. Also
+            // TODO: Reinstate the old value if we failed to reload it. Also
             // reinstate the old value if any of the dependent files failed
             // to load. The reason they failed could easily be that this
             // file was no longer compatible.

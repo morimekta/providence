@@ -26,6 +26,8 @@ public class ProvidenceInput {
      * @param project The maven project
      * @param inputSelector The input-exclude selector.
      * @param defaultInputInclude The default input include (if not specified).
+     * @param log Maven logger instance.
+     * @throws MojoExecutionException If parsing or checking input files failed.
      * @return The set of input files.
      */
     public static Set<File> getInputFiles(@Nonnull MavenProject project,

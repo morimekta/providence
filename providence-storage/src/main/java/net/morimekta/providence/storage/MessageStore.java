@@ -59,7 +59,6 @@ public interface MessageStore<K, M extends PMessage<M,F>, F extends PField> {
      *
      * @param key The key to look up.
      * @return The value if present.
-     * @throws IllegalStateException
      */
     @Nullable
     default M get(@Nonnull K key) {
@@ -69,6 +68,7 @@ public interface MessageStore<K, M extends PMessage<M,F>, F extends PField> {
     /**
      * @param key The key to put message at.
      * @param message The message to put.
+     * @return Replaced value if any.
      */
     @Nullable
     default M put(@Nonnull K key, @Nonnull M message) {
