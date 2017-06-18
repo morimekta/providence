@@ -213,6 +213,9 @@
                                 ${project.build.directory}/generated-test-sources/jackson:
                                 ${project.build.directory}/generated-test-sources/providence
                             </sourcepath>
+                            <outputDirectory>${project.build.directory}/ignore-docs</outputDirectory>
+                            <reportOutputDirectory>${project.build.directory}/ignore-docs-site</reportOutputDirectory>
+                            <quiet>true</quiet>
                         </configuration>
                     </execution>
                 </executions>
