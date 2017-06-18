@@ -133,24 +133,24 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                                    "Serialization speed Integration test");
         TestOptions options = new TestOptions();
         try {
-            parser.add(new Flag("--flag", "h?", "Show this help message",
+            parser.add(new Flag("--help", "h?", "Show this help message",
                                 options.help::set));
             parser.add(new Flag("--no_progress", "s",
                                 "No progress output",
                                 options.no_progress::set));
-            parser.add(new Option("--runs", "r", "RUNS",
+            parser.add(new Option("--runs", "R", "RUNS",
                                   "Number of runs to do",
                                   i32(options.runs::set), "100"));
             parser.add(new Option("--generate", "g", "NUM",
                                   "Number of messages to generate",
                                   i32(options.generate::set), "10"));
-            parser.add(new Option("--fill_rate", "f", "FRACT",
+            parser.add(new Option("--fill_rate", "r", "FRACT",
                                   "Fill rate, 0.0 - 1.0 of fields in generated classes",
                                   dbl(options.generator::setFillRate), "1.0"));
             parser.add(new Option("--load", null, "FILE",
                                   "File to load data from. Required test to match content",
                                   file(options.file::set)));
-            parser.add(new Option("--format", null, "FMT",
+            parser.add(new Option("--format", "f", "FMT",
                                   "Which format to test",
                                   oneOf(Format.class, options.format::set), "all"));
             parser.add(new Argument("test", "Which test to run",
