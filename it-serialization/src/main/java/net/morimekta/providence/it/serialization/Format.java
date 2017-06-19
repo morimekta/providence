@@ -21,59 +21,39 @@ import org.apache.thrift.protocol.TTupleProtocol;
  */
 public enum Format implements Comparable<Format> {
     // Common serialization formats.
-    binary("bin", "Thrift Binary",
-           new BinarySerializer(true),
+    binary(new BinarySerializer(true),
            TBinaryProtocol::new),
 
     // Unique providence formats.
-    json_pretty("json", "Prettified JSON",
-                new JsonSerializer(true).pretty(),
+    json_pretty(new JsonSerializer(true).pretty(),
                 null),
-    json_named("json", "Named JSON",
-               new JsonSerializer(true).named(),
+    json_named(new JsonSerializer(true).named(),
                null),
-    json("json", "Compact JSON",
-         new JsonSerializer(true),
+    json(new JsonSerializer(true),
          null),
-    config("cfg", "Pretty / Config",
-           new PrettySerializer(true).config(),
+    config(new PrettySerializer(true).config(),
            null),
-    pretty("cfg", "Pretty / Compact",
-           new PrettySerializer(true).compact(),
+    pretty(new PrettySerializer(true).compact(),
            null),
-    fast_binary("bin", "Fast Binary",
-                new FastBinarySerializer(true),
+    fast_binary(new FastBinarySerializer(true),
                 null),
 
     // Thrift formats.
-    binary_protocol("bin", "Thrift Binary Protocol (wrapper)",
-                    new TBinaryProtocolSerializer(true),
+    binary_protocol(new TBinaryProtocolSerializer(true),
                     null),
-    json_protocol("json", "Thrift JSON Protocol (wrapper)",
-                  new TJsonProtocolSerializer(true),
+    json_protocol(new TJsonProtocolSerializer(true),
                   TJSONProtocol::new),
-    compact_protocol("bin", "Thrift \"compact\" Protocol (wrapper)",
-                     new TCompactProtocolSerializer(true),
+    compact_protocol(new TCompactProtocolSerializer(true),
                      TCompactProtocol::new),
-    tuple_protocol("tpl", "Thrift \"tuple\" Protocol (wrapper)",
-                   new TTupleProtocolSerializer(true),
+    tuple_protocol(new TTupleProtocolSerializer(true),
                    TTupleProtocol::new),
     ;
-
-    public final String suffix;
-    public final String description;
 
     public final Serializer serializer;
     public final TProtocolFactory protocolFactory;
 
-    Format(String s,
-           String desc,
-
-           Serializer ps,
+    Format(Serializer ps,
            TProtocolFactory pf) {
-        description = desc;
-        suffix = s;
-
         serializer = ps;
         protocolFactory = pf;
     }
