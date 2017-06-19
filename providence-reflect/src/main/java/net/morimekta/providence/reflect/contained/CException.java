@@ -88,7 +88,17 @@ public class CException extends Exception implements CMessage<CException> {
         @Nonnull
         @Override
         public CException build() {
-            return new CException(this);
+            CException e = new CException(this);
+
+            try {
+                StackTraceElement[] stackTrace = e.getStackTrace();
+                StackTraceElement[] subTrace = new StackTraceElement[stackTrace.length - 1];
+                System.arraycopy(stackTrace, 1, subTrace, 0, subTrace.length);
+                e.setStackTrace(subTrace);
+            } catch (Throwable ignored) {
+            }
+
+            return e;
         }
     }
 }

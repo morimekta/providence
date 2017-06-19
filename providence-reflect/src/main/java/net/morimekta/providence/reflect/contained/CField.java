@@ -35,8 +35,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Description of a single contained field. Part of the message descriptor.
  */
 public class CField implements PField, CAnnotatedDescriptor {
     private final String              comment;
@@ -159,6 +158,7 @@ public class CField implements PField, CAnnotatedDescriptor {
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof CField)) {
             return false;
         }

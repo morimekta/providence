@@ -45,11 +45,11 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
     private final String               comment;
 
     public CExceptionDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
-        super(packageName, name, new _Factory(),
+        super(packageName, name, new _BuilderSupplier(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
-        ((_Factory) getBuilderSupplier()).setType(this);
+        ((_BuilderSupplier) getBuilderSupplier()).setType(this);
 
         this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
@@ -128,7 +128,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
         return true;
     }
 
-    private static class _Factory implements Supplier<PMessageBuilder<CException, CField>> {
+    private static class _BuilderSupplier implements Supplier<PMessageBuilder<CException, CField>> {
         private CExceptionDescriptor mType;
 
         public void setType(CExceptionDescriptor type) {

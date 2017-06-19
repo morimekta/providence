@@ -24,27 +24,33 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
 public class CFieldTest {
-    PField field;
-    PField fieldSame;
-    PField fieldComment;
-    PField fieldKey;
-    PField fieldRequired;
-    PField fieldOptional;
-    PField fieldName;
-    PField fieldType;
-    PField fieldNoDefault;
-    PField fieldDefault;
+    private PField field;
+    private PField fieldSame;
+    private PField fieldComment;
+    private PField fieldKey;
+    private PField fieldRequired;
+    private PField fieldOptional;
+    private PField fieldName;
+    private PField fieldType;
+    private CField fieldNoDefault;
+    private CField fieldDefault;
 
     @Before
     public void setUp() {
@@ -111,7 +117,7 @@ public class CFieldTest {
                                   "name",
                                   PPrimitive.I32.provider(),
                                   new PDefaultValueProvider<>(6),
-                                  null);
+                                  ImmutableMap.of("annot", "ation"));
     }
 
     @Test
@@ -217,5 +223,44 @@ public class CFieldTest {
         assertNotEquals(fieldRequired.hashCode(), fieldDefault.hashCode());
 
         assertNotEquals(fieldName.hashCode(), fieldDefault.hashCode());
+    }
+
+    @Test
+    public void testDefaultValue() {
+        assertThat(fieldDefault.getDefaultValue(), is(6));
+        assertThat(fieldNoDefault.getDefaultValue(), is(nullValue()));
+
+        fieldDefault = new CField("comment",
+                                  4,
+                                  PRequirement.DEFAULT,
+                                  "name",
+                                  PPrimitive.I32.provider(),
+                                  () -> {throw new IllegalArgumentException();},
+                                  ImmutableMap.of("annot", "ation"));
+        try {
+            fieldDefault.getDefaultValue();
+            fail("no exception");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage(), is("Unable to parse default value name"));
+        }
+    }
+
+    @Test
+    public void testAnnotations() {
+        assertThat(fieldDefault.getAnnotations(), is(ImmutableSet.of("annot")));
+        assertThat(fieldNoDefault.getAnnotations(), is(ImmutableSet.of()));
+
+        assertThat(fieldDefault.hasAnnotation("annot"), is(true));
+        assertThat(fieldNoDefault.hasAnnotation("annot"), is(false));
+
+        assertThat(fieldDefault.getAnnotationValue("annot"), is("ation"));
+        assertThat(fieldNoDefault.getAnnotationValue("annot"), is(nullValue()));
+    }
+
+    @Test
+    public void testExtra() {
+        assertThat(fieldDefault, is(fieldDefault));
+        assertThat(fieldDefault.equals(null), is(false));
+        assertThat(fieldDefault.equals(new Object()), is(false));
     }
 }
