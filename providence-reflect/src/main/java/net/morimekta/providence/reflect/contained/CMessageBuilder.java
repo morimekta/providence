@@ -58,14 +58,24 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         break;
                     case SET:
                         if (values.containsKey(key)) {
-                            ((Set<Object>) values.get(key)).addAll((Collection<Object>) from.get(key));
+                            Set<Object> set = (Set<Object>) values.get(key);
+                            if (!(set instanceof LinkedHashSet)) {
+                                set = new LinkedHashSet<>(set);
+                                values.put(key, set);
+                            }
+                            set.addAll((Collection<Object>) from.get(key));
                         } else {
                             set(key, from.get(key));
                         }
                         break;
                     case MAP:
                         if (values.containsKey(key)) {
-                            ((Map<Object, Object>) values.get(key)).putAll((Map<Object, Object>) from.get(key));
+                            Map<Object, Object> map = (Map<Object, Object>) values.get(key);
+                            if (!(map instanceof LinkedHashMap)) {
+                                map = new LinkedHashMap<>(map);
+                                values.put(key, map);
+                            }
+                            map.putAll((Map<Object, Object>) from.get(key));
                         } else {
                             set(key, from.get(key));
                         }
@@ -153,15 +163,25 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         } else {
             switch (field.getType()) {
                 case LIST: {
-                    values.put(key, ImmutableList.copyOf((Collection<Object>) value));
+                    values.put(key, ImmutableList.copyOf((Collection) value));
                     break;
                 }
                 case SET: {
-                    values.put(key, new LinkedHashSet<>((Set) value));
+                    ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                    if (ctype == ThriftCollection.SORTED) {
+                        values.put(key, ImmutableSortedSet.copyOf((Set) value));
+                    } else {
+                        values.put(key, ImmutableSet.copyOf((Set) value));
+                    }
                     break;
                 }
                 case MAP: {
-                    values.put(key, new LinkedHashMap<>((Map) value));
+                    ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                    if (ctype == ThriftCollection.SORTED) {
+                        values.put(key, ImmutableSortedMap.copyOf((Map) value));
+                    } else {
+                        values.put(key, ImmutableMap.copyOf((Map) value));
+                    }
                     break;
                 }
                 default:
@@ -200,12 +220,18 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             if (list == null) {
                 list = new LinkedList<>();
                 values.put(field.getId(), list);
+            } else if (!(list instanceof LinkedList)) {
+                list = new LinkedList<>(list);
+                values.put(field.getId(), list);
             }
             list.add(value);
         } else if (field.getType() == PType.SET) {
             Set<Object> set = (Set<Object>) values.get(field.getId());
             if (set == null) {
                 set = new LinkedHashSet<>();
+                values.put(field.getId(), set);
+            } else if (!(set instanceof LinkedHashSet)) {
+                set = new LinkedHashSet<>(set);
                 values.put(field.getId(), set);
             }
             set.add(value);
