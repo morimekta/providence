@@ -119,7 +119,14 @@ public class Operand
     }
 
     @Override
+    public boolean unionFieldIsSet() {
+        return tUnionField != null;
+    }
+
+    @Override
+    @javax.annotation.Nonnull
     public _Field unionField() {
+        if (tUnionField == null) throw new IllegalStateException("No union field set in calculator.Operand");
         return tUnionField;
     }
 
@@ -422,7 +429,7 @@ public class Operand
         @javax.annotation.Nonnull
         @Override
         public _Builder merge(Operand from) {
-            if (from.unionField() == null) {
+            if (!from.unionFieldIsSet()) {
                 return this;
             }
 

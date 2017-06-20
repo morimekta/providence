@@ -148,8 +148,8 @@ public class LogFormatter {
               .begin();
 
         if (message instanceof PUnion) {
-            PField field = ((PUnion) message).unionField();
-            if (field != null) {
+            if (((PUnion) message).unionFieldIsSet()) {
+                PField field = ((PUnion) message).unionField();
                 Object o = message.get(field.getId());
 
                 writer.appendln()

@@ -710,7 +710,14 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         @Override
+        public boolean unionFieldIsSet() {
+            return tUnionField != null;
+        }
+
+        @Override
+        @javax.annotation.Nonnull
         public _Field unionField() {
+            if (tUnionField == null) throw new IllegalStateException("No union field set in calculator.Calculator2.extra.response");
             return tUnionField;
         }
 
@@ -973,7 +980,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             @javax.annotation.Nonnull
             @Override
             public _Builder merge(_extra_response from) {
-                if (from.unionField() == null) {
+                if (!from.unionFieldIsSet()) {
                     return this;
                 }
 

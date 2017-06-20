@@ -29,13 +29,19 @@ enum MyEnum {
 
     private final int value;
 
-    public int getValue() {
+    public int getId() {
         return value;
     }
 
     MyEnum(int value) {
         this.value = value;
     }
+
+    @Nullable
+    public static MyEnum findById(int id) {}
+
+    @Nonnull
+    public static MyEnum valueForId(int id) {}
 }
 ```
 
@@ -44,11 +50,17 @@ enum MyEnum {
 There are three types of messages in providence:
 
 - **[struct]**: Simple data structure containing a list of fields
-  corresponding to a java model class.
+  corresponding to a java model class. See struct definitions below
+  for details.
 - **[exception]**: A struct that also extends the java Exception
-  class and can be thrown as exception from service methods.
+  class and can be thrown as exception from service methods. Exceptions
+  have some extra methods to get the original `message` from the
+  exception `origGetMessage()` and `origGetLocalizedMessage()`, and
+  an overridden `initCause(Throwable)` method that returns the correct
+  exception type.
 - **[union]**: A struct that only allows one of it's fields to be
-  set.
+  set. Unions have two extra methods for managing the single set
+  field: `unionField()` and `unionFieldIsSet()`.
 
 Example:
 
@@ -122,7 +134,7 @@ All message types implements the `PMessage` interface,
 and contains a number of generated methods for accessing content and building
 new messages. All the objects are generated to be `immutable`, but with use
 of deeply nested containers that may be broken to some extent. The concept
-of `simple` messages was introduces to distinguish between structs that
+of `simple` messages was introduced to distinguish between structs that
 completely guarantee immutability, and those that don't.
 
 ### Field Access

@@ -202,8 +202,8 @@ public class TTupleProtocolSerializer extends Serializer {
     private void writeMessage(PMessage<?,?> message, TTupleProtocol protocol) throws TException, SerializerException {
         PMessageDescriptor<?, ?> descriptor = message.descriptor();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
-            PField fld = ((PUnion<?,?>) message).unionField();
-            if (fld != null) {
+            if (((PUnion<?,?>) message).unionFieldIsSet()) {
+                PField fld = ((PUnion<?,?>) message).unionField();
                 protocol.writeI16((short) fld.getId());
                 writeTypedValue(message.get(fld.getId()), fld.getDescriptor(), protocol);
             } else {

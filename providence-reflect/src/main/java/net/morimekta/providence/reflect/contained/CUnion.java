@@ -126,9 +126,15 @@ public class CUnion implements PUnion<CUnion,CField> {
         return descriptor;
     }
 
+    @Override
+    public boolean unionFieldIsSet() {
+        return unionField != null;
+    }
+
     @Nonnull
     @Override
     public CField unionField() {
+        if (unionField == null) throw new IllegalStateException("No union field set in " + descriptor.getQualifiedName());
         return unionField;
     }
 

@@ -63,12 +63,15 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
                                  @Nonnull PMessageDescriptor<M,F> descriptor,
                                  @Nonnull Serializer serializer) {
         if (!directory.isDirectory()) {
-            throw new IllegalArgumentException("not a directory: " + directory.toString());
+            throw new IllegalArgumentException("Not a directory: " + directory.toString());
         }
 
         this.directory = directory;
         this.tempDir = new File(directory, TMP_DIR);
         this.tempDir.mkdirs();
+        if (!tempDir.isDirectory()) {
+            throw new IllegalStateException("Unable to create temp directory: " + tempDir.toString());
+        }
         this.keyBuilder = keyBuilder;
         this.keyParser = keyParser;
         this.descriptor = descriptor;

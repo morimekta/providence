@@ -191,8 +191,8 @@ public class FastBinarySerializer extends Serializer {
             throws IOException {
         int len = 0;
         if (message instanceof PUnion) {
-            PField field = ((PUnion) message).unionField();
-            if (field != null) {
+            if (((PUnion) message).unionFieldIsSet()) {
+                PField field = ((PUnion) message).unionField();
                 len += writeFieldValue(out, field.getId(), field.getDescriptor(), message.get(field.getId()));
             }
         } else {

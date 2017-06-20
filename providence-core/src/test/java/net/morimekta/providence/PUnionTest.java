@@ -45,6 +45,7 @@ public class PUnionTest {
         assertNotEquals(bl1, bl3);
         assertTrue(bl1.hasBooleanValue());
         assertTrue(bl1.isBooleanValue());
+        assertTrue(bl1.unionFieldIsSet());
         assertEquals(UnionFields._Field.BOOLEAN_VALUE, bl1.unionField());
 
         assertEquals(bl1, bl2);

@@ -289,7 +289,14 @@ public class UnionFields
     }
 
     @Override
+    public boolean unionFieldIsSet() {
+        return tUnionField != null;
+    }
+
+    @Override
+    @javax.annotation.Nonnull
     public _Field unionField() {
+        if (tUnionField == null) throw new IllegalStateException("No union field set in providence.UnionFields");
         return tUnionField;
     }
 
@@ -657,7 +664,7 @@ public class UnionFields
         @javax.annotation.Nonnull
         @Override
         public _Builder merge(UnionFields from) {
-            if (from.unionField() == null) {
+            if (!from.unionFieldIsSet()) {
                 return this;
             }
 

@@ -174,7 +174,14 @@ public class Declaration
     }
 
     @Override
+    public boolean unionFieldIsSet() {
+        return tUnionField != null;
+    }
+
+    @Override
+    @javax.annotation.Nonnull
     public _Field unionField() {
+        if (tUnionField == null) throw new IllegalStateException("No union field set in model.Declaration");
         return tUnionField;
     }
 
@@ -523,7 +530,7 @@ public class Declaration
         @javax.annotation.Nonnull
         @Override
         public _Builder merge(Declaration from) {
-            if (from.unionField() == null) {
+            if (!from.unionFieldIsSet()) {
                 return this;
             }
 

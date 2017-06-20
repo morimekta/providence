@@ -859,7 +859,14 @@ public class Calculator {
         }
 
         @Override
+        public boolean unionFieldIsSet() {
+            return tUnionField != null;
+        }
+
+        @Override
+        @javax.annotation.Nonnull
         public _Field unionField() {
+            if (tUnionField == null) throw new IllegalStateException("No union field set in calculator.Calculator.calculate.response");
             return tUnionField;
         }
 
@@ -1142,7 +1149,7 @@ public class Calculator {
             @javax.annotation.Nonnull
             @Override
             public _Builder merge(_calculate_response from) {
-                if (from.unionField() == null) {
+                if (!from.unionFieldIsSet()) {
                     return this;
                 }
 
@@ -2231,7 +2238,14 @@ public class Calculator {
         }
 
         @Override
+        public boolean unionFieldIsSet() {
+            return tUnionField != null;
+        }
+
+        @Override
+        @javax.annotation.Nonnull
         public _Field unionField() {
+            if (tUnionField == null) throw new IllegalStateException("No union field set in calculator.Calculator.ping.response");
             return tUnionField;
         }
 
@@ -2486,7 +2500,7 @@ public class Calculator {
             @javax.annotation.Nonnull
             @Override
             public _Builder merge(_ping_response from) {
-                if (from.unionField() == null) {
+                if (!from.unionFieldIsSet()) {
                     return this;
                 }
 

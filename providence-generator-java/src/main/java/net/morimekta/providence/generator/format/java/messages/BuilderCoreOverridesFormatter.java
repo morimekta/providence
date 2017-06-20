@@ -75,7 +75,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .begin();
 
         if (message.isUnion()) {
-            writer.appendln("if (from.unionField() == null) {")
+            writer.appendln("if (!from.unionFieldIsSet()) {")
                   .appendln("    return this;")
                   .appendln("}")
                   .newline()

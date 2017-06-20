@@ -793,7 +793,14 @@ public class ContainerService {
         }
 
         @Override
+        public boolean unionFieldIsSet() {
+            return tUnionField != null;
+        }
+
+        @Override
+        @javax.annotation.Nonnull
         public _Field unionField() {
+            if (tUnionField == null) throw new IllegalStateException("No union field set in providence.ContainerService.load.response");
             return tUnionField;
         }
 
@@ -1076,7 +1083,7 @@ public class ContainerService {
             @javax.annotation.Nonnull
             @Override
             public _Builder merge(_load_response from) {
-                if (from.unionField() == null) {
+                if (!from.unionFieldIsSet()) {
                     return this;
                 }
 

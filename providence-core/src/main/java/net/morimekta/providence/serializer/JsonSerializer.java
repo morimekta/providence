@@ -658,8 +658,8 @@ public class JsonSerializer extends Serializer {
         PMessageDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
-            PField field = ((PUnion) message).unionField();
-            if (field != null) {
+            if (((PUnion) message).unionFieldIsSet()) {
+                PField field = ((PUnion) message).unionField();
                 Object value = message.get(field.getId());
                 if (IdType.ID.equals(fieldIdType)) {
                     writer.key(field.getId());

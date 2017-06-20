@@ -41,6 +41,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -98,7 +99,16 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
 
         if (message.isUnion()) {
             writer.appendln("@Override")
+                  .appendln("public boolean unionFieldIsSet() {")
+                  .formatln("    return %s != null;", UNION_FIELD)
+                  .appendln('}')
+                  .newline();
+
+            writer.appendln("@Override")
+                  .appendln("@" + Nonnull.class.getName())
                   .appendln("public _Field unionField() {")
+                  .formatln("    if (%s == null) throw new IllegalStateException(\"No union field set in %s\");",
+                            UNION_FIELD, message.descriptor().getQualifiedName())
                   .formatln("    return %s;", UNION_FIELD)
                   .appendln('}')
                   .newline();

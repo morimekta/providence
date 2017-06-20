@@ -22,6 +22,8 @@ package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PField;
 
+import javax.annotation.Nonnull;
+
 /**
  * Base class for all messages.
  *
@@ -31,8 +33,16 @@ import net.morimekta.providence.descriptor.PField;
 public interface PUnion<Union extends PUnion<Union, Field>, Field extends PField>
         extends PMessage<Union, Field> {
     /**
+     * @return Returns true if the union has a field set. If true {@link #unionField()}
+     *         will not throw an exception.
+     */
+    boolean unionFieldIsSet();
+
+    /**
      * The user should be able to assume that this value never is null.
      * @return The field set on the union.
+     * @throws IllegalStateException If no field is set.
      */
+    @Nonnull
     Field unionField();
 }

@@ -325,8 +325,8 @@ public class BinaryFormatUtils {
 
         int len = 0;
         if (message instanceof PUnion) {
-            PField field = ((PUnion) message).unionField();
-            if (field != null) {
+            if (((PUnion) message).unionFieldIsSet()) {
+                PField field = ((PUnion) message).unionField();
                 len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getId());
                 len += writeFieldValue(writer,
                                        message.get(field.getId()),
