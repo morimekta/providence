@@ -72,10 +72,10 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
 
     /**
      * Files to compile. By default will select all '.thrift' files in
-     * 'src/main/providence/' and subdirectories.
+     * 'src/main/providence/' and subdirectories. Simple includes can be
+     * specified by property <code>providence.main.input</code>.
      */
-    @Parameter(alias = "files",
-               property = "providence.main.input")
+    @Parameter(alias = "inputFiles")
     protected IncludeExcludeFileSelector input;
 
     /**
@@ -84,6 +84,14 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = CLASSIFIER)
     protected String classifier = CLASSIFIER;
+
+    /**
+     * File type name to use for the artifact. By default it's 'zip', but it can
+     * be replaced depending on needs (and if the artifact should be used in other
+     * ways than included in providence building).
+     */
+    @Parameter(defaultValue = TYPE)
+    protected String type = TYPE;
 
     // --- After here are internals, components and maven-set params.
 
@@ -102,7 +110,10 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
 
     public void execute() throws MojoFailureException, MojoExecutionException {
         if (!skipAssembly) {
-            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, input, "src/main/providence/**/*.thrift", getLog());
+            String defaultInputIncludes = System.getProperties()
+                                                .getProperty("providence.main.input",
+                                                             "src/main/providence/**/*.thrift");
+            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, input, defaultInputIncludes, getLog());
             if (inputFiles.isEmpty()) {
                 getLog().info("No providence testInput, skipping assembly");
                 return;
@@ -154,7 +165,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
             }
 
             getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " files.");
-            projectHelper.attachArtifact(project, TYPE, classifier, target);
+            projectHelper.attachArtifact(project, type, classifier, target);
         }
     }
 }
