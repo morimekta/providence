@@ -75,12 +75,12 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 /**
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
+    private static final String TEST = "test";
+
     // -----------    PARSER OPTIONS    ----------- //
 
     /**
@@ -163,13 +163,21 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean public_constructors;
 
     // ----------------------------
+    public static class ProvidenceDependency extends Dependency {
+        public ProvidenceDependency() {
+            setType(ProvidenceAssemblyMojo.TYPE);
+            setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
+        }
+    }
 
     /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
-     * type is implied here.
+     * type is implied here, but can be overridden. The thrift files from these
+     * artifacts will be available for inclusion by compiled thrift files, but
+     * will not be compiled themselves.
      */
     @Parameter
-    protected Dependency[] dependencies = new Dependency[0];
+    protected ProvidenceDependency[] dependencies = new ProvidenceDependency[0];
 
     /**
      * If true will add the generated sources to be compiled.
@@ -234,17 +242,8 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         Set<Artifact> resolvedArtifacts = new HashSet<>();
-        for (Dependency dep : project.getDependencies()) {
-            if ("provided".equalsIgnoreCase(dep.getScope())) {
-                resolveDependency(dep, includes, workingDir, resolvedArtifacts);
-            }
-        }
         for (Dependency dep : dependencies) {
-            dep.setType(ProvidenceAssemblyMojo.TYPE);
-            if (isNullOrEmpty(dep.getClassifier())) {
-                dep.setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
-            }
-            if (testCompile || !"test".equalsIgnoreCase(dep.getScope())) {
+            if (testCompile || !TEST.equalsIgnoreCase(dep.getScope())) {
                 resolveDependency(dep, includes, workingDir, resolvedArtifacts);
             }
         }
