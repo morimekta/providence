@@ -78,7 +78,8 @@ public class ProvidenceServlet extends HttpServlet {
             Serializer requestSerializer = serializerProvider.getDefault();
             if (req.getContentType() != null) {
                 try {
-                    requestSerializer = serializerProvider.getSerializer(req.getContentType());
+                    MediaType mediaType = MediaType.parse(req.getContentType());
+                    requestSerializer = serializerProvider.getSerializer(mediaType.withoutParameters().toString());
                 } catch (IllegalArgumentException e) {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown content-type: " + req.getContentType());
                     LOGGER.warn("Unknown content type in request", e);

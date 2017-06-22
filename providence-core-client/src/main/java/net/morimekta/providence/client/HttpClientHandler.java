@@ -36,6 +36,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import com.google.common.net.MediaType;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.HttpHostConnectException;
 
@@ -85,36 +86,41 @@ public class HttpClientHandler implements PServiceCallHandler {
             request.getHeaders()
                    .setAccept(requestSerializer.mediaType());
             HttpResponse response = request.execute();
-
-            Serializer responseSerializer = requestSerializer;
-            if (response.getContentType() != null) {
-                try {
-                    responseSerializer = serializerProvider.getSerializer(response.getContentType());
-                } catch (IllegalArgumentException e) {
-                    throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
-                                                    PApplicationExceptionType.INVALID_PROTOCOL)
-                            .initCause(e);
+            try {
+                Serializer responseSerializer = requestSerializer;
+                if (response.getContentType() != null) {
+                    try {
+                        MediaType mediaType = MediaType.parse(response.getContentType());
+                        responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters().toString());
+                    } catch (IllegalArgumentException e) {
+                        throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
+                                                        PApplicationExceptionType.INVALID_PROTOCOL).initCause(e);
+                    }
                 }
+
+                PServiceCall<Response, ResponseField> reply = null;
+                if (call.getType() == PServiceCallType.CALL) {
+                    // non 200 responses should have triggered a HttpResponseException,
+                    // so this is safe.
+                    reply = responseSerializer.deserialize(response.getContent(), service);
+
+                    if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                        throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                        PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                    }
+                    if (reply.getSequence() != call.getSequence()) {
+                        throw new PApplicationException(
+                                "Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                                PApplicationExceptionType.BAD_SEQUENCE_ID);
+                    }
+                }
+
+                return reply;
+            } finally {
+                // Ignore whatever is left of the response when returning, in
+                // case we did'nt read the whole response.
+                response.ignore();
             }
-
-            PServiceCall<Response, ResponseField> reply = null;
-            if (call.getType() == PServiceCallType.CALL) {
-                // non 200 responses should have triggered a HttpResponseException,
-                // so this is safe.
-                reply = responseSerializer.deserialize(response.getContent(), service);
-
-                if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
-                    throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
-                                                    PApplicationExceptionType.INVALID_MESSAGE_TYPE);
-                }
-                if (reply.getSequence() != call.getSequence()) {
-                    throw new PApplicationException(
-                            "Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
-                            PApplicationExceptionType.BAD_SEQUENCE_ID);
-                }
-            }
-
-            return reply;
         } catch (HttpHostConnectException e) {
             throw e;
         } catch (ConnectException e) {
