@@ -31,42 +31,42 @@ import static net.morimekta.providence.serializer.Serializer.DEFAULT_STRICT;
  */
 public class ThriftSerializerProvider extends DefaultSerializerProvider {
     /**
-     * Get the thrift serializer provider.
+     * Create a thrift serializer provider.
      */
     public ThriftSerializerProvider() {
         this(DEFAULT_STRICT);
     }
 
     /**
-     * Get the thrift serializer provider.
+     * Create a thrift serializer provider.
      *
      * @param strict If the serializer should read strictly.
      */
     public ThriftSerializerProvider(boolean strict) {
-        this(BinarySerializer.MIME_TYPE, strict);
+        this(BinarySerializer.MEDIA_TYPE, strict);
     }
 
     /**
-     * Get the thrift serializer provider.
+     * Create a thrift serializer provider.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media type.
      */
-    public ThriftSerializerProvider(String defaultContentType) {
-        this(defaultContentType, false);
+    public ThriftSerializerProvider(String defaultMediaType) {
+        this(defaultMediaType, false);
     }
 
     /**
-     * Get the thrift serializer provider.
+     * Create a thrift serializer provider.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media type.
      * @param strict If the serializer should read strictly.
      */
-    public ThriftSerializerProvider(String defaultContentType, boolean strict) {
-        super(defaultContentType, strict);
+    public ThriftSerializerProvider(String defaultMediaType, boolean strict) {
+        super(defaultMediaType, strict);
 
         // Just add the thrift-only serializers.
-        register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);
-        register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
-        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
+        register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MEDIA_TYPE);
+        register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MEDIA_TYPE);
+        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MEDIA_TYPE);
     }
 }

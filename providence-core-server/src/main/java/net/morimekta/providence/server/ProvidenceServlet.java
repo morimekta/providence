@@ -119,7 +119,7 @@ public class ProvidenceServlet extends HttpServlet {
             new DefaultProcessorHandler(processor).process(reader, writer);
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType(responseSerializer.mimeType());
+            resp.setContentType(responseSerializer.mediaType());
             resp.setContentLength(baos.size());
             resp.getOutputStream().write(baos.toByteArray());
         } catch (Exception e) {

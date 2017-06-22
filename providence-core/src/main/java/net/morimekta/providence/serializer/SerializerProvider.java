@@ -23,11 +23,11 @@ package net.morimekta.providence.serializer;
 import javax.annotation.Nonnull;
 
 /**
- * Provider of serializers based on a string mime-type.
+ * Provider of serializers based on a string media type.
  */
 public interface SerializerProvider {
     /**
-     * Get serializer for the given mime-type
+     * Get serializer for the given media type
      *
      * @param mediaType The media-type to get serializer for.
      * @return The serializer, or null if not found.
@@ -37,7 +37,7 @@ public interface SerializerProvider {
     Serializer getSerializer(String mediaType);
 
     /**
-     * @return The default serializer.
+     * @return The default serializer based on media type.
      */
     @Nonnull
     Serializer getDefault();

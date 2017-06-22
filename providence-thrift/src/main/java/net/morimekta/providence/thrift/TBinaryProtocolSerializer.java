@@ -29,8 +29,8 @@ import org.apache.thrift.protocol.TBinaryProtocol;
  * @since 24.10.15.
  */
 public class TBinaryProtocolSerializer extends TProtocolSerializer {
-    public static final String MIME_TYPE = BinarySerializer.MIME_TYPE;
-    public static final String ALT_MIME_TYPE = BinarySerializer.ALT_MIME_TYPE;
+    public static final String MEDIA_TYPE     = BinarySerializer.MEDIA_TYPE;
+    public static final String ALT_MEDIA_TYPE = BinarySerializer.ALT_MEDIA_TYPE;
 
     public TBinaryProtocolSerializer() {
         this(DEFAULT_STRICT);
@@ -42,6 +42,6 @@ public class TBinaryProtocolSerializer extends TProtocolSerializer {
 
     public TBinaryProtocolSerializer(boolean readStrict, boolean versioned) {
         super(readStrict, new TBinaryProtocol.Factory(readStrict && versioned, versioned),
-              true, MIME_TYPE);
+              true, MEDIA_TYPE);
     }
 }

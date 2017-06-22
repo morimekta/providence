@@ -20,8 +20,8 @@ import java.io.IOException;
  * Test service implementation for dropwizard testing.
  */
 @Path("/calculator")
-@Consumes({JsonSerializer.MIME_TYPE, BinarySerializer.MIME_TYPE})
-@Produces({JsonSerializer.MIME_TYPE, BinarySerializer.MIME_TYPE})
+@Consumes({JsonSerializer.MEDIA_TYPE, BinarySerializer.MEDIA_TYPE})
+@Produces({JsonSerializer.MEDIA_TYPE, BinarySerializer.MEDIA_TYPE})
 public class TestCalculatorResource {
     Calculator.Iface impl;
 

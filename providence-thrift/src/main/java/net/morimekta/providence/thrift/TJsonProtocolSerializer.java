@@ -27,7 +27,7 @@ import org.apache.thrift.protocol.TJSONProtocol;
  * @since 24.10.15.
  */
 public class TJsonProtocolSerializer extends TProtocolSerializer {
-    public static final String MIME_TYPE = "application/vnd.apache.thrift.json";
+    public static final String MEDIA_TYPE = "application/vnd.apache.thrift.json";
 
     public TJsonProtocolSerializer() {
         this(DEFAULT_STRICT);
@@ -35,6 +35,6 @@ public class TJsonProtocolSerializer extends TProtocolSerializer {
 
     public TJsonProtocolSerializer(boolean readStrict) {
         super(readStrict, new TJSONProtocol.Factory(),
-              false, MIME_TYPE);
+              false, MEDIA_TYPE);
     }
 }

@@ -106,7 +106,7 @@ The available serializers are as follows:
 
 Often when using serializers a system may need to be able to select a fitting
 serializer for the current task. This is done with the `SerializerProvider`
-interface, which simply let's a service get a serializer based on a MIME
+interface, which simply let's a service get a serializer based on a media
 type string.
 
 ### A Note on Strictness

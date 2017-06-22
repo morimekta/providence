@@ -76,14 +76,14 @@ public class HttpClientHandler implements PServiceCallHandler {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         requestSerializer.serialize(baos, call);
 
-        ByteArrayContent content = new ByteArrayContent(requestSerializer.mimeType(), baos.toByteArray());
+        ByteArrayContent content = new ByteArrayContent(requestSerializer.mediaType(), baos.toByteArray());
 
         @Nonnull
         GenericUrl url = urlSupplier.get();
         try {
             HttpRequest request = factory.buildPostRequest(url, content);
             request.getHeaders()
-                   .setAccept(requestSerializer.mimeType());
+                   .setAccept(requestSerializer.mediaType());
             HttpResponse response = request.execute();
 
             Serializer responseSerializer = requestSerializer;

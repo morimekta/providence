@@ -49,8 +49,8 @@ import static net.morimekta.providence.serializer.binary.BinaryFormatUtils.write
  * spec.
  */
 public class BinarySerializer extends Serializer {
-    public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
-    public static final String ALT_MIME_TYPE = "application/x-thrift";
+    public static final String MEDIA_TYPE     = "application/vnd.apache.thrift.binary";
+    public static final String ALT_MEDIA_TYPE = "application/x-thrift";
 
     private static final int VERSION_MASK = 0xffff0000;
     private static final int VERSION_1    = 0x80010000;
@@ -95,8 +95,8 @@ public class BinarySerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return MIME_TYPE;
+    public String mediaType() {
+        return MEDIA_TYPE;
     }
 
     @Override

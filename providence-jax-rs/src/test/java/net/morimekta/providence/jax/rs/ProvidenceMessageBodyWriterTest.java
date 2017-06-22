@@ -25,14 +25,14 @@ public class ProvidenceMessageBodyWriterTest {
         Annotation[] annotations = new Annotation[0];
 
         // This should work.
-        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(JsonSerializer.MIME_TYPE)));
-        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(JsonSerializer.JSON_MIME_TYPE + "; encoding=utf-8")));
-        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(BinarySerializer.MIME_TYPE)));
-        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(BinarySerializer.ALT_MIME_TYPE)));
+        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(JsonSerializer.MEDIA_TYPE)));
+        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(JsonSerializer.JSON_MEDIA_TYPE + "; encoding=utf-8")));
+        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(BinarySerializer.MEDIA_TYPE)));
+        assertTrue(reader.isWriteable(Operand.class, null, annotations, MediaType.valueOf(BinarySerializer.ALT_MEDIA_TYPE)));
 
         // Wrong class, correct media type.
-        assertFalse(reader.isWriteable(PMap.class, null, annotations, MediaType.valueOf(BinarySerializer.MIME_TYPE)));
-        assertFalse(reader.isWriteable(String.class, null, annotations, MediaType.valueOf(BinarySerializer.ALT_MIME_TYPE)));
+        assertFalse(reader.isWriteable(PMap.class, null, annotations, MediaType.valueOf(BinarySerializer.MEDIA_TYPE)));
+        assertFalse(reader.isWriteable(String.class, null, annotations, MediaType.valueOf(BinarySerializer.ALT_MEDIA_TYPE)));
 
         // Correct class, wrong media type.
         assertFalse(reader.isWriteable(Operand.class, null, annotations, MediaType.WILDCARD_TYPE));

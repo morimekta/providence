@@ -71,7 +71,7 @@ import java.util.Set;
  * protocols.
  */
 public class TTupleProtocolSerializer extends Serializer {
-    public static final String MIME_TYPE = "application/vnd.apache.thrift.tuple";
+    public static final String MEDIA_TYPE = "application/vnd.apache.thrift.tuple";
 
     private final boolean          strict;
     private final TProtocolFactory protocolFactory;
@@ -195,8 +195,8 @@ public class TTupleProtocolSerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return MIME_TYPE;
+    public String mediaType() {
+        return MEDIA_TYPE;
     }
 
     private void writeMessage(PMessage<?,?> message, TTupleProtocol protocol) throws TException, SerializerException {

@@ -31,26 +31,26 @@ public class DefaultSerialzerProviderTest {
     @Test
     public void testDefault() {
         assertThat(new DefaultSerializerProvider().getDefault(), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider(BinarySerializer.MIME_TYPE).getDefault(), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider(BinarySerializer.ALT_MIME_TYPE).getDefault(), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getDefault(), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.JSON_MIME_TYPE).getDefault(), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider(FastBinarySerializer.MIME_TYPE).getDefault(), is(instanceOf(FastBinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(BinarySerializer.MEDIA_TYPE).getDefault(), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(BinarySerializer.ALT_MEDIA_TYPE).getDefault(), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getDefault(), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.JSON_MEDIA_TYPE).getDefault(), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider(FastBinarySerializer.MEDIA_TYPE).getDefault(), is(instanceOf(FastBinarySerializer.class)));
     }
 
     @Test
     public void testGetSerializer() {
-        assertThat(new DefaultSerializerProvider().getSerializer(BinarySerializer.MIME_TYPE), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider().getSerializer(BinarySerializer.ALT_MIME_TYPE), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider().getSerializer(JsonSerializer.MIME_TYPE), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider().getSerializer(JsonSerializer.JSON_MIME_TYPE), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider().getSerializer(FastBinarySerializer.MIME_TYPE), is(instanceOf(FastBinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider().getSerializer(BinarySerializer.MEDIA_TYPE), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider().getSerializer(BinarySerializer.ALT_MEDIA_TYPE), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider().getSerializer(JsonSerializer.MEDIA_TYPE), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider().getSerializer(JsonSerializer.JSON_MEDIA_TYPE), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider().getSerializer(FastBinarySerializer.MEDIA_TYPE), is(instanceOf(FastBinarySerializer.class)));
 
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getSerializer(BinarySerializer.MIME_TYPE), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getSerializer(BinarySerializer.ALT_MIME_TYPE), is(instanceOf(BinarySerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getSerializer(JsonSerializer.MIME_TYPE), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getSerializer(JsonSerializer.JSON_MIME_TYPE), is(instanceOf(JsonSerializer.class)));
-        assertThat(new DefaultSerializerProvider(JsonSerializer.MIME_TYPE).getSerializer(FastBinarySerializer.MIME_TYPE), is(instanceOf(FastBinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getSerializer(BinarySerializer.MEDIA_TYPE), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getSerializer(BinarySerializer.ALT_MEDIA_TYPE), is(instanceOf(BinarySerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getSerializer(JsonSerializer.MEDIA_TYPE), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getSerializer(JsonSerializer.JSON_MEDIA_TYPE), is(instanceOf(JsonSerializer.class)));
+        assertThat(new DefaultSerializerProvider(JsonSerializer.MEDIA_TYPE).getSerializer(FastBinarySerializer.MEDIA_TYPE), is(instanceOf(FastBinarySerializer.class)));
     }
 
     @Test

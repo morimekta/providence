@@ -56,7 +56,7 @@ public class JsonSerializerTest {
     @Test
     public void testProperties() {
         assertThat(compact.binaryProtocol(), is(false));
-        assertThat(pretty.mimeType(), is(JsonSerializer.MIME_TYPE));
+        assertThat(pretty.mediaType(), is(JsonSerializer.MEDIA_TYPE));
     }
 
     @Test

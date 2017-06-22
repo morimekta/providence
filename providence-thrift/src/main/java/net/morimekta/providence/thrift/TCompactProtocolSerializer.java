@@ -27,7 +27,7 @@ import org.apache.thrift.protocol.TCompactProtocol;
  * @since 24.10.15.
  */
 public class TCompactProtocolSerializer extends TProtocolSerializer {
-    public static final String MIME_TYPE = "application/vnd.apache.thrift.compact";
+    public static final String MEDIA_TYPE = "application/vnd.apache.thrift.compact";
 
     public TCompactProtocolSerializer() {
         this(DEFAULT_STRICT);
@@ -35,6 +35,6 @@ public class TCompactProtocolSerializer extends TProtocolSerializer {
 
     public TCompactProtocolSerializer(boolean readStrict) {
         super(readStrict, new TCompactProtocol.Factory(),
-              true, MIME_TYPE);
+              true, MEDIA_TYPE);
     }
 }

@@ -31,11 +31,11 @@ import javax.ws.rs.Consumes;
  * Default message body reader for standard providence serializers.
  */
 @Consumes({
-                  BinarySerializer.MIME_TYPE,
-                  BinarySerializer.ALT_MIME_TYPE,
-                  FastBinarySerializer.MIME_TYPE,
-                  JsonSerializer.MIME_TYPE,
-                  JsonSerializer.JSON_MIME_TYPE
+                  BinarySerializer.MEDIA_TYPE,
+                  BinarySerializer.ALT_MEDIA_TYPE,
+                  FastBinarySerializer.MEDIA_TYPE,
+                  JsonSerializer.MEDIA_TYPE,
+                  JsonSerializer.JSON_MEDIA_TYPE
           })
 public class DefaultProvidenceMessageBodyReader extends ProvidenceMessageBodyReader {
     public DefaultProvidenceMessageBodyReader() {

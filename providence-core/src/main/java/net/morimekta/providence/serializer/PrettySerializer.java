@@ -63,7 +63,7 @@ import java.util.Map;
  * @since 25.08.15
  */
 public class PrettySerializer extends Serializer {
-    public final static String MIME_TYPE = "text/plain";
+    public final static String MEDIA_TYPE = "text/plain";
 
     private final static String INDENT   = "  ";
     private final static String SPACE    = " ";
@@ -537,8 +537,8 @@ public class PrettySerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return MIME_TYPE;
+    public String mediaType() {
+        return MEDIA_TYPE;
     }
 
     private void appendMessage(IndentedPrintWriter builder, PMessage<?,?> message, boolean enclose) {

@@ -79,14 +79,14 @@ class TProtocolSerializer extends Serializer {
     private final TProtocolFactory protocolFactory;
     private final boolean          readStrict;
     private final boolean          binary;
-    private final String           mimeType;
+    private final String           mediaType;
 
     public TProtocolSerializer(boolean readStrict, TProtocolFactory protocolFactory,
-                               boolean binary, String mimeType) {
+                               boolean binary, String mediaType) {
         this.readStrict = readStrict;
         this.protocolFactory = protocolFactory;
         this.binary = binary;
-        this.mimeType = mimeType;
+        this.mediaType = mediaType;
     }
 
     @Override
@@ -96,8 +96,8 @@ class TProtocolSerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return mimeType;
+    public String mediaType() {
+        return mediaType;
     }
 
     @Override

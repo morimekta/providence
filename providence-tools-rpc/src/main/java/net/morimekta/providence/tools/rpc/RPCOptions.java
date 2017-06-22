@@ -73,8 +73,6 @@ import java.util.stream.Collectors;
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.i32;
 import static net.morimekta.console.util.Parser.oneOf;
-import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
-import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
  * Options used by the providence converter.
@@ -285,7 +283,7 @@ public class RPCOptions extends CommonOptions {
 
         HttpTransport transport = Utils.createTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs, connect_timeout, read_timeout));
-        SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mimeType());
+        SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mediaType());
         return new HttpClientHandler(() -> url, factory, serializerProvider);
     }
 }

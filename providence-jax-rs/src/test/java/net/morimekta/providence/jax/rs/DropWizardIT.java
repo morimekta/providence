@@ -63,16 +63,16 @@ public class DropWizardIT {
                                   .register(DefaultProvidenceMessageBodyReader.class)
                                   .request()
                                   // note: we cannot use "application/json" as jackson will be chosen as serializer and make the content fail...
-                                  .accept(JsonSerializer.MIME_TYPE)
+                                  .accept(JsonSerializer.MEDIA_TYPE)
                                   .post(Entity.entity(new Operation(Operator.ADD,
                                                                     list(withNumber(52d),
                                                                          withImaginary(new Imaginary(1d, -1d)),
                                                                          withNumber(15d))),
                                                       // same problem as with accept.
-                                                      JsonSerializer.MIME_TYPE));
+                                                      JsonSerializer.MEDIA_TYPE));
 
         assertThat(response.getStatus(), is(equalTo(200)));
-        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MIME_TYPE)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MEDIA_TYPE)));
         Operand op = response.readEntity(Operand.class);
 
         assertThat(debugString(op), is(equalTo(
@@ -90,15 +90,15 @@ public class DropWizardIT {
                                   .register(DefaultProvidenceMessageBodyWriter.class)
                                   .register(DefaultProvidenceMessageBodyReader.class)
                                   .request()
-                                  .accept(BinarySerializer.MIME_TYPE)
+                                  .accept(BinarySerializer.MEDIA_TYPE)
                                   .post(Entity.entity(new Operation(Operator.ADD,
                                                                     list(withNumber(52d),
                                                                          withImaginary(new Imaginary(1d, -1d)),
                                                                          withNumber(15d))),
-                                                      BinarySerializer.MIME_TYPE));
+                                                      BinarySerializer.MEDIA_TYPE));
 
         assertThat(response.getStatus(), is(equalTo(200)));
-        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(BinarySerializer.MIME_TYPE)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(BinarySerializer.MEDIA_TYPE)));
         Operand op = response.readEntity(Operand.class);
 
         assertThat(debugString(op), is(equalTo(
@@ -117,16 +117,16 @@ public class DropWizardIT {
                                   .register(DefaultProvidenceMessageBodyReader.class)
                                   .request()
                                   // note: we cannot use "application/json" as jackson will be chosen as serializer and make the content fail...
-                                  .accept(JsonSerializer.MIME_TYPE)
+                                  .accept(JsonSerializer.MEDIA_TYPE)
                                   .post(Entity.entity(new Operation(Operator.MULTIPLY,
                                                                     list(withNumber(52d),
                                                                          withImaginary(new Imaginary(1d, -1d)),
                                                                          withNumber(15d))),
                                                       // same problem as with accept.
-                                                      JsonSerializer.MIME_TYPE));
+                                                      JsonSerializer.MEDIA_TYPE));
 
         assertThat(response.getStatus(), is(equalTo(400)));
-        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MIME_TYPE)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MEDIA_TYPE)));
         CalculateException ex = response.readEntity(CalculateException.class);
 
         assertEquals(

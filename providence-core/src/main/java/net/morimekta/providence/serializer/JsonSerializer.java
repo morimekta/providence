@@ -97,8 +97,8 @@ import static java.util.Objects.requireNonNull;
  * </pre>
  */
 public class JsonSerializer extends Serializer {
-    public static final String MIME_TYPE = "application/vnd.morimekta.providence.json";
-    public static final String JSON_MIME_TYPE = "application/json";
+    public static final String MEDIA_TYPE      = "application/vnd.morimekta.providence.json";
+    public static final String JSON_MEDIA_TYPE = "application/json";
 
     public JsonSerializer() {
         this(DEFAULT_STRICT, false, IdType.ID, IdType.ID);
@@ -189,8 +189,8 @@ public class JsonSerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return MIME_TYPE;
+    public String mediaType() {
+        return MEDIA_TYPE;
     }
 
     // ------------------- PRIVATE ONLY ------------------

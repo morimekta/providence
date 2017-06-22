@@ -86,7 +86,7 @@ public class BinarySerializerTest {
     @Test
     public void testProperties() {
         assertThat(lenient.binaryProtocol(), is(true));
-        assertThat(strict.mimeType(), is(BinarySerializer.MIME_TYPE));
+        assertThat(strict.mediaType(), is(BinarySerializer.MEDIA_TYPE));
     }
 
     @Test

@@ -40,29 +40,29 @@ public class DefaultSerializerProvider extends BaseSerializerProvider {
      * @param strict If the serializer should read strictly.
      */
     public DefaultSerializerProvider(boolean strict) {
-        this(BinarySerializer.MIME_TYPE, strict);
+        this(BinarySerializer.MEDIA_TYPE, strict);
     }
 
     /**
-     * Get the default serializer provider.
+     * Get provider with the given default media type.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media-type.
      */
-    public DefaultSerializerProvider(String defaultContentType) {
-        this(defaultContentType, DEFAULT_STRICT);
+    public DefaultSerializerProvider(String defaultMediaType) {
+        this(defaultMediaType, DEFAULT_STRICT);
     }
 
     /**
-     * Get provider with the given default content type.
+     * Get provider with the given default media type and strict mode.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media-type.
      * @param strict If the serializer should read strictly.
      */
-    public DefaultSerializerProvider(String defaultContentType, boolean strict) {
-        super(defaultContentType);
+    public DefaultSerializerProvider(String defaultMediaType, boolean strict) {
+        super(defaultMediaType);
 
-        register(new BinarySerializer(strict), BinarySerializer.MIME_TYPE, BinarySerializer.ALT_MIME_TYPE);
-        register(new FastBinarySerializer(strict), FastBinarySerializer.MIME_TYPE);
-        register(new JsonSerializer(strict), JsonSerializer.MIME_TYPE, JsonSerializer.JSON_MIME_TYPE);
+        register(new BinarySerializer(strict), BinarySerializer.MEDIA_TYPE, BinarySerializer.ALT_MEDIA_TYPE);
+        register(new FastBinarySerializer(strict), FastBinarySerializer.MEDIA_TYPE);
+        register(new JsonSerializer(strict), JsonSerializer.MEDIA_TYPE, JsonSerializer.JSON_MEDIA_TYPE);
     }
 }

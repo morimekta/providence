@@ -62,7 +62,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * See data definition file <code>docs/fast-binary.md</code> for format spec.
  */
 public class FastBinarySerializer extends Serializer {
-    public static final String MIME_TYPE = "application/vnd.morimekta.providence.binary";
+    public static final String MEDIA_TYPE = "application/vnd.morimekta.providence.binary";
 
     private final boolean readStrict;
 
@@ -180,8 +180,8 @@ public class FastBinarySerializer extends Serializer {
 
     @Nonnull
     @Override
-    public String mimeType() {
-        return MIME_TYPE;
+    public String mediaType() {
+        return MEDIA_TYPE;
     }
 
     // --- MESSAGE ---

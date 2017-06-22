@@ -41,34 +41,34 @@ public class ThriftOnlySerializerProvider extends BaseSerializerProvider {
      * @param strict If the serializer should read strictly.
      */
     public ThriftOnlySerializerProvider(boolean strict) {
-        this(BinarySerializer.MIME_TYPE, strict);
+        this(BinarySerializer.MEDIA_TYPE, strict);
     }
 
     /**
      * Get the thrift-only serializer provider.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media type.
      */
-    public ThriftOnlySerializerProvider(String defaultContentType) {
-        this(defaultContentType, false);
+    public ThriftOnlySerializerProvider(String defaultMediaType) {
+        this(defaultMediaType, false);
     }
 
     /**
      * Get the thrift-only serializer provider.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media type.
      * @param strict If the serializer should read strictly.
      */
-    public ThriftOnlySerializerProvider(String defaultContentType, boolean strict) {
-        super(defaultContentType);
+    public ThriftOnlySerializerProvider(String defaultMediaType, boolean strict) {
+        super(defaultMediaType);
 
         // The BinarySerializer is identical to the TBinaryProtocolSerializer,
         // except that it is "native providence".
-        register(new BinarySerializer(strict), BinarySerializer.MIME_TYPE, TBinaryProtocolSerializer.ALT_MIME_TYPE);
-        register(new TCompactProtocolSerializer(strict), TCompactProtocolSerializer.MIME_TYPE);
-        register(new TJsonProtocolSerializer(strict), TJsonProtocolSerializer.MIME_TYPE);
-        register(new TTupleProtocolSerializer(strict), TTupleProtocolSerializer.MIME_TYPE);
+        register(new BinarySerializer(strict), BinarySerializer.MEDIA_TYPE, TBinaryProtocolSerializer.ALT_MEDIA_TYPE);
+        register(new TCompactProtocolSerializer(strict), TCompactProtocolSerializer.MEDIA_TYPE);
+        register(new TJsonProtocolSerializer(strict), TJsonProtocolSerializer.MEDIA_TYPE);
+        register(new TTupleProtocolSerializer(strict), TTupleProtocolSerializer.MEDIA_TYPE);
         // Even though it's a write-only protocol.
-        register(new TSimpleJsonProtocolSerializer(), TSimpleJsonProtocolSerializer.MIME_TYPE);
+        register(new TSimpleJsonProtocolSerializer(), TSimpleJsonProtocolSerializer.MEDIA_TYPE);
     }
 }

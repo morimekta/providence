@@ -31,11 +31,11 @@ import javax.ws.rs.Produces;
  * Default message body writer for standard providence serializers.
  */
 @Produces({
-                  BinarySerializer.MIME_TYPE,
-                  BinarySerializer.ALT_MIME_TYPE,
-                  FastBinarySerializer.MIME_TYPE,
-                  JsonSerializer.MIME_TYPE,
-                  JsonSerializer.MIME_TYPE
+                  BinarySerializer.MEDIA_TYPE,
+                  BinarySerializer.ALT_MEDIA_TYPE,
+                  FastBinarySerializer.MEDIA_TYPE,
+                  JsonSerializer.MEDIA_TYPE,
+                  JsonSerializer.MEDIA_TYPE
           })
 public class DefaultProvidenceMessageBodyWriter extends ProvidenceMessageBodyWriter {
     public DefaultProvidenceMessageBodyWriter() {

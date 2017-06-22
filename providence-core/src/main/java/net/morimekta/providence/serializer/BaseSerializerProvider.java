@@ -29,15 +29,15 @@ import java.util.Map;
  */
 public abstract class BaseSerializerProvider implements SerializerProvider {
     private final Map<String, Serializer> serializerMap;
-    private final String defaultContentType;
+    private final String                  defaultMediaType;
 
     /**
-     * Get provider with the given default content type.
+     * Get provider with the given default media type.
      *
-     * @param defaultContentType The default mime-type.
+     * @param defaultMediaType The default media-type.
      */
-    public BaseSerializerProvider(String defaultContentType) {
-        this.defaultContentType = defaultContentType;
+    public BaseSerializerProvider(String defaultMediaType) {
+        this.defaultMediaType = defaultMediaType;
         this.serializerMap = new HashMap<>();
     }
 
@@ -54,17 +54,18 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
     @Override
     @Nonnull
     public Serializer getDefault() {
-        return getSerializer(defaultContentType);
+        return getSerializer(defaultMediaType);
     }
 
     /**
-     * Register the serializer with a given set of mime-types.
+     * Register the serializer with a given set of media types.
+     *
      * @param serializer The serializer to register.
      * @param mediaTypes The media types to register it for.
      */
     protected void register(Serializer serializer, String... mediaTypes) {
-        for (String mimeType : mediaTypes) {
-            this.serializerMap.put(mimeType, serializer);
+        for (String mediaType : mediaTypes) {
+            this.serializerMap.put(mediaType, serializer);
         }
     }
 }
