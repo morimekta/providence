@@ -25,6 +25,8 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -47,6 +49,7 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
         this.provider = provider;
     }
 
+    @Nullable
     private PMessageDescriptor getDescriptor(Class<?> type) {
         try {
             if (!PMessage.class.isAssignableFrom(type)) {
@@ -57,14 +60,24 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
             if (desc instanceof PMessageDescriptor) {
                 return (PMessageDescriptor) desc;
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            // e.printStackTrace();
+        } catch (NoSuchFieldException | IllegalAccessException ignore) {
+            // ignore.printStackTrace();
         }
         return null;
     }
 
+    @Nonnull
+    private PMessageDescriptor getDescriptorOrFail(Class<?> type) {
+        PMessageDescriptor descriptor = getDescriptor(type);
+        if (descriptor == null) throw new NotSupportedException("No providence descriptor for class " + type.getName());
+        return descriptor;
+    }
+
     @Override
-    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public boolean isReadable(Class<?> type,
+                              Type genericType,
+                              Annotation[] annotations,
+                              MediaType mediaType) {
         if (type == null || getDescriptor(type) == null) {
             return false;
         }
@@ -79,19 +92,17 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
 
     @Override
     public PMessage readFrom(Class<PMessage> type,
-                      Type genericType,
-                      Annotation[] annotations,
-                      MediaType mediaType,
-                      MultivaluedMap<String, String> httpHeaders,
-                      InputStream entityStream) throws IOException, WebApplicationException {
+                             Type genericType,
+                             Annotation[] annotations,
+                             MediaType mediaType,
+                             MultivaluedMap<String, String> httpHeaders,
+                             InputStream entityStream) throws IOException, WebApplicationException {
         String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
 
         try {
-            PMessageDescriptor descriptor = getDescriptor(type);
+            PMessageDescriptor<?, ?> descriptor = getDescriptorOrFail(type);
             return provider.getSerializer(contentType)
                            .deserialize(entityStream, descriptor);
-        } catch (NullPointerException e) {
-            throw new NotSupportedException("Unknown media type: " + mediaType, e);
         } catch (SerializerException e) {
             throw new ProcessingException("Unable to deserialize entity", e);
         }
