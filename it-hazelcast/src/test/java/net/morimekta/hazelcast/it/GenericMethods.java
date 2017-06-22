@@ -1,7 +1,7 @@
 package net.morimekta.hazelcast.it;
 
 import com.hazelcast.config.Config;
-import org.jfairy.Fairy;
+import io.codearte.jfairy.Fairy;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;

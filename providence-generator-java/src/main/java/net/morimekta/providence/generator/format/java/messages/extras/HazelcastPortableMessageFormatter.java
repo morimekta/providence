@@ -274,8 +274,8 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 BigEndianBinaryWriter.class.getName(),
                                 baosTemp)
                       .begin()
-                      .formatln("%s.writeInt(%s.build().size());", bebwTemp, field.member())
-                      .formatln("for( %s.Entry<%s,%s> %s : %s.build().entrySet() ) {",
+                      .formatln("%s.writeInt(%s.size());", bebwTemp, field.member())
+                      .formatln("for( %s.Entry<%s,%s> %s : %s.entrySet() ) {",
                                 Map.class.getName(),
                                 helper.getFieldType(pMap.keyDescriptor()),
                                 helper.getFieldType(pMap.itemDescriptor()),
@@ -302,7 +302,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                     BigEndianBinaryWriter.class.getName(),
                                     baosTemp)
                           .begin();
-                    writePortableBinary(field, bebwTemp, field.member() + ".build()", field.toPList());
+                    writePortableBinary(field, bebwTemp, field.member(), field.toPList());
                     writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());",
                                     PORTABLE_WRITER,
                                     field.name(),
@@ -327,7 +327,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                     BigEndianBinaryWriter.class.getName(),
                                     baosTemp)
                           .begin();
-                    writePortableBinary(field, bebwTemp, field.member() + ".build()", field.toPSet());
+                    writePortableBinary(field, bebwTemp, field.member(), field.toPSet());
                     writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());",
                                     PORTABLE_WRITER,
                                     field.name(),

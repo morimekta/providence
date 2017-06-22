@@ -5,7 +5,7 @@ import net.morimekta.test.hazelcast.v1.Value;
 import net.morimekta.util.Binary;
 
 import com.google.common.primitives.Bytes;
-import org.jfairy.Fairy;
+import io.codearte.jfairy.Fairy;
 
 import java.util.Arrays;
 import java.util.HashMap;
