@@ -24,12 +24,12 @@ package net.morimekta.providence.tools.converter;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
@@ -73,22 +73,19 @@ public class Convert {
 
                 cli.validate();
 
+                AtomicInteger num = new AtomicInteger(0);
                 options.getInput()
+                       .peek(m -> num.incrementAndGet())
                        .collect(options.getOutput());
+                if (num.get() == 0) {
+                    throw new IOException("No data");
+                }
                 return;
             } catch (ArgumentException e) {
                 System.err.println(e.getMessage());
                 System.out.println("Usage: " + cli.getSingleLineUsage());
                 System.err.println();
                 System.err.println("Run $ pvd --help # for available options.");
-                if (options.verbose()) {
-                    System.err.println();
-                    e.printStackTrace();
-                }
-            } catch (ParseException e) {
-                System.out.flush();
-                System.err.println();
-                System.err.println(e.asString());
                 if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();

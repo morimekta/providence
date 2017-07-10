@@ -109,6 +109,39 @@ public class ConvertTest {
     }
 
     @Test
+    public void testStream_JsonToBinary_empty() throws IOException {
+        console.setInput("{\n" +
+                         "}\n");
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "json",
+                "-o", "binary",
+                "cont.Containers");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is("\0"));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testStream_BinaryToJson_empty() throws IOException {
+        console.setInput('\0');
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "binary",
+                "-o", "json",
+                "cont.Containers");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is("{}\n"));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
     public void testStream_JsonToBinary() throws IOException {
         console.setInput(getResourceAsBytes("/pretty.json"));
 

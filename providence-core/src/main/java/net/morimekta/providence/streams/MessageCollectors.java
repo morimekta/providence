@@ -129,7 +129,14 @@ public class MessageCollectors {
         }, (a, b) -> {
             a.addAndGet(b.get());
             return a;
-        }, AtomicInteger::get);
+        }, i -> {
+            try {
+                out.flush();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return i.getAndSet(0);
+        });
     }
 
     private static int maybeWriteBytes(OutputStream out, byte[] bytes) throws IOException {
