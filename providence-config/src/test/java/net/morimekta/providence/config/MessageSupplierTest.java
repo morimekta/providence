@@ -106,7 +106,7 @@ public class MessageSupplierTest {
             supplier.reload();
             fail("No exception");
         } catch (Exception e) {
-            assertThat(e.getMessage(), is("java.io.IOException: Message"));
+            assertThat(e.getMessage(), is("Message"));
             assertThat(e, is(instanceOf(UncheckedIOException.class)));
         }
 

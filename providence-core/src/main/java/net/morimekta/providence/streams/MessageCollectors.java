@@ -124,7 +124,7 @@ public class MessageCollectors {
                     }
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new UncheckedIOException(e.getMessage(), e);
             }
         }, (a, b) -> {
             a.addAndGet(b.get());
@@ -133,7 +133,7 @@ public class MessageCollectors {
             try {
                 out.flush();
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new UncheckedIOException(e.getMessage(), e);
             }
             return i.getAndSet(0);
         });

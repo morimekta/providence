@@ -78,7 +78,7 @@ public class MessageSupplier<Message extends PMessage<Message, Field>, Field ext
         try {
             instance.set(loadInternal());
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 

@@ -72,7 +72,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
         try {
             configLoader.reload(configFile);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 

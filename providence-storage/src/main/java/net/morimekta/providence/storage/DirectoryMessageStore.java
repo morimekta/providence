@@ -120,7 +120,7 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
                     cache.put(key, value);
                     keyset.add(key);
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new UncheckedIOException(e.getMessage(), e);
                 }
             });
             return out;

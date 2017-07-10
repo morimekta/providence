@@ -171,7 +171,7 @@ public class MessageSpliterator<Message extends PMessage<Message, Field>, Field 
             return serializer.deserialize(in, descriptor);
         } catch (IOException e) {
             close(e);
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         } finally {
             ++num;
         }
@@ -183,7 +183,7 @@ public class MessageSpliterator<Message extends PMessage<Message, Field>, Field 
                 closer.close();
             } catch (IOException e) {
                 if (cause == null) {
-                    throw new UncheckedIOException(e);
+                    throw new UncheckedIOException(e.getMessage(), e);
                 } else {
                     cause.addSuppressed(e);
                 }

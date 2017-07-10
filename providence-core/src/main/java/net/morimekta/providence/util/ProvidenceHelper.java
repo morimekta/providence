@@ -116,7 +116,7 @@ public class ProvidenceHelper {
             ByteArrayInputStream bais = new ByteArrayInputStream(string.getBytes(UTF_8));
             return DEBUG_STRING_SERIALIZER.deserialize(bais, descriptor);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 

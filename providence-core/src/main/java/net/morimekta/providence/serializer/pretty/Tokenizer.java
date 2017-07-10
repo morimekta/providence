@@ -534,7 +534,7 @@ public class Tokenizer extends InputStream {
             }
             return IOUtils.readString(this, "\n");
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         } finally {
             readOffset = originalReadOffset;
             lineNo = originalLineNo;

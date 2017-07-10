@@ -93,7 +93,7 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
         try {
             instance.set(loadInternal());
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 

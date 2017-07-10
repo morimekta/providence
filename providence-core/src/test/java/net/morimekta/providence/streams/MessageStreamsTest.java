@@ -202,7 +202,7 @@ public class MessageStreamsTest {
             collector.accumulator().accept(i, list.get(0));
             fail("no exception");
         } catch (UncheckedIOException e) {
-            assertThat(e.getMessage(), is("java.io.IOException: write"));
+            assertThat(e.getMessage(), is("write"));
         }
     }
 
@@ -264,7 +264,7 @@ public class MessageStreamsTest {
             spliterator.tryAdvance(consumer);
             fail("no exception");
         } catch (UncheckedIOException e) {
-            assertThat(e.getMessage(), is("java.io.IOException: read"));
+            assertThat(e.getMessage(), is("read"));
             assertThat(e.getCause(), is(notNullValue()));
             assertThat(e.getCause().getSuppressed().length, is(1));
             assertThat(e.getCause().getSuppressed()[0].getMessage(), is("close"));

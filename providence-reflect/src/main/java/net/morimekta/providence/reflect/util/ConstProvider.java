@@ -73,7 +73,7 @@ public class ConstProvider implements PValueProvider<Object> {
             try (ByteArrayInputStream in = new ByteArrayInputStream(constantString.getBytes(StandardCharsets.UTF_8))) {
                 parsedValue = parser.parse(in, type);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new UncheckedIOException(e.getMessage(), e);
             }
         }
 
