@@ -76,7 +76,6 @@ public class Compiler {
 
                             System.out.println(" - no_generated_annotation_version : Remove providence version from the <code>@Generated</code>\n" +
                                                "                         annotation for each generated class. [Default on]");
-                            System.out.println(" - legacy_enum_getters : Keep the 'forName' and 'forValue' legacy static enum getters.");
                             System.out.println(" - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
                                                "                         effect on unions.");
                             break;

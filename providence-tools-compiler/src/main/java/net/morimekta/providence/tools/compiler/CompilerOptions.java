@@ -181,9 +181,6 @@ public class CompilerOptions {
                         case "no_generated_annotation_version":
                             options.generated_annotation_version = false;
                             break;
-                        case "legacy_enum_getters":
-                            options.legacy_enum_getters = true;
-                            break;
                         case "public_constructors":
                             options.public_constructors = true;
                             break;

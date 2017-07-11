@@ -29,7 +29,6 @@ import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
 

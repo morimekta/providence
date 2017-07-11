@@ -89,7 +89,6 @@ public class CompilerFlagsTest {
                                    "                         factories.\n" +
                                    " - no_generated_annotation_version : Remove providence version from the <code>@Generated</code>\n" +
                                    "                         annotation for each generated class. [Default on]\n" +
-                                   " - legacy_enum_getters : Keep the 'forName' and 'forValue' legacy static enum getters.\n" +
                                    " - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
                                    "                         effect on unions.\n")));
         assertThat(exitCode, is(0));

@@ -93,6 +93,13 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     @Parameter(defaultValue = TYPE)
     protected String type = TYPE;
 
+    /**
+     * Print extra debug info to the maven log.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.print_debug")
+    protected boolean print_debug;
+
     // --- After here are internals, components and maven-set params.
 
     /**
@@ -113,7 +120,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
             String defaultInputIncludes = System.getProperties()
                                                 .getProperty("providence.main.input",
                                                              "src/main/providence/**/*.thrift");
-            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, input, defaultInputIncludes, getLog());
+            Set<File> inputFiles = ProvidenceInput.getInputFiles(project, input, defaultInputIncludes, print_debug, getLog());
             if (inputFiles.isEmpty()) {
                 getLog().info("No providence testInput, skipping assembly");
                 return;

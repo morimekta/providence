@@ -67,34 +67,6 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
         }
     }
 
-    public void appendStaticGetter_Legacy(CEnumDescriptor type, String simpleClass) {
-        new BlockCommentBuilder(writer)
-                .comment("Find a value based in its ID")
-                .newline()
-                .param_("id", "Id of value")
-                .return_("Value found or null")
-                .deprecated_("#findById(int)")
-                .finish();
-        writer.appendln("@Deprecated")
-              .formatln("public static %s forValue(int id) {", simpleClass)
-              .appendln("    return findById(id);")
-              .appendln('}')
-              .newline();
-
-        new BlockCommentBuilder(writer)
-                .comment("Find a value based in its name")
-                .newline()
-                .param_("name", "Name of value")
-                .return_("Value found or null")
-                .deprecated_("#findByName(String)")
-                .finish();
-        writer.appendln("@Deprecated")
-              .formatln("public static %s forName(String name) {", simpleClass)
-              .appendln("    return findByName(name);")
-              .appendln('}')
-              .newline();
-    }
-
     public void appendStaticGetter_FindBy(CEnumDescriptor type, String simpleClass) {
         new BlockCommentBuilder(writer)
                 .comment("Find a value based in its ID")
@@ -186,9 +158,6 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
     public void appendExtraProperties(CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
 
-        if (javaOptions.legacy_enum_getters) {
-            appendStaticGetter_Legacy(type, simpleClass);
-        }
         appendStaticGetter_FindBy(type, simpleClass);
         appendStaticGetter_ValueFor(type, simpleClass);
     }

@@ -27,6 +27,8 @@ import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
+import net.morimekta.providence.maven.util.UncheckedMojoExecutionException;
+import net.morimekta.providence.maven.util.UncheckedMojoFailureException;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ProgramParser;
@@ -148,19 +150,19 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean generated_annotation_version;
 
     /**
-     * Generate the legacy 'forValue' and 'forName' static enum getters.
-     */
-    @Parameter(defaultValue = "false",
-               property = "providence.gen.legacy_enum_getters")
-    protected boolean legacy_enum_getters;
-
-    /**
      * Generate public constructors with all fields as arguments for structs and
      * exceptions.
      */
     @Parameter(defaultValue = "false",
                property = "providence.gen.public_constructors")
     protected boolean public_constructors;
+
+    /**
+     * Print extra debug info to the maven log.
+     */
+    @Parameter(defaultValue = "false",
+               property = "providence.print_debug")
+    protected boolean print_debug;
 
     // ----------------------------
     public static class ProvidenceDependency extends Dependency {
@@ -217,7 +219,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                             IncludeExcludeFileSelector inputSelector,
                             String defaultInputIncludes,
                             boolean testCompile) throws MojoExecutionException, MojoFailureException {
-        Set<File> inputFiles = ProvidenceInput.getInputFiles(project, inputSelector, defaultInputIncludes, getLog());
+        Set<File> inputFiles = ProvidenceInput.getInputFiles(project, inputSelector, defaultInputIncludes, print_debug, getLog());
         if (inputFiles.isEmpty()) {
             return false;
         }
@@ -270,18 +272,20 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         LinkedList<CProgram> documents = new LinkedList<>();
 
-        inputFiles.stream()
-                  .map(file -> {
-                      try {
-                          return file.getAbsoluteFile()
-                                     .getCanonicalPath();
-                      } catch (IOException e) {
-                          e.printStackTrace();
-                          return null;
-                      }
-                  }).filter(Objects::nonNull)
-                  .sorted()
-                  .forEach(f -> getLog().info("Compiling: " + f));
+        if (print_debug) {
+            inputFiles.stream()
+                      .filter(Objects::nonNull)
+                      .map(file -> {
+                          try {
+                              return file.getAbsoluteFile().getCanonicalPath();
+                          } catch (IOException e) {
+                              e.printStackTrace();
+                              return null;
+                          }
+                      })
+                      .sorted()
+                      .forEach(f -> getLog().info("Compiling: " + f));
+        }
 
         for (File in : inputFiles) {
             try {
@@ -301,6 +305,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
         }
 
+        if (documents.isEmpty()) {
+            return false;
+        }
+
         try {
             JavaOptions javaOptions = new JavaOptions();
             javaOptions.android = android;
@@ -308,23 +316,26 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             javaOptions.rw_binary = rw_binary;
             javaOptions.hazelcast_portable = hazelcast_portable;
             javaOptions.generated_annotation_version = generated_annotation_version;
-            javaOptions.legacy_enum_getters = legacy_enum_getters;
             javaOptions.public_constructors = public_constructors;
             GeneratorOptions generatorOptions = new GeneratorOptions();
             generatorOptions.generator_program_name = "providence-maven-plugin";
             generatorOptions.program_version = project.getVersion();
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), generatorOptions, javaOptions);
-
-            for (CProgram doc : documents) {
-                try {
-                    generator.generate(doc);
-                } catch (GeneratorException e) {
-                    throw new MojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Failed to write document: " + doc.getProgramName(), e);
-                }
-            }
+            documents.parallelStream()
+                     .forEach(doc -> {
+                         try {
+                             generator.generate(doc);
+                         } catch (GeneratorException e) {
+                             throw new UncheckedMojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
+                         } catch (IOException e) {
+                             throw new UncheckedMojoExecutionException("Failed to write document: " + doc.getProgramName(), e);
+                         }
+                     });
+        } catch (UncheckedMojoFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
+        } catch (UncheckedMojoExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         } catch (GeneratorException e) {
             throw new MojoFailureException("Failed to generate file: " + e.getMessage(), e);
         }

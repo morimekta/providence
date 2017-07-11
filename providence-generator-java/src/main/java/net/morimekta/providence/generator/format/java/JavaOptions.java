@@ -51,11 +51,6 @@ public class JavaOptions {
     public boolean generated_annotation_version = true;
 
     /**
-     * Keep the 'forName' and 'forValue' legacy static enum getters.
-     */
-    public boolean legacy_enum_getters = false;
-
-    /**
      * Generate public constructors for all structs and exceptions. Have no
      * effect on unions. Can be overridden per class with the
      * <code>java.public.constructor = ""</code> annotation.

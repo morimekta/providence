@@ -29,6 +29,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 
 import java.io.File;
+import java.time.Clock;
+import java.time.Duration;
+
+import static net.morimekta.providence.maven.util.ProvidenceInput.format;
 
 /**
  * Generate providence test sources from thrift definitions.
@@ -74,11 +78,18 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
             return;
         }
 
+        long start = Clock.systemUTC().millis();
+
         String defaultInputIncludes = System.getProperties()
                                             .getProperty("providence.test.input",
                                                          "src/test/providence/**/*.thrift");
         if (executeInternal(testIncludes, testOutput, testInput, defaultInputIncludes, true)) {
             project.addTestCompileSourceRoot(testOutput.getPath());
+
+            if (print_debug) {
+                Duration duration = Duration.ofMillis(Clock.systemUTC().millis() - start);
+                getLog().info("Duration: " + format(duration));
+            }
         }
     }
 }

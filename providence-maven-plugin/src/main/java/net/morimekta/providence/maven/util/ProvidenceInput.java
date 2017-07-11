@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class ProvidenceInput {
      * @param project The maven project
      * @param inputSelector The input-exclude selector.
      * @param defaultInputInclude The default input include (if not specified).
+     * @param print_debug Print debug info to maven log.
      * @param log Maven logger instance.
      * @throws MojoExecutionException If parsing or checking input files failed.
      * @return The set of input files.
@@ -33,6 +35,7 @@ public class ProvidenceInput {
     public static Set<File> getInputFiles(@Nonnull MavenProject project,
                                           IncludeExcludeFileSelector inputSelector,
                                           @Nonnull String defaultInputInclude,
+                                          boolean print_debug,
                                           @Nonnull Log log) throws MojoExecutionException {
         try {
             TreeSet<File> inputs = new TreeSet<>();
@@ -41,19 +44,32 @@ public class ProvidenceInput {
             if (inputSelector != null) {
                 if (inputSelector.getIncludes() != null &&
                         inputSelector.getIncludes().length > 0) {
-                    log.info("Specified includes...");
+                    if (print_debug) {
+                        log.info("Specified includes:");
+                        for (String include : inputSelector.getIncludes()) {
+                            log.info("    -I " + include);
+                        }
+                    }
                     inputScanner.setIncludes(inputSelector.getIncludes());
                 } else {
-                    log.info("Default includes: " + defaultInputInclude);
+                    if (print_debug) {
+                        log.info("Default includes: " + defaultInputInclude);
+                    }
                     inputScanner.setIncludes(new String[]{defaultInputInclude});
                 }
 
                 if (inputSelector.getExcludes() != null &&
                         inputSelector.getExcludes().length > 0) {
+                    log.info("Specified excludes:");
+                    for (String exclude : inputSelector.getExcludes()) {
+                        log.info("    -E " + exclude);
+                    }
                     inputScanner.setExcludes(inputSelector.getExcludes());
                 }
             } else {
-                log.info("Default input: " + defaultInputInclude);
+                if (print_debug) {
+                    log.info("Default input: " + defaultInputInclude);
+                }
                 inputScanner.setIncludes(new String[]{defaultInputInclude});
             }
 
@@ -91,5 +107,19 @@ public class ProvidenceInput {
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    public static String format(Duration duration) {
+        long h = duration.toHours();
+        long m = duration.minusHours(h).toMinutes();
+        if (h > 0) {
+            return String.format("%d:%02d H", h, m);
+        }
+        long s = duration.minusHours(h).minusMinutes(m).getSeconds();
+        if (m > 0) {
+            return String.format("%d:%02d min", m, s);
+        }
+        long ms = duration.minusHours(h).minusMinutes(m).minusSeconds(s).toMillis();
+        return String.format("%d.%02d s", s, ms / 10);
     }
 }
