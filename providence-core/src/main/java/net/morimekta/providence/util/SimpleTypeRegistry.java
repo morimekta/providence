@@ -88,24 +88,17 @@ public class SimpleTypeRegistry extends BaseTypeRegistry {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void registerRecursively(@Nonnull PService service) {
+    public boolean register(@Nonnull PService service) {
         // Services cannot be aliased with typedefs, so no need to resolve the
         // qualified or final name.
         String declaredTypeName = service.getQualifiedName();
 
-        if (service.getExtendsService() != null) {
-            registerRecursively(service.getExtendsService());
+        if (!services.containsKey(declaredTypeName)) {
+            services.put(declaredTypeName, service);
+            knownPrograms.add(service.getProgramName());
+            return true;
         }
-
-        services.put(declaredTypeName, service);
-        knownPrograms.add(service.getProgramName());
-        // TODO(morimekta): Figure out if we need to register these too. Probably not.
-//        for (PServiceMethod method : service.getMethods()) {
-//            registerRecursively(method.getRequestType());
-//            if (method.getResponseType() != null) {
-//                registerRecursively(method.getResponseType());
-//            }
-//        }
+        return false;
     }
 
     @Override

@@ -20,10 +20,7 @@
  */
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 
 import javax.annotation.Nonnull;
@@ -48,6 +45,16 @@ public interface WritableTypeRegistry extends TypeRegistry {
     /**
      * Services are not handled as "declared types", so they need to be registered
      * separately.
+     *
+     * @param service the service to register.
+     * @return True if the service was registered and not already known.
+     */
+    @SuppressWarnings("unchecked")
+    boolean register(@Nonnull PService service);
+
+    /**
+     * Register the service recursively. E.g. if the service extends a different
+     * service, make sure to register that service too.
      *
      * @param service the service to register.
      */

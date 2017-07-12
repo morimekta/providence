@@ -30,6 +30,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 
@@ -125,13 +126,23 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
         return () -> getService(serviceName, programContext);
     }
 
-    /**
-     * Register a declared type recursively. If the type is a message, then
-     * iterate through the fields and register those types recursively.
-     *
-     * @param declaredType The descriptor for the type.
-     * @param <T> The declared java type.
-     */
+    @Override
+    public void registerRecursively(@Nonnull PService service) {
+        if (register(service)) {
+            if (service.getExtendsService() != null) {
+                registerRecursively(service.getExtendsService());
+            }
+
+            // TODO(morimekta): Figure out if we need to register these too. Probably not.
+            //        for (PServiceMethod method : service.getMethods()) {
+            //            registerRecursively(method.getRequestType());
+            //            if (method.getResponseType() != null) {
+            //                registerRecursively(method.getResponseType());
+            //            }
+            //        }
+        }
+    }
+
     @Override
     public <T> void registerRecursively(PDeclaredDescriptor<T> declaredType) {
         if (register(declaredType)) {
