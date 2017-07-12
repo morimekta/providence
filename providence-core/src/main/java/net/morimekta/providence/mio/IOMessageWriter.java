@@ -57,8 +57,10 @@ public class IOMessageWriter implements MessageWriter {
     public int separator() throws IOException {
         if (!serializer.binaryProtocol()) {
             out.write(MessageStreams.READABLE_ENTRY_SEP);
+            out.flush();
             return MessageStreams.READABLE_ENTRY_SEP.length;
         }
+        out.flush();
 
         return 0;
     }
