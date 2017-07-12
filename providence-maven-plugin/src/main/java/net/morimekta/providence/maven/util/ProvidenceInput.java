@@ -60,9 +60,11 @@ public class ProvidenceInput {
 
                 if (inputSelector.getExcludes() != null &&
                         inputSelector.getExcludes().length > 0) {
-                    log.info("Specified excludes:");
-                    for (String exclude : inputSelector.getExcludes()) {
-                        log.info("    -E " + exclude);
+                    if (print_debug) {
+                        log.info("Specified excludes:");
+                        for (String exclude : inputSelector.getExcludes()) {
+                            log.info("    -E " + exclude);
+                        }
                     }
                     inputScanner.setExcludes(inputSelector.getExcludes());
                 }
