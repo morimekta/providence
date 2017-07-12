@@ -47,6 +47,7 @@ import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.contained.CUnionDescriptor;
+import net.morimekta.providence.util.TypeRegistry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -66,39 +67,42 @@ import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameF
  * the providence generators.
  */
 public class ProgramConverter {
-    private final ProgramRegistry registry;
+    private final ProgramRegistry programRegistry;
 
     /**
      * Create a program converter that uses the given registry for type
      * references.
      *
-     * @param registry The program registry.
+     * @param programRegistry The program registry.
      */
-    public ProgramConverter(ProgramRegistry registry) {
-        this.registry = registry;
+    public ProgramConverter(ProgramRegistry programRegistry) {
+        this.programRegistry = programRegistry;
     }
 
     /**
      * Convert document model to declared document.
      *
      * @param path The program file path.
-     * @param document Document model to convert.
+     * @param path Path of the program file to convert.
+     * @param program Program model to convert.
      * @return The declared thrift document.
      */
-    public CProgram convert(String path, ProgramType document) {
+    public CProgram convert(String path, ProgramType program) {
         ImmutableList.Builder<PDeclaredDescriptor<?>> declaredTypes = ImmutableList.builder();
         ImmutableList.Builder<CConst> constants = ImmutableList.builder();
         ImmutableMap.Builder<String, String> typedefs = ImmutableMap.builder();
         ImmutableList.Builder<CService> services = ImmutableList.builder();
 
-        for (Declaration decl : document.getDecl()) {
+        RecursiveTypeRegistry registry = programRegistry.registryForPath(path);
+
+        for (Declaration decl : program.getDecl()) {
             switch (decl.unionField()) {
                 case DECL_ENUM: {
                     EnumType enumType = decl.getDeclEnum();
 
                     int nextValue = PEnumDescriptor.DEFAULT_FIRST_VALUE;
                     CEnumDescriptor type = new CEnumDescriptor(enumType.getDocumentation(),
-                                                               document.getProgramName(),
+                                                               program.getProgramName(),
                                                                enumType.getName(),
                                                                enumType.getAnnotations());
                     List<CEnumValue> values = new LinkedList<>();
@@ -119,28 +123,28 @@ public class ProgramConverter {
                     if (messageType.hasFields()) {
                         fields.addAll(messageType.getFields()
                                                 .stream()
-                                                .map(field -> makeField(document.getProgramName(), field, messageType.getVariant()))
+                                                .map(field -> makeField(registry, program.getProgramName(), field, messageType.getVariant()))
                                                 .collect(Collectors.toList()));
                     }
                     PMessageDescriptor<?, ?> type;
                     switch (messageType.getVariant()) {
                         case STRUCT:
                             type = new CStructDescriptor(messageType.getDocumentation(),
-                                                         document.getProgramName(),
+                                                         program.getProgramName(),
                                                          messageType.getName(),
                                                          fields,
                                                          messageType.getAnnotations());
                             break;
                         case UNION:
                             type = new CUnionDescriptor(messageType.getDocumentation(),
-                                                        document.getProgramName(),
+                                                        program.getProgramName(),
                                                         messageType.getName(),
                                                         fields,
                                                         messageType.getAnnotations());
                             break;
                         case EXCEPTION:
                             type = new CExceptionDescriptor(messageType.getDocumentation(),
-                                                            document.getProgramName(),
+                                                            program.getProgramName(),
                                                             messageType.getName(),
                                                             fields,
                                                             messageType.getAnnotations());
@@ -154,7 +158,7 @@ public class ProgramConverter {
                 }
                 case DECL_CONST: {
                     ConstType constant = decl.getDeclConst();
-                    constants.add(makeConst(document.getProgramName(), constant));
+                    constants.add(makeConst(registry, program.getProgramName(), constant));
                     break;
                 }
                 case DECL_TYPEDEF: {
@@ -163,10 +167,10 @@ public class ProgramConverter {
                                  decl.getDeclTypedef()
                                      .getType());
                     registry.registerTypedef(decl.getDeclTypedef()
-                                                 .getName(),
-                                             document.getProgramName(),
-                                             decl.getDeclTypedef()
-                                                 .getType());
+                                            .getName(),
+                                        program.getProgramName(),
+                                        decl.getDeclTypedef()
+                                            .getType());
                     break;
                 }
                 case DECL_SERVICE: {
@@ -177,11 +181,11 @@ public class ProgramConverter {
                             List<CField> rqFields = new LinkedList<>();
                             if (sm.numParams() > 0) {
                                 for (FieldType field : sm.getParams()) {
-                                    rqFields.add(makeField(document.getProgramName(), field, MessageVariant.STRUCT));
+                                    rqFields.add(makeField(registry, program.getProgramName(), field, MessageVariant.STRUCT));
                                 }
                             }
                             CStructDescriptor request = new CStructDescriptor(null,
-                                                                              document.getProgramName(),
+                                                                              program.getProgramName(),
                                                                               serviceType.getName() + '.' +
                                                                               sm.getName() + ".request",
                                                                               rqFields,
@@ -193,7 +197,7 @@ public class ProgramConverter {
                                 CField success;
                                 if (sm.getReturnType() != null) {
                                     PDescriptorProvider type = registry.getProvider(sm.getReturnType(),
-                                                                                    document.getProgramName(),
+                                                                                    program.getProgramName(),
                                                                                     sm.getAnnotations());
                                     success = new CField(null, 0, PRequirement.OPTIONAL, "success", type, null, null);
                                 } else {
@@ -209,12 +213,12 @@ public class ProgramConverter {
 
                                 if (sm.numExceptions() > 0) {
                                     for (FieldType field : sm.getExceptions()) {
-                                        rsFields.add(makeField(document.getProgramName(), field, MessageVariant.UNION));
+                                        rsFields.add(makeField(registry, program.getProgramName(), field, MessageVariant.UNION));
                                     }
                                 }
 
                                 response = new CUnionDescriptor(null,
-                                                                document.getProgramName(),
+                                                                program.getProgramName(),
                                                                 serviceType.getName() + '.' +
                                                                 sm.getName() + ".response",
                                                                 rsFields,
@@ -234,11 +238,11 @@ public class ProgramConverter {
 
                     PServiceProvider extendsProvider = null;
                     if (serviceType.hasExtend()) {
-                        extendsProvider = registry.getServiceProvider(serviceType.getExtend(), document.getProgramName());
+                        extendsProvider = registry.getServiceProvider(serviceType.getExtend(), program.getProgramName());
                     }
 
                     CService service = new CService(serviceType.getDocumentation(),
-                                                    document.getProgramName(),
+                                                    program.getProgramName(),
                                                     serviceType.getName(),
                                                     extendsProvider,
                                                     methodBuilder.build(),
@@ -251,11 +255,11 @@ public class ProgramConverter {
         }
 
         return new CProgram(path,
-                            document.getDocumentation(),
-                            document.getProgramName(),
-                            document.getNamespaces(),
-                            getIncludedProgramNames(document),
-                            document.getIncludes(),
+                            program.getDocumentation(),
+                            program.getProgramName(),
+                            program.getNamespaces(),
+                            getIncludedProgramNames(program),
+                            program.getIncludes(),
                             typedefs.build(),
                             declaredTypes.build(),
                             services.build(),
@@ -276,7 +280,7 @@ public class ProgramConverter {
         return out;
     }
 
-    private CConst makeConst(String pkg, ConstType field) {
+    private CConst makeConst(TypeRegistry registry, String pkg, ConstType field) {
         PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
         if (!field.hasValue()) {
             throw new IllegalArgumentException("Const " + pkg + "." + field.getName() + " does not have a value.");
@@ -297,7 +301,7 @@ public class ProgramConverter {
         return made;
     }
 
-    private CField makeField(String pkg, FieldType field, MessageVariant variant) {
+    private CField makeField(TypeRegistry registry, String pkg, FieldType field, MessageVariant variant) {
         PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {

@@ -4,6 +4,7 @@ import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramConverter;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -25,17 +26,18 @@ public class CMessageBuilderTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
-    private ProgramRegistry registry;
+    private ProgramTypeRegistry registry;
 
     @Before
     public void setUp() throws IOException {
         File file = tmp.newFile("test.thrift").getCanonicalFile().getAbsoluteFile();
-        registry = new ProgramRegistry();
+        ProgramRegistry tmp = new ProgramRegistry();
         ThriftProgramParser parser = new ThriftProgramParser();
-        ProgramConverter converter = new ProgramConverter(registry);
+        ProgramConverter converter = new ProgramConverter(tmp);
         ProgramType program = parser.parse(getClass().getResourceAsStream("/parser/tests/test.thrift"),
                                            file, ImmutableList.of());
-        registry.putDocument(file.getPath(), converter.convert(file.getPath(), program));
+        tmp.putProgram(file.getPath(), converter.convert(file.getPath(), program));
+        registry = tmp.registryForPath(file.getCanonicalFile().getAbsolutePath());
     }
 
     @Test

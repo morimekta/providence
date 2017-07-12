@@ -50,7 +50,7 @@ public class JsonGeneratorTest {
         ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/test.thrift", tmp.getRoot());
         File file = new File(tmp.getRoot(), "test.thrift");
 
-        generator.generate(typeLoader.load(file));
+        generator.generate(typeLoader.load(file).getProgram());
 
         File test = new File(out, "test.json");
         assertTrue(test.exists());

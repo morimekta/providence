@@ -36,7 +36,7 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class JavaGenerator extends Generator {
     private final   JavaOptions      javaOptions;
 
     public JavaGenerator(FileManager manager,
-                         ProgramRegistry registry,
+                         ProgramTypeRegistry registry,
                          GeneratorOptions generatorOptions,
                          JavaOptions javaOptions) throws GeneratorException {
         super(manager);

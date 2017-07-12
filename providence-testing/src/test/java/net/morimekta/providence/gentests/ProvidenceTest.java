@@ -30,6 +30,8 @@ import net.morimekta.test.providence.testing.OptionalFields;
 import net.morimekta.test.providence.testing.RequiredFields;
 import net.morimekta.test.providence.testing.UnionFields;
 import net.morimekta.test.providence.testing.Value;
+import net.morimekta.test.providence.testing.calculator.Calculator;
+import net.morimekta.test.providence.testing.math.OtherCalculator;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableSet;
@@ -303,5 +305,17 @@ public class ProvidenceTest {
                 "  EIGHTEENTH,\n" +
                 "  THIRD\n" +
                 "]", Containers.kDescriptor))));
+    }
+
+    @Test
+    public void testOther() {
+        // The files containing these two classes have the same
+        // program context. That used to cause one of them to
+        // use the java package from the other.
+        // Both of these are in a 'calculator.thrift' file.
+        assertThat(OtherCalculator.class.getPackage().toString(),
+                   is("net.morimekta.test.providence.testing.math"));
+        assertThat(Calculator.class.getPackage().toString(),
+                   is("net.morimekta.test.providence.testing.calculator"));
     }
 }

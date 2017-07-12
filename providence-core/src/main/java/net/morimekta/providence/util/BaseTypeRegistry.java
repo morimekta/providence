@@ -193,9 +193,9 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
     /**
      * Register a list type part of recursive registering.
      *
-     * @param containerType
+     * @param containerType The container to register containing types of.
      */
-    protected void registerListType(PContainer containerType) {
+    private void registerListType(PContainer containerType) {
         PDescriptor itemType = containerType.itemDescriptor();
         if (itemType.getType() == PType.MAP ||
             itemType.getType() == PType.LIST ||

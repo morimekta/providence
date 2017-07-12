@@ -24,8 +24,10 @@ import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramConverter;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,17 +40,29 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public class TypeLoader {
-    private final ProgramRegistry registry;
+    private final ProgramRegistry programRegistry;
 
     private final ProgramConverter         converter;
     private final ProgramParser            parser;
     private final Map<String, ProgramType> loadedDocuments;
     private final Collection<File>         includes;
+
+    /**
+     * Construct a type loader for file types matches with the given parser.
+     *
+     * @param includes List of files with include path roots. For includes
+     *                 search these in order.
+     */
+    public TypeLoader(Collection<File> includes) {
+        this(includes, new ThriftProgramParser());
+    }
 
     /**
      * Construct a type loader for file types matches with the given parser.
@@ -85,10 +99,9 @@ public class TypeLoader {
     protected TypeLoader(Collection<File> includes, ProgramParser parser, ProgramRegistry registry, ProgramConverter converter) {
         this.includes = includes;
         this.parser = parser;
-        this.registry = registry;
+        this.programRegistry = registry;
         this.converter = converter;
-
-        loadedDocuments = new LinkedHashMap<>();
+        this.loadedDocuments = new LinkedHashMap<>();
     }
 
     /**
@@ -105,7 +118,7 @@ public class TypeLoader {
      * @return The loaded contained document.
      * @throws IOException If the file could not be read or parsed.
      */
-    public CProgram load(File file) throws IOException {
+    public ProgramTypeRegistry load(File file) throws IOException {
         file = file.getCanonicalFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
@@ -115,10 +128,11 @@ public class TypeLoader {
                     "Unable to load thrift program: " + file.getCanonicalPath() + " is not a file.");
         }
         file = file.getAbsoluteFile();
+        String path = file.getPath();
 
-        CProgram cdoc = registry.getDocument(file.getPath());
-        if (cdoc != null) {
-            return cdoc;
+        ProgramTypeRegistry registry = this.programRegistry.registryForPath(path);
+        if (programRegistry.containsProgramPath(path)) {
+            return registry;
         }
 
         InputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -151,24 +165,22 @@ public class TypeLoader {
         // Load includes in reverse order, in case of serial dependencies.
         Collections.reverse(queue);
 
-        loadedDocuments.put(file.getPath(), doc);
+        loadedDocuments.put(path, doc);
         for (File include : queue) {
-            if (!loadedDocuments.containsKey(include.getPath())) {
-                load(include);
-            }
+            registry.registerInclude(programNameFromPath(include.getPath()), load(include));
         }
 
         // Now everything it depends on is loaded.
 
-        cdoc = converter.convert(file.getPath(), doc);
-        registry.putDocument(file.getPath(), cdoc);
-        return cdoc;
+        CProgram program = converter.convert(path, doc);
+        programRegistry.putProgram(path, program);
+        return registry;
     }
 
     /**
      * @return The local registry.
      */
-    public ProgramRegistry getRegistry() {
-        return registry;
+    public ProgramRegistry getProgramRegistry() {
+        return programRegistry;
     }
 }

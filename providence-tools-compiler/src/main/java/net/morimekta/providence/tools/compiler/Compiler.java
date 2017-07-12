@@ -107,14 +107,14 @@ public class Compiler {
             List<File> input = options.getInputFiles();
 
             TypeLoader loader = new TypeLoader(includes, parser);
-            Generator generator = options.getGenerator(loader);
 
             List<CProgram> docs = new LinkedList<>();
             for (File f : input) {
-                docs.add(loader.load(f));
+                docs.add(loader.load(f).getProgram());
             }
 
             for (CProgram doc : docs) {
+                Generator generator = options.getGenerator(doc.getProgramFilePath(), loader);
                 generator.generate(doc);
             }
 

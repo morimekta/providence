@@ -13,6 +13,7 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -31,7 +32,7 @@ public class CProgramTest {
         CConst constant = new CConst(null,
                                      "kC",
                                      PPrimitive.STRING.provider(),
-                                     new ConstProvider(registry,
+                                     new ConstProvider(registry.registryForPath("prog.thrift"),
                                                        "string",
                                                        "prog",
                                                        "\"value\"",
@@ -70,17 +71,9 @@ public class CProgramTest {
 
     @Test
     public void testEmptyProgram() {
-        CProgram program = new CProgram("prog.thrift",
-                                        null,
-                                        "prog",
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null);
+        CProgram program = new CProgram("prog.thrift",null, "prog", null, null, null, null, null, null, null);
 
+        assertThat(program.getProgramFilePath(), is(notNullValue()));
         assertThat(program.getDocumentation(), is(nullValue()));
         assertThat(program.getProgramName(), is("prog"));
         assertThat(program.getNamespaces(), is(Collections.EMPTY_MAP));

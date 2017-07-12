@@ -9,7 +9,7 @@ public class ConstProviderTest {
     @Test
     public void testProvider() {
         ProgramRegistry registry = new ProgramRegistry();
-        ConstProvider provider = new ConstProvider(registry,
+        ConstProvider provider = new ConstProvider(registry.registryForPath("prog.thrift"),
                                                    "string",
                                                    "prog",
                                                    "\"value\"",

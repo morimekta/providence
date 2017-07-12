@@ -155,7 +155,7 @@ public class CompilerOptions {
         }
     }
 
-    public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
+    public Generator getGenerator(String programPath, TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
         GeneratorOptions generatorOptions = new GeneratorOptions();
         generatorOptions.generator_program_name = "pvdc";
         generatorOptions.program_version = Utils.getVersionString();
@@ -188,7 +188,10 @@ public class CompilerOptions {
                             throw new ArgumentException("No such option for java generator: " + opt);
                     }
                 }
-                return new JavaGenerator(getFileManager(), loader.getRegistry(), generatorOptions, options);
+                return new JavaGenerator(getFileManager(),
+                                         loader.getProgramRegistry().registryForPath(programPath),
+                                         generatorOptions,
+                                         options);
             }
             default:
                 throw new ArgumentException("Unknown language %s.", gen.generator.name());

@@ -2,7 +2,6 @@ package net.morimekta.providence.tools.config.cmd;
 
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.tools.config.ConfigOptions;
 
 import java.io.File;
@@ -23,12 +22,12 @@ public abstract class CommandBase implements Command {
                                       .stream()
                                       .map(File::getParentFile)
                                       .collect(Collectors.toSet());
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
+        TypeLoader loader = new TypeLoader(rootSet);
         for (File file : includeMap.values()) {
             loader.load(file);
         }
 
-        execute(new ProvidenceConfig(loader.getRegistry(), options.isStrict()));
+        execute(new ProvidenceConfig(loader.getProgramRegistry(), options.isStrict()));
     }
 
     public abstract void execute(ProvidenceConfig config) throws IOException;

@@ -2,7 +2,8 @@ package net.morimekta.providence.reflect.parser.internal;
 
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.util.SimpleTypeRegistry;
+import net.morimekta.providence.util.WritableTypeRegistry;
 import net.morimekta.test.providence.reflect.CompactFields;
 import net.morimekta.test.providence.reflect.Containers;
 import net.morimekta.test.providence.reflect.OptionalFields;
@@ -25,11 +26,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ConstParserTest {
-    private ProgramRegistry registry;
+    private WritableTypeRegistry registry;
 
     @Before
     public void setUp() {
-        registry = new ProgramRegistry();
+        registry = new SimpleTypeRegistry();
         registry.registerRecursively(Operation.kDescriptor);
         registry.registerRecursively(Containers.kDescriptor);
     }
@@ -178,8 +179,7 @@ public class ConstParserTest {
 
     private Object parse(String context, String type, String text) throws IOException {
         ConstParser parser = new ConstParser(registry, context, type.length(), text.length());
-        PDescriptor descriptor = registry.getProvider(type, context, ImmutableMap.of())
-                                         .descriptor();
+        PDescriptor descriptor = registry.getProvider(type, context, ImmutableMap.of()).descriptor();
         ByteArrayInputStream bais = new ByteArrayInputStream(text.getBytes(UTF_8));
         return parser.parse(bais, descriptor);
     }

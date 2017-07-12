@@ -6,7 +6,6 @@ import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
@@ -39,7 +38,7 @@ public class JavaGeneratorTest {
     private TypeLoader           typeLoader;
 
     @Before
-    public void setUp() throws IOException, ParseException {
+    public void setUp() throws IOException {
         File out = tmp.newFolder("out");
 
         generatorOptions = new GeneratorOptions();
@@ -48,20 +47,21 @@ public class JavaGeneratorTest {
 
         fileManager = new FileManager(out);
         ProgramParser parser = new ThriftProgramParser();
-        programRegistry = new ProgramRegistry();
         typeLoader = new TypeLoader(ImmutableList.of(), parser);
+        programRegistry = typeLoader.getProgramRegistry();
         programs = new LinkedList<>();
     }
 
-    private void defaultSources() throws IOException, ParseException {
+    private void defaultSources() throws IOException {
         File src = tmp.newFolder("src");
         for (String res : ImmutableList.of(
                 "/providence/number.thrift",
                 "/providence/calculator.thrift",
                 "/providence/providence.thrift",
                 "/providence/service.thrift")) {
-            CProgram program = typeLoader.load(copyResourceTo(res, src));
-            programRegistry.putDocument(res, program);
+            File f = copyResourceTo(res, src).getAbsoluteFile().getCanonicalFile();
+            CProgram program = typeLoader.load(f).getProgram();
+            programRegistry.putProgram(f.getPath(), program);
             programs.add(program);
         }
     }
@@ -71,8 +71,11 @@ public class JavaGeneratorTest {
         defaultSources();
 
         JavaOptions options = new JavaOptions();
-        Generator generator = new JavaGenerator(fileManager, programRegistry, generatorOptions, options);
         for (CProgram program : programs) {
+            Generator generator = new JavaGenerator(fileManager,
+                                                    programRegistry.registryForPath(program.getProgramFilePath()),
+                                                    generatorOptions,
+                                                    options);
             generator.generate(program);
         }
     }
@@ -83,8 +86,11 @@ public class JavaGeneratorTest {
 
         JavaOptions options = new JavaOptions();
         options.android = true;
-        Generator generator = new JavaGenerator(fileManager, programRegistry, generatorOptions, options);
         for (CProgram program : programs) {
+            Generator generator = new JavaGenerator(fileManager,
+                                                    programRegistry.registryForPath(program.getProgramFilePath()),
+                                                    generatorOptions,
+                                                    options);
             generator.generate(program);
         }
     }
@@ -95,8 +101,11 @@ public class JavaGeneratorTest {
 
         JavaOptions options = new JavaOptions();
         options.jackson = true;
-        Generator generator = new JavaGenerator(fileManager, programRegistry, generatorOptions, options);
         for (CProgram program : programs) {
+            Generator generator = new JavaGenerator(fileManager,
+                                                    programRegistry.registryForPath(program.getProgramFilePath()),
+                                                    generatorOptions,
+                                                    options);
             generator.generate(program);
         }
     }
@@ -106,15 +115,18 @@ public class JavaGeneratorTest {
         File src = tmp.newFolder("hz");
         for (String res : ImmutableList.of(
                 "/hazelcast/hazelcast.thrift")) {
-            CProgram program = typeLoader.load(copyResourceTo(res, src));
-            programRegistry.putDocument(res, program);
+            CProgram program = typeLoader.load(copyResourceTo(res, src)).getProgram();
+            programRegistry.putProgram(res, program);
             programs.add(program);
         }
 
         JavaOptions options = new JavaOptions();
         options.hazelcast_portable = true;
-        Generator generator = new JavaGenerator(fileManager, programRegistry, generatorOptions, options);
         for (CProgram program : programs) {
+            Generator generator = new JavaGenerator(fileManager,
+                                                    programRegistry.registryForPath(program.getProgramFilePath()),
+                                                    generatorOptions,
+                                                    options);
             generator.generate(program);
         }
     }

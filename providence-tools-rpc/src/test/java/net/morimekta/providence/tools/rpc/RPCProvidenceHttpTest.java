@@ -115,6 +115,7 @@ public class RPCProvidenceHttpTest {
         rpc.run("--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
+                "--verbose",
                 endpoint());
 
         assertThat(console.error(), is(""));

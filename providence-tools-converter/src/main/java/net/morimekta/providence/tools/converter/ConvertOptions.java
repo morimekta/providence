@@ -42,7 +42,6 @@ import net.morimekta.providence.tools.common.options.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,6 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static net.morimekta.console.util.Parser.dir;
-import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
-import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
  * Options used by the providence converter.
@@ -122,7 +119,7 @@ public class ConvertOptions extends CommonOptions {
         String namespace = type.substring(0, type.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
+        TypeLoader loader = new TypeLoader(rootSet);
 
         try {
             loader.load(includeMap.get(namespace));
@@ -131,7 +128,7 @@ public class ConvertOptions extends CommonOptions {
         }
 
         @SuppressWarnings("unchecked")
-        PMessageDescriptor<Message, Field> descriptor = (PMessageDescriptor) loader.getRegistry().getDeclaredType(type);
+        PMessageDescriptor<Message, Field> descriptor = (PMessageDescriptor) loader.getProgramRegistry().getDeclaredType(type);
         if (descriptor == null) {
             throw new ArgumentException("No available type for name %s", type);
         }

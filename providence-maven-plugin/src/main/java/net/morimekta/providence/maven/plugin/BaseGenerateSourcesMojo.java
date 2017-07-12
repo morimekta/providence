@@ -289,7 +289,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         for (File in : inputFiles) {
             try {
-                documents.add(loader.load(in));
+                documents.add(loader.load(in).getProgram());
             } catch (SerializerException e) {
                 // ParseException is a SerializerException. And serialize exceptions can come from
                 // failing to make sense of constant definitions.
@@ -321,10 +321,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             generatorOptions.generator_program_name = "providence-maven-plugin";
             generatorOptions.program_version = project.getVersion();
 
-            Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), generatorOptions, javaOptions);
             documents.parallelStream()
                      .forEach(doc -> {
                          try {
+                             Generator generator = new JavaGenerator(fileManager,
+                                                                     loader.getProgramRegistry().registryForPath(doc.getProgramFilePath()),
+                                                                     generatorOptions,
+                                                                     javaOptions);
                              generator.generate(doc);
                          } catch (GeneratorException e) {
                              throw new UncheckedMojoFailureException("Failed to generate document: " + doc.getProgramName(), e);

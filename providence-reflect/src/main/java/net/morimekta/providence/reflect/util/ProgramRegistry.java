@@ -20,36 +20,33 @@
  */
 package net.morimekta.providence.reflect.util;
 
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.util.SimpleTypeRegistry;
+import net.morimekta.providence.util.TypeRegistry;
 
-import java.util.LinkedHashMap;
+import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+
+import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * Program scope type registry.
  */
-public class ProgramRegistry extends SimpleTypeRegistry {
-    private final Map<String, CProgram> documents;
+public class ProgramRegistry implements TypeRegistry {
+    private final Map<String, ProgramTypeRegistry> registryMap;
 
     public ProgramRegistry() {
-        documents = new LinkedHashMap<>();
+        registryMap = new HashMap<>();
     }
 
-    /**
-     * Puts the given document into the registry.
-     *
-     * @param path File path the document was found.
-     * @param doc The contained document.
-     * @return True if the document was not already there.
-     */
-    public boolean putDocument(String path, CProgram doc) {
-        if (!documents.containsKey(path)) {
-            documents.put(path, doc);
-            return true;
-        }
-        return false;
+    @Nonnull
+    public ProgramTypeRegistry registryForPath(String path) {
+        return registryMap.computeIfAbsent(path, p -> new ProgramTypeRegistry(programNameFromPath(path)));
     }
 
     /**
@@ -58,17 +55,64 @@ public class ProgramRegistry extends SimpleTypeRegistry {
      * @param path The file path.
      * @return The contained document, or null if not found.
      */
-    public CProgram getDocument(String path) {
-        return documents.get(path);
+    public boolean containsProgramPath(String path) {
+        return registryForPath(path).getProgram() != null;
     }
 
-    public CProgram getDocumentForPackage(String packageContext) {
-        for (CProgram document : documents.values()) {
-            if (document.getProgramName()
-                        .equals(packageContext)) {
-                return document;
+    public void putProgram(String path, CProgram program) {
+        registryForPath(path).setProgram(program);
+    }
+
+    @Nonnull
+    @Override
+    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String typeName,
+                                                                @Nonnull String programContext) {
+        return handle(typeName, programContext,
+                      p -> p.getDeclaredType(typeName, programContext));
+    }
+
+    @Nonnull
+    @Override
+    public PService getService(String serviceName, String programContext) {
+        return handle(serviceName, programContext,
+                      r -> r.getService(serviceName, programContext));
+    }
+
+    @Override
+    public PDescriptorProvider getProvider(String typeName, String programContext, Map<String, String> annotations) {
+        return handle(typeName, programContext,
+                      r -> r.getProvider(typeName, programContext, annotations));
+    }
+
+    @Override
+    public PServiceProvider getServiceProvider(String serviceName, String programContext) {
+        return handle(serviceName, programContext,
+                      r -> r.getServiceProvider(serviceName, programContext));
+    }
+
+    private <T> T handle(String typeName, String programContext, Function<ProgramTypeRegistry, T> f) {
+        Exception e = null;
+        String context = getProgramContext(typeName, programContext);
+
+        for (ProgramTypeRegistry registry : registryMap.values()) {
+            if (registry.getLocalProgramContext().equals(context)) {
+                try {
+                    return f.apply(registry);
+                } catch (Exception ignored) {
+                    e = ignored;
+                }
             }
         }
-        return null;
+        if (e != null) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        throw new IllegalArgumentException("No program \"" + context + "\" found for type \"" + typeName + "\"");
+    }
+
+    private String getProgramContext(String typeName, String programContext) {
+        if (typeName.contains(".")) {
+            return typeName.substring(0, typeName.indexOf("."));
+        }
+        return programContext;
     }
 }

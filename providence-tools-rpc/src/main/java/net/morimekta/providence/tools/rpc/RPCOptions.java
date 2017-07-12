@@ -168,25 +168,26 @@ public class RPCOptions extends CommonOptions {
             rootSet.add(file.getParentFile());
         }
 
-        String namespace = service.substring(0, service.lastIndexOf("."));
-        namespace = namespace.replaceAll("[-.]", "_");
+        String programName = service.substring(0, service.lastIndexOf("."));
 
         TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
 
         try {
-            if (!includeMap.containsKey(namespace)) {
-                throw new ArgumentException("No package " + namespace + " found in include path.\nFound: " +
-                                            Strings.join(", ", new TreeSet<Object>(includeMap.keySet())));
+            if (!includeMap.containsKey(programName)) {
+                throw new ArgumentException("No program " + programName + " found in include path.\n" +
+                                            "Found: " + Strings.join(", ", new TreeSet<Object>(includeMap.keySet())));
             }
 
-            loader.load(includeMap.get(namespace));
+            loader.load(includeMap.get(programName));
         } catch (IOException e) {
             throw new ArgumentException(e.getLocalizedMessage());
         }
 
-        PService srv = loader.getRegistry().getService(service, null);
+        String filePath = includeMap.get(programName).getCanonicalFile().getAbsolutePath();
+
+        PService srv = loader.getProgramRegistry().getService(service, null);
         if (srv == null) {
-            CProgram document = loader.getRegistry().getDocumentForPackage(namespace);
+            CProgram document = loader.getProgramRegistry().registryForPath(filePath).getProgram();
             Set<String> services = new TreeSet<>(
                     document.getServices()
                             .stream().map(s -> s.getQualifiedName())
@@ -195,7 +196,7 @@ public class RPCOptions extends CommonOptions {
             throw new ArgumentException(
                          "Unknown service %s in %s.\n" +
                          "Found %s",
-                         service, namespace,
+                         service, programName,
                          services.size() == 0 ? "none" : Strings.join(", ", services));
         }
 

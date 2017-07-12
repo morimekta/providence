@@ -21,7 +21,7 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.RecursiveTypeRegistry;
 import net.morimekta.util.Binary;
 
 import org.junit.Before;
@@ -44,13 +44,13 @@ import static org.junit.Assert.assertTrue;
  * @since 05.09.15
  */
 public class CMessageTest {
-    private ProgramRegistry   registry;
-    private CStructDescriptor structType;
-    private CUnionDescriptor  unionType;
+    private RecursiveTypeRegistry registry;
+    private CStructDescriptor     structType;
+    private CUnionDescriptor      unionType;
 
     @Before
     public void setUp() {
-        registry = new ProgramRegistry();
+        registry = new RecursiveTypeRegistry("test");
 
         List<CField> fields = new LinkedList<>();
         fields.add(new CField(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), null, null));

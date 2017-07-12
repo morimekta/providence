@@ -116,14 +116,7 @@ public class RPC {
                 System.err.println("Run $ pvdrpc --help # for available options.");
             } catch (SerializerException e) {
                 System.out.flush();
-                System.err.println(e.asString());
-                if (options.verbose()) {
-                    System.err.println();
-                    e.printStackTrace();
-                }
-            } catch (IllegalArgumentException e) {
-                System.out.flush();
-                System.err.println(e.getMessage());
+                System.err.println("Serializer error: " + e.asString());
                 if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
@@ -135,16 +128,23 @@ public class RPC {
                     System.out.flush();
                     e.printStackTrace();
                 }
+            } catch (IllegalArgumentException e) {
+                System.out.flush();
+                System.err.println("Internal Error: " + e.getMessage());
+                if (options.verbose()) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException|IOException e) {
             System.out.flush();
             System.err.println("Unchecked exception: " + e.getMessage());
             if (options.verbose()) {
                 System.out.flush();
                 e.printStackTrace();
             }
-
         }
+        System.err.flush();
         exit(1);
     }
 

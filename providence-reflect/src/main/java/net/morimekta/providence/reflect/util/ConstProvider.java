@@ -23,6 +23,7 @@ package net.morimekta.providence.reflect.util;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.reflect.parser.internal.ConstParser;
+import net.morimekta.providence.util.TypeRegistry;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -35,16 +36,16 @@ import java.util.Collections;
  * A value provider for thrift constants.
  */
 public class ConstProvider implements PValueProvider<Object> {
-    private final ProgramRegistry registry;
-    private final String          typeName;
-    private final String          programContext;
-    private final String          constantString;
-    private final int             startLineNo;
-    private final int             startLinePos;
+    private final TypeRegistry registry;
+    private final String       typeName;
+    private final String       programContext;
+    private final String       constantString;
+    private final int          startLineNo;
+    private final int          startLinePos;
 
     private Object parsedValue;
 
-    public ConstProvider(@Nonnull ProgramRegistry registry,
+    public ConstProvider(@Nonnull TypeRegistry registry,
                          @Nonnull String typeName,
                          @Nonnull String programContext,
                          @Nonnull String constantString,

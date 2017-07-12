@@ -44,7 +44,7 @@ public class Utils {
                 continue;
             }
             if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
-                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file.getCanonicalFile());
+                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file.getAbsoluteFile().getCanonicalFile());
             }
         }
     }

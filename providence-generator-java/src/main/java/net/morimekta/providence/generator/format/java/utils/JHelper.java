@@ -31,7 +31,7 @@ import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,21 +54,21 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
 public class JHelper {
     public static final String packageSeparator = ".";
 
-    private final ProgramRegistry mRegistry;
+    private final ProgramTypeRegistry mRegistry;
 
-    public JHelper(ProgramRegistry registry) {
+    public JHelper(ProgramTypeRegistry registry) {
         mRegistry = registry;
     }
 
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {
         String packageContext = type.getProgramName();
-        CProgram document = mRegistry.getDocumentForPackage(packageContext);
+        CProgram document = mRegistry.getProgramForName(packageContext);
         return JUtils.getJavaPackage(document);
     }
 
     public String getJavaPackage(PService type) throws GeneratorException {
         String packageContext = type.getProgramName();
-        CProgram document = mRegistry.getDocumentForPackage(packageContext);
+        CProgram document = mRegistry.getProgramForName(packageContext);
         return JUtils.getJavaPackage(document);
     }
 
