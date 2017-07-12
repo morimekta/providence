@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -30,13 +29,13 @@ public class CMessageBuilderTest {
 
     @Before
     public void setUp() throws IOException {
-        File file = tmp.newFile("test.thrift");
+        File file = tmp.newFile("test.thrift").getCanonicalFile().getAbsoluteFile();
         registry = new ProgramRegistry();
         ThriftProgramParser parser = new ThriftProgramParser();
         ProgramConverter converter = new ProgramConverter(registry);
         ProgramType program = parser.parse(getClass().getResourceAsStream("/parser/tests/test.thrift"),
                                            file, ImmutableList.of());
-        registry.putDocument(file.getCanonicalFile().getAbsolutePath(), converter.convert(program));
+        registry.putDocument(file.getPath(), converter.convert(file.getPath(), program));
     }
 
     @Test

@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class CProgram {
+    private final String                       programFilePath;
     private final String                       documentation;
     private final String                       programName;
     private final Set<String>                  includedPrograms;
@@ -47,8 +49,9 @@ public class CProgram {
     private final List<CService>               services;
     private final List<CConst>                 constants;
 
-    public CProgram(String documentation,
-                    String programName,
+    public CProgram(@Nonnull String programFilePath,
+                    String documentation,
+                    @Nonnull String programName,
                     Map<String, String> namespaces,
                     Collection<String> includedPrograms,
                     Collection<String> includedFiles,
@@ -56,6 +59,7 @@ public class CProgram {
                     Collection<PDeclaredDescriptor<?>> declaredTypes,
                     Collection<CService> services,
                     Collection<CConst> constants) {
+        this.programFilePath  = programFilePath;
         this.documentation    = documentation;
         this.programName      = programName;
         this.namespaces       = namespaces       == null ? ImmutableMap.of()  : ImmutableMap.copyOf(namespaces);
@@ -109,4 +113,7 @@ public class CProgram {
         return namespaces.get(language);
     }
 
+    public String getProgramFilePath() {
+        return programFilePath;
+    }
 }

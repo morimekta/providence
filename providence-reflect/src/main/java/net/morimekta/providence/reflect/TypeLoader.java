@@ -160,7 +160,7 @@ public class TypeLoader {
 
         // Now everything it depends on is loaded.
 
-        cdoc = converter.convert(doc);
+        cdoc = converter.convert(file.getPath(), doc);
         registry.putDocument(file.getPath(), cdoc);
         return cdoc;
     }

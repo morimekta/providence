@@ -14,7 +14,6 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
@@ -41,6 +40,7 @@ public class CProgramTest {
                                      ImmutableMap.of());
 
         CProgram program = new CProgram(
+                "prog.thrift",
                 "Documentation",
                 "prog",
                 ImmutableMap.of("java", "net.morimekta.providence",
@@ -70,7 +70,16 @@ public class CProgramTest {
 
     @Test
     public void testEmptyProgram() {
-        CProgram program = new CProgram(null, "prog", null, null, null, null, null, null, null);
+        CProgram program = new CProgram("prog.thrift",
+                                        null,
+                                        "prog",
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null);
 
         assertThat(program.getDocumentation(), is(nullValue()));
         assertThat(program.getProgramName(), is("prog"));

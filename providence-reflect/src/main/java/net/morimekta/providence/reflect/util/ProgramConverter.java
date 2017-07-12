@@ -81,10 +81,11 @@ public class ProgramConverter {
     /**
      * Convert document model to declared document.
      *
+     * @param path The program file path.
      * @param document Document model to convert.
      * @return The declared thrift document.
      */
-    public CProgram convert(ProgramType document) {
+    public CProgram convert(String path, ProgramType document) {
         ImmutableList.Builder<PDeclaredDescriptor<?>> declaredTypes = ImmutableList.builder();
         ImmutableList.Builder<CConst> constants = ImmutableList.builder();
         ImmutableMap.Builder<String, String> typedefs = ImmutableMap.builder();
@@ -249,7 +250,8 @@ public class ProgramConverter {
             }
         }
 
-        return new CProgram(document.getDocumentation(),
+        return new CProgram(path,
+                            document.getDocumentation(),
                             document.getProgramName(),
                             document.getNamespaces(),
                             getIncludedProgramNames(document),
