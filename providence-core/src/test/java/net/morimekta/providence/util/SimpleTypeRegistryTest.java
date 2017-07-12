@@ -16,14 +16,14 @@ import static org.junit.Assert.fail;
 /**
  * Tests for the TypeRegistry class.
  */
-public class TypeRegistryTest {
+public class SimpleTypeRegistryTest {
     @Test
     public void testFinalTypename() {
-        TypeRegistry registry = new TypeRegistry();
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
 
-        registry.putTypedef("I", "number", "Imaginary");
-        registry.putTypedef("real", "number", "double");
         registry.registerRecursively(Operation.kDescriptor);
+        registry.registerTypedef("I", "number", "Imaginary");
+        registry.registerTypedef("real", "number", "double");
 
         assertEquals("double", registry.finalTypename("real", "number"));
         assertEquals("double", registry.finalTypename("number.real", "calculator"));
@@ -42,31 +42,19 @@ public class TypeRegistryTest {
 
     @Test
     public void testService() {
-        TypeRegistry registry = new TypeRegistry();
-        registry.putService(Calculator.kDescriptor);
-
-        try {
-            registry.putService(null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("No service to register"));
-        }
-        try {
-            registry.putService(Calculator.kDescriptor);
-            fail();
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Service calculator.Calculator already registered"));
-        }
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
+        registry.registerRecursively(Calculator.kDescriptor);
+        registry.registerRecursively(Calculator.kDescriptor);
 
         assertThat(registry.getService("Calculator", "calculator"), is(sameInstance(Calculator.kDescriptor)));
     }
 
     @Test
     public void testGetDeclaredType() {
-        TypeRegistry registry = new TypeRegistry();
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
 
-        registry.putTypedef("I", "number", "Imaginary");
-        registry.putTypedef("real", "number", "double");
+        registry.registerTypedef("I", "number", "Imaginary");
+        registry.registerTypedef("real", "number", "double");
         registry.registerRecursively(Operation.kDescriptor);
 
         assertThat((PDeclaredDescriptor) registry.getDeclaredType("number.I"),
@@ -76,26 +64,26 @@ public class TypeRegistryTest {
             registry.getDeclaredType("FakeNews");
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Requesting global typename without package: \"FakeNews\""));
+            assertThat(e.getMessage(), is("Requesting global type name without program name: \"FakeNews\""));
         }
         try {
             registry.getDeclaredType("real.fake.News");
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Invalid declared type: \"real.fake.News\""));
+            assertThat(e.getMessage(), is("Invalid identifier: \"real.fake.News\""));
         }
 
         try {
             registry.getDeclaredType("fake.News");
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("No such package \"fake\" exists for type \"News\""));
+            assertThat(e.getMessage(), is("No such program \"fake\" known for type \"News\""));
         }
         try {
             registry.getDeclaredType("number.Fake");
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("No such type \"Fake\" in package \"number\""));
+            assertThat(e.getMessage(), is("No such type \"Fake\" in program \"number\""));
         }
 
     }

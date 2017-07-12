@@ -150,7 +150,7 @@ public class CompilerJavaTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(
-                "No such type \"Request2\" in package \"ref\"\n"));
+                "No such type \"Request2\" in program \"ref\"\n"));
         assertThat(exitCode, is(1));
     }
 }

@@ -23,6 +23,7 @@ package net.morimekta.providence.config;
 import net.morimekta.config.ConfigException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
+import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.RefConfig1;
@@ -60,11 +61,11 @@ public class ProvidenceConfigTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private TypeRegistry registry;
+    private SimpleTypeRegistry registry;
 
     @Before
     public void setUp() throws IOException {
-        registry = new TypeRegistry();
+        registry = new SimpleTypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
         registry.registerRecursively(Value.kDescriptor);
         registry.registerRecursively(RefMerge.kDescriptor);

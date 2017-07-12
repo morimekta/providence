@@ -10,7 +10,7 @@ import net.morimekta.providence.generator.format.java.shared.MessageMemberFormat
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.util.Binary;
 import net.morimekta.util.BinaryUtil;
 import net.morimekta.util.Strings;

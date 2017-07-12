@@ -6,8 +6,8 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
-import net.morimekta.providence.reflect.util.ThriftCollection;
+import net.morimekta.providence.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftCollection;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;

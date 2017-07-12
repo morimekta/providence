@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.reflect.util;
+package net.morimekta.providence.util;
 
 /**
  * Enum containing known "general" thrift annotations.

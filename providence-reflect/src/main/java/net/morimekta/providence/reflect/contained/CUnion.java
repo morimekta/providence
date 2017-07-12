@@ -26,8 +26,8 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
-import net.morimekta.providence.reflect.util.ThriftCollection;
+import net.morimekta.providence.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftCollection;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

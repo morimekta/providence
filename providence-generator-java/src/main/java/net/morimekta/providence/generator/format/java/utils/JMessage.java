@@ -33,7 +33,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 import java.util.ArrayList;
 import java.util.Comparator;

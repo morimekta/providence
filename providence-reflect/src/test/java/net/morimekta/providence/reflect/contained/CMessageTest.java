@@ -75,7 +75,7 @@ public class CMessageTest {
 
     @Test
     public void testStruct() {
-        registry.putDeclaredType(structType);
+        registry.register(structType);
 
         CStruct inner = structType.builder()
                                   .set(1, Boolean.TRUE)
@@ -150,7 +150,7 @@ public class CMessageTest {
 
     @Test
     public void testUnion() {
-        // ...
+        assertNotEquals(structType, unionType);
     }
 
     @Test

@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

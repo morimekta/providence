@@ -109,7 +109,7 @@ public class ProgramConverter {
                     }
                     type.setValues(values);
                     declaredTypes.add(type);
-                    registry.putDeclaredType(type);
+                    registry.register(type);
                     break;
                 }
                 case DECL_STRUCT: {
@@ -149,7 +149,7 @@ public class ProgramConverter {
                             throw new UnsupportedOperationException("Unhandled message variant " + messageType.getVariant());
                     }
                     declaredTypes.add(type);
-                    registry.putDeclaredType(type);
+                    registry.register(type);
                     break;
                 }
                 case DECL_CONST: {
@@ -162,11 +162,11 @@ public class ProgramConverter {
                                      .getName(),
                                  decl.getDeclTypedef()
                                      .getType());
-                    registry.putTypedef(decl.getDeclTypedef()
-                                            .getName(),
-                                        document.getProgramName(),
-                                        decl.getDeclTypedef()
-                                            .getType());
+                    registry.registerTypedef(decl.getDeclTypedef()
+                                                 .getName(),
+                                             document.getProgramName(),
+                                             decl.getDeclTypedef()
+                                                 .getType());
                     break;
                 }
                 case DECL_SERVICE: {
@@ -245,7 +245,7 @@ public class ProgramConverter {
                                                     serviceType.getAnnotations());
 
                     services.add(service);
-                    registry.putService(service);
+                    registry.registerRecursively(service);
                 }
             }
         }

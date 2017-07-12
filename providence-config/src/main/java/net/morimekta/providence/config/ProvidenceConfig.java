@@ -261,9 +261,6 @@ public class ProvidenceConfig {
      */
     public <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
         try {
-            if (descriptor != null) {
-                registry.registerRecursively(descriptor);
-            }
             Supplier<M> supplier = getSupplier(file);
             if (descriptor != null && !supplier.get().descriptor().equals(descriptor)) {
                 throw new TokenizerException(

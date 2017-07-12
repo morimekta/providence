@@ -4,7 +4,7 @@ import net.morimekta.config.IncompatibleValueException;
 import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
-import net.morimekta.providence.util.TypeRegistry;
+import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.ServicePort;
 
@@ -42,7 +42,7 @@ public class ProvidenceConfigUtilTest {
                                                          .setType("i32")
                                                          .setValue("44")
                                                          .build());
-        TypeRegistry registry = new TypeRegistry();
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
 
         copyResourceTo("/net/morimekta/providence/config/base_service.cfg", tmp.getRoot());

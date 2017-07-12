@@ -13,7 +13,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.tools.common.ProvidenceTools;
-import net.morimekta.providence.util.TypeRegistry;
+import net.morimekta.providence.util.SimpleTypeRegistry;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -60,7 +60,7 @@ public class Utils {
         }
 
         try {
-            TypeRegistry registry = new TypeRegistry();
+            SimpleTypeRegistry registry = new SimpleTypeRegistry();
             registry.registerRecursively(ProvidenceTools.kDescriptor);
             ProvidenceConfig loader = new ProvidenceConfig(registry);
             ProvidenceTools config = loader.getConfig(rc, ProvidenceTools.kDescriptor);

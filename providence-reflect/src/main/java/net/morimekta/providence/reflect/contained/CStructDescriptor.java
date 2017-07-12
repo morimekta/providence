@@ -23,7 +23,7 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
 import javax.annotation.Nonnull;

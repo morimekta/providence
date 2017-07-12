@@ -17,7 +17,7 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.hazelcast.config.Config;

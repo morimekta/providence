@@ -3,7 +3,7 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

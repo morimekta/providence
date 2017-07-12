@@ -24,7 +24,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 import java.io.IOException;
 import java.util.LinkedList;

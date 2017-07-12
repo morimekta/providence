@@ -23,7 +23,7 @@ package net.morimekta.providence.generator.format.java.utils;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
-import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 /**
  *
