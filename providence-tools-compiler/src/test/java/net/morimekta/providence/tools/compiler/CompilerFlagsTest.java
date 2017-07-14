@@ -65,6 +65,8 @@ public class CompilerFlagsTest {
                      " --version (-v)             : Show program version.\n" +
                      " --include (-I) dir         : Allow includes of files in directory\n" +
                      " --out (-o) dir             : Output directory (default: ${PWD})\n" +
+                     " --require-field-id         : Require all fields to have a defined ID\n" +
+                     " --require-enum-value       : Require all enum values to have a defined ID\n" +
                      " file                       : Files to compile.\n" +
                      "\n" +
                      "Available generators:\n" +

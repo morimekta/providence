@@ -34,16 +34,13 @@ import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.MessageProgramParser;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
-import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
 import net.morimekta.providence.tools.compiler.options.GeneratorSpecParser;
 import net.morimekta.providence.tools.compiler.options.HelpOption;
 import net.morimekta.providence.tools.compiler.options.HelpSpec;
-import net.morimekta.providence.tools.compiler.options.Syntax;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +49,6 @@ import java.util.List;
 
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.file;
-import static net.morimekta.console.util.Parser.oneOf;
 
 /**
  * @author Stein Eldar Johnsen
@@ -62,14 +58,15 @@ import static net.morimekta.console.util.Parser.oneOf;
 public class CompilerOptions {
     private final STTY tty;
 
-    protected File out = new File(".");
-    protected List<File>    includes = new LinkedList<>();
-    protected Syntax        syntax   = Syntax.thrift;
-    protected HelpSpec      help     = null;
-    protected GeneratorSpec gen      = null;
-    protected List<File>    files    = new LinkedList<>();
-    protected boolean       version;
-    protected boolean       verbose;
+    protected File          out              = new File(".");
+    protected List<File>    includes         = new LinkedList<>();
+    protected HelpSpec      help             = null;
+    protected GeneratorSpec gen              = null;
+    protected List<File>    files            = new LinkedList<>();
+    protected boolean       version          = false;
+    protected boolean       verbose          = false;
+    protected boolean       requireEnumValue = false;
+    protected boolean       requireFieldId   = false;
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
         ArgumentOptions opts = ArgumentOptions.defaults(tty).withMaxUsageWidth(120);
@@ -82,7 +79,8 @@ public class CompilerOptions {
         parser.add(new Flag("--version", "v", "Show program version.", this::setVersion));
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
         parser.add(new Option("--out", "o", "dir", "Output directory", dir(this::setOut), "${PWD}"));
-        parser.add(new Option("--syntax", null, "syntax", "Input file syntax", oneOf(Syntax.class, this::setSyntax), "thrift", false, false, true));
+        parser.add(new Flag("--require-field-id", null, "Require all fields to have a defined ID", this::setRequireFieldId));
+        parser.add(new Flag("--require-enum-value", null, "Require all enum values to have a defined ID", this::setRequireEnumValue));
         parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
 
         return parser;
@@ -94,6 +92,12 @@ public class CompilerOptions {
     private void setVersion(boolean version) {
         this.version = version;
     }
+    private void setRequireEnumValue(boolean requireEnumValue) {
+        this.requireEnumValue = requireEnumValue;
+    }
+    private void setRequireFieldId(boolean requireFieldId) {
+        this.requireFieldId = requireFieldId;
+    }
 
     public void setOut(File out) {
         this.out = out;
@@ -101,10 +105,6 @@ public class CompilerOptions {
 
     public void addInclude(File includes) {
         this.includes.add(includes);
-    }
-
-    public void setSyntax(Syntax syntax) {
-        this.syntax = syntax;
     }
 
     public void setHelp(HelpSpec help) {
@@ -145,14 +145,7 @@ public class CompilerOptions {
     }
 
     public ProgramParser getParser() throws ArgumentException {
-        switch (syntax) {
-            case thrift:
-                return new ThriftProgramParser();
-            case json:
-                return new MessageProgramParser(new JsonSerializer());
-            default:
-                throw new ArgumentException("Unknown SLI syntax %s.", syntax.name());
-        }
+        return new ThriftProgramParser(requireFieldId, requireEnumValue);
     }
 
     public Generator getGenerator(String programPath, TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
