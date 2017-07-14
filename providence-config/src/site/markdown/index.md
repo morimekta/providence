@@ -177,11 +177,11 @@ this:
 ```java
 class Loader {
     public Named load() {
-        TypeRegistry reg = new TypeRegistry();
+        WritableTypeRegistry reg = new SimpleTypeRegistry();
         // sadly all types needs to be registered, so a utility to register all
         // subtypes are needed. 
-        reg.putRecursiveType(Named.kDescriptor);
-        reg.putRecursiveType(From.kDescriptor);
+        reg.registerRecursive(Named.kDescriptor);
+        reg.registerRecursive(From.kDescriptor);
     
         ProvidenceConfig cfg = new ProvidenceConfig(reg);
         return cfg.load("myfile.cfg");
