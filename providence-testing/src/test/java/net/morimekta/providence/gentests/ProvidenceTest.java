@@ -313,9 +313,9 @@ public class ProvidenceTest {
         // program context. That used to cause one of them to
         // use the java package from the other.
         // Both of these are in a 'calculator.thrift' file.
-        assertThat(OtherCalculator.class.getPackage().toString(),
+        assertThat(OtherCalculator.class.getPackage().getName(),
                    is("net.morimekta.test.providence.testing.math"));
-        assertThat(Calculator.class.getPackage().toString(),
+        assertThat(Calculator.class.getPackage().getName(),
                    is("net.morimekta.test.providence.testing.calculator"));
     }
 }
