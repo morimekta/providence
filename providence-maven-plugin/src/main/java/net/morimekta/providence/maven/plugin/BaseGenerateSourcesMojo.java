@@ -61,6 +61,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,6 +71,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -319,7 +322,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             javaOptions.public_constructors = public_constructors;
             GeneratorOptions generatorOptions = new GeneratorOptions();
             generatorOptions.generator_program_name = "providence-maven-plugin";
-            generatorOptions.program_version = project.getVersion();
+            generatorOptions.program_version = getVersionString();
 
             documents.parallelStream()
                      .forEach(doc -> {
@@ -344,6 +347,17 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         return compileOutput;
+    }
+
+    private static String getVersionString() {
+        Properties properties = new Properties();
+        try (InputStream in = BaseGenerateSourcesMojo.class.getResourceAsStream(
+                "/net/morimekta/providence/maven/providence_version.properties")) {
+            properties.load(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
+        }
+        return properties.getProperty("providence.version");
     }
 
     private void resolveDependency(Dependency dep,
