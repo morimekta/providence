@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple in-memory storage of
+ * Simple in-memory storage of providence objects. Uses a local hash map for
+ * storing the instances.
  */
 public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> implements MessageStore<K,M,F> {
     private final Map<K, M>      map;

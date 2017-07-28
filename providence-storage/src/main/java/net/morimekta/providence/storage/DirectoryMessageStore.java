@@ -36,11 +36,13 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Simple file-based storage of providence messages, that keeps
  * an in-memory key index, a message cache, and stores messages
  * to individual files in a single directly.
- *
+ * <p>
  * Note that the directory store is parallel compatible between
  * instances, as all of them would be able to read, write etc all
- * the files all the time. TL;DR Each directory can only have one
- * {@link DirectoryMessageStore} instance.
+ * the files all the time.
+ * <p>
+ * <b>TL;DR Each directory can only have one
+ * {@link DirectoryMessageStore} instance active at a time.</b>
  */
 public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
         implements MessageStore<K,M,F>, Closeable {
