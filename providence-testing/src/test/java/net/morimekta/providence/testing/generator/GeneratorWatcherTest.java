@@ -1,4 +1,4 @@
-package net.morimekta.providence.testing.util;
+package net.morimekta.providence.testing.generator;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
@@ -31,16 +31,18 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class MessageGeneratorTest {
+public class GeneratorWatcherTest {
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher();
 
     @Test
     public void testRandom_defaultDump() {
-        MessageGenerator generator = new MessageGenerator()
-                .dumpOnFailure();
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator =
+                GeneratorWatcher.create()
+                                .dumpOnFailure();
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -49,7 +51,7 @@ public class MessageGeneratorTest {
         assertThat(compact.getName(), is(notNullValue()));
         assertThat(compact.hasId(), is(true));
 
-        assertThat(generator.getGenerated(), hasItem(compact));
+        assertThat(generator.allGenerated(), hasItem(compact));
 
         generator.failed(new Throwable(), Description.EMPTY);
 
@@ -59,9 +61,10 @@ public class MessageGeneratorTest {
 
     @Test
     public void testRandom_multipleMessages() {
-        MessageGenerator generator = new MessageGenerator()
-                .setFillRate(0.667)
-                .dumpOnFailure();
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator =
+                GeneratorWatcher.create()
+                                .setFillRate(0.667)
+                                .dumpOnFailure();
         generator.starting(Description.EMPTY);
 
         LinkedList<CompactFields> list = new LinkedList<>();
@@ -69,7 +72,7 @@ public class MessageGeneratorTest {
 
         assertThat(list.size(), is(100));
         for (CompactFields compact : list) {
-            assertThat(generator.getGenerated(), hasItem(compact));
+            assertThat(generator.allGenerated(), hasItem(compact));
         }
 
         generator.failed(new Throwable(), Description.EMPTY);
@@ -84,32 +87,32 @@ public class MessageGeneratorTest {
     public void testRandom_customSerializer() throws IOException {
         Random random = new Random();
         Fairy fairy = Fairy.create(Locale.ENGLISH);
-        MessageGenerator generator = new MessageGenerator()
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> watcher = GeneratorWatcher
+                .create()
                 .setOutputSerializer(new JsonSerializer())
                 .setMaxCollectionItems(2)
                 .setRandom(random)
-                .addFactory(f -> {
-                    if (f.equals(CompactFields._Field.NAME)) {
-                        return () -> fairy.textProducer()
-                                          .word(1);
-                    }
-                    return null;
-                })
+                .withGenerator(CompactFields.kDescriptor,
+                               gen -> gen.setAlwaysPresent(CompactFields._Field.NAME)
+                                         .setAlwaysAbsent(CompactFields._Field.LABEL)
+                                         .setValueGenerator(CompactFields._Field.NAME,
+                                                            ctx -> fairy.textProducer()
+                                                                        .word(1)))
                 .setFairy(fairy)
                 .dumpOnFailure();
 
-        generator.starting(Description.EMPTY);
+        watcher.starting(Description.EMPTY);
 
-        CompactFields compact = generator.generate(CompactFields.kDescriptor);
+        CompactFields compact = watcher.generate(CompactFields.kDescriptor);
 
-        assertThat(compact.getLabel(), is(notNullValue()));
+        assertThat(compact.getLabel(), is(nullValue()));
         assertThat(compact.getName(), is(notNullValue()));
         assertThat(compact.getName(), not(containsString(" ")));
         assertThat(compact.hasId(), is(true));
 
-        assertThat(generator.getGenerated(), hasItem(compact));
+        assertThat(watcher.allGenerated(), hasItem(compact));
 
-        generator.failed(new Throwable(), Description.EMPTY);
+        watcher.failed(new Throwable(), Description.EMPTY);
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(json(compact) + "\n"));
@@ -119,14 +122,13 @@ public class MessageGeneratorTest {
     public void testRandom_customWriter() throws IOException {
         Fairy fairy = Fairy.create(Locale.ENGLISH);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MessageGenerator generator = new MessageGenerator()
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator = GeneratorWatcher
+                .create()
                 .setMessageWriter(new IOMessageWriter(baos, new FastBinarySerializer()))
                 .setMaxCollectionItems(2)
-                .addFactory(f -> {
-                    if (f.equals(CompactFields._Field.NAME)) {
-                        return () -> fairy.textProducer().word(1);
-                    }
-                    return null;
+                .withGenerator(CompactFields.kDescriptor, gen -> {
+                    gen.setAlwaysPresent(CompactFields._Field.NAME);
+                    gen.setValueGenerator(CompactFields._Field.NAME, ctx -> fairy.textProducer().word(1));
                 })
                 .dumpOnFailure();
         generator.starting(Description.EMPTY);
@@ -138,7 +140,7 @@ public class MessageGeneratorTest {
         assertThat(compact.getName(), not(containsString(" ")));
         assertThat(compact.hasId(), is(true));
 
-        assertThat(generator.getGenerated(), hasItem(compact));
+        assertThat(generator.allGenerated(), hasItem(compact));
 
         generator.failed(new Throwable(), Description.EMPTY);
 
@@ -152,7 +154,8 @@ public class MessageGeneratorTest {
 
     @Test
     public void testRandom_noDump() {
-        MessageGenerator generator = new MessageGenerator();
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator =
+                GeneratorWatcher.create();
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -160,7 +163,7 @@ public class MessageGeneratorTest {
         assertThat(compact.getLabel(), is(notNullValue()));
         assertThat(compact.getName(), is(notNullValue()));
         assertThat(compact.hasId(), is(true));
-        assertThat(generator.getGenerated(), hasItem(compact));
+        assertThat(generator.allGenerated(), hasItem(compact));
 
         generator.failed(new Throwable(), Description.EMPTY);
 
@@ -184,7 +187,8 @@ public class MessageGeneratorTest {
                                              .setLabel("Sjampanjebrus")
                                              .build();
 
-        MessageGenerator generator = new MessageGenerator()
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator = GeneratorWatcher
+                .create()
                 .dumpOnFailure()
                 .setMessageReader(reader);
         generator.starting(Description.EMPTY);
@@ -192,7 +196,7 @@ public class MessageGeneratorTest {
         CompactFields gen = generator.generate(CompactFields.kDescriptor);
 
         assertThat(gen, is(equalToMessage(compact)));
-        assertThat(generator.getGenerated(), hasItem(compact));
+        assertThat(generator.allGenerated(), hasItem(compact));
 
         generator.failed(new Throwable(), Description.EMPTY);
 
@@ -218,7 +222,8 @@ public class MessageGeneratorTest {
                                              .setLabel("Brus med smak")
                                              .build();
 
-        MessageGenerator generator = new MessageGenerator()
+        GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator = GeneratorWatcher
+                .create()
                 .dumpOnFailure()
                 .setResourceReader("/pregen.cfg");
         generator.starting(Description.EMPTY);
@@ -228,8 +233,8 @@ public class MessageGeneratorTest {
 
         assertThat(gen, notNullValue());
         assertThat(gen2, notNullValue());
-        assertThat(generator.getGenerated(), hasItem(compact));
-        assertThat(generator.getGenerated(), hasItem(compact2));
+        assertThat(generator.allGenerated(), hasItem(compact));
+        assertThat(generator.allGenerated(), hasItem(compact2));
 
         generator.failed(new Throwable(), Description.EMPTY);
 

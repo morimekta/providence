@@ -1,7 +1,8 @@
 package net.morimekta.providence.storage;
 
 import net.morimekta.providence.serializer.PrettySerializer;
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.Containers;
 
 import org.junit.Rule;
@@ -25,7 +26,7 @@ public class DirectoryMessageStoreTest {
     public TemporaryFolder tmp = new TemporaryFolder();
 
     @Rule
-    public MessageGenerator generator = new MessageGenerator();
+    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
     @Test
     public void testDirectoryStore() throws IOException, InterruptedException {
