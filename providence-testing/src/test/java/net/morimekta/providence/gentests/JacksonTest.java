@@ -1,7 +1,9 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorBase;
+import net.morimekta.providence.testing.generator.SimpleGeneratorContext;
 import net.morimekta.test.jackson.CompactFields;
 import net.morimekta.test.jackson.Containers;
 import net.morimekta.test.jackson.OptionalFields;
@@ -31,7 +33,8 @@ import static org.junit.Assert.assertThat;
  */
 public class JacksonTest {
     @Rule
-    public MessageGenerator generator = new MessageGenerator();
+    public GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator =
+            GeneratorWatcher.create();
 
     private OptionalFields primitives;
 

@@ -1,6 +1,7 @@
 package net.morimekta.providence.storage;
 
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.Containers;
 
 import com.google.common.collect.ImmutableList;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class InMemoryMessageStoreTest {
     @Rule
-    public MessageGenerator generator = new MessageGenerator();
+    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
     @Test
     public void testStore() {

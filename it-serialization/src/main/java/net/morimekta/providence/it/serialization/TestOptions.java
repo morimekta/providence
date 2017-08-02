@@ -1,6 +1,7 @@
 package net.morimekta.providence.it.serialization;
 
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,7 +23,7 @@ public class TestOptions {
     AtomicBoolean           no_progress = new AtomicBoolean();
     AtomicInteger           runs        = new AtomicInteger(100);
     AtomicInteger           generate    = new AtomicInteger(10);
-    MessageGenerator        generator   = new MessageGenerator();
+    SimpleGeneratorWatcher  generator   = SimpleGeneratorWatcher.create();
     AtomicReference<Test>   test        = new AtomicReference<>();
     AtomicReference<File>   file        = new AtomicReference<>();
     AtomicReference<Format> format      = new AtomicReference<>();

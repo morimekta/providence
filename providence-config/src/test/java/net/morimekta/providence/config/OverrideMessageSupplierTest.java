@@ -21,7 +21,8 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.config.ConfigException;
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.config.Credentials;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.RefConfig1;
@@ -55,7 +56,7 @@ public class OverrideMessageSupplierTest {
     private AtomicReference<Database> base = new AtomicReference<>();
 
     @Rule
-    public MessageGenerator generator = new MessageGenerator();
+    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
     @Before
     @SuppressWarnings("unchecked")

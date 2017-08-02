@@ -6,7 +6,7 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.testing.util.MessageGenerator;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.thrift.TBase;
@@ -36,7 +36,7 @@ public class ITGenerator<PM extends PMessage<PM, PF>, PF extends PField,
 
     private final ImmutableList.Builder<PM> pvdListBuilder;
     private final ImmutableList.Builder<TM> thrListBuilder;
-    private final MessageGenerator          generator;
+    private final SimpleGeneratorWatcher    generator;
 
     private static final Locale[]   LOCALES = new Locale[]{
             Locale.ENGLISH,
@@ -52,7 +52,7 @@ public class ITGenerator<PM extends PMessage<PM, PF>, PF extends PField,
 
     public ITGenerator(PMessageDescriptor<PM, PF> descriptor,
                        Supplier<TM> supplier,
-                       MessageGenerator generator) {
+                       SimpleGeneratorWatcher generator) {
         this.descriptor = descriptor;
         this.supplier = supplier;
         this.thrListBuilder = ImmutableList.builder();
