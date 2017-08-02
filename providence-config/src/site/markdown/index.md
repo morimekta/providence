@@ -129,7 +129,7 @@ def {
 }
 
 def other_num = 4321
-def msg = package.Struct : alias {
+def alias = package.Struct {
   key = "value"
 }
 

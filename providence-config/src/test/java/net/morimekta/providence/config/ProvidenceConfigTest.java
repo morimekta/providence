@@ -544,11 +544,11 @@ public class ProvidenceConfigTest {
                            "def { n = 1f }\n" +
                            "----------^^",
                            "def { n = 1f }");
-        assertParseFailure("Error in test.cfg on line 3, pos 1: Defines already complete or passed.\n" +
+        assertParseFailure("Error in test.cfg on line 3, pos 1: Unexpected token 'def', expected end of file.\n" +
                            "def { y = \"baa\"}\n" +
                            "^^^",
                            "include \"a.cfg\" as a\n" +
-                           "def { n = 1 }\n" +
+                           "config.Database { driver = \"baa\"}\n" +
                            "def { y = \"baa\"}\n");
         assertParseFailure("Error in test.cfg on line 2, pos 1: Expected the token 'as', but got 'config.Database'\n" +
                            "config.Database { driver = \"baa\"}\n" +
@@ -588,7 +588,7 @@ public class ProvidenceConfigTest {
                            "def { s = \"a\n" +
                            "----------^^",
                            "def { s = \"a");
-        assertParseFailure("Error in test.cfg on line 1, pos 7: Reference name '1' is not valid.\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 7: Token '1' is not valid reference name.\n" +
                            "def { 1 = \"boo\" }\n" +
                            "------^",
                            "def { 1 = \"boo\" }");

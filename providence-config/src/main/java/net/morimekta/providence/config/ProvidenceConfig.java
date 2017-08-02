@@ -471,10 +471,6 @@ public class ProvidenceConfig {
                 context.setInclude(alias, included);
             } else if (DEF.equals(token.asString())) {
                 // if params && stage == DEF --> DEF
-                if (lastStage != Stage.INCLUDES) {
-                    throw new TokenizerException(token, "Defines already complete or passed.").setLine(
-                            tokenizer.getLine(token.getLineNo()));
-                }
                 lastStage = Stage.DEFINES;
                 parseDefinitions(context, tokenizer);
             } else if (token.isQualifiedIdentifier()) {
@@ -514,95 +510,116 @@ public class ProvidenceConfig {
 
     @SuppressWarnings("unchecked")
     private void parseDefinitions(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
-        tokenizer.expectSymbol("defines start", Token.kMessageStart);
-        Token token = tokenizer.expect("define or end");
-        while (!token.isSymbol(Token.kMessageEnd)) {
-            if (!token.isIdentifier()) {
-                throw new TokenizerException(token, "Reference name '%s' is not valid.", token.asString())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
-            }
+        Token token = tokenizer.expect("defines group start or identifier");
+        if (token.isIdentifier()) {
             String name = context.initReference(token, tokenizer);
             tokenizer.expectSymbol("def value sep", Token.kFieldValueSep);
-            token = tokenizer.expect("def value");
+            context.setReference(name, parseDefinitionValue(context, tokenizer));
+        } else if (token.isSymbol(Token.kMessageStart)) {
+            token = tokenizer.expect("define or end");
+            while (!token.isSymbol(Token.kMessageEnd)) {
+                if (!token.isIdentifier()) {
+                    throw new TokenizerException(token, "Token '%s' is not valid reference name.", token.asString()).setLine(
+                            tokenizer.getLine(token.getLineNo()));
+                }
+                String name = context.initReference(token, tokenizer);
+                tokenizer.expectSymbol("def value sep", Token.kFieldValueSep);
+                context.setReference(name, parseDefinitionValue(context, tokenizer));
+                token = tokenizer.expect("next define or end");
+            }
+        } else {
+            throw new TokenizerException(token, "Unexpected token after def: '%s'", token.asString()).setLine(
+                    tokenizer.getLine(token.getLineNo()));
+        }
+    }
 
-            if (token.isReal()) {
-                context.setReference(name, Double.parseDouble(token.asString()));
-            } else if (token.isInteger()) {
-                context.setReference(name, Long.parseLong(token.asString()));
-            } else if (token.isStringLiteral()) {
-                context.setReference(name, token.decodeLiteral(strict));
-            } else if (TRUE.equalsIgnoreCase(token.asString())) {
-                context.setReference(name, true);
-            } else if (FALSE.equalsIgnoreCase(token.asString())) {
-                context.setReference(name, false);
-            } else if (Token.B64.equals(token.asString())) {
-                tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
-                context.setReference(name, Binary.fromBase64(tokenizer.readBinary(Token.kParamsEnd)));
-            } else if (Token.HEX.equals(token.asString())) {
-                tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
-                context.setReference(name, Binary.fromHexString(tokenizer.readBinary(Token.kParamsEnd)));
-            } else if (token.isDoubleQualifiedIdentifier()) {
-                // this may be an enum reference, must be
-                // - package.EnumType.IDENTIFIER
+    @SuppressWarnings("unchecked")
+    private Object parseDefinitionValue(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
+        Token token = tokenizer.expect("Start of def value");
 
-                String id = token.asString();
-                int l = id.lastIndexOf(Token.kIdentifierSep);
-                try {
-                    // These extra casts needs to be there, otherwise we'd get this error:
-                    // incompatible types: inference variable T has incompatible upper bounds
-                    // net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
-                    // net.morimekta.providence.descriptor.PEnumDescriptor
-                    // TODO: Figure out a way to fix the generic cast.
-                    PEnumDescriptor ed = (PEnumDescriptor) (Object) registry.getDeclaredType(id.substring(0, l));
-                    PEnumValue val = ed.findByName(id.substring(l + 1));
-                    if (val == null && strict) {
-                        throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    // Note that unknown enum value results in null. Therefore we don't catch null values here.
-                    context.setReference(name, val);
-                } catch (IllegalArgumentException e) {
-                    // No such declared type.
-                    if (strict) {
-                        throw new TokenizerException(token, "Unknown enum identifier: %s", id.substring(0, l))
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                } catch (ClassCastException e) {
-                    // Not an enum.
-                    throw new TokenizerException(token, "Identifier " + id + " does not reference an enum, from " + token.asString())
+        if (token.isReal()) {
+            return Double.parseDouble(token.asString());
+        } else if (token.isInteger()) {
+            return Long.parseLong(token.asString());
+        } else if (token.isStringLiteral()) {
+            return token.decodeLiteral(strict);
+        } else if (TRUE.equalsIgnoreCase(token.asString())) {
+            return Boolean.TRUE;
+        } else if (FALSE.equalsIgnoreCase(token.asString())) {
+            return Boolean.FALSE;
+        } else if (Token.B64.equals(token.asString())) {
+            tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+            return Binary.fromBase64(tokenizer.readBinary(Token.kParamsEnd));
+        } else if (Token.HEX.equals(token.asString())) {
+            tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+            return Binary.fromHexString(tokenizer.readBinary(Token.kParamsEnd));
+        } else if (token.isDoubleQualifiedIdentifier()) {
+            // this may be an enum reference, must be
+            // - package.EnumType.IDENTIFIER
+
+            String id = token.asString();
+            int l = id.lastIndexOf(Token.kIdentifierSep);
+            try {
+                // These extra casts needs to be there, otherwise we'd get this error:
+                // incompatible types: inference variable T has incompatible upper bounds
+                // net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
+                // net.morimekta.providence.descriptor.PEnumDescriptor
+                // TODO: Figure out a way to fix the generic cast.
+                PEnumDescriptor ed = (PEnumDescriptor) (Object) registry.getDeclaredType(id.substring(0, l));
+                PEnumValue val = ed.findByName(id.substring(l + 1));
+                if (val == null && strict) {
+                    throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-            } else if (token.isQualifiedIdentifier()) {
-                // Message type.
-                PMessageDescriptor descriptor;
-                try {
-                    descriptor = (PMessageDescriptor) (Object) registry.getDeclaredType(token.asString());
-                } catch (IllegalArgumentException e) {
-                    // Unknown declared type. Fail if:
-                    // - strict mode: all types must be known.
-                    if (strict) {
-                        throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
-                                tokenizer.getLine(token.getLineNo()));
-                    }
-                    continue;
+                // Note that unknown enum value results in null. Therefore we don't catch null values here.
+                return val;
+            } catch (IllegalArgumentException e) {
+                // No such declared type.
+                if (strict) {
+                    throw new TokenizerException(token, "Unknown enum identifier: %s", id.substring(0, l))
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-                PMessageBuilder builder = descriptor.builder();
-                if (tokenizer.expectSymbol("message start or inherits", '{', ':') == ':') {
-                    token = tokenizer.expect("inherits reference");
-                    PMessage inheritsFrom = resolve(context, token, tokenizer, descriptor);
-                    builder.merge(inheritsFrom);
-                    tokenizer.expectSymbol("message start", '{');
-                }
-
-                PMessage message = parseMessage(tokenizer, context, builder);
-                context.setReference(name, message);
-            } else {
-                throw new TokenizerException(token, "Invalid define value " + token.asString())
+                consumeValue(context, tokenizer, token);
+            } catch (ClassCastException e) {
+                // Not an enum.
+                throw new TokenizerException(token, "Identifier " + id + " does not reference an enum, from " + token.asString())
                         .setLine(tokenizer.getLine(token.getLineNo()));
             }
+        } else if (token.isQualifiedIdentifier()) {
+            // Message type.
+            PMessageDescriptor descriptor;
+            try {
+                descriptor = (PMessageDescriptor) (Object) registry.getDeclaredType(token.asString());
+            } catch (IllegalArgumentException e) {
+                // Unknown declared type. Fail if:
+                // - strict mode: all types must be known.
+                if (strict) {
+                    throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
+                            tokenizer.getLine(token.getLineNo()));
+                }
+                consumeValue(context, tokenizer, token);
+                return null;
+            }
+            PMessageBuilder builder = descriptor.builder();
+            if (tokenizer.expectSymbol("message start or inherits", '{', ':') == ':') {
+                token = tokenizer.expect("inherits reference");
+                PMessage inheritsFrom = resolve(context, token, tokenizer, descriptor);
+                if (inheritsFrom == null) {
+                    throw new TokenizerException(token, "Inheriting from null reference: %s", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
 
-            token = tokenizer.expect("next define or end");
+                builder.merge(inheritsFrom);
+                tokenizer.expectSymbol("message start", '{');
+            }
+
+            return parseMessage(tokenizer, context, builder);
+        } else {
+            throw new TokenizerException(token, "Invalid define value " + token.asString())
+                    .setLine(tokenizer.getLine(token.getLineNo()));
         }
+
+        return null;
     }
 
     @SuppressWarnings("unchecked")
