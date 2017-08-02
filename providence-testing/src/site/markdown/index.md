@@ -6,49 +6,61 @@ providence, and comparing providence messages.
 
 ### Comparing And Matching
 
-There are 3 notable hamcrest matchers added in the testing library:
+There are 3 notable hamcrest matchers added in the testing library. These are
+available throu static methods on `ProvidenceMatchers`:
 
 * `equalToMessage(expected)`: Checks if two messages is equal. This is
   essentially the same as `equals(value)`, but with different output on
   failure. Instead of just displaying the two messages' `toString()`
   output it tried to generate a field-by-field diff.
 
-* `hasFieldValue(path, value)`: Checks if the 'actual' value is a message
-  that has a field with the specified path and the given value. So a
-  short-hand (with better output) of checking the specified field. To these
-  two checks the same, just that the latter has better failure output.:
+* `hasFieldValue(path)`: Checks that the value at the given path is
+  present. So a short-hand (with better output) of checking the specified
+  field. To these two checks the same, just that the last has better
+  failure output:
     ```java
-    assertThat(msg.getMyField().getOtherField(), is("something"));
-    assertThat(msg, hasFieldValue("my_field.other_field", "something"));
+    assertTrue(msg.getMyField().hasOtherField());
+    assertThat(msg.getMyField().hasOtherField(), is(true));
+    assertThat(msg, hasFieldValue("my_field.other_field"));
     ```
 
-* `hasFieldValueThat(path, matcher)`: Essentially same as `hasFieldValue`
-  bit instead of just value comparison, matches the value with a complete
-  hamcrest matcher. E.g.:
+* `hasFieldValueThat(path, matcher)`: Uses the same depth checking as
+  `hasVieldValue`, but also takes a matcher to match against the actual
+  value. So these would be equivalent, but one with better failure output:
     ```java
+    assertThat(msg.getMyField().getOtherField(), startsWith("boo."));
     assertThat(msg, hasFieldValueThat("my_field.other_field", startsWith("boo.")));
     ```
 
-### Message Generator
+### Generating Messages for Testing
 
-There is also added a message generator that can be handled as a junit `@Rule`.
+There is also added a message generator that can be handled with a junit `@Rule`.
 The `MessageGenerator` can generate and fill message either with totally random
-data, or using special rules:
+data, or using special rules, the generator watcher is a simple wrapper that
+handles multiple message generators, setting up default generators and keeping
+messages in case of failure.
 
 ```java
 class MyTest {
     @Rule
-    public MessageGenerator gen = new MessageGenerator()
-            .dumpOnFailure()
-            .addFactory(f -> f.getName().endsWith("uuid") ? () -> UUID.randomUUID().toString() : null);
+    SimpleGeneratorWatcher generator =
+            GeneratorWatcher.create()
+                            .dumpOnFailure()
+                            .withGenerator(MyMessage.kDescriptor, gen -> {
+                                gen.setValueGenerator(MyMessage._Field.UUID, ctx -> UUID.randomUUID().toString());
+                            });
 
     @Test
     public testSomething() {
-        gen.addFactory(f -> f.equals(MyMessage._Field.NAME) ? () -> "name" : null);
-        MyMessage msg = gen.generate(MyMessage.kDescriptor);
+        generator.withGenerator(MyMessage.kDescriptor, gen -> {
+            gen.setValueGenerator(MyMessage._Field.NAME, ctx -> ctx.getFairy().person().getFullName());
+            gen.setValueGenerator(MyMessage._Field.AGE, ctx -> 20 + ctx.getRandom().nextInt(35));
+        });
+
+        MyMessage msg = generator.generate(MyMessage.kDescriptor);
         sut.doSomething(msg);
 
-        assertThat(sut.state(), is(SystemToTest.CORRECT));
+        assertThat(sut.state(), is(SystemUnderTest.CORRECT));
     }
 }
 ```
