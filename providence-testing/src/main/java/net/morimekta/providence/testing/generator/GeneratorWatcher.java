@@ -75,24 +75,27 @@ public class GeneratorWatcher<
     /**
      * Create a message generator watcher with the given base context.
      *
-     * @param baseContext The base context to use when generating messages.
+     * @param base The base generator to use when generating messages.
+     * @param <Base> The base generator type.
      * @param <Context> The context type.
      * @return The watcher instance.
      */
     public static
-    <Context extends GeneratorContext<Context>, Base extends GeneratorBase<Base,Context>> GeneratorWatcher<Base, Context> create(Base baseContext) {
-        return new GeneratorWatcher<>(baseContext);
+    <Context extends GeneratorContext<Context>, Base extends GeneratorBase<Base,Context>> GeneratorWatcher<Base, Context> create(Base base) {
+        return new GeneratorWatcher<>(base);
     }
 
     /**
      * Make a simple default message generator.
+     *
+     * @param base The base generator to use when generating messages.
      */
-    public GeneratorWatcher(Base baseContext) {
+    public GeneratorWatcher(Base base) {
         this.globalOutputSerializer = this.outputSerializer = new PrettySerializer().config();
         this.globalDumpOnFailure    = this.dumpOnFailure    = false;
         this.globalReader           = this.reader           = null;
         this.globalWriter           = this.writer           = null;
-        this.globalBase             = this.base             = baseContext;
+        this.globalBase             = this.base             = base;
 
         this.generated              = new LinkedList<>();
         this.started                = false;
