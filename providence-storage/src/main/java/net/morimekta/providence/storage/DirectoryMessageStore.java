@@ -70,9 +70,10 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
 
         this.directory = directory;
         this.tempDir = new File(directory, TMP_DIR);
-        this.tempDir.mkdirs();
-        if (!tempDir.isDirectory()) {
+        if (!tempDir.exists() && !tempDir.mkdirs()) {
             throw new IllegalStateException("Unable to create temp directory: " + tempDir.toString());
+        } else if (!tempDir.isDirectory()) {
+            throw new IllegalStateException("File blocking temp directory: " + tempDir.toString());
         }
         this.keyBuilder = keyBuilder;
         this.keyParser = keyParser;
