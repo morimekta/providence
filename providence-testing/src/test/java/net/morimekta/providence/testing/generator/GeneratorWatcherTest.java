@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -68,7 +69,7 @@ public class GeneratorWatcherTest {
         generator.starting(Description.EMPTY);
 
         LinkedList<CompactFields> list = new LinkedList<>();
-        ExtraStreams.range(0, 100).forEach(i -> list.add(generator.generate(CompactFields.kDescriptor)));
+        IntStream.range(0, 100).forEach(i -> list.add(generator.generate(CompactFields.kDescriptor)));
 
         assertThat(list.size(), is(100));
         for (CompactFields compact : list) {
