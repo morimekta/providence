@@ -1,8 +1,11 @@
 namespace java net.morimekta.test.providence.testing.service
 
+include "service2.thrift"
+
 struct Request {
     1: string text;
     2: bool valid;
+    3: service2.Request request;
 }
 
 struct Response {

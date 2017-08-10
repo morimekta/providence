@@ -32,6 +32,7 @@ import net.morimekta.test.providence.testing.UnionFields;
 import net.morimekta.test.providence.testing.Value;
 import net.morimekta.test.providence.testing.calculator.Calculator;
 import net.morimekta.test.providence.testing.math.OtherCalculator;
+import net.morimekta.test.providence.testing.service.Request;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableSet;
@@ -317,5 +318,11 @@ public class ProvidenceTest {
                    is("net.morimekta.test.providence.testing.math"));
         assertThat(Calculator.class.getPackage().getName(),
                    is("net.morimekta.test.providence.testing.calculator"));
+
+        // Actually just a compile time check that the "request" field in the "service.Request" struct is
+        // a "service2.Request", not a "service.Request".
+        Request.builder()
+               .setRequest(net.morimekta.test.providence.testing.service2.Request.builder().build())
+               .build();
     }
 }

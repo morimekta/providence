@@ -78,10 +78,10 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
         String program = finalName.replaceAll("\\..*", "");
         String name = finalName.replaceAll(".*\\.", "");
 
-        if (declaredTypes.containsKey(name)) {
-            return (T) declaredTypes.get(name);
-        }
         if (localProgramContext.equals(program)) {
+            if (declaredTypes.containsKey(name)) {
+                return (T) declaredTypes.get(name);
+            }
             throw new IllegalArgumentException(
                     "No such type \"" + name + "\" in program \"" + program + "\"");
         }
@@ -121,7 +121,7 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
             if (!includes.containsKey(program)) {
                 includes.get(program).registerRecursively(service);
             }
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("No include for type: " + service.getQualifiedName());
         }
         String serviceName = service.getName();
 
@@ -140,7 +140,7 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
             if (includes.containsKey(program)) {
                 includes.get(program).registerRecursively(declaredType);
             }
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("No include for type: " + declaredType.getQualifiedName());
         }
         String typeName = declaredType.getName();
         if (declaredTypes.containsKey(typeName)) {
