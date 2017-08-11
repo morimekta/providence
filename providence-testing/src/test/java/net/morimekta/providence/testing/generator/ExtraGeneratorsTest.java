@@ -2,14 +2,18 @@ package net.morimekta.providence.testing.generator;
 
 import net.morimekta.providence.testing.generator.extra.ByteRangeGenerator;
 import net.morimekta.providence.testing.generator.extra.DoubleRangeGenerator;
+import net.morimekta.providence.testing.generator.extra.EnumNameGenerator;
+import net.morimekta.providence.testing.generator.extra.EnumValueGenerator;
 import net.morimekta.providence.testing.generator.extra.ExtraGenerators;
 import net.morimekta.providence.testing.generator.extra.IntRangeGenerator;
 import net.morimekta.providence.testing.generator.extra.LongRangeGenerator;
 import net.morimekta.providence.testing.generator.extra.OneOfGenerator;
 import net.morimekta.providence.testing.generator.extra.ShortRangeGenerator;
+import net.morimekta.test.providence.testing.Value;
 import net.morimekta.testing.ExtraMatchers;
 
 import com.google.common.collect.ImmutableList;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -17,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.byteRange;
 import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.doubleRange;
+import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.enumName;
+import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.enumValue;
 import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.intRange;
 import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.longRange;
 import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.oneOf;
@@ -24,16 +30,23 @@ import static net.morimekta.providence.testing.generator.extra.ExtraGenerators.s
 import static net.morimekta.testing.ExtraMatchers.inRange;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class ExtraGeneratorsTest {
+    private SimpleGeneratorBase base;
+    private SimpleGeneratorContext context;
+
+    @Before
+    public void setUp() {
+        base = new SimpleGeneratorBase();
+        context = base.createContext();
+    }
+
     @Test
     public void testRange() {
-        SimpleGeneratorBase base = new SimpleGeneratorBase();
-        SimpleGeneratorContext context = base.createContext();
-
         ByteRangeGenerator<SimpleGeneratorContext> bytes = byteRange(-12, 12);
         ShortRangeGenerator<SimpleGeneratorContext> shorts = shortRange(-130, 130);
         IntRangeGenerator<SimpleGeneratorContext> ints = intRange(-123456, 123456);
@@ -118,9 +131,6 @@ public class ExtraGeneratorsTest {
 
     @Test
     public void testOneOf() {
-        SimpleGeneratorBase base = new SimpleGeneratorBase();
-        SimpleGeneratorContext context = base.createContext();
-
         OneOfGenerator<SimpleGeneratorContext,Integer> fibonnacci =
                 oneOf(1, 1, 2, 3, 5, 8, 13, 21, 35);
         for (int i = 0; i < 1000; ++i) {
@@ -132,6 +142,45 @@ public class ExtraGeneratorsTest {
                 oneOf(ImmutableList.of());
         assertThat(none.generate(context), is(nullValue()));
         assertThat(none.generate(context), is(nullValue()));
+    }
+
+    @Test
+    public void testEnumValue() {
+        EnumValueGenerator<SimpleGeneratorContext, Value> generator = enumValue(Value.kDescriptor);
+        for (int i = 0; i < 1000; ++i) {
+            int value = generator.generate(context);
+            assertThat(Value.findById(value), is(notNullValue()));
+        }
+
+        generator = enumValue(Value.SECOND, Value.FOURTH, Value.SIXTH, Value.EIGHTH, Value.TENTH);
+        for (int i = 0; i < 1000; ++i) {
+            int value = generator.generate(context);
+            assertThat(Value.findById(value),
+                       is(ExtraMatchers.oneOf(Value.SECOND, Value.FOURTH, Value.SIXTH, Value.EIGHTH, Value.TENTH)));
+        }
+
+        generator = enumValue();
+        assertThat(generator.generate(context), is(nullValue()));
+    }
+
+
+    @Test
+    public void testEnumName() {
+        EnumNameGenerator<SimpleGeneratorContext, Value> generator = ExtraGenerators.enumName(Value.kDescriptor);
+        for (int i = 0; i < 1000; ++i) {
+            String name = generator.generate(context);
+            assertThat(Value.findByName(name), is(notNullValue()));
+        }
+
+        generator = ExtraGenerators.enumName(Value.SECOND, Value.FOURTH, Value.SIXTH, Value.EIGHTH, Value.TENTH);
+        for (int i = 0; i < 1000; ++i) {
+            String name = generator.generate(context);
+            assertThat(Value.findByName(name),
+                       is(ExtraMatchers.oneOf(Value.SECOND, Value.FOURTH, Value.SIXTH, Value.EIGHTH, Value.TENTH)));
+        }
+
+        generator = enumName();
+        assertThat(generator.generate(context), is(nullValue()));
     }
 
     @Test

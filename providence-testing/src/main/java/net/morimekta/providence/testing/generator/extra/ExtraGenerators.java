@@ -1,5 +1,7 @@
 package net.morimekta.providence.testing.generator.extra;
 
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.testing.generator.GeneratorContext;
 
 import java.util.Collection;
@@ -57,6 +59,26 @@ public class ExtraGenerators {
     public static <Context extends GeneratorContext<Context>, T>
     OneOfGenerator<Context, T> oneOf(Collection<T> selection) {
         return new OneOfGenerator<>(selection);
+    }
+
+    @SafeVarargs
+    public static <Context extends GeneratorContext<Context>, E extends PEnumValue<E>>
+    EnumValueGenerator<Context, E> enumValue(E... selection) {
+        return new EnumValueGenerator<>(selection);
+    }
+    public static <Context extends GeneratorContext<Context>, E extends PEnumValue<E>>
+    EnumValueGenerator<Context, E> enumValue(PEnumDescriptor<E> descriptor) {
+        return new EnumValueGenerator<>(descriptor);
+    }
+
+    @SafeVarargs
+    public static <Context extends GeneratorContext<Context>, E extends PEnumValue<E>>
+    EnumNameGenerator<Context, E> enumName(E... selection) {
+        return new EnumNameGenerator<>(selection);
+    }
+    public static <Context extends GeneratorContext<Context>, E extends PEnumValue<E>>
+    EnumNameGenerator<Context, E> enumName(PEnumDescriptor<E> descriptor) {
+        return new EnumNameGenerator<>(descriptor);
     }
 
     // -- Defeat instantiation --
