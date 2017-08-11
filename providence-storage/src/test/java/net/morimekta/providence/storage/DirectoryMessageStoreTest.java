@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class DirectoryMessageStoreTest {
+    @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
     @Rule
@@ -30,9 +31,6 @@ public class DirectoryMessageStoreTest {
 
     @Test
     public void testDirectoryStore() throws IOException, InterruptedException {
-        tmp.create();
-        System.err.println("ROOT: " + tmp.getRoot().getAbsolutePath());
-
         Map<UUID, Containers> source = new HashMap<>();
         for (int i = 0; i < 100; ++i) {
             source.put(UUID.randomUUID(),

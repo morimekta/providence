@@ -4,31 +4,33 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.streams.MessageCollectors;
+import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.util.concurrent.ReadWriteMutex;
 import net.morimekta.util.concurrent.ReentrantReadWriteMutex;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -42,10 +44,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * the files all the time.
  * <p>
  * <b>TL;DR Each directory can only have one
- * {@link DirectoryMessageStore} instance active at a time.</b>
+ * {@link DirectoryMessageListStore} instance active at a time.</b>
  */
-public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
-        implements MessageStore<K,M,F>, Closeable {
+public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PField>
+        implements MessageListStore<K,M,F>, Closeable {
     private static final String TMP_DIR = ".tmp";
 
     private final File                     directory;
@@ -55,15 +57,15 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     private final Serializer               serializer;
     private final PMessageDescriptor<M, F> descriptor;
 
-    private final ReadWriteMutex mutex;
-    private final Cache<K, M>    cache;
-    private final Set<K>         keyset;
+    private final ReadWriteMutex    mutex;
+    private final Cache<K, List<M>> cache;
+    private final Set<K>            keyset;
 
-    public DirectoryMessageStore(@Nonnull File directory,
-                                 @Nonnull Function<K, String> keyBuilder,
-                                 @Nonnull Function<String, K> keyParser,
-                                 @Nonnull PMessageDescriptor<M,F> descriptor,
-                                 @Nonnull Serializer serializer) {
+    public DirectoryMessageListStore(@Nonnull File directory,
+                                     @Nonnull Function<K, String> keyBuilder,
+                                     @Nonnull Function<String, K> keyParser,
+                                     @Nonnull PMessageDescriptor<M,F> descriptor,
+                                     @Nonnull Serializer serializer) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException("Not a directory: " + directory.toString());
         }
@@ -97,9 +99,9 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     }
 
     @Override @Nonnull
-    public Map<K, M> getAll(@Nonnull Collection<K> keys) {
+    public Map<K, List<M>> getAll(@Nonnull Collection<K> keys) {
         return mutex.lockForReading(() -> {
-            HashMap<K,M> out = new HashMap<>();
+            HashMap<K,List<M>> out = new HashMap<>();
             TreeSet<K> tmp = new TreeSet<>(keys);
             tmp.retainAll(keyset);
             for (K key : tmp) {
@@ -114,11 +116,12 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     }
 
     @Override @Nonnull
-    public Map<K,M> putAll(@Nonnull Map<K, M> values) {
+    public Map<K,List<M>> putAll(@Nonnull Map<K, List<M>> values) {
         return mutex.lockForWriting(() -> {
-            Map<K,M> out = getAll(values.keySet());
+            Map<K,List<M>> out = new HashMap<>();
             values.forEach((key, value) -> {
                 try {
+                    value = ImmutableList.copyOf(value);
                     write(key, value);
                     cache.put(key, value);
                     keyset.add(key);
@@ -131,28 +134,30 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     }
 
     @Override @Nonnull
-    public Map<K,M> removeAll(Collection<K> keys) {
+    public Map<K,List<M>> removeAll(Collection<K> keys) {
         return mutex.lockForWriting(() -> {
-            Map<K,M> out = new HashMap<>();
-            for (K key : keys) {
-                File file = fileFor(key, false);
-                if (file.exists()) {
-                    try {
-                        out.put(key, cache.get(key, () -> read(key)));
-                    } catch (ExecutionException e) {
-                        // Best effort, as we could not read the message.
-                        // At least it was present.
-                        out.put(key, descriptor.builder().build());
-                    } finally {
-                        file.delete();
+            try {
+                Map<K, List<M>> out = new HashMap<>();
+                for (K key : keys) {
+                    File file = fileFor(key, false);
+                    if (file.exists()) {
+                        try {
+                            out.put(key, cache.get(key, () -> read(key)));
+                        } catch (ExecutionException e) {
+                            // Best effort, as we could not read the message.
+                            // At least it was present.
+                            out.put(key, new LinkedList<>());
+                        } finally {
+                            file.delete();
+                        }
+                        cache.invalidate(key);
+                        keyset.remove(key);
                     }
-                    cache.invalidate(key);
-                    keyset.remove(key);
-                } else {
-                    out.put(key, null);
                 }
+                return out;
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
             }
-            return out;
         });
     }
 
@@ -170,31 +175,36 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
         return set;
     }
 
-    private M read(K key) throws IOException {
-        try (FileInputStream fis = new FileInputStream(fileFor(key, false));
-             BufferedInputStream bis = new BufferedInputStream(fis)) {
-            return serializer.deserialize(bis, descriptor);
-        } catch (IOException e) {
-            throw new IOException("Unable to read " + keyBuilder.apply(key), e);
+    private List<M> read(K key) throws IOException {
+        try {
+            return MessageStreams.file(fileFor(key, false), serializer, descriptor)
+                                 .collect(Collectors.toList());
+        } catch (UncheckedIOException e) {
+            throw new IOException("Unable to read " + keyBuilder.apply(key), e.getCause());
         }
     }
 
-    private void write(K key, M message) throws IOException {
+    private void write(K key, List<M> message) throws IOException {
         File tmp = fileFor(key, true);
         File file = fileFor(key, false);
-        try (FileOutputStream fos = new FileOutputStream(tmp, false);
-             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-            serializer.serialize(bos, message);
-            bos.flush();
-        } catch (IOException e) {
-            throw new IOException("Unable to write " + keyBuilder.apply(key), e);
+        if (tmp.exists() && !tmp.delete()) {
+            throw new IOException("Unable to delete old tmp file: " + tmp.getAbsolutePath());
+        }
+        try {
+            int size = message.stream().collect(MessageCollectors.toFile(tmp, serializer));
+            if (size == 0) {
+                throw new IOException("Zero bytes written to " + tmp.getAbsolutePath());
+            }
+        } catch (UncheckedIOException e) {
+            throw new IOException("Unable to write " + keyBuilder.apply(key), e.getCause());
         }
         Files.move(tmp.toPath(), file.toPath(), REPLACE_EXISTING);
     }
 
-    private File fileFor(K key, boolean temp) {
+    private File fileFor(K key, boolean temp) throws IOException {
         return new File(temp ? tempDir : directory,
-                        validateKey(keyBuilder.apply(key)));
+                        validateKey(keyBuilder.apply(key)))
+                .getCanonicalFile();
     }
 
     private String validateKey(String key) {

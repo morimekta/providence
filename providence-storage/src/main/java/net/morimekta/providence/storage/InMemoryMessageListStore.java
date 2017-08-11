@@ -5,32 +5,34 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.concurrent.ReadWriteMutex;
 import net.morimekta.util.concurrent.ReentrantReadWriteMutex;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Simple in-memory storage of providence objects. Uses a local hash map for
  * storing the instances.
  */
-public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> implements MessageStore<K,M,F> {
-    private final Map<K, M>      map;
-    private final ReadWriteMutex mutex;
+public class InMemoryMessageListStore<K, M extends PMessage<M,F>, F extends PField> implements MessageListStore<K,M,F> {
+    private final Map<K, List<M>> map;
+    private final ReadWriteMutex  mutex;
 
-    public InMemoryMessageStore() {
+    public InMemoryMessageListStore() {
         map   = new HashMap<>();
         mutex = new ReentrantReadWriteMutex();
     }
 
     @Nonnull
     @Override
-    public Map<K, M> getAll(@Nonnull Collection<K> keys) {
+    public Map<K, List<M>> getAll(@Nonnull Collection<K> keys) {
         return mutex.lockForReading(() -> {
-            Map<K, M> out = new HashMap<>();
+            Map<K, List<M>> out = new HashMap<>();
             for (K key : keys) {
                 if (map.containsKey(key)) {
                     out.put(key, map.get(key));
@@ -51,11 +53,11 @@ public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> 
     }
 
     @Override @Nonnull
-    public Map<K,M> putAll(@Nonnull Map<K, M> values) {
+    public Map<K,List<M>> putAll(@Nonnull Map<K, List<M>> values) {
         return mutex.lockForWriting(() -> {
-            Map<K,M> out = new HashMap<>();
-            for (Map.Entry<K,M> entry : values.entrySet()) {
-                M tmp = map.put(entry.getKey(), entry.getValue());
+            Map<K,List<M>> out = new HashMap<>();
+            for (Map.Entry<K,List<M>> entry : values.entrySet()) {
+                List<M> tmp = map.put(entry.getKey(), ImmutableList.copyOf(entry.getValue()));
                 if (tmp != null) {
                     out.put(entry.getKey(), tmp);
                 }
@@ -65,11 +67,11 @@ public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> 
     }
 
     @Override @Nonnull
-    public Map<K,M> removeAll(Collection<K> keys) {
+    public Map<K,List<M>> removeAll(Collection<K> keys) {
         return mutex.lockForWriting(() -> {
-            Map<K,M> out = new HashMap<>();
+            Map<K,List<M>> out = new HashMap<>();
             for (K key : keys) {
-                M tmp = map.remove(key);
+                List<M> tmp = map.remove(key);
                 if (tmp != null) {
                     out.put(key, tmp);
                 }
