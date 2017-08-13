@@ -976,6 +976,9 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                       .begin();
                 readPortableBinary(field, bebrTemp, keyVariable, pMap.keyDescriptor());
                 readPortableBinary(field, bebrTemp, valueVariable, pMap.itemDescriptor());
+
+                // TODO: This needs to be replaced with a field setter (not the adder) so that
+                // an empty map is not confused with no map at all.
                 writer.formatln("%s(%s, %s);", field.adder(), keyVariable, valueVariable)
                       .end()
                       .println("}");
