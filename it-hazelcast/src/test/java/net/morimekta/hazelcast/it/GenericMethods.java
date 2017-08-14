@@ -233,17 +233,17 @@ public class GenericMethods {
                 if (key instanceof PEnumValue) {
 
                     // Search for the enum with the same ID in the expected map keys.
-                    Object epxectedKey = expectedMap.keySet()
+                    Object expectedKey = expectedMap.keySet()
                                                     .stream()
                                                     .filter(k -> ((PEnumValue) k).getId() == ((PEnumValue) key).getId())
                                                     .findFirst()
                                                     .orElse(null);
 
-                    if (epxectedKey == null) {
+                    if (expectedKey == null) {
                         throw new AssertionError("No expected map key matching " + key);
                     }
 
-                    assertValueIntegrity(expectedField, actualMap.get(key), expectedMap.get(epxectedKey));
+                    assertValueIntegrity(expectedField, actualMap.get(key), expectedMap.get(expectedKey));
 
                 } else if (key instanceof PMessage) {
 
