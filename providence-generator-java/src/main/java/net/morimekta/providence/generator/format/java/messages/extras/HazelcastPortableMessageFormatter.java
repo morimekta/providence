@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -949,6 +950,10 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 }
                 break;
             case MAP:
+                // TODO: Repeal and replace with proper "set value".
+                // This is a hack to make sure the map is set even if it is empty.
+                writer.formatln("%s(new %s<>());", field.setter(), HashMap.class.getName());
+
                 PMap pMap = field.toPMap();
                 String mapSize = tempVariable();
                 String keyVariable = tempVariable();
@@ -978,7 +983,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 readPortableBinary(field, bebrTemp, valueVariable, pMap.itemDescriptor());
 
                 // TODO: This needs to be replaced with a field setter (not the adder) so that
-                // an empty map is not confused with no map at all.
+                // an empty map is not confused with no map at all (see hack above).
                 writer.formatln("%s(%s, %s);", field.adder(), keyVariable, valueVariable)
                       .end()
                       .println("}");
