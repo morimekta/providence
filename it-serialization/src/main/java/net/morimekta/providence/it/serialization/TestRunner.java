@@ -90,7 +90,7 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                 if (stop.get()) return;
                                 runner.run(test);
                                 if (progress != null) {
-                                    progress.update(k++);
+                                    progress.accept(k++);
                                 }
                             }
                             System.gc();
