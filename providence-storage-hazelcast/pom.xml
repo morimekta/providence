@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Providence Utils : Storage / Hazelcast</name>
+    <description>
+        Utilities for handling storage of providence objects using hazelcast.
+    </description>
+
+    <parent>
+        <groupId>net.morimekta.providence</groupId>
+        <artifactId>providence</artifactId>
+        <version>0.5.2-SNAPSHOT</version>
+    </parent>
+    <artifactId>providence-storage-hazelcast</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>findbugs-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>testing-util</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-providence</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <hazelcast_portable>true</hazelcast_portable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

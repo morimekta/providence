@@ -93,7 +93,7 @@
         <mockito.version>2.8.47</mockito.version>
 
         <!-- subsystems -->
-        <hazelcast.version>3.6.8</hazelcast.version>
+        <hazelcast.version>3.8.4</hazelcast.version>
         <dropwizard.version>1.1.3</dropwizard.version>
 
         <!-- RPC tools, Client -->
@@ -146,6 +146,11 @@
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-reflect</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-storage</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -969,6 +974,7 @@
                 <module>providence-thrift</module>
                 <module>providence-config</module>
                 <module>providence-storage</module>
+                <module>providence-storage-hazelcast</module>
                 <module>providence-jax-rs</module>
             </modules>
         </profile>
