@@ -334,7 +334,9 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .begin();
 
         if (message.isUnion()) {
-            writer.formatln("int c = %s.compareTo(other.%s);",
+            writer.formatln("if (%s == null || other.%s == null) return Boolean.compare(%s != null, other.%s != null);",
+                            UNION_FIELD, UNION_FIELD, UNION_FIELD, UNION_FIELD)
+                  .formatln("int c = %s.compareTo(other.%s);",
                             UNION_FIELD, UNION_FIELD)
                   .appendln("if (c != 0) return c;")
                   .newline()
