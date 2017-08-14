@@ -102,7 +102,7 @@ public class JUtils {
      * @return macro cased constant value of the message.
      */
     public static String getHazelcastClassId(String name) {
-        return macroCase(name).concat("_ID");
+        return "CLASS_" + macroCase(name) + "_ID";
     }
 
     /**

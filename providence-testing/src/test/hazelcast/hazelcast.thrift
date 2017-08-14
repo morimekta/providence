@@ -50,6 +50,7 @@ struct OptionalFields {
     8: optional binary binaryValue;
     9: optional Value enumValue;
     10: optional CompactFields compactValue;
+    11: optional RequiredFields requiredValue;
 } (hazelcast.class.id = "2",
    java.public.constructor = "")
 
@@ -62,6 +63,7 @@ struct OptionalListFields {
     6: optional list<double> doubleValue;
     7: optional list<string> stringValue;
     10: optional list<CompactFields> compactValue;
+    11: optional list<RequiredFields> requiredValue;
 } (hazelcast.class.id = "3",
    java.public.constructor = "")
 

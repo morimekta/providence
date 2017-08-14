@@ -20,17 +20,17 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
-import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.providence.reflect.contained.CMessageDescriptor;
+import net.morimekta.providence.util.ThriftAnnotation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -86,10 +86,6 @@ public class JField {
     public String name() {
         return field.getName();
     }
-
-    public String hasName() { return camelCase("__has_", field.getName()); }
-
-    public String sizeName() { return camelCase("__size_", field.getName()); }
 
     public String param() {
         return camelCase("p", field.getName());
@@ -245,16 +241,18 @@ public class JField {
                 return LinkedList.class.getName().replace('$', '.');
             case MAP:
                 switch (containerType()) {
-                    case DEFAULT: return HashMap.class.getName().replace('$', '.');
-                    case SORTED: return TreeMap.class.getName().replace('$', '.');
-                    case ORDERED: return LinkedHashMap.class.getName().replace('$', '.');
+                    case DEFAULT: return HashMap.class.getName();
+                    case SORTED: return TreeMap.class.getName();
+                    case ORDERED: return LinkedHashMap.class.getName();
                 }
             case SET:
                 switch (containerType()) {
-                    case DEFAULT: return HashSet.class.getName().replace('$', '.');
-                    case SORTED: return TreeSet.class.getName().replace('$', '.');
-                    case ORDERED: return LinkedHashSet.class.getName().replace('$', '.');
+                    case DEFAULT: return HashSet.class.getName();
+                    case SORTED: return TreeSet.class.getName();
+                    case ORDERED: return LinkedHashSet.class.getName();
                 }
+            case MESSAGE:
+                return fieldType() + "._Builder";
             default:
                 return fieldType();
         }
@@ -378,22 +376,38 @@ public class JField {
                 .getDescriptor());
     }
 
-    public boolean isUnion() {
-        boolean result = false;
+    /**
+     * @return True if the field should be serialized with it's binary serialized representation, not it's
+     *         portable field type. This is the case for non-portable messages, sets and lists of
+     *         non-portable messages and all maps.
+     */
+    public boolean portableRequiresBinarySerialization() {
         switch ( type() ) {
             case MESSAGE:
-                result = ((PMessageDescriptor)field().getDescriptor()).getVariant().equals(PMessageVariant.UNION);
-                break;
+                // Messages that does not have the hazelcast.class.id
+                // annotation do require binary serialization.
+                return !((CMessageDescriptor)field().getDescriptor()).hasAnnotation(ThriftAnnotation.JAVA_HAZELCAST_CLASS_ID);
+            case MAP:
+                return true;
             case SET:
             case LIST:
                 PDescriptor descriptor = extractItemDescriptor(field().getDescriptor());
                 if( descriptor.getType().equals(PType.MESSAGE) ) {
-                    result = ((PMessageDescriptor)descriptor).getVariant().equals(PMessageVariant.UNION);
+                    // Lists containing messages that are not portable
+                    // should be completely binary serialized.
+                    return !((CMessageDescriptor)descriptor).hasAnnotation(ThriftAnnotation.JAVA_HAZELCAST_CLASS_ID);
+                }
+                // Collections containing collections do require binary
+                // serialization. As this is basically impossible to
+                // model in a usable way with portable.
+                if (descriptor.getType() == PType.MAP ||
+                    descriptor.getType() == PType.SET ||
+                    descriptor.getType() == PType.LIST) {
+                    return true;
                 }
                 break;
         }
-        return result;
-
+        return false;
     }
 
     private PDescriptor extractItemDescriptor(PDescriptor descriptor) {

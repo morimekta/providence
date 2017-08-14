@@ -1,8 +1,8 @@
 namespace java net.morimekta.test.hazelcast.v4
 
-const i32 FACTORY_ID = 1;
+const i32 FACTORY_ID = 123456;
 
-enum Value {
+enum Fibonacchi {
    FIRST = 1,
    SECOND = 2,
    THIRD = 3,
@@ -15,7 +15,6 @@ enum Value {
    TENTH = 89,
    ELEVENTH = 144,
    TWELWETH = 233,
-   /** @Deprecated */
    THIRTEENTH = 377,
    FOURTEENTH = 610,
    FIFTEENTH = 987,
@@ -26,147 +25,105 @@ enum Value {
    TWENTIETH = 10946
 }
 
-struct CompactFields {
+struct Compact {
     1: required string name
     2: required i32 id,
     3: string label;
-} (compact = "", hazelcast.class.id = "1")
+} (json.compact = "", hazelcast.class.id = "1")
 
-const list<CompactFields> kDefaultCompactFields = [
-  {"name": "Tut-Ankh-Amon", "id": 1333, "label": "dead"},
-  {"name": "Ramses II", "id": 1279}
-];
 
-struct OptionalFields {
+struct PortableFields {
     1: optional bool booleanValue;
     2: optional byte byteValue;
-//    3: optional i16 shortValue;
+    // 3: optional i16 shortValue;
     4: optional i32 integerValue;
     5: optional i64 longValue;
     6: optional double doubleValue;
-//    7: optional string stringValue;
+    7: optional string stringValue;
     8: optional binary binaryValue;
-    9: optional Value enumValue;
-    10: optional CompactFields compactValue;
-    11: optional string anotherStringValue;
-    2017: optional i16 anotherShortValue;
+    // 9: optional Fibonacchi enumValue;
+    10: optional Compact compactValue;
+    12: optional NotPortableFields notPortableValue;
 } (hazelcast.class.id = "2")
 
-struct OptionalListFields {
+struct PortableListFields {
     1: optional list<bool> booleanValues;
     2: optional list<byte> byteValues;
-    3: optional list<i16> shortValues;
-//    4: optional list<i32> integerValue;
+    // 3: optional list<i16> shortValues;
+    4: optional list<i32> integerValue;
     5: optional list<i64> longValue;
     6: optional list<double> doubleValue;
-//    7: optional list<string> stringValue;
+    7: optional list<string> stringValue;
     8: optional list<binary> binaryValue;
-    9: optional list<Value> valueValue;
-    10: optional list<CompactFields> compactValue;
-    11: optional list<string> anotherStringValues;
-    12: optional list<i32> anotherIntegerValue;
+    // 9: optional list<Fibonacchi> valueValue;
+    10: optional list<Compact> compactValue;
+    12: optional list<NotPortableFields> notPortableValue;
 } (hazelcast.class.id = "3")
 
-struct OptionalSetFields {
+struct PortableSetFields {
     1: optional set<bool> booleanValues;
     2: optional set<byte> byteValues;
-    3: optional set<i16> shortValues;
-//    4: optional set<i32> integerValue;
+    // 3: optional set<i16> shortValues;
+    4: optional set<i32> integerValue;
     5: optional set<i64> longValue;
     6: optional set<double> doubleValue;
-//    7: optional set<string> stringValue;
+    7: optional set<string> stringValue;
     8: optional set<binary> binaryValue;
-    9: optional set<Value> valueValue;
-    10: optional set<CompactFields> compactValue;
-    11: optional set<string> anotherStringValues;
-    12: optional set<i32> anotherIntegerValue;
+    // 9: optional set<Fibonacchi> valueValue;
+    10: optional set<Compact> compactValue;
+    12: optional set<NotPortableFields> notPortableValue;
 } (hazelcast.class.id = "4")
 
-
-struct OptionalMapFields {
+struct PortableMapFields {
     1: optional map<bool,bool> booleanValue;
     2: optional map<byte,byte> byteValue;
-    3: optional map<i16,i16> shortValue;
-//    4: optional map<i32,i32> integerValue;
+    // 3: optional map<i16,i16> shortValue;
+    4: optional map<i32,i32> integerValue;
     5: optional map<i64,i64> longValue;
     6: optional map<double,double> doubleValue;
-//    7: optional map<string,string> stringValue;
+    7: optional map<string,string> stringValue;
     8: optional map<binary,binary> binaryValue;
-    9: optional map<Value,Value> valueValue;
-    10: optional map<CompactFields,CompactFields> compactValue;
-    11: optional map<string,string> anotherStringValue;
-    12: optional map<i32,i32> anotherIntegerValue;
+    // 9: optional map<Fibonacchi,Fibonacchi> valueValue;
+    10: optional map<Compact,Compact> compactValue;
+    12: optional map<i32,NotPortableFields> notPortableValue;
 } (hazelcast.class.id = "5")
 
-struct OptionalMapListFields {
+struct PortableMapListFields {
     1: optional map<i32,list<bool>> booleanValueList;
     2: optional map<i32,list<byte>> byteValueList;
-    3: optional map<i32,list<i16>> shortValueList;
-//    4: optional map<i32,list<i32>> integerValueList;
+    // 3: optional map<i32,list<i16>> shortValueList;
+    4: optional map<i32,list<i32>> integerValueList;
     5: optional map<i32,list<i64>> longValueList;
     6: optional map<i32,list<double>> doubleValueList;
-//    7: optional map<i32,list<string>> stringValueList;
+    7: optional map<i32,list<string>> stringValueList;
     8: optional map<i32,list<binary>> binaryValueList;
-    9: optional map<i32,list<Value>> valueValueList;
-    10: optional map<i32,list<CompactFields>> compactValueList;
-    11: optional map<i32,list<string>> anotherStringValueList;
-    12: optional map<i32,list<i32>> anotherIntegerValueList;
+    // 9: optional map<i32,list<Fibonacchi>> valueValueList;
+    10: optional map<i32,list<Compact>> compactValueList;
+    12: optional map<i32,list<NotPortableFields>> notPortableList;
 } (hazelcast.class.id = "6")
 
-struct OptionalMapSetFields {
+struct PortableMapSetFields {
     1: optional map<i32,set<bool>> booleanValueSet;
     2: optional map<i32,set<byte>> byteValueSet;
-    3: optional map<i32,set<i16>> shortValueSet;
-//    4: optional map<i32,set<i32>> integerValueSet;
+    // 3: optional map<i32,set<i16>> shortValueSet;
+    4: optional map<i32,set<i32>> integerValueSet;
     5: optional map<i32,set<i64>> longValueSet;
     6: optional map<i32,set<double>> doubleValueSet;
-//    7: optional map<i32,set<string>> stringValueSet;
+    7: optional map<i32,set<string>> stringValueSet;
     8: optional map<i32,set<binary>> binaryValueSet;
-    9: optional map<i32,set<Value>> valueValueSet;
-    10: optional map<i32,set<CompactFields>> compactValueSet;
-    11: optional map<i32,set<string>> anotherStringValueSet;
-    12: optional map<i32,set<i32>> anotherIntegerValueSet;
+    // 9: optional map<i32,set<Fibonacchi>> valueValueSet;
+    10: optional map<i32,set<Compact>> compactValueSet;
+    12: optional map<i32,set<NotPortableFields>> notPortableSet;
 } (hazelcast.class.id = "7")
 
-struct UnionFields {
-    1: optional AllFields all_fields (hazelcast.use.thrift.serialization = "");
-    2: optional byte byteValue;
-    3: optional i16 shortValue;
-//    4: optional i32 integerValue;
-    5: optional i64 longValue;
-    6: optional double doubleValue;
-//    7: optional string stringValue;
-    8: optional list<AllFields> all_fields_list (hazelcast.use.thrift.serialization = "");
-    9: optional set<AllFields> all_fields_set (hazelcast.use.thrift.serialization = "");
-    10: optional map<string, AllFields> all_fields_map (hazelcast.use.thrift.serialization = "");
-    11: optional string anotherStringValue;
-    12: optional i32 anotherIntegerValue;
-} (hazelcast.class.id = "8")
-
-union AllFields {
+union NotPortableFields {
     1: optional bool booleanValue;
     2: optional byte byteValue;
     3: optional i16 shortValue;
-//    4: optional i32 integerValue;
+    4: optional i32 integerValue;
     5: optional i64 longValue;
     6: optional double doubleValue;
-//    7: optional string stringValue;
+    7: optional string stringValue;
     8: optional binary binaryValue;
-    9: optional Value enumValue;
-    10: optional CompactFields compactValue;
-    11: optional string anotherStringValue;
-    12: optional i32 anotherIntegerValue;
-}
-
-struct RequiredFields {
-    1: required bool booleanValue;
-    2: required byte byteValue,
-    3: required i16 shortValue
-    4: required i32 integerValue;
-    5: required i64 longValue,
-    6: required double doubleValue
-    7: required string stringValue;
-    8: required binary binaryValue,
-    9: required Value enumValue;
-    10: required CompactFields compactValue;
+    9: optional Fibonacchi enumValue;
 }

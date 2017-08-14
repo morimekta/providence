@@ -47,7 +47,7 @@ public class HazelcastIT {
 
         Config config1 = new Config();
         config1.setProperty("hazelcast.logging.type", "slf4j");
-        Hazelcast_Factory.populateConfig(config1);
+        Hazelcast_Factory.populateConfig(config1, 1);
         config1.getSerializationConfig().setPortableVersion(1);
 
         instance1 = Hazelcast.newHazelcastInstance(config1);

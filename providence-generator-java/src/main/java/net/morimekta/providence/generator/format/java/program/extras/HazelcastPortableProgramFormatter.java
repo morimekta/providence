@@ -42,6 +42,9 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
     public static final String FACTORY_ID = "FACTORY_ID";
 
     private static final String FACTORY_IMPL = "PortableFactoryImpl";
+    private static final String PORTABLE_VERSION = "portableVersion";
+    private static final String CONFIG = "config";
+    private static final String INSTANCE = "instance";
 
     private final JHelper             helper;
     private final IndentedPrintWriter writer;
@@ -200,22 +203,24 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
      * </pre>
      */
     private void appendPopulateMethod(List<CStructDescriptor> messages) {
-        final String CONFIG = "config";
-        final String INSTANCE = "instance";
-        writer.formatln("public static final %s populateConfig(%s %s) {",
+        writer.formatln("public static final %s populateConfig(%s %s, int %s) {",
                         Config.class.getName(),
                         Config.class.getName(),
-                        CONFIG)
+                        CONFIG,
+                        PORTABLE_VERSION)
               .begin()
               .formatln("%s %s = new %s();", FACTORY_IMPL, INSTANCE, FACTORY_IMPL)
-              .formatln("%s.getSerializationConfig().addPortableFactory(%s, %s);", CONFIG, FACTORY_ID, INSTANCE);
-        writer.formatln("%s.getSerializationConfig()", CONFIG)
+              .formatln("%s.getSerializationConfig().addPortableFactory(%s, %s);", CONFIG, FACTORY_ID, INSTANCE)
+              .formatln("%s.getSerializationConfig().setPortableVersion(%s);", CONFIG, PORTABLE_VERSION)
+              .appendln()
+              .formatln("%s.getSerializationConfig()", CONFIG)
               .begin()
               .begin();
         for (CStructDescriptor struct : messages) {
-            writer.formatln(".addClassDefinition(%s.%s())",
+            writer.formatln(".addClassDefinition(%s.%s(%s))",
                             INSTANCE,
-                            camelCase("get", struct.getName() + "Definition"));
+                            camelCase("get", struct.getName() + "Definition"),
+                            PORTABLE_VERSION);
         }
         writer.append(";")
               .end()
@@ -233,20 +238,22 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
     }
 
     private void appendGetDefinition(JMessage<?> message) {
-        writer.formatln("public %s %s() {",
+        writer.formatln("public %s %s(int %s) {",
                         ClassDefinition.class.getName(),
                         camelCase("get",
                                   message.descriptor()
-                                         .getName() + "Definition"))
+                                         .getName() + "Definition"),
+                        PORTABLE_VERSION)
               .begin()
-              .formatln("return new %s(%s, %s)",
+              .formatln("return new %s(%s, %s, %s)",
                         ClassDefinitionBuilder.class.getName(),
                         FACTORY_ID,
-                        getHazelcastClassId(message.instanceType()))
+                        getHazelcastClassId(message.instanceType()),
+                        PORTABLE_VERSION)
               .begin()
               .begin();
+        writer.formatln(".addIntArrayField(\"__fields__\")");
         for (JField field : message.declaredOrderFields()) {
-            writer.formatln(".addBooleanField(\"%s\")", field.hasName());
             appendTypeField(field);
         }
         writer.appendln(".build();")
@@ -258,9 +265,13 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
     }
 
     private void appendTypeField(JField field) {
+        if (field.portableRequiresBinarySerialization()) {
+            writer.formatln(".addByteArrayField(\"%s\")", field.name());
+            return;
+        }
+
         switch (field.type()) {
             case BINARY:
-            case MAP:
                 writer.formatln(".addByteArrayField(\"%s\")", field.name());
                 break;
             case BYTE:
@@ -286,32 +297,21 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                 writer.formatln(".addUTFField(\"%s\")", field.name());
                 break;
             case LIST:
-                if ( field.isUnion() ) {
-                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
-                } else {
-                    final PList pList = field.toPList();
-                    appendCollectionTypeField(field, pList.itemDescriptor());
-                }
+                final PList pList = field.toPList();
+                appendCollectionTypeField(field, pList.itemDescriptor());
                 break;
             case SET:
-                if ( field.isUnion() ) {
-                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
-                } else {
-                    final PSet pSet = field.toPSet();
-                    appendCollectionTypeField(field, pSet.itemDescriptor());
-                }
+                final PSet pSet = field.toPSet();
+                appendCollectionTypeField(field, pSet.itemDescriptor());
                 break;
             case MESSAGE:
-                if ( field.isUnion() ) {
-                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
-                } else {
-                    writer.formatln(".addPortableField(\"%s\", %s())",
-                                    field.name(),
-                                    camelCase("get",
-                                              field.field()
-                                                   .getDescriptor()
-                                                   .getName() + "Definition"));
-                }
+                writer.formatln(".addPortableField(\"%s\", %s(%s))",
+                                field.name(),
+                                camelCase("get",
+                                          field.field()
+                                               .getDescriptor()
+                                               .getName() + "Definition"),
+                                PORTABLE_VERSION);
                 break;
             default:
                 throw new GeneratorException("Not implemented appendTypeField for type: " + field.type() + " in " +
@@ -356,9 +356,10 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                 writer.formatln(".addUTFArrayField(\"%s\")", field.name());
                 break;
             case MESSAGE:
-                writer.formatln(".addPortableArrayField(\"%s\", %s())",
+                writer.formatln(".addPortableArrayField(\"%s\", %s(%s))",
                                 field.name(),
-                                camelCase("get", descriptor.getName() + "Definition"));
+                                camelCase("get", descriptor.getName() + "Definition"),
+                                PORTABLE_VERSION);
                 break;
             default:
                 throw new GeneratorException(

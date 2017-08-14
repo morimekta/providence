@@ -9,14 +9,12 @@ import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import io.codearte.jfairy.Fairy;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 
 import java.util.List;
 import java.util.Map;
@@ -41,17 +39,14 @@ public class GenericMethods {
     }
 
     @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Rule
     public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
-    public Random rand;
-    public Fairy  fairy;
+    private Random rand;
+    private Fairy  fairy;
 
     @Before
-    public void setUp() {
-        generator// .dumpOnFailure()
+    public void setUpGeneric() {
+        generator.dumpOnFailure()
                  .getBaseContext()
                  .setDefaultFillRate(0.6667);
         rand = generator.getBaseContext().getRandom();
@@ -60,47 +55,44 @@ public class GenericMethods {
 
     @AfterClass
     public static void shutDownClass() {
-        Hazelcast.shutdownAll();
+        // Hazelcast.shutdownAll();
     }
 
-    protected static Config getV1Config() {
+    static Config getV1Config() {
         Config config = new Config();
-        net.morimekta.test.hazelcast.v1.Hazelcastv1_Factory.populateConfig(config);
-        config.getSerializationConfig()
-              .setPortableVersion(1);
+        config.setInstanceName("v1_" + new Random().nextInt(1000));
+        config.setClassLoader(ClassLoader.getSystemClassLoader());
+        net.morimekta.test.hazelcast.v1.Hazelcastv1_Factory.populateConfig(config, 1);
         return config;
     }
 
-    protected static Config getV2Config() {
+    static Config getV2Config() {
         Config config = new Config();
-        net.morimekta.test.hazelcast.v2.Hazelcastv2_Factory.populateConfig(config);
-        config.getSerializationConfig()
-              .setPortableVersion(2);
+        config.setInstanceName("v1_" + new Random().nextInt(1000));
+        net.morimekta.test.hazelcast.v2.Hazelcastv2_Factory.populateConfig(config, 2);
         return config;
     }
 
-    protected static Config getV3Config() {
+    static Config getV3Config() {
         Config config = new Config();
-        net.morimekta.test.hazelcast.v3.Hazelcastv3_Factory.populateConfig(config);
-        config.getSerializationConfig()
-              .setPortableVersion(3);
+        config.setInstanceName("v3_" + new Random().nextInt(1000));
+        net.morimekta.test.hazelcast.v3.Hazelcastv3_Factory.populateConfig(config, 3);
         return config;
     }
 
-    protected static Config getV4Config() {
+    static Config getV4Config() {
         Config config = new Config();
-        net.morimekta.test.hazelcast.v4.Hazelcastv4_Factory.populateConfig(config);
-        config.getSerializationConfig()
-              .setPortableVersion(4);
+        config.setInstanceName("v4_" + new Random().nextInt(1000));
+        net.morimekta.test.hazelcast.v4.Hazelcastv4_Factory.populateConfig(config, 4);
         return config;
     }
 
-    protected String nextString() {
+    String nextString() {
         return fairy.textProducer()
                     .randomString(rand.nextInt(Byte.MAX_VALUE) + 1);
     }
 
-    protected <M extends PMessage<M,F>, F extends PField>
+    <M extends PMessage<M,F>, F extends PField>
     void assertMapIntegrity(HazelcastInstance instance1,
                             HazelcastInstance instance2,
                             PMessageDescriptor<M, F> descriptor) {
@@ -132,11 +124,8 @@ public class GenericMethods {
         assertThat(newActual, is(equalToMessage(newExpected)));
     }
 
-    protected <
-            M1 extends PMessage<M1,F1>,
-            F1 extends PField,
-            M2 extends PMessage<M2,F2>,
-            F2 extends PField>
+    <       M1 extends PMessage<M1,F1>, F1 extends PField,
+            M2 extends PMessage<M2,F2>, F2 extends PField>
     void assertMapUpgradeIntegrity(HazelcastInstance instance1,
                                    HazelcastInstance instance2,
                                    PMessageDescriptor<M1, F1> sourceDescriptor,

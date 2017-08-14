@@ -47,7 +47,7 @@ public class TestBase {
         Config config = new Config();
         config.setProperty("hazelcast.logging.type", "slf4j");
         config.setInstanceName("providence-storage-hazelcast");
-        HazelcastStore_Factory.populateConfig(config);
+        HazelcastStore_Factory.populateConfig(config, 1);
         instance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         IMap<String, Integer> map = instance.getMap("test");
         map.compute("test", (k, v) -> {
