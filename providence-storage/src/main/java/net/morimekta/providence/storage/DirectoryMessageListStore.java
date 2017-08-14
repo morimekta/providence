@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
- * Simple file-based storage of providence messages, that keeps
- * an in-memory key index, a message cache, and stores messages
+ * Simple file-based storage of lists of providence messages that keeps
+ * an in-memory key index, a message cache, and stores message lists
  * to individual files in a single directly.
  * <p>
  * Note that the directory store is parallel compatible between
@@ -191,10 +191,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
             throw new IOException("Unable to delete old tmp file: " + tmp.getAbsolutePath());
         }
         try {
-            int size = message.stream().collect(MessageCollectors.toFile(tmp, serializer));
-            if (size == 0) {
-                throw new IOException("Zero bytes written to " + tmp.getAbsolutePath());
-            }
+            message.stream().collect(MessageCollectors.toFile(tmp, serializer));
         } catch (UncheckedIOException e) {
             throw new IOException("Unable to write " + keyBuilder.apply(key), e.getCause());
         }

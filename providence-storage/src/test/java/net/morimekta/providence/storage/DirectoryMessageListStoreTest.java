@@ -1,8 +1,6 @@
 package net.morimekta.providence.storage;
 
 import net.morimekta.providence.serializer.PrettySerializer;
-import net.morimekta.providence.testing.generator.GeneratorWatcher;
-import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.OptionalFields;
 
 import com.google.common.collect.ImmutableList;
@@ -26,12 +24,23 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class DirectoryMessageListStoreTest {
+public class DirectoryMessageListStoreTest extends TestBase {
     @Rule
     public TemporaryFolder        tmp       = new TemporaryFolder();
 
-    @Rule
-    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
+    @Test
+    public void testConformity() {
+        try (DirectoryMessageListStore<String, OptionalFields, OptionalFields._Field> store = new DirectoryMessageListStore<>(
+                tmp.getRoot(),
+                i -> i,
+                i -> i,
+                OptionalFields.kDescriptor,
+                new PrettySerializer().config())) {
+            assertConformity(store);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
 
     @Test
     public void testStore() {

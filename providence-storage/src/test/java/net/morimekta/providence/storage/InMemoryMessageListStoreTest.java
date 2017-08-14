@@ -1,11 +1,8 @@
 package net.morimekta.providence.storage;
 
-import net.morimekta.providence.testing.generator.GeneratorWatcher;
-import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.OptionalFields;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,9 +18,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class InMemoryMessageListStoreTest {
-    @Rule
-    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
+public class InMemoryMessageListStoreTest extends TestBase {
+    @Test
+    public void testConformity() {
+        MessageListStore<String, OptionalFields, OptionalFields._Field> store = new InMemoryMessageListStore<>();
+        assertConformity(store);
+    }
 
     @Test
     public void testStore() {

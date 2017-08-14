@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simple in-memory storage of providence objects. Uses a local hash map for
- * storing the instances.
+ * Simple in-memory storage of lists providence messages. Uses a local hash map for
+ * storing the instances.The store is thread safe through using reentrand
+ * read-write mutex handling, so reading can happen in parallel.
  */
 public class InMemoryMessageListStore<K, M extends PMessage<M,F>, F extends PField> implements MessageListStore<K,M,F> {
     private final Map<K, List<M>> map;

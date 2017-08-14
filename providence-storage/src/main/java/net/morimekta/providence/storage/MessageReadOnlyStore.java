@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.morimekta.providence.storage.MessageStoreUtils.mutateIfNotNull;
+
 /**
  * Interface for storing messages of a single type. This is a read-only part
  * of the store.
@@ -21,7 +23,8 @@ public interface MessageReadOnlyStore<K, M extends PMessage<M,F>, F extends PFie
      * Look up a set of keys from the storage.
      *
      * @param keys The keys to look up.
-     * @return The map of all the found key value pairs.
+     * @return Immutable map of all the found key value pairs. Values not found should not
+     *         have an entry in the result map (no key -&gt; null mapping).
      */
     @Nonnull
     Map<K,M> getAll(@Nonnull Collection<K> keys);
@@ -50,13 +53,30 @@ public interface MessageReadOnlyStore<K, M extends PMessage<M,F>, F extends PFie
         return getAll(ImmutableList.of(key)).get(key);
     }
 
+    /**
+     * Get the builder representing the message on the given key. Any modifications
+     * to the returned builder will not be reflected onto the store.
+     *
+     * @param key The key to find builder for.
+     * @param <B> The builder type.
+     * @return The builder if message was found or null if not.
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     default <B extends PMessageBuilder<M,F>>
     B getBuilder(@Nonnull K key) {
-        return (B) getAllBuilders(ImmutableList.of(key)).get(key);
+        return mutateIfNotNull(get(key));
     }
 
+    /**
+     * Get builders for all keys requested. Any modifications to the returned builders
+     * will not be reflected onto the store. The result map fill not contain any
+     * (key -&gt; null) entries.
+     *
+     * @param keys Keys to look up.
+     * @param <B> The builder type.
+     * @return The map of found entries.
+     */
     @Nonnull
     @SuppressWarnings("unchecked")
     default <B extends PMessageBuilder<M,F>>
