@@ -37,6 +37,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import javax.annotation.Generated;
+import javax.annotation.concurrent.Immutable;
 import java.util.Optional;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
@@ -80,6 +81,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                             Generated.class.getName(),
                             generatorOptions.generator_program_name);
         }
+        writer.formatln("@%s", Immutable.class.getName());
     }
 
     @Override

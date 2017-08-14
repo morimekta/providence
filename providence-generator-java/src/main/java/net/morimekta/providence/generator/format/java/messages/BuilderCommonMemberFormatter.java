@@ -33,7 +33,6 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
 
-import javax.annotation.Nonnull;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Objects;
@@ -179,9 +178,17 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
                 writer.append(" &&")
                       .appendln("       ");
-                writer.format("%s.equals(%s, other.%s)",
-                              Objects.class.getName(),
-                              field.member(), field.member());
+                if (field.type() == PType.MESSAGE) {
+                    writer.format("%s.equals(%s(), other.%s())",
+                                  Objects.class.getName(),
+                                  field.getter(),
+                                  field.getter());
+                } else {
+                    writer.format("%s.equals(%s, other.%s)",
+                                  Objects.class.getName(),
+                                  field.member(),
+                                  field.member());
+                }
             }
             writer.append(';');
         } else {
@@ -207,8 +214,13 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                .stream()
                .filter(field -> !field.isVoid())
                .forEach(field -> {
-                   writer.append(",");
-                   writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+                   if (field.type() == PType.MESSAGE) {
+                       writer.append(",");
+                       writer.formatln("_Field.%s, %s()", field.fieldEnum(), field.getter());
+                   } else {
+                       writer.append(",");
+                       writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+                   }
                });
 
         writer.end()
@@ -610,6 +622,40 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                       .formatln("    %s_builder = %s.builder();", field.member(), field.instanceType())
                       .appendln('}')
                       .formatln("return %s_builder;", field.member());
+
+                writer.end()
+                      .appendln('}')
+                      .newline();
+
+                // Also add "normal" getter for the message field, which will
+                // return the message or the builder dependent on which is set.
+                // It will not change the state of the builder.
+                comment = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    comment.comment(field.comment());
+                } else {
+                    comment.comment("Gets the value for the contained " + field.name() + ".");
+                }
+                comment.newline()
+                       .return_("The field value")
+                       .finish();
+                if (JAnnotation.isDeprecated(field)) {
+                    writer.appendln(JAnnotation.DEPRECATED);
+                }
+                writer.formatln("public %s %s() {", field.instanceType(), field.getter())
+                      .begin();
+
+                if (message.isUnion()) {
+                    writer.formatln("if (%s != _Field.%s) {", UNION_FIELD, field.fieldEnum())
+                          .formatln("    return null;")
+                          .appendln('}');
+                }
+
+                writer.newline()
+                      .formatln("if (%s_builder != null) {", field.member())
+                      .formatln("    return %s_builder.build();", field.member())
+                      .appendln('}')
+                      .formatln("return %s;", field.member());
 
                 writer.end()
                       .appendln('}')

@@ -68,8 +68,15 @@ Two other variants exists, which is controlled by the `container` annotations.
       class will be handled as an application level failure, throwing
       `PApplicationException`.
     - The client will still only throw the declared exceptions (and `IOException`).
+* `java.public.constructor` will create a public constructor with all fields as
+  params. Note that this used to be default on, but is now default off and triggered
+  with this annotation.
 
 ### Other
 
+- `deprecated = "<message>"`: Will mark the associated methods, service or class as
+  being deprecated (should not be used). Since the syntax for deprecating a class
+  is different for each language, it is handled in annotation, and should e.g.
+  generate `@Deprecated` annotations in java.
 - `json.compact = ""`: Enables the use of the compact syntax in the
   [json serializer](serializer-json.html).
