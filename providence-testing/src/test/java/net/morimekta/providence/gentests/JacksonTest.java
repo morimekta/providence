@@ -19,6 +19,8 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -184,5 +186,24 @@ public class JacksonTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         mapper.writeValue(out, value);
         return new String(out.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+
+    @Test
+    public void testSerializable() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        OptionalFields original = generator.generate(OptionalFields.kDescriptor);
+
+        oos.writeObject(original);
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bais);
+
+        OptionalFields actual = (OptionalFields) in.readObject();
+
+        assertThat(actual, is(equalToMessage(original)));
     }
 }

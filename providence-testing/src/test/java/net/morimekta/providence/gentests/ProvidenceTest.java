@@ -20,12 +20,17 @@
  */
 package net.morimekta.providence.gentests;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.providence.testing.generator.GeneratorWatcher;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.testing.AutoIdFields;
 import net.morimekta.test.providence.testing.CompactFields;
 import net.morimekta.test.providence.testing.Containers;
 import net.morimekta.test.providence.testing.DefaultValues;
 import net.morimekta.test.providence.testing.EnumNames;
+import net.morimekta.test.providence.testing.ExceptionFields;
 import net.morimekta.test.providence.testing.OptionalFields;
 import net.morimekta.test.providence.testing.RequiredFields;
 import net.morimekta.test.providence.testing.UnionFields;
@@ -36,11 +41,14 @@ import net.morimekta.test.providence.testing.service.Request;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableSet;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -61,6 +69,9 @@ import static org.junit.Assert.assertEquals;
  * Tests for providence built sources - message main body.
  */
 public class ProvidenceTest {
+    @Rule
+    public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
+
     @Test
     public void testUnion() {
         UnionFields uf = UnionFields.withCompactValue(new CompactFields("a", 4, null));
@@ -324,5 +335,28 @@ public class ProvidenceTest {
         Request.builder()
                .setRequest(net.morimekta.test.providence.testing.service2.Request.builder().build())
                .build();
+    }
+
+    @Test
+    public void testSerializable() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        PApplicationException originalCause = new PApplicationException("test",
+                                                                        PApplicationExceptionType.BAD_SEQUENCE_ID);
+        ExceptionFields original = generator.generate(ExceptionFields.kDescriptor);
+        original.initCause(originalCause);
+
+        oos.writeObject(original);
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(bais);
+
+        ExceptionFields actual = (ExceptionFields) in.readObject();
+
+        assertThat(actual, is(equalToMessage(original)));
+        assertThat(actual.getCause(), is(originalCause));
+        assertThat(actual.getStackTrace(), is(original.getStackTrace()));
     }
 }

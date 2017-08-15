@@ -208,7 +208,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 // Void fields have no value.
                 continue;
             }
-            writer.formatln("private final %s %s;", field.fieldType(), field.member());
+            writer.formatln("private final transient %s %s;", field.fieldType(), field.member());
         }
         writer.newline();
     }

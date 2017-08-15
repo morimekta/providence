@@ -79,7 +79,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
     @Override
     public void appendFields(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
-            writer.formatln("private final _Field %s;", UNION_FIELD)
+            writer.formatln("private transient final _Field %s;", UNION_FIELD)
                   .newline();
         }
     }

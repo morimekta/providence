@@ -75,7 +75,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
 
     @Override
     public void appendFields(JMessage<?> message) throws GeneratorException {
-        writer.appendln("private volatile int tHashCode;")
+        writer.appendln("private volatile transient int tHashCode;")
               .newline();
     }
 
