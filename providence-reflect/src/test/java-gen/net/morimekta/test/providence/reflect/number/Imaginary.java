@@ -2,6 +2,7 @@ package net.morimekta.test.providence.reflect.number;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class Imaginary
         implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
                    Comparable<Imaginary>,
@@ -12,10 +13,13 @@ public class Imaginary
     private final static double kDefaultV = 0.0d;
     private final static double kDefaultI = 0.0d;
 
-    private final double mV;
-    private final double mI;
+    private final transient double mV;
+    private final transient double mI;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient Imaginary tSerializeInstance;
 
     private Imaginary(_Builder builder) {
         mV = builder.mV;
@@ -122,6 +126,23 @@ public class Imaginary
         if (c != 0) return c;
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

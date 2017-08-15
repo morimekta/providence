@@ -6,6 +6,7 @@ package net.morimekta.providence;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class PApplicationException
         extends java.io.IOException
         implements net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
@@ -16,10 +17,13 @@ public class PApplicationException
 
     private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
 
-    private final String mMessage;
-    private final net.morimekta.providence.PApplicationExceptionType mId;
+    private final transient String mMessage;
+    private final transient net.morimekta.providence.PApplicationExceptionType mId;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient PApplicationException tSerializeInstance;
 
     public PApplicationException(String pMessage,
                                  net.morimekta.providence.PApplicationExceptionType pId) {
@@ -176,6 +180,27 @@ public class PApplicationException
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        if (getCause() != null) {
+            tSerializeInstance.initCause(getCause());
+        }
+        tSerializeInstance.setStackTrace(getStackTrace());
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

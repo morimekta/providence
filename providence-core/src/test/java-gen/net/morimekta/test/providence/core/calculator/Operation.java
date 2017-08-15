@@ -2,6 +2,7 @@ package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class Operation
         implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
                    Comparable<Operation>,
@@ -9,10 +10,13 @@ public class Operation
                    net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -2122462501055525645L;
 
-    private final net.morimekta.test.providence.core.calculator.Operator mOperator;
-    private final java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
+    private final transient net.morimekta.test.providence.core.calculator.Operator mOperator;
+    private final transient java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient Operation tSerializeInstance;
 
     private Operation(_Builder builder) {
         mOperator = builder.mOperator;
@@ -141,6 +145,23 @@ public class Operation
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

@@ -193,6 +193,7 @@ public class ContainerService {
     // type --> ContainerService.load.request
     @SuppressWarnings("unused")
     @javax.annotation.Generated("providence-maven-plugin")
+    @javax.annotation.concurrent.Immutable
     protected static class _load_request
             implements net.morimekta.providence.PMessage<_load_request,_load_request._Field>,
                        Comparable<_load_request>,
@@ -200,9 +201,12 @@ public class ContainerService {
                        net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 642175186578463330L;
 
-        private final net.morimekta.test.providence.core.Containers mC;
+        private final transient net.morimekta.test.providence.core.Containers mC;
 
-        private volatile int tHashCode;
+        private volatile transient int tHashCode;
+
+        // Transient object used during java deserialization.
+        private transient _load_request tSerializeInstance;
 
         private _load_request(_Builder builder) {
             mC = builder.mC_builder != null ? builder.mC_builder.build() : builder.mC;
@@ -292,6 +296,23 @@ public class ContainerService {
             }
 
             return 0;
+        }
+
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+            oos.defaultWriteObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            serializer.serialize(oos, this);
+        }
+
+        private void readObject(java.io.ObjectInputStream ois)
+                throws java.io.IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        }
+
+        private Object readResolve() throws java.io.ObjectStreamException {
+            return tSerializeInstance;
         }
 
         @Override
@@ -580,20 +601,33 @@ public class ContainerService {
                 return mC_builder;
             }
 
+            /**
+             * Gets the value for the contained c.
+             *
+             * @return The field value
+             */
+            public net.morimekta.test.providence.core.Containers getC() {
+
+                if (mC_builder != null) {
+                    return mC_builder.build();
+                }
+                return mC;
+            }
+
             @Override
             public boolean equals(Object o) {
                 if (o == this) return true;
                 if (o == null || !o.getClass().equals(getClass())) return false;
                 _load_request._Builder other = (_load_request._Builder) o;
                 return java.util.Objects.equals(optionals, other.optionals) &&
-                       java.util.Objects.equals(mC, other.mC);
+                       java.util.Objects.equals(getC(), other.getC());
             }
 
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
                         _load_request.class, optionals,
-                        _Field.C, mC);
+                        _Field.C, getC());
             }
 
             @Override
@@ -702,6 +736,7 @@ public class ContainerService {
     // type <-- ContainerService.load.response
     @SuppressWarnings("unused")
     @javax.annotation.Generated("providence-maven-plugin")
+    @javax.annotation.concurrent.Immutable
     protected static class _load_response
             implements net.morimekta.providence.PUnion<_load_response,_load_response._Field>,
                        Comparable<_load_response>,
@@ -709,12 +744,15 @@ public class ContainerService {
                        net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = 4669041823902453548L;
 
-        private final net.morimekta.test.providence.core.CompactFields mSuccess;
-        private final net.morimekta.test.providence.core.ExceptionFields mEf;
+        private final transient net.morimekta.test.providence.core.CompactFields mSuccess;
+        private final transient net.morimekta.test.providence.core.ExceptionFields mEf;
 
-        private final _Field tUnionField;
+        private transient final _Field tUnionField;
 
-        private volatile int tHashCode;
+        private volatile transient int tHashCode;
+
+        // Transient object used during java deserialization.
+        private transient _load_response tSerializeInstance;
 
         /**
          * @param value The union value
@@ -854,6 +892,7 @@ public class ContainerService {
 
         @Override
         public int compareTo(_load_response other) {
+            if (tUnionField == null || other.tUnionField == null) return Boolean.compare(tUnionField != null, other.tUnionField != null);
             int c = tUnionField.compareTo(other.tUnionField);
             if (c != 0) return c;
 
@@ -864,6 +903,23 @@ public class ContainerService {
                     return mEf.compareTo(other.mEf);
                 default: return 0;
             }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+            oos.defaultWriteObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            serializer.serialize(oos, this);
+        }
+
+        private void readObject(java.io.ObjectInputStream ois)
+                throws java.io.IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        }
+
+        private Object readResolve() throws java.io.ObjectStreamException {
+            return tSerializeInstance;
         }
 
         @Override
@@ -1173,6 +1229,22 @@ public class ContainerService {
             }
 
             /**
+             * Gets the value for the contained success.
+             *
+             * @return The field value
+             */
+            public net.morimekta.test.providence.core.CompactFields getSuccess() {
+                if (tUnionField != _Field.SUCCESS) {
+                    return null;
+                }
+
+                if (mSuccess_builder != null) {
+                    return mSuccess_builder.build();
+                }
+                return mSuccess;
+            }
+
+            /**
              * Sets the value of ef.
              *
              * @param value The new value
@@ -1237,6 +1309,22 @@ public class ContainerService {
             }
 
             /**
+             * Gets the value for the contained ef.
+             *
+             * @return The field value
+             */
+            public net.morimekta.test.providence.core.ExceptionFields getEf() {
+                if (tUnionField != _Field.EF) {
+                    return null;
+                }
+
+                if (mEf_builder != null) {
+                    return mEf_builder.build();
+                }
+                return mEf;
+            }
+
+            /**
              * Checks if ContainerService.load.response has been modified since the _Builder was created.
              *
              * @return True if ContainerService.load.response has been modified.
@@ -1251,16 +1339,16 @@ public class ContainerService {
                 if (o == null || !o.getClass().equals(getClass())) return false;
                 _load_response._Builder other = (_load_response._Builder) o;
                 return java.util.Objects.equals(tUnionField, other.tUnionField) &&
-                       java.util.Objects.equals(mSuccess, other.mSuccess) &&
-                       java.util.Objects.equals(mEf, other.mEf);
+                       java.util.Objects.equals(getSuccess(), other.getSuccess()) &&
+                       java.util.Objects.equals(getEf(), other.getEf());
             }
 
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
                         _load_response.class,
-                        _Field.SUCCESS, mSuccess,
-                        _Field.EF, mEf);
+                        _Field.SUCCESS, getSuccess(),
+                        _Field.EF, getEf());
             }
 
             @Override

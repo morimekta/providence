@@ -2,6 +2,7 @@ package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class UnionFields
         implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
                    Comparable<UnionFields>,
@@ -15,20 +16,23 @@ public class UnionFields
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
 
-    private final Boolean mBooleanValue;
-    private final Byte mByteValue;
-    private final Short mShortValue;
-    private final Integer mIntegerValue;
-    private final Long mLongValue;
-    private final Double mDoubleValue;
-    private final String mStringValue;
-    private final net.morimekta.util.Binary mBinaryValue;
-    private final net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
-    private final net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
+    private final transient Boolean mBooleanValue;
+    private final transient Byte mByteValue;
+    private final transient Short mShortValue;
+    private final transient Integer mIntegerValue;
+    private final transient Long mLongValue;
+    private final transient Double mDoubleValue;
+    private final transient String mStringValue;
+    private final transient net.morimekta.util.Binary mBinaryValue;
+    private final transient net.morimekta.test.providence.core.no_rw_binary.Value mEnumValue;
+    private final transient net.morimekta.test.providence.core.no_rw_binary.CompactFields mCompactValue;
 
-    private final _Field tUnionField;
+    private transient final _Field tUnionField;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient UnionFields tSerializeInstance;
 
     /**
      * @param value The union value
@@ -406,6 +410,7 @@ public class UnionFields
 
     @Override
     public int compareTo(UnionFields other) {
+        if (tUnionField == null || other.tUnionField == null) return Boolean.compare(tUnionField != null, other.tUnionField != null);
         int c = tUnionField.compareTo(other.tUnionField);
         if (c != 0) return c;
 
@@ -432,6 +437,23 @@ public class UnionFields
                 return mCompactValue.compareTo(other.mCompactValue);
             default: return 0;
         }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @javax.annotation.Nonnull
@@ -1199,6 +1221,22 @@ public class UnionFields
         }
 
         /**
+         * Gets the value for the contained compactValue.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {
+            if (tUnionField != _Field.COMPACT_VALUE) {
+                return null;
+            }
+
+            if (mCompactValue_builder != null) {
+                return mCompactValue_builder.build();
+            }
+            return mCompactValue;
+        }
+
+        /**
          * Checks if UnionFields has been modified since the _Builder was created.
          *
          * @return True if UnionFields has been modified.
@@ -1222,7 +1260,7 @@ public class UnionFields
                    java.util.Objects.equals(mStringValue, other.mStringValue) &&
                    java.util.Objects.equals(mBinaryValue, other.mBinaryValue) &&
                    java.util.Objects.equals(mEnumValue, other.mEnumValue) &&
-                   java.util.Objects.equals(mCompactValue, other.mCompactValue);
+                   java.util.Objects.equals(getCompactValue(), other.getCompactValue());
         }
 
         @Override
@@ -1238,7 +1276,7 @@ public class UnionFields
                     _Field.STRING_VALUE, mStringValue,
                     _Field.BINARY_VALUE, mBinaryValue,
                     _Field.ENUM_VALUE, mEnumValue,
-                    _Field.COMPACT_VALUE, mCompactValue);
+                    _Field.COMPACT_VALUE, getCompactValue());
         }
 
         @Override

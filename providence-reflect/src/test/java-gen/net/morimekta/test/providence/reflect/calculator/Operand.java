@@ -2,6 +2,7 @@ package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class Operand
         implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
                    Comparable<Operand>,
@@ -11,13 +12,16 @@ public class Operand
 
     private final static double kDefaultNumber = 0.0d;
 
-    private final net.morimekta.test.providence.reflect.calculator.Operation mOperation;
-    private final Double mNumber;
-    private final net.morimekta.test.providence.reflect.number.Imaginary mImaginary;
+    private final transient net.morimekta.test.providence.reflect.calculator.Operation mOperation;
+    private final transient Double mNumber;
+    private final transient net.morimekta.test.providence.reflect.number.Imaginary mImaginary;
 
-    private final _Field tUnionField;
+    private transient final _Field tUnionField;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient Operand tSerializeInstance;
 
     /**
      * @param value The union value
@@ -187,6 +191,7 @@ public class Operand
 
     @Override
     public int compareTo(Operand other) {
+        if (tUnionField == null || other.tUnionField == null) return Boolean.compare(tUnionField != null, other.tUnionField != null);
         int c = tUnionField.compareTo(other.tUnionField);
         if (c != 0) return c;
 
@@ -199,6 +204,23 @@ public class Operand
                 return mImaginary.compareTo(other.mImaginary);
             default: return 0;
         }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override
@@ -523,6 +545,22 @@ public class Operand
         }
 
         /**
+         * Gets the value for the contained operation.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
+            if (tUnionField != _Field.OPERATION) {
+                return null;
+            }
+
+            if (mOperation_builder != null) {
+                return mOperation_builder.build();
+            }
+            return mOperation;
+        }
+
+        /**
          * Sets the value of number.
          *
          * @param value The new value
@@ -632,6 +670,22 @@ public class Operand
         }
 
         /**
+         * Gets the value for the contained imaginary.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.reflect.number.Imaginary getImaginary() {
+            if (tUnionField != _Field.IMAGINARY) {
+                return null;
+            }
+
+            if (mImaginary_builder != null) {
+                return mImaginary_builder.build();
+            }
+            return mImaginary;
+        }
+
+        /**
          * Checks if Operand has been modified since the _Builder was created.
          *
          * @return True if Operand has been modified.
@@ -646,18 +700,18 @@ public class Operand
             if (o == null || !o.getClass().equals(getClass())) return false;
             Operand._Builder other = (Operand._Builder) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
-                   java.util.Objects.equals(mOperation, other.mOperation) &&
+                   java.util.Objects.equals(getOperation(), other.getOperation()) &&
                    java.util.Objects.equals(mNumber, other.mNumber) &&
-                   java.util.Objects.equals(mImaginary, other.mImaginary);
+                   java.util.Objects.equals(getImaginary(), other.getImaginary());
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
                     Operand.class,
-                    _Field.OPERATION, mOperation,
+                    _Field.OPERATION, getOperation(),
                     _Field.NUMBER, mNumber,
-                    _Field.IMAGINARY, mImaginary);
+                    _Field.IMAGINARY, getImaginary());
         }
 
         @Override

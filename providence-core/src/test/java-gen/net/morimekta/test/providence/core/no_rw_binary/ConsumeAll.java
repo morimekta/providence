@@ -2,6 +2,7 @@ package net.morimekta.test.providence.core.no_rw_binary;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class ConsumeAll
         implements net.morimekta.providence.PMessage<ConsumeAll,ConsumeAll._Field>,
                    Comparable<ConsumeAll>,
@@ -9,7 +10,10 @@ public class ConsumeAll
     private final static long serialVersionUID = -9118592554502001384L;
 
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient ConsumeAll tSerializeInstance;
 
     private ConsumeAll(_Builder builder) {
     }
@@ -71,6 +75,23 @@ public class ConsumeAll
         int c;
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @javax.annotation.Nonnull

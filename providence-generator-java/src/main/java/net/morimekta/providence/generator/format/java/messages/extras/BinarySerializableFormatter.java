@@ -53,7 +53,7 @@ public class BinarySerializableFormatter implements MessageMemberFormatter {
     public void appendFields(JMessage<?> message) throws GeneratorException {
         writer.appendln("// Transient object used during java deserialization.")
               .formatln("private transient %s " + T_SERIALIZE_INSTANCE + ";", message.instanceType())
-              .appendln();
+              .newline();
     }
 
     @Override

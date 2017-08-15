@@ -5,6 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class TypedefType
         implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
                    Comparable<TypedefType>,
@@ -15,11 +16,14 @@ public class TypedefType
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
 
-    private final String mDocumentation;
-    private final String mType;
-    private final String mName;
+    private final transient String mDocumentation;
+    private final transient String mType;
+    private final transient String mName;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient TypedefType tSerializeInstance;
 
     private TypedefType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
@@ -173,6 +177,23 @@ public class TypedefType
         if (c != 0) return c;
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

@@ -5,6 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class ConstType
         implements net.morimekta.providence.PMessage<ConstType,ConstType._Field>,
                    Comparable<ConstType>,
@@ -18,15 +19,18 @@ public class ConstType
     private final static int kDefaultStartLineNo = 0;
     private final static int kDefaultStartLinePos = 0;
 
-    private final String mDocumentation;
-    private final String mType;
-    private final String mName;
-    private final String mValue;
-    private final java.util.Map<String,String> mAnnotations;
-    private final Integer mStartLineNo;
-    private final Integer mStartLinePos;
+    private final transient String mDocumentation;
+    private final transient String mType;
+    private final transient String mName;
+    private final transient String mValue;
+    private final transient java.util.Map<String,String> mAnnotations;
+    private final transient Integer mStartLineNo;
+    private final transient Integer mStartLinePos;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient ConstType tSerializeInstance;
 
     private ConstType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
@@ -308,6 +312,23 @@ public class ConstType
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

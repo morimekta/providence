@@ -7,6 +7,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class MessageType
         implements net.morimekta.providence.PMessage<MessageType,MessageType._Field>,
                    Comparable<MessageType>,
@@ -19,13 +20,16 @@ public class MessageType
     private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType>()
                 .build();
 
-    private final String mDocumentation;
-    private final net.morimekta.providence.model.MessageVariant mVariant;
-    private final String mName;
-    private final java.util.List<net.morimekta.providence.model.FieldType> mFields;
-    private final java.util.Map<String,String> mAnnotations;
+    private final transient String mDocumentation;
+    private final transient net.morimekta.providence.model.MessageVariant mVariant;
+    private final transient String mName;
+    private final transient java.util.List<net.morimekta.providence.model.FieldType> mFields;
+    private final transient java.util.Map<String,String> mAnnotations;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient MessageType tSerializeInstance;
 
     private MessageType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
@@ -248,6 +252,23 @@ public class MessageType
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

@@ -282,6 +282,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
     // type --> Calculator2.extra.request
     @SuppressWarnings("unused")
     @javax.annotation.Generated("providence-maven-plugin")
+    @javax.annotation.concurrent.Immutable
     protected static class _extra_request
             implements net.morimekta.providence.PMessage<_extra_request,_extra_request._Field>,
                        Comparable<_extra_request>,
@@ -290,7 +291,10 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         private final static long serialVersionUID = 7756543901078345535L;
 
 
-        private volatile int tHashCode;
+        private volatile transient int tHashCode;
+
+        // Transient object used during java deserialization.
+        private transient _extra_request tSerializeInstance;
 
         private _extra_request(_Builder builder) {
         }
@@ -352,6 +356,23 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             int c;
 
             return 0;
+        }
+
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+            oos.defaultWriteObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            serializer.serialize(oos, this);
+        }
+
+        private void readObject(java.io.ObjectInputStream ois)
+                throws java.io.IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        }
+
+        private Object readResolve() throws java.io.ObjectStreamException {
+            return tSerializeInstance;
         }
 
         @Override
@@ -647,6 +668,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
     // type <-- Calculator2.extra.response
     @SuppressWarnings("unused")
     @javax.annotation.Generated("providence-maven-plugin")
+    @javax.annotation.concurrent.Immutable
     protected static class _extra_response
             implements net.morimekta.providence.PUnion<_extra_response,_extra_response._Field>,
                        Comparable<_extra_response>,
@@ -654,11 +676,14 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
                        net.morimekta.providence.serializer.binary.BinaryWriter {
         private final static long serialVersionUID = -3257175400506493499L;
 
-        private final String mSuccess;
+        private final transient String mSuccess;
 
-        private final _Field tUnionField;
+        private transient final _Field tUnionField;
 
-        private volatile int tHashCode;
+        private volatile transient int tHashCode;
+
+        // Transient object used during java deserialization.
+        private transient _extra_response tSerializeInstance;
 
         /**
          * @param value The union value
@@ -764,6 +789,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
         @Override
         public int compareTo(_extra_response other) {
+            if (tUnionField == null || other.tUnionField == null) return Boolean.compare(tUnionField != null, other.tUnionField != null);
             int c = tUnionField.compareTo(other.tUnionField);
             if (c != 0) return c;
 
@@ -772,6 +798,23 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
                     return mSuccess.compareTo(other.mSuccess);
                 default: return 0;
             }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+            oos.defaultWriteObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            serializer.serialize(oos, this);
+        }
+
+        private void readObject(java.io.ObjectInputStream ois)
+                throws java.io.IOException, ClassNotFoundException {
+            ois.defaultReadObject();
+            net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+            tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        }
+
+        private Object readResolve() throws java.io.ObjectStreamException {
+            return tSerializeInstance;
         }
 
         @Override

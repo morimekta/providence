@@ -7,6 +7,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class EnumType
         implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
                    Comparable<EnumType>,
@@ -18,12 +19,15 @@ public class EnumType
     private final static java.util.List<net.morimekta.providence.model.EnumValue> kDefaultValues = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.EnumValue>()
                 .build();
 
-    private final String mDocumentation;
-    private final String mName;
-    private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;
-    private final java.util.Map<String,String> mAnnotations;
+    private final transient String mDocumentation;
+    private final transient String mName;
+    private final transient java.util.List<net.morimekta.providence.model.EnumValue> mValues;
+    private final transient java.util.Map<String,String> mAnnotations;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient EnumType tSerializeInstance;
 
     private EnumType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
@@ -216,6 +220,23 @@ public class EnumType
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

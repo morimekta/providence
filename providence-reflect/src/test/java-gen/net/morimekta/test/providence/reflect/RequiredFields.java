@@ -2,6 +2,7 @@ package net.morimekta.test.providence.reflect;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class RequiredFields
         implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
                    Comparable<RequiredFields>,
@@ -18,18 +19,21 @@ public class RequiredFields
     private final static String kDefaultStringValue = "";
     private final static net.morimekta.util.Binary kDefaultBinaryValue = net.morimekta.util.Binary.wrap(new byte[]{});
 
-    private final boolean mBooleanValue;
-    private final byte mByteValue;
-    private final short mShortValue;
-    private final int mIntegerValue;
-    private final long mLongValue;
-    private final double mDoubleValue;
-    private final String mStringValue;
-    private final net.morimekta.util.Binary mBinaryValue;
-    private final net.morimekta.test.providence.reflect.Value mEnumValue;
-    private final net.morimekta.test.providence.reflect.CompactFields mCompactValue;
+    private final transient boolean mBooleanValue;
+    private final transient byte mByteValue;
+    private final transient short mShortValue;
+    private final transient int mIntegerValue;
+    private final transient long mLongValue;
+    private final transient double mDoubleValue;
+    private final transient String mStringValue;
+    private final transient net.morimekta.util.Binary mBinaryValue;
+    private final transient net.morimekta.test.providence.reflect.Value mEnumValue;
+    private final transient net.morimekta.test.providence.reflect.CompactFields mCompactValue;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient RequiredFields tSerializeInstance;
 
     private RequiredFields(_Builder builder) {
         mBooleanValue = builder.mBooleanValue;
@@ -346,6 +350,23 @@ public class RequiredFields
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override
@@ -1275,6 +1296,19 @@ public class RequiredFields
             return mCompactValue_builder;
         }
 
+        /**
+         * Gets the value for the contained compactValue.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.reflect.CompactFields getCompactValue() {
+
+            if (mCompactValue_builder != null) {
+                return mCompactValue_builder.build();
+            }
+            return mCompactValue;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -1290,7 +1324,7 @@ public class RequiredFields
                    java.util.Objects.equals(mStringValue, other.mStringValue) &&
                    java.util.Objects.equals(mBinaryValue, other.mBinaryValue) &&
                    java.util.Objects.equals(mEnumValue, other.mEnumValue) &&
-                   java.util.Objects.equals(mCompactValue, other.mCompactValue);
+                   java.util.Objects.equals(getCompactValue(), other.getCompactValue());
         }
 
         @Override
@@ -1306,7 +1340,7 @@ public class RequiredFields
                     _Field.STRING_VALUE, mStringValue,
                     _Field.BINARY_VALUE, mBinaryValue,
                     _Field.ENUM_VALUE, mEnumValue,
-                    _Field.COMPACT_VALUE, mCompactValue);
+                    _Field.COMPACT_VALUE, getCompactValue());
         }
 
         @Override

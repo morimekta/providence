@@ -2,6 +2,7 @@ package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,
@@ -9,45 +10,48 @@ public class Containers
                    net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = 3106880629763954881L;
 
-    private final java.util.List<Boolean> mBooleanList;
-    private final java.util.List<Byte> mByteList;
-    private final java.util.List<Short> mShortList;
-    private final java.util.List<Integer> mIntegerList;
-    private final java.util.List<Long> mLongList;
-    private final java.util.List<Double> mDoubleList;
-    private final java.util.List<String> mStringList;
-    private final java.util.List<net.morimekta.util.Binary> mBinaryList;
-    private final java.util.Set<Boolean> mBooleanSet;
-    private final java.util.Set<Byte> mByteSet;
-    private final java.util.Set<Short> mShortSet;
-    private final java.util.Set<Integer> mIntegerSet;
-    private final java.util.Set<Long> mLongSet;
-    private final java.util.Set<Double> mDoubleSet;
-    private final java.util.Set<String> mStringSet;
-    private final java.util.Set<net.morimekta.util.Binary> mBinarySet;
-    private final java.util.Map<Boolean,Boolean> mBooleanMap;
-    private final java.util.Map<Byte,Byte> mByteMap;
-    private final java.util.Map<Short,Short> mShortMap;
-    private final java.util.Map<Integer,Integer> mIntegerMap;
-    private final java.util.Map<Long,Long> mLongMap;
-    private final java.util.Map<Double,Double> mDoubleMap;
-    private final java.util.Map<String,String> mStringMap;
-    private final java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
-    private final java.util.List<net.morimekta.test.providence.core.Value> mEnumList;
-    private final java.util.Set<net.morimekta.test.providence.core.Value> mEnumSet;
-    private final java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mEnumMap;
-    private final java.util.List<net.morimekta.test.providence.core.DefaultFields> mMessageList;
-    private final java.util.Set<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
-    private final java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
-    private final java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
-    private final net.morimekta.test.providence.core.RequiredFields mRequiredFields;
-    private final net.morimekta.test.providence.core.DefaultFields mDefaultFields;
-    private final net.morimekta.test.providence.core.OptionalFields mOptionalFields;
-    private final net.morimekta.test.providence.core.UnionFields mUnionFields;
-    private final net.morimekta.test.providence.core.ExceptionFields mExceptionFields;
-    private final net.morimekta.test.providence.core.DefaultValues mDefaultValues;
+    private final transient java.util.List<Boolean> mBooleanList;
+    private final transient java.util.List<Byte> mByteList;
+    private final transient java.util.List<Short> mShortList;
+    private final transient java.util.List<Integer> mIntegerList;
+    private final transient java.util.List<Long> mLongList;
+    private final transient java.util.List<Double> mDoubleList;
+    private final transient java.util.List<String> mStringList;
+    private final transient java.util.List<net.morimekta.util.Binary> mBinaryList;
+    private final transient java.util.Set<Boolean> mBooleanSet;
+    private final transient java.util.Set<Byte> mByteSet;
+    private final transient java.util.Set<Short> mShortSet;
+    private final transient java.util.Set<Integer> mIntegerSet;
+    private final transient java.util.Set<Long> mLongSet;
+    private final transient java.util.Set<Double> mDoubleSet;
+    private final transient java.util.Set<String> mStringSet;
+    private final transient java.util.Set<net.morimekta.util.Binary> mBinarySet;
+    private final transient java.util.Map<Boolean,Boolean> mBooleanMap;
+    private final transient java.util.Map<Byte,Byte> mByteMap;
+    private final transient java.util.Map<Short,Short> mShortMap;
+    private final transient java.util.Map<Integer,Integer> mIntegerMap;
+    private final transient java.util.Map<Long,Long> mLongMap;
+    private final transient java.util.Map<Double,Double> mDoubleMap;
+    private final transient java.util.Map<String,String> mStringMap;
+    private final transient java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
+    private final transient java.util.List<net.morimekta.test.providence.core.Value> mEnumList;
+    private final transient java.util.Set<net.morimekta.test.providence.core.Value> mEnumSet;
+    private final transient java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mEnumMap;
+    private final transient java.util.List<net.morimekta.test.providence.core.DefaultFields> mMessageList;
+    private final transient java.util.Set<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
+    private final transient java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
+    private final transient java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
+    private final transient net.morimekta.test.providence.core.RequiredFields mRequiredFields;
+    private final transient net.morimekta.test.providence.core.DefaultFields mDefaultFields;
+    private final transient net.morimekta.test.providence.core.OptionalFields mOptionalFields;
+    private final transient net.morimekta.test.providence.core.UnionFields mUnionFields;
+    private final transient net.morimekta.test.providence.core.ExceptionFields mExceptionFields;
+    private final transient net.morimekta.test.providence.core.DefaultValues mDefaultValues;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient Containers tSerializeInstance;
 
     private Containers(_Builder builder) {
         if (builder.isSetBooleanList()) {
@@ -1476,6 +1480,23 @@ public class Containers
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override
@@ -5269,6 +5290,19 @@ public class Containers
         }
 
         /**
+         * Gets the value for the contained requiredFields.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.RequiredFields getRequiredFields() {
+
+            if (mRequiredFields_builder != null) {
+                return mRequiredFields_builder.build();
+            }
+            return mRequiredFields;
+        }
+
+        /**
          * Sets the value of defaultFields.
          *
          * @param value The new value
@@ -5336,6 +5370,19 @@ public class Containers
                 mDefaultFields_builder = net.morimekta.test.providence.core.DefaultFields.builder();
             }
             return mDefaultFields_builder;
+        }
+
+        /**
+         * Gets the value for the contained defaultFields.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.DefaultFields getDefaultFields() {
+
+            if (mDefaultFields_builder != null) {
+                return mDefaultFields_builder.build();
+            }
+            return mDefaultFields;
         }
 
         /**
@@ -5409,6 +5456,19 @@ public class Containers
         }
 
         /**
+         * Gets the value for the contained optionalFields.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.OptionalFields getOptionalFields() {
+
+            if (mOptionalFields_builder != null) {
+                return mOptionalFields_builder.build();
+            }
+            return mOptionalFields;
+        }
+
+        /**
          * Sets the value of unionFields.
          *
          * @param value The new value
@@ -5476,6 +5536,19 @@ public class Containers
                 mUnionFields_builder = net.morimekta.test.providence.core.UnionFields.builder();
             }
             return mUnionFields_builder;
+        }
+
+        /**
+         * Gets the value for the contained unionFields.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.UnionFields getUnionFields() {
+
+            if (mUnionFields_builder != null) {
+                return mUnionFields_builder.build();
+            }
+            return mUnionFields;
         }
 
         /**
@@ -5549,6 +5622,19 @@ public class Containers
         }
 
         /**
+         * Gets the value for the contained exceptionFields.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.ExceptionFields getExceptionFields() {
+
+            if (mExceptionFields_builder != null) {
+                return mExceptionFields_builder.build();
+            }
+            return mExceptionFields;
+        }
+
+        /**
          * Sets the value of defaultValues.
          *
          * @param value The new value
@@ -5618,6 +5704,19 @@ public class Containers
             return mDefaultValues_builder;
         }
 
+        /**
+         * Gets the value for the contained defaultValues.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.core.DefaultValues getDefaultValues() {
+
+            if (mDefaultValues_builder != null) {
+                return mDefaultValues_builder.build();
+            }
+            return mDefaultValues;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -5655,12 +5754,12 @@ public class Containers
                    java.util.Objects.equals(mMessageSet, other.mMessageSet) &&
                    java.util.Objects.equals(mMessageMap, other.mMessageMap) &&
                    java.util.Objects.equals(mMessageKeyMap, other.mMessageKeyMap) &&
-                   java.util.Objects.equals(mRequiredFields, other.mRequiredFields) &&
-                   java.util.Objects.equals(mDefaultFields, other.mDefaultFields) &&
-                   java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
-                   java.util.Objects.equals(mUnionFields, other.mUnionFields) &&
-                   java.util.Objects.equals(mExceptionFields, other.mExceptionFields) &&
-                   java.util.Objects.equals(mDefaultValues, other.mDefaultValues);
+                   java.util.Objects.equals(getRequiredFields(), other.getRequiredFields()) &&
+                   java.util.Objects.equals(getDefaultFields(), other.getDefaultFields()) &&
+                   java.util.Objects.equals(getOptionalFields(), other.getOptionalFields()) &&
+                   java.util.Objects.equals(getUnionFields(), other.getUnionFields()) &&
+                   java.util.Objects.equals(getExceptionFields(), other.getExceptionFields()) &&
+                   java.util.Objects.equals(getDefaultValues(), other.getDefaultValues());
         }
 
         @Override
@@ -5698,12 +5797,12 @@ public class Containers
                     _Field.MESSAGE_SET, mMessageSet,
                     _Field.MESSAGE_MAP, mMessageMap,
                     _Field.MESSAGE_KEY_MAP, mMessageKeyMap,
-                    _Field.REQUIRED_FIELDS, mRequiredFields,
-                    _Field.DEFAULT_FIELDS, mDefaultFields,
-                    _Field.OPTIONAL_FIELDS, mOptionalFields,
-                    _Field.UNION_FIELDS, mUnionFields,
-                    _Field.EXCEPTION_FIELDS, mExceptionFields,
-                    _Field.DEFAULT_VALUES, mDefaultValues);
+                    _Field.REQUIRED_FIELDS, getRequiredFields(),
+                    _Field.DEFAULT_FIELDS, getDefaultFields(),
+                    _Field.OPTIONAL_FIELDS, getOptionalFields(),
+                    _Field.UNION_FIELDS, getUnionFields(),
+                    _Field.EXCEPTION_FIELDS, getExceptionFields(),
+                    _Field.DEFAULT_VALUES, getDefaultValues());
         }
 
         @Override

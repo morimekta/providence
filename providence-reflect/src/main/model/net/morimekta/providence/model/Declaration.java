@@ -5,6 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class Declaration
         implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
                    Comparable<Declaration>,
@@ -12,15 +13,18 @@ public class Declaration
                    net.morimekta.providence.serializer.binary.BinaryWriter {
     private final static long serialVersionUID = -6998763195276182553L;
 
-    private final net.morimekta.providence.model.EnumType mDeclEnum;
-    private final net.morimekta.providence.model.TypedefType mDeclTypedef;
-    private final net.morimekta.providence.model.MessageType mDeclStruct;
-    private final net.morimekta.providence.model.ServiceType mDeclService;
-    private final net.morimekta.providence.model.ConstType mDeclConst;
+    private final transient net.morimekta.providence.model.EnumType mDeclEnum;
+    private final transient net.morimekta.providence.model.TypedefType mDeclTypedef;
+    private final transient net.morimekta.providence.model.MessageType mDeclStruct;
+    private final transient net.morimekta.providence.model.ServiceType mDeclService;
+    private final transient net.morimekta.providence.model.ConstType mDeclConst;
 
-    private final _Field tUnionField;
+    private transient final _Field tUnionField;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient Declaration tSerializeInstance;
 
     /**
      * @param value The union value
@@ -256,6 +260,7 @@ public class Declaration
 
     @Override
     public int compareTo(Declaration other) {
+        if (tUnionField == null || other.tUnionField == null) return Boolean.compare(tUnionField != null, other.tUnionField != null);
         int c = tUnionField.compareTo(other.tUnionField);
         if (c != 0) return c;
 
@@ -272,6 +277,23 @@ public class Declaration
                 return mDeclConst.compareTo(other.mDeclConst);
             default: return 0;
         }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override
@@ -644,6 +666,22 @@ public class Declaration
         }
 
         /**
+         * Gets the value for the contained decl_enum.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.EnumType getDeclEnum() {
+            if (tUnionField != _Field.DECL_ENUM) {
+                return null;
+            }
+
+            if (mDeclEnum_builder != null) {
+                return mDeclEnum_builder.build();
+            }
+            return mDeclEnum;
+        }
+
+        /**
          * Sets the value of decl_typedef.
          *
          * @param value The new value
@@ -705,6 +743,22 @@ public class Declaration
                 mDeclTypedef_builder = net.morimekta.providence.model.TypedefType.builder();
             }
             return mDeclTypedef_builder;
+        }
+
+        /**
+         * Gets the value for the contained decl_typedef.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.TypedefType getDeclTypedef() {
+            if (tUnionField != _Field.DECL_TYPEDEF) {
+                return null;
+            }
+
+            if (mDeclTypedef_builder != null) {
+                return mDeclTypedef_builder.build();
+            }
+            return mDeclTypedef;
         }
 
         /**
@@ -772,6 +826,22 @@ public class Declaration
         }
 
         /**
+         * Gets the value for the contained decl_struct.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.MessageType getDeclStruct() {
+            if (tUnionField != _Field.DECL_STRUCT) {
+                return null;
+            }
+
+            if (mDeclStruct_builder != null) {
+                return mDeclStruct_builder.build();
+            }
+            return mDeclStruct;
+        }
+
+        /**
          * Sets the value of decl_service.
          *
          * @param value The new value
@@ -833,6 +903,22 @@ public class Declaration
                 mDeclService_builder = net.morimekta.providence.model.ServiceType.builder();
             }
             return mDeclService_builder;
+        }
+
+        /**
+         * Gets the value for the contained decl_service.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.ServiceType getDeclService() {
+            if (tUnionField != _Field.DECL_SERVICE) {
+                return null;
+            }
+
+            if (mDeclService_builder != null) {
+                return mDeclService_builder.build();
+            }
+            return mDeclService;
         }
 
         /**
@@ -900,6 +986,22 @@ public class Declaration
         }
 
         /**
+         * Gets the value for the contained decl_const.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.ConstType getDeclConst() {
+            if (tUnionField != _Field.DECL_CONST) {
+                return null;
+            }
+
+            if (mDeclConst_builder != null) {
+                return mDeclConst_builder.build();
+            }
+            return mDeclConst;
+        }
+
+        /**
          * Checks if Declaration has been modified since the _Builder was created.
          *
          * @return True if Declaration has been modified.
@@ -914,22 +1016,22 @@ public class Declaration
             if (o == null || !o.getClass().equals(getClass())) return false;
             Declaration._Builder other = (Declaration._Builder) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
-                   java.util.Objects.equals(mDeclEnum, other.mDeclEnum) &&
-                   java.util.Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
-                   java.util.Objects.equals(mDeclStruct, other.mDeclStruct) &&
-                   java.util.Objects.equals(mDeclService, other.mDeclService) &&
-                   java.util.Objects.equals(mDeclConst, other.mDeclConst);
+                   java.util.Objects.equals(getDeclEnum(), other.getDeclEnum()) &&
+                   java.util.Objects.equals(getDeclTypedef(), other.getDeclTypedef()) &&
+                   java.util.Objects.equals(getDeclStruct(), other.getDeclStruct()) &&
+                   java.util.Objects.equals(getDeclService(), other.getDeclService()) &&
+                   java.util.Objects.equals(getDeclConst(), other.getDeclConst());
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
                     Declaration.class,
-                    _Field.DECL_ENUM, mDeclEnum,
-                    _Field.DECL_TYPEDEF, mDeclTypedef,
-                    _Field.DECL_STRUCT, mDeclStruct,
-                    _Field.DECL_SERVICE, mDeclService,
-                    _Field.DECL_CONST, mDeclConst);
+                    _Field.DECL_ENUM, getDeclEnum(),
+                    _Field.DECL_TYPEDEF, getDeclTypedef(),
+                    _Field.DECL_STRUCT, getDeclStruct(),
+                    _Field.DECL_SERVICE, getDeclService(),
+                    _Field.DECL_CONST, getDeclConst());
         }
 
         @Override

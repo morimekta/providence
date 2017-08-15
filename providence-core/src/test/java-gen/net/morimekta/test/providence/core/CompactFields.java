@@ -2,6 +2,7 @@ package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
                    net.morimekta.providence.serializer.json.JsonCompactible,
@@ -13,11 +14,14 @@ public class CompactFields
     private final static String kDefaultName = "";
     private final static int kDefaultId = 0;
 
-    private final String mName;
-    private final int mId;
-    private final String mLabel;
+    private final transient String mName;
+    private final transient int mId;
+    private final transient String mLabel;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient CompactFields tSerializeInstance;
 
     public CompactFields(String pName,
                          int pId,
@@ -185,6 +189,23 @@ public class CompactFields
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

@@ -5,6 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class EnumValue
         implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>,
                    Comparable<EnumValue>,
@@ -15,12 +16,15 @@ public class EnumValue
     private final static String kDefaultName = "";
     private final static int kDefaultId = 0;
 
-    private final String mDocumentation;
-    private final String mName;
-    private final Integer mId;
-    private final java.util.Map<String,String> mAnnotations;
+    private final transient String mDocumentation;
+    private final transient String mName;
+    private final transient Integer mId;
+    private final transient java.util.Map<String,String> mAnnotations;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient EnumValue tSerializeInstance;
 
     private EnumValue(_Builder builder) {
         mDocumentation = builder.mDocumentation;
@@ -210,6 +214,23 @@ public class EnumValue
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override

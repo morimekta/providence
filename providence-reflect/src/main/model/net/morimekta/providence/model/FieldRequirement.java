@@ -3,6 +3,9 @@ package net.morimekta.providence.model;
 /**
  * The requirement of the field.
  */
+/**
+ * The requirement of the field.
+ */
 @javax.annotation.Generated("providence-maven-plugin")
 public enum FieldRequirement
         implements net.morimekta.providence.PEnumValue<FieldRequirement> {

@@ -2,6 +2,7 @@ package net.morimekta.test.providence.reflect.calculator;
 
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
+@javax.annotation.concurrent.Immutable
 public class CalculateException
         extends Exception
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
@@ -12,10 +13,13 @@ public class CalculateException
 
     private final static String kDefaultMessage = "";
 
-    private final String mMessage;
-    private final net.morimekta.test.providence.reflect.calculator.Operation mOperation;
+    private final transient String mMessage;
+    private final transient net.morimekta.test.providence.reflect.calculator.Operation mOperation;
 
-    private volatile int tHashCode;
+    private volatile transient int tHashCode;
+
+    // Transient object used during java deserialization.
+    private transient CalculateException tSerializeInstance;
 
     private CalculateException(_Builder builder) {
         super(builder.mMessage);
@@ -157,6 +161,27 @@ public class CalculateException
         }
 
         return 0;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
+        oos.defaultWriteObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        serializer.serialize(oos, this);
+    }
+
+    private void readObject(java.io.ObjectInputStream ois)
+            throws java.io.IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        net.morimekta.providence.serializer.BinarySerializer serializer = new net.morimekta.providence.serializer.BinarySerializer(false);
+        tSerializeInstance = serializer.deserialize(ois, kDescriptor);
+        if (getCause() != null) {
+            tSerializeInstance.initCause(getCause());
+        }
+        tSerializeInstance.setStackTrace(getStackTrace());
+    }
+
+    private Object readResolve() throws java.io.ObjectStreamException {
+        return tSerializeInstance;
     }
 
     @Override
@@ -522,6 +547,19 @@ public class CalculateException
         }
 
         /**
+         * Gets the value for the contained operation.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
+
+            if (mOperation_builder != null) {
+                return mOperation_builder.build();
+            }
+            return mOperation;
+        }
+
+        /**
          * Initializes the cause of the calculator.CalculateException
          *
          * @param cause The cause
@@ -540,7 +578,7 @@ public class CalculateException
             CalculateException._Builder other = (CalculateException._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mMessage, other.mMessage) &&
-                   java.util.Objects.equals(mOperation, other.mOperation);
+                   java.util.Objects.equals(getOperation(), other.getOperation());
         }
 
         @Override
@@ -548,7 +586,7 @@ public class CalculateException
             return java.util.Objects.hash(
                     CalculateException.class, optionals,
                     _Field.MESSAGE, mMessage,
-                    _Field.OPERATION, mOperation);
+                    _Field.OPERATION, getOperation());
         }
 
         @Override
