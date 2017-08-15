@@ -92,12 +92,12 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                 String keyGeneric = helper.getFieldType(kType);
                 String mkKey = "k";
                 if (kType.getType() == PType.BINARY) {
-                    writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(String.class);",
+                    writer.formatln("%s kType = ctxt.getTypeFactory().constructSimpleType(String.class, null);",
                                     JavaType.class.getName());
                     keyGeneric = "String";
                     mkKey = String.format("%s.fromBase64(k)", Binary.class.getName());
                 } else {
-                    writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
+                    writer.formatln("%s kType = ctxt.getTypeFactory().constructSimpleType(%s.class, null);",
                                     JavaType.class.getName(),
                                     helper.getFieldType(kType));
                 }
@@ -131,12 +131,12 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                                     MapType.class.getName(),
                                     helper.getFieldType(iiType));
                 } else if (iType.getType() == PType.BINARY) {
-                    writer.formatln("%s iType = ctxt.getTypeFactory().uncheckedSimpleType(String.class);",
+                    writer.formatln("%s iType = ctxt.getTypeFactory().constructSimpleType(String.class, null);",
                                     JavaType.class.getName());
                     valueGeneric = "String";
                     mkValue = String.format("%s.fromBase64(v)", Binary.class.getName());
                 } else {
-                    writer.formatln("%s iType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
+                    writer.formatln("%s iType = ctxt.getTypeFactory().constructSimpleType(%s.class, null);",
                                     JavaType.class.getName(),
                                     helper.getFieldType(iType));
                 }
