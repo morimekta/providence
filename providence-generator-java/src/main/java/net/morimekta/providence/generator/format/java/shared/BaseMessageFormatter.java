@@ -26,6 +26,7 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -69,13 +70,26 @@ public abstract class BaseMessageFormatter {
         @SuppressWarnings("unchecked")
         JMessage<?> message = new JMessage(descriptor, helper);
 
+        BlockCommentBuilder classComment = null;
+
         if (message.descriptor() instanceof CAnnotatedDescriptor) {
             CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) message.descriptor();
             if (annotatedDescriptor.getDocumentation() != null) {
-                new BlockCommentBuilder(writer)
-                        .comment(annotatedDescriptor.getDocumentation())
-                        .finish();
+                classComment = new BlockCommentBuilder(writer);
+                classComment.comment(annotatedDescriptor.getDocumentation());
             }
+            String deprecatedReason = annotatedDescriptor.getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (deprecatedReason != null && deprecatedReason.trim().length() > 0) {
+                if (classComment == null) {
+                    classComment = new BlockCommentBuilder(writer);
+                } else {
+                    classComment.newline();
+                }
+                classComment.deprecated_(deprecatedReason);
+            }
+        }
+        if (classComment != null) {
+            classComment.finish();
         }
 
         formatters.forEach(f -> f.appendClassAnnotations(message));

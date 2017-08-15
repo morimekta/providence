@@ -81,22 +81,8 @@ public class BlockCommentBuilder {
         return this;
     }
 
-    public BlockCommentBuilder see_(Class<?> klass, String comment) {
-        return see_(klass.getName().replaceAll("[$]", "."), comment);
-    }
-
-    public BlockCommentBuilder see_(String klass, String comment) {
-        writer.formatln(" @see %s %s", klass, html.escape(comment));
-        return this;
-    }
-
-    public BlockCommentBuilder deprecated_(@Nonnull String useInstead) {
-        writer.formatln(" @deprecated Use {@link %s} instead.", useInstead);
-        return this;
-    }
-
-    public BlockCommentBuilder deprecated_(@Nonnull String useInstead, @Nonnull String reason) {
-        writer.formatln(" @deprecated %s. Use {@link %s} instead.", html.escape(reason), useInstead);
+    public BlockCommentBuilder deprecated_(@Nonnull String reason) {
+        writer.formatln(" @deprecated %s", html.escape(reason));
         return this;
     }
 

@@ -26,6 +26,7 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumValue;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -49,6 +50,25 @@ public class BaseEnumFormatter {
 
     public void appendEnumClass(CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
+
+        BlockCommentBuilder classComment = null;
+        if (type.getDocumentation() != null) {
+            classComment = new BlockCommentBuilder(writer);
+            classComment.comment(type.getDocumentation());
+        }
+
+        String deprecatedReason = type.getAnnotationValue(ThriftAnnotation.DEPRECATED);
+        if (deprecatedReason != null && deprecatedReason.trim().length() > 0) {
+            if (classComment == null) {
+                classComment = new BlockCommentBuilder(writer);
+            } else {
+                classComment.newline();
+            }
+            classComment.deprecated_(deprecatedReason);
+        }
+        if (classComment != null) {
+            classComment.finish();
+        }
 
         if (type.getDocumentation() != null) {
             new BlockCommentBuilder(writer)

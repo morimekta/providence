@@ -181,8 +181,14 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 comment.comment(field.comment())
                        .newline();
             }
-            comment.return_("The field value")
-                   .finish();
+            comment.return_("The field value");
+            if (JAnnotation.isDeprecated(field)) {
+                String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                if (reason != null && reason.trim().length() > 0) {
+                    comment.deprecated_(reason);
+                }
+            }
+            comment.finish();
             if (JAnnotation.isDeprecated(field)) {
                 writer.appendln(JAnnotation.DEPRECATED);
             }

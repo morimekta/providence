@@ -31,6 +31,7 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
@@ -331,8 +332,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (!field.isVoid()) {
             comment.param_("value", "The new value");
         }
-        comment.return_("The builder")
-               .finish();
+        comment.return_("The builder");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
@@ -407,8 +414,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             comment.param_("values", "The added value");
         }
-        comment.return_("The builder")
-               .finish();
+        comment.return_("The builder");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
 
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
@@ -537,8 +550,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             comment.comment("Clears the " + field.name() + " field.");
         }
         comment.newline()
-               .return_("The builder")
-               .finish();
+               .return_("The builder");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
         writer.appendln(JAnnotation.NON_NULL);
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
@@ -592,8 +611,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             comment.comment("Gets the builder for the contained " + field.name() + ".");
         }
         comment.newline()
-               .return_("The field builder")
-               .finish();
+               .return_("The field builder");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
@@ -637,8 +662,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                     comment.comment("Gets the value for the contained " + field.name() + ".");
                 }
                 comment.newline()
-                       .return_("The field value")
-                       .finish();
+                       .return_("The field value");
+                if (JAnnotation.isDeprecated(field)) {
+                    String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                    if (reason != null && reason.trim().length() > 0) {
+                        comment.deprecated_(reason);
+                    }
+                }
+                comment.finish();
                 if (JAnnotation.isDeprecated(field)) {
                     writer.appendln(JAnnotation.DEPRECATED);
                 }
@@ -708,8 +739,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             comment.comment("Gets the value of the contained " + field.name() + ".");
         }
         comment.newline()
-               .return_("The field value")
-               .finish();
+               .return_("The field value");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
