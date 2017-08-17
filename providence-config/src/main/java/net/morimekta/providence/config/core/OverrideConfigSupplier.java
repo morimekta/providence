@@ -18,13 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.core;
 
-import net.morimekta.config.ConfigException;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.utils.UncheckedProvidenceConfigException;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -37,24 +38,23 @@ import net.morimekta.providence.serializer.pretty.Tokenizer;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
-import static net.morimekta.providence.config.ProvidenceConfig.UNDEFINED;
+import static net.morimekta.providence.config.ProvidenceConfigParser.UNDEFINED;
 
 /**
  * A supplier of a providence message config based on a parent config
  * (supplier) and a map of value overrides. Handy for use with
- * argument parser overrides, system property overrides or similar.
+ * argument parsers overrides, system property overrides or similar.
  *
  * <pre>{@code
- *     Supplier<Service> supplier = new OverrideMessageSupplier<>(
+ *     Supplier<Service> supplier = new OverrideConfigSupplier<>(
  *             baseServiceConfig,
  *             ImmutableMap.of(
  *                 "db.username", "root",
@@ -62,8 +62,12 @@ import static net.morimekta.providence.config.ProvidenceConfig.UNDEFINED;
  *             ));
  * }</pre>
  */
-public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        implements ReloadableSupplier<Message> {
+public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
+        extends ConfigSupplier<Message, Field> {
+    // Make sure the listener cannot be GC'd as long as this instance
+    // survives.
+    private final ConfigListener<Message, Field> listener;
+
     /**
      * Create a config that wraps a providence message instance. This message
      * will be exposed without any key prefix. Note that reading from properties
@@ -71,10 +75,11 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
-     * @throws ConfigException If message overriding failed
+     * @throws ProvidenceConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Properties overrides)
-            throws ConfigException {
+    public OverrideConfigSupplier(@Nonnull ConfigSupplier<Message,Field> parent,
+                                  @Nonnull Properties overrides)
+            throws ProvidenceConfigException {
         this(parent, propertiesMap(overrides), false);
     }
 
@@ -84,10 +89,11 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
-     * @throws ConfigException If message overriding failed
+     * @throws ProvidenceConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides)
-            throws ConfigException {
+    public OverrideConfigSupplier(@Nonnull ConfigSupplier<Message,Field> parent,
+                                  @Nonnull Map<String, String> overrides)
+            throws ProvidenceConfigException {
         this(parent, overrides, false);
     }
 
@@ -98,43 +104,36 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
      * @param strict If config should be read strictly.
-     * @throws ConfigException If message overriding failed
+     * @throws ProvidenceConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides, boolean strict)
-            throws ConfigException {
-        this.parent = parent;
-        this.overrides = overrides;
-        this.strict = strict;
-        this.instance = new AtomicReference<>(loadInternal());
+    public OverrideConfigSupplier(@Nonnull ConfigSupplier<Message,Field> parent,
+                                  @Nonnull Map<String, String> overrides,
+                                  boolean strict)
+            throws ProvidenceConfigException {
+        synchronized (this) {
+            listener = updated -> {
+                try {
+                    set(buildOverrideConfig(updated, overrides, strict));
+                } catch (ProvidenceConfigException e) {
+                    throw new UncheckedProvidenceConfigException(e);
+                }
+            };
+            parent.addListener(listener);
+            set(buildOverrideConfig(parent.get(), overrides, strict));
+        }
     }
 
-    /**
-     * Get the message enclosed in the config wrapper.
-     *
-     * @return The message.
-     */
-    @Override
-    public Message get() {
-        return instance.get();
-    }
-
-    /**
-     * Reload the message into the config.
-     */
-    @Override
-    public void reload() {
-        instance.set(loadInternal());
-    }
-
-    private Message loadInternal() throws ConfigException {
-        PMessageBuilder<Message, Field> builder = parent.get()
-                                                        .mutate();
+    private static <Message extends PMessage<Message, Field>, Field extends PField>
+    Message buildOverrideConfig(Message parent,
+                                Map<String,String> overrides,
+                                boolean strict) throws ProvidenceConfigException {
+        PMessageBuilder<Message, Field> builder = parent.mutate();
         for (Map.Entry<String, String> override : overrides.entrySet()) {
             String[] path = override.getKey()
                                     .split("[.]");
 
             String fieldName = lastFieldName(path);
-            PMessageBuilder containedBuilder = builderForField(builder, path);
+            PMessageBuilder containedBuilder = builderForField(strict, builder, path);
             if (containedBuilder == null) {
                 continue;
             }
@@ -142,7 +141,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                                            .findFieldByName(fieldName);
             if (field == null) {
                 if (strict) {
-                    throw new ConfigException("No such field %s in %s [%s]",
+                    throw new ProvidenceConfigException("No such field %s in %s [%s]",
                                               fieldName,
                                               containedBuilder.descriptor()
                                                               .getQualifiedName(),
@@ -163,48 +162,49 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                         if (next.isStringLiteral()) {
                             containedBuilder.set(field.getId(), next.decodeLiteral(strict));
                             if (tokenizer.hasNext()) {
-                                throw new ConfigException("Garbage after string value [%s]: '%s'",
-                                                          override.getKey(),
-                                                          override.getValue());
+                                throw new ProvidenceConfigException("Garbage after string value [%s]: '%s'",
+                                                                    override.getKey(),
+                                                                    override.getValue());
                             }
                             continue;
                         }
                     }
                     containedBuilder.set(field.getId(), override.getValue());
                 } else {
-                    containedBuilder.set(field.getId(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
+                    containedBuilder.set(field.getId(),
+                                         readFieldValue(tokenizer,
+                                                        tokenizer.expect("value"),
+                                                        field.getDescriptor(),
+                                                        strict));
                     if (tokenizer.hasNext()) {
-                        throw new ConfigException("Garbage after %s value [%s]: '%s'",
-                                                  field.getType(),
-                                                  override.getKey(),
-                                                  override.getValue());
+                        throw new ProvidenceConfigException("Garbage after %s value [%s]: '%s'",
+                                                            field.getType(),
+                                                            override.getKey(),
+                                                            override.getValue());
                     }
                 }
+            } catch (ProvidenceConfigException e) {
+                throw e;
             } catch (IOException e) {
-                throw new ConfigException(e.getMessage() + " [" + override.getKey() + "]", e);
+                throw new ProvidenceConfigException(e.getMessage() + " [" + override.getKey() + "]", e);
             }
         }
 
         return builder.build();
     }
 
-    private final AtomicReference<Message> instance;
-    private final Supplier<Message>        parent;
-    private final Map<String,String>       overrides;
-    private final boolean                  strict;
-
-    private String lastFieldName(String... path) {
+    private static String lastFieldName(String... path) {
         return path[path.length - 1];
     }
 
-    private PMessageBuilder builderForField(PMessageBuilder builder, String... path) {
+    private static PMessageBuilder builderForField(boolean strict, PMessageBuilder builder, String... path) throws ProvidenceConfigException {
         for (int i = 0; i < (path.length - 1); ++i) {
             PMessageDescriptor descriptor = builder.descriptor();
             String fieldName = path[i];
             PField field = descriptor.findFieldByName(fieldName);
             if (field == null) {
                 if (strict) {
-                    throw new ConfigException("No such field %s in %s [%s]",
+                    throw new ProvidenceConfigException("No such field %s in %s [%s]",
                                               fieldName,
                                               descriptor.getQualifiedName(),
                                               String.join(".", path));
@@ -212,7 +212,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 return null;
             }
             if (field.getType() != PType.MESSAGE) {
-                throw new ConfigException("'%s' is not a message field in %s [%s]",
+                throw new ProvidenceConfigException("'%s' is not a message field in %s [%s]",
                                           fieldName,
                                           descriptor.getQualifiedName(),
                                           String.join(".", path));
@@ -222,7 +222,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
         return builder;
     }
 
-    private Object readFieldValue(Tokenizer tokenizer, Token token, PDescriptor descriptor) throws IOException {
+    private static Object readFieldValue(Tokenizer tokenizer, Token token, PDescriptor descriptor, boolean strict) throws IOException {
         switch (descriptor.getType()) {
             case BOOL: {
                 switch (token.asString().toLowerCase()) {
@@ -358,9 +358,9 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
 
                 token = tokenizer.expect("list end or value");
                 while (!token.isSymbol(Token.kMessageEnd)) {
-                    Object key = readFieldValue(tokenizer, token, kDesc);
+                    Object key = readFieldValue(tokenizer, token, kDesc, strict);
                     tokenizer.expectSymbol("map kv sep", Token.kKeyValueSep);
-                    Object value = readFieldValue(tokenizer, tokenizer.expect("map value"), iDesc);
+                    Object value = readFieldValue(tokenizer, tokenizer.expect("map value"), iDesc, strict);
                     builder.put(key, value);
                     token = tokenizer.expect("map sep, end or value");
                     if (token.isSymbol(Token.kLineSep1)) {
@@ -382,7 +382,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
 
                 token = tokenizer.expect("list end or value");
                 while (!token.isSymbol(Token.kListEnd)) {
-                    builder.add(readFieldValue(tokenizer, token, iDesc));
+                    builder.add(readFieldValue(tokenizer, token, iDesc, strict));
                     token = tokenizer.expect("list sep, end or value");
                     if (token.isSymbol(Token.kLineSep1)) {
                         token = tokenizer.expect("list end or value");
@@ -404,7 +404,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
 
                 token = tokenizer.expect("set end or value");
                 while (!token.isSymbol(Token.kListEnd)) {
-                    builder.add(readFieldValue(tokenizer, token, iDesc));
+                    builder.add(readFieldValue(tokenizer, token, iDesc, strict));
                     token = tokenizer.expect("set sep, end or value");
                     if (token.isSymbol(Token.kLineSep1)) {
                         token = tokenizer.expect("set end or value");

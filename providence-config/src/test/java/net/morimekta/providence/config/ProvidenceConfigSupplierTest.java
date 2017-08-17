@@ -20,26 +20,28 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.util.FileWatcher;
+import net.morimekta.util.Pair;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -53,12 +55,14 @@ public class ProvidenceConfigSupplierTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
-    private ProvidenceConfig config;
+    private ProvidenceConfigParser parser;
+    private FileWatcher            watcher;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        config = mock(ProvidenceConfig.class);
+        parser = mock(ProvidenceConfigParser.class);
+        watcher = mock(FileWatcher.class);
     }
 
     @Test
@@ -66,74 +70,99 @@ public class ProvidenceConfigSupplierTest {
         Database first = Database.builder().build();
         Database second = Database.builder().build();
 
-        File file = tmp.newFile();
+        File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
-        AtomicReference<Database> reference = new AtomicReference<>(first);
-
-        when((Supplier) config.getSupplier(file)).thenReturn(reference::get);
+        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
+        doNothing().when(watcher).addWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
-                new ProvidenceConfigSupplier<>(file, config);
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
 
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(config).getSupplier(file);
-        verifyNoMoreInteractions(config);
+        verify(parser).parseConfig(file, null);
+        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher, atLeast(1)).startWatching(any(File.class));
+        verifyNoMoreInteractions(watcher, parser);
 
-        reset(config);
-        doAnswer((mock) -> {
-            reference.set(second);
-            return null;
-        }).when(config).reload(file);
+        reset(parser, watcher);
+        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
+        doNothing().when(watcher).addWatcher(watcherCapture.capture());
 
-        supplier.reload();
+        watcherCapture.getValue().onFileUpdate(file);
 
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
 
-        verify(config).reload(file);
-        verifyNoMoreInteractions(config);
+        verify(parser).parseConfig(file, null);
+        verify(watcher).startWatching(any(File.class));
+        verifyNoMoreInteractions(parser, watcher);
+    }
+
+    @Test
+    public void testWatchedSupplier() throws IOException {
+        Database first = Database.builder().build();
+        Database second = Database.builder().build();
+
+        File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
+
+        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
+        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+
+        ProvidenceConfigSupplier<Database, Database._Field> supplier =
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
+
+        assertThat(supplier.get(), is(sameInstance(first)));
+        assertThat(supplier.get(), is(sameInstance(first)));
+        assertThat(supplier.get(), is(sameInstance(first)));
+
+        verify(parser).parseConfig(file, null);
+        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher, atMost(4)).startWatching(file);
+        verifyNoMoreInteractions(watcher, parser);
+
+        reset(parser, watcher);
+        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
+        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+
+        watcherCapture.getValue().onFileUpdate(file);
+
+        assertThat(supplier.get(), is(sameInstance(second)));
+        assertThat(supplier.get(), is(sameInstance(second)));
+        assertThat(supplier.get(), is(sameInstance(second)));
+
+        verify(parser).parseConfig(file, null);
+        verify(watcher).startWatching(file);
+        verifyNoMoreInteractions(parser, watcher);
     }
 
     @Test
     public void testSupplierKeepInstanceOnFailedReload() throws IOException {
         Database first = Database.builder().build();
 
-        File file = tmp.newFile();
+        File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
-        AtomicReference<Database> reference = new AtomicReference<>(first);
-
-        when((Supplier) config.getSupplier(file)).thenReturn(reference::get);
+        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
+        doNothing().when(watcher).addWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
-                new ProvidenceConfigSupplier<>(file, config);
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
+        assertThat(supplier.get(), is(first));
+        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        reset(parser, watcher);
+        when(parser.parseConfig(file, null)).thenThrow(new ProvidenceConfigException("test"));
 
-        assertThat(supplier.get(), is(sameInstance(first)));
-        assertThat(supplier.get(), is(sameInstance(first)));
-        assertThat(supplier.get(), is(sameInstance(first)));
+        watcherCapture.getValue().onFileUpdate(file);
 
-        verify(config).getSupplier(file);
-        verifyNoMoreInteractions(config);
+        verify(parser).parseConfig(file, null);
+        verifyNoMoreInteractions(parser);
 
-        reset(config);
-        doThrow(new IOException("Message")).when(config).reload(file);
-
-        try {
-            supplier.reload();
-            fail("No exception");
-        } catch (Exception e) {
-            assertThat(e.getMessage(), is("Message"));
-            assertThat(e, is(instanceOf(UncheckedIOException.class)));
-        }
-
-        assertThat(supplier.get(), is(sameInstance(first)));
-        assertThat(supplier.get(), is(sameInstance(first)));
-        assertThat(supplier.get(), is(sameInstance(first)));
-
-        verify(config).reload(file);
-        verifyNoMoreInteractions(config);
+        assertThat(supplier.get(), is(first));
     }
 }

@@ -44,6 +44,7 @@ struct RefConfig1 {
     7: optional Value enum_value;
     8: optional binary bin_value;
     9: optional string str_value;
+    90: optional string str2_value;
     10: optional Database msg_value;
 
     11: optional list<string> list_value;

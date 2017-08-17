@@ -18,9 +18,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.core;
 
-import net.morimekta.config.ConfigException;
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.config.Credentials;
@@ -38,8 +38,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.is;
@@ -52,8 +50,8 @@ import static org.junit.Assert.fail;
 /**
  * Tests for the message config wrapper.
  */
-public class OverrideMessageSupplierTest {
-    private AtomicReference<Database> base = new AtomicReference<>();
+public class OverrideConfigSupplierTest {
+    private ConfigSupplier<Database,Database._Field> base = new ConfigSupplier<>();
 
     @Rule
     public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
@@ -70,8 +68,8 @@ public class OverrideMessageSupplierTest {
 
     @Test
     public void testSupplier() throws IOException {
-        OverrideMessageSupplier<Database, Database._Field> supplier = new OverrideMessageSupplier<>(
-                base::get, ImmutableMap.of(
+        OverrideConfigSupplier<Database, Database._Field> supplier = new OverrideConfigSupplier<>(
+                base, ImmutableMap.of(
                         "credentials.password", "password",
                         "uri", "undefined"),
                 true);
@@ -90,10 +88,9 @@ public class OverrideMessageSupplierTest {
                          .setDriver("otherDriver")
                          .setCredentials(new Credentials("username", "complicated password that no one guesses"))
                          .build());
-        // updating the base does not update the result.
-        assertThat(supplier.get(), is(sameInstance(instance)));
 
-        supplier.reload();
+        // updating the base updates the result.
+        assertThat(supplier.get(), is(not(sameInstance(instance))));
 
         instance = supplier.get();
 
@@ -106,48 +103,48 @@ public class OverrideMessageSupplierTest {
     }
 
     @Test
-    public void testFaliures() throws IOException {
+    public void testFailures() throws IOException {
         try {
-            new OverrideMessageSupplier<>(
-                    base::get, ImmutableMap.of(
+            new OverrideConfigSupplier<>(
+                    base, ImmutableMap.of(
                             "pass.password", "password",
                             "uri", "undefined"),
                     true);
             fail("No exception when strict");
-        } catch (ConfigException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("No such field pass in config.Database [pass.password]"));
         }
 
         try {
-            new OverrideMessageSupplier<>(
-                    base::get, ImmutableMap.of(
+            new OverrideConfigSupplier<>(
+                    base, ImmutableMap.of(
                     "credentials.pass", "password",
                     "uri", "undefined"),
                     true);
             fail("No exception when strict");
-        } catch (ConfigException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("No such field pass in config.Credentials [credentials.pass]"));
         }
     }
 
     @Test
-    public void testFaliures_noStrict() throws IOException {
+    public void testFailures_noStrict() throws IOException {
         // no exception. See testFailures()
-        new OverrideMessageSupplier<>(
-                base::get, ImmutableMap.of(
+        new OverrideConfigSupplier<>(
+                base, ImmutableMap.of(
                 "pass.password", "password",
                 "uri", "undefined"));
-        new OverrideMessageSupplier<>(
-                base::get, ImmutableMap.of(
+        new OverrideConfigSupplier<>(
+                base, ImmutableMap.of(
                 "credentials.pass", "password",
                 "uri", "undefined"));
 
         try {
-            new OverrideMessageSupplier<>(
-                    base::get, ImmutableMap.of(
+            new OverrideConfigSupplier<>(
+                    base, ImmutableMap.of(
                     "credentials.password", "\"password\" and some"));
             fail("No exception");
-        } catch (ConfigException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(),
                        is("Garbage after string value [credentials.password]: '\"password\" and some'"));
         }
@@ -155,9 +152,9 @@ public class OverrideMessageSupplierTest {
         try {
             Properties properties = new Properties();
             properties.setProperty("value", "FIRST SECOND");
-            new OverrideMessageSupplier<>(base::get, properties);
+            new OverrideConfigSupplier<>(base, properties);
             fail("No exception");
-        } catch (ConfigException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(),
                        is("Garbage after enum value [value]: 'FIRST SECOND'"));
         }
@@ -165,15 +162,15 @@ public class OverrideMessageSupplierTest {
 
     @Test
     public void testOverrideEveryType() throws IOException {
-        AtomicReference<RefConfig1> ref = new AtomicReference<>();
+        ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
         ref.set(generator.generate(RefConfig1.kDescriptor)
                          .mutate()
                          .clearMsgValue()
                          .clearMapValue()
                          .build());
 
-        Supplier<RefConfig1> supplier = new OverrideMessageSupplier<>(
-                ref::get,
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
                 ImmutableMap.<String,String>builder()
                             .put("bool_value", "true")
                             .put("byte_value", "123")
@@ -184,6 +181,7 @@ public class OverrideMessageSupplierTest {
                             .put("enum_value", "SECOND")
                             .put("bin_value", "hex(01020304)")
                             .put("str_value", "\"This is a string\"")
+                            .put("str2_value", "This is also a string")
                             .put("list_value", "[\"first\",\"second\"]")
                             .put("set_value", "[1234, 4321]")
                             .put("simple_map", "{12345678:SECOND}")
@@ -202,6 +200,7 @@ public class OverrideMessageSupplierTest {
                           .setEnumValue(Value.SECOND)
                           .setBinValue(Binary.fromHexString("01020304"))
                           .setStrValue("This is a string")
+                          .setStr2Value("This is also a string")
                           .setListValue(ImmutableList.of("first", "second"))
                           .setSetValue(ImmutableSet.of((short) 1234, (short) 4321))
                           .setSimpleMap(ImmutableMap.of(12345678, Value.SECOND))
@@ -210,11 +209,11 @@ public class OverrideMessageSupplierTest {
 
     @Test
     public void testOverrideEveryType_alt() throws IOException {
-        AtomicReference<RefConfig1> ref = new AtomicReference<>();
+        ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
         ref.set(RefConfig1.builder().build());
 
-        Supplier<RefConfig1> supplier = new OverrideMessageSupplier<>(
-                ref::get,
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
                 ImmutableMap.<String,String>builder()
                         .put("bool_value", "f")
                         .put("bin_value", "b64(AAf_)")
@@ -281,17 +280,17 @@ public class OverrideMessageSupplierTest {
 
     private void assertOverrideFailure(String key, String value, String message) throws IOException {
         try {
-            AtomicReference<RefConfig1> ref = new AtomicReference<>();
+            ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
             ref.set(generator.generate(RefConfig1.kDescriptor));
 
-            new OverrideMessageSupplier<>(
-                    ref::get,
+            new OverrideConfigSupplier<>(
+                    ref,
                     ImmutableMap.<String,String>builder()
                             .put(key, value)
                             .build(),
                     true);
             fail("No exception");
-        } catch (ConfigException e) {
+        } catch (ProvidenceConfigException e) {
             if (!e.getMessage().equals(message)) {
                 e.printStackTrace();
             }

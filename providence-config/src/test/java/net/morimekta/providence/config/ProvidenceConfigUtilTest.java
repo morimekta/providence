@@ -1,7 +1,7 @@
 package net.morimekta.providence.config;
 
-import net.morimekta.config.IncompatibleValueException;
-import net.morimekta.config.KeyNotFoundException;
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.utils.ProvidenceConfigUtil;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.util.SimpleTypeRegistry;
@@ -15,7 +15,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +32,7 @@ public class ProvidenceConfigUtilTest {
     public TemporaryFolder tmp = new TemporaryFolder();
 
     private Declaration declaration;
-    private Supplier<Service> service;
+    private Service service;
 
     @Before
     public void setUp() throws IOException {
@@ -50,11 +49,11 @@ public class ProvidenceConfigUtilTest {
 
         File cfg = copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
 
-        service = new ProvidenceConfig(registry).getSupplier(cfg);
+        service = new ProvidenceConfig(registry).getConfig(cfg);
     }
 
     @Test
-    public void testGetInMessage() {
+    public void testGetInMessage() throws ProvidenceConfigException {
         // Return the field value.
         assertEquals("44", ProvidenceConfigUtil.getInMessage(declaration, "decl_const.value"));
         assertEquals("Name", ProvidenceConfigUtil.getInMessage(declaration, "decl_const.name"));
@@ -63,39 +62,39 @@ public class ProvidenceConfigUtilTest {
         // Return null when there are no default in thrift, and none specified.
         assertEquals(null, ProvidenceConfigUtil.getInMessage(declaration, "decl_const.documentation"));
 
-        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "name"), is("stage"));
-        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "admin"), is(nullValue()));
+        assertThat(ProvidenceConfigUtil.getInMessage(service, "name"), is("stage"));
+        assertThat(ProvidenceConfigUtil.getInMessage(service, "admin"), is(nullValue()));
         ServicePort def = ServicePort.builder().build();
-        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "admin", def), is(sameInstance(def)));
+        assertThat(ProvidenceConfigUtil.getInMessage(service, "admin", def), is(sameInstance(def)));
     }
 
     @Test
     public void testGetInMessage_fail() {
         try {
-            ProvidenceConfigUtil.getInMessage(service.get(), "does_not_exist");
+            ProvidenceConfigUtil.getInMessage(service, "does_not_exist");
             fail("No exception");
-        } catch (KeyNotFoundException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            ProvidenceConfigUtil.getInMessage(service.get(), "does_not_exist.name");
+            ProvidenceConfigUtil.getInMessage(service, "does_not_exist.name");
             fail("No exception");
-        } catch (KeyNotFoundException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            ProvidenceConfigUtil.getInMessage(service.get(), "db.does_not_exist");
+            ProvidenceConfigUtil.getInMessage(service, "db.does_not_exist");
             fail("No exception");
-        } catch (KeyNotFoundException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Message config.Database has no field named does_not_exist"));
         }
 
         try {
-            ProvidenceConfigUtil.getInMessage(service.get(), "name.db");
+            ProvidenceConfigUtil.getInMessage(service, "name.db");
             fail("No exception");
-        } catch (IncompatibleValueException e) {
+        } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Field 'name' is not of message type in config.Service"));
         }
     }

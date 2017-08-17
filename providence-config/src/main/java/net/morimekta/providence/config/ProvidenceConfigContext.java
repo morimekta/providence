@@ -13,30 +13,30 @@ import java.util.Set;
 /**
  *
  */
-class ProvidenceConfigContext {
+public class ProvidenceConfigContext {
     private final Set<String>                     includeAliases;
     private final Map<String, Object>             references;
     private final Map<String, TokenizerException> referenceExceptions;
 
-    ProvidenceConfigContext() {
+    public ProvidenceConfigContext() {
         this.references = new HashMap<>();
         this.referenceExceptions = new HashMap<>();
         this.includeAliases = new HashSet<>();
     }
 
-    boolean containsReference(String name) {
+    public boolean containsReference(String name) {
         return referenceExceptions.containsKey(name) ||
                references.containsKey(name);
     }
 
-    void setInclude(String alias, PMessage include) {
+    public void setInclude(String alias, PMessage include) {
         references.put(alias, include);
         includeAliases.add(alias);
     }
 
-    String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
+    public String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
         String reference = token.asString();
-        if (ProvidenceConfig.RESERVED_WORDS.contains(reference)) {
+        if (ProvidenceConfigParser.RESERVED_WORDS.contains(reference)) {
             throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine(token.getLineNo()));
         }
 
@@ -68,7 +68,7 @@ class ProvidenceConfigContext {
         return reference;
     }
 
-    Object setReference(String reference, Object value) {
+    public Object setReference(String reference, Object value) {
         if (reference != null) {
             if (!referenceExceptions.containsKey(reference)) {
                 throw new RuntimeException("Reference '" + reference + "' not initialised");
@@ -78,7 +78,7 @@ class ProvidenceConfigContext {
         return value;
     }
 
-    Object getReference(String reference, Token token, Tokenizer tokenizer) throws TokenizerException {
+    public Object getReference(String reference, Token token, Tokenizer tokenizer) throws TokenizerException {
         if (references.containsKey(reference)) {
             return references.get(reference);
         }

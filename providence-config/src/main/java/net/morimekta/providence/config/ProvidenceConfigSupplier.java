@@ -21,62 +21,111 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.config.core.ConfigListener;
+import net.morimekta.providence.config.core.ConfigSupplier;
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.util.FileWatcher;
+import net.morimekta.util.Pair;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * A reloadable supplier of a providence config based on a config file.
+ * A supplier to get a config (aka message) from a resource location. This is
+ * a fixed static supplier, so listening to changes will never do anything.
  *
  * <pre>{@code
- *     ProvidenceConfigSupplier supplier = new ProvidenceConfigSupplier(configFile, configLoader);
+ *     Supplier<Service> supplier = new ResourceConfigSupplier<>(resourceName, Service.kDescriptor);
  * }</pre>
  */
 public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        implements ReloadableSupplier<Message> {
-    /**
-     * Create a config that wraps a providence message instance. This message
-     * will be exposed without any key prefix.
-     *
-     * @param configFile The file containing the config.
-     * @param configLoader The providence config loader.
-     * @throws IOException If message read failed.
-     * @throws SerializerException If message deserialization failed.
-     */
-    public ProvidenceConfigSupplier(File configFile, ProvidenceConfig configLoader)
-            throws IOException {
+        extends ConfigSupplier<Message, Field> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProvidenceConfigSupplier.class);
+
+    private final File                           configFile;
+    private final ProvidenceConfigParser         configParser;
+    private final Set<String>                    includedFiles;
+    private final FileWatcher                    fileWatcher;
+    private final ConfigListener<Message, Field> configListener;
+    private final FileWatcher.Watcher            fileListener;
+    private final ConfigSupplier<Message, Field> parentSupplier;
+
+    public ProvidenceConfigSupplier(File configFile,
+                                    ConfigSupplier<Message, Field> parentSupplier,
+                                    FileWatcher fileWatcher,
+                                    ProvidenceConfigParser configParser)
+            throws ProvidenceConfigException {
+        super();
         this.configFile = configFile;
-        this.configLoader = configLoader;
-        this.instance = configLoader.getSupplier(configFile);
-    }
+        this.configParser = configParser;
+        this.parentSupplier = parentSupplier;
+        this.includedFiles = new HashSet<>();
+        this.fileWatcher = fileWatcher;
 
-    /**
-     * Get the message enclosed in the config wrapper.
-     *
-     * @return The message.
-     */
-    @Override
-    public Message get() {
-        return instance.get();
-    }
+        synchronized (this) {
+            if (fileWatcher != null) {
+                fileWatcher.startWatching(configFile);
+                // TODO: Make the file watcher hold weak references.
+                // This may cause long term memory leaks.
+                fileListener = file -> {
+                    if (includedFiles.contains(file.toString())) {
+                        reload();
+                    }
+                };
+                fileWatcher.addWatcher(fileListener);
+            } else {
+                fileListener = null;
+            }
 
-    /**
-     * Reload the message into the config.
-     */
-    @Override
-    public void reload() {
-        try {
-            configLoader.reload(configFile);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e.getMessage(), e);
+            if (parentSupplier != null) {
+                this.configListener = config -> this.reload();
+                this.parentSupplier.addListener(configListener);
+                set(loadConfig(parentSupplier.get()));
+            } else {
+                this.configListener = null;
+                set(loadConfig(null));
+            }
         }
     }
 
-    private final Supplier<Message> instance;
-    private final File              configFile;
-    private final ProvidenceConfig  configLoader;
+    /**
+     * Trigger reloading of the config file.
+     */
+    protected void reload() {
+        try {
+            LOGGER.trace("Config reload triggered for " + configFile);
+            if (parentSupplier != null) {
+                set(loadConfig(parentSupplier.get()));
+            } else {
+                set(loadConfig(null));
+            }
+        } catch (ProvidenceConfigException e) {
+            LOGGER.error("Exception when reloading " + configFile, e);
+        }
+    }
+
+    @Nonnull
+    private Message loadConfig(@Nullable Message parent) throws ProvidenceConfigException {
+        Pair<Message, Set<String>> tmp = configParser.parseConfig(configFile, parent);
+        if (fileWatcher != null) {
+            fileWatcher.startWatching(configFile);
+            synchronized (this) {
+                if (!tmp.second.equals(includedFiles)) {
+                    includedFiles.clear();
+                    includedFiles.addAll(tmp.second);
+                    for (String included : includedFiles) {
+                        fileWatcher.startWatching(new File(included));
+                    }
+                }
+            }
+        }
+        return tmp.first;
+    }
 }
