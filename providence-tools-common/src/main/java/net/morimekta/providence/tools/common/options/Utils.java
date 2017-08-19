@@ -1,9 +1,9 @@
 package net.morimekta.providence.tools.common.options;
 
-import net.morimekta.config.ConfigException;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.ProvidenceConfig;
+import net.morimekta.providence.config.utils.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
@@ -56,14 +56,14 @@ public class Utils {
 
         rc = rc.getCanonicalFile();
         if (!rc.isFile()) {
-            throw new ConfigException("Rc file is not a file " + rc.getPath());
+            throw new ProvidenceConfigException("Rc file is not a file " + rc.getPath());
         }
 
         try {
             SimpleTypeRegistry registry = new SimpleTypeRegistry();
             registry.registerRecursively(ProvidenceTools.kDescriptor);
             ProvidenceConfig loader = new ProvidenceConfig(registry);
-            ProvidenceTools config = loader.getConfig(rc, ProvidenceTools.kDescriptor);
+            ProvidenceTools config = loader.getConfig(rc);
 
             if (config.hasIncludes()) {
                 File basePath = rc.getParentFile();
@@ -74,7 +74,7 @@ public class Utils {
                     }
                     basePath = new File(base);
                     if (!basePath.exists() || !basePath.isDirectory()) {
-                        throw new ConfigException(
+                        throw new ProvidenceConfigException(
                                 "Includes Base path in " + rc.getPath() + " is not a directory: " + basePath);
                     }
                 }

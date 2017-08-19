@@ -27,7 +27,7 @@ public abstract class CommandBase implements Command {
             loader.load(file);
         }
 
-        execute(new ProvidenceConfig(loader.getProgramRegistry(), options.isStrict()));
+        execute(new ProvidenceConfig(loader.getProgramRegistry(), null, options.isStrict()));
     }
 
     public abstract void execute(ProvidenceConfig config) throws IOException;

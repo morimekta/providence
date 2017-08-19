@@ -51,6 +51,7 @@ public class ProvidenceConfigUtil {
      * @param message The message to look up into.
      * @param key The key to look up.
      * @return The value found or null.
+     * @throws ProvidenceConfigException When unable to get value from message.
      */
     public static Object getInMessage(PMessage message, String key) throws ProvidenceConfigException {
         return getInMessage(message, key, null);
@@ -65,6 +66,7 @@ public class ProvidenceConfigUtil {
      * @param key The key to look up.
      * @param defValue The default value.
      * @return The value found or the default.
+     * @throws ProvidenceConfigException When unable to get value from message.
      */
     public static Object getInMessage(PMessage message, final String key, Object defValue)
             throws ProvidenceConfigException {
@@ -172,6 +174,7 @@ public class ProvidenceConfigUtil {
      *
      * @param value The value instance.
      * @return The boolean value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     public static boolean asBoolean(Object value) throws ProvidenceConfigException {
         if (value instanceof Boolean) {
@@ -211,6 +214,7 @@ public class ProvidenceConfigUtil {
      *
      * @param value The value instance.
      * @return The integer value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     public static int asInteger(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
@@ -239,6 +243,7 @@ public class ProvidenceConfigUtil {
      *
      * @param value The value instance.
      * @return The long value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     public static long asLong(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
@@ -266,6 +271,7 @@ public class ProvidenceConfigUtil {
      *
      * @param value The value instance.
      * @return The double value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     public static double asDouble(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
@@ -289,6 +295,7 @@ public class ProvidenceConfigUtil {
      *
      * @param value The value instance.
      * @return The string value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     public static String asString(Object value) throws ProvidenceConfigException {
         if (value instanceof Collection || value instanceof Map) {
@@ -309,6 +316,7 @@ public class ProvidenceConfigUtil {
      * @param value The value instance.
      * @param <T> The collection item type.
      * @return The collection value.
+     * @throws ProvidenceConfigException When unable to convert value.
      */
     @SuppressWarnings("unchecked")
     public static <T> Collection<T> asCollection(Object value) throws ProvidenceConfigException {

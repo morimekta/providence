@@ -16,7 +16,7 @@ public class Validate extends CommandBase {
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        config.getSupplier(file);
+        config.getConfig(file);
     }
 
     private void setFile(File file) {

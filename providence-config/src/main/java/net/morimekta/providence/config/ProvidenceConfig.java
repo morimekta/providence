@@ -52,9 +52,11 @@ public class ProvidenceConfig implements ConfigResolver {
      * Make a config instance.
      *
      * @param registry The type registry used to find message and enum types.
+     * @param watcher File watcher used to detect config file updates.
      * @param strict If the config should be parsed strictly.
      */
-    public ProvidenceConfig(TypeRegistry registry, FileWatcher watcher, boolean strict) {
+    public ProvidenceConfig(@Nonnull TypeRegistry registry,
+                            @Nullable FileWatcher watcher, boolean strict) {
         this.loaded = new ConcurrentHashMap<>();
         this.watcher = watcher;
         this.parser = new ProvidenceConfigParser(registry, strict);
