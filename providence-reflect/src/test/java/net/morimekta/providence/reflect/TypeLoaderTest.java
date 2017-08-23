@@ -19,15 +19,35 @@
 
 package net.morimekta.providence.reflect;
 
+import net.morimekta.providence.reflect.parser.ProgramParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+
+import com.google.common.collect.ImmutableList;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 12.09.15
  */
 public class TypeLoaderTest {
-    @Test
-    public void testLoad() {
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test
+    public void testLoadServices() throws IOException {
+        copyResourceTo("/parser/tests/service2.thrift", temp.getRoot());
+        File service = copyResourceTo("/parser/tests/service.thrift", temp.getRoot());
+
+        ProgramParser parser = new ThriftProgramParser();
+        TypeLoader loader = new TypeLoader(ImmutableList.of(), parser);
+
+        loader.load(service);
     }
 }

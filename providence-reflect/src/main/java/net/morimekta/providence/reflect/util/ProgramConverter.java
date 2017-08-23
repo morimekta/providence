@@ -52,6 +52,7 @@ import net.morimekta.providence.util.TypeRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -94,6 +95,15 @@ public class ProgramConverter {
         ImmutableList.Builder<CService> services = ImmutableList.builder();
 
         RecursiveTypeRegistry registry = programRegistry.registryForPath(path);
+
+        File dir = new File(path).getParentFile();
+        if (program.hasIncludes()) {
+            for (String include : program.getIncludes()) {
+                String includePath = new File(dir, include).getPath();
+                registry.registerInclude(ReflectionUtils.programNameFromPath(include),
+                                         programRegistry.registryForPath(includePath));
+            }
+        }
 
         for (Declaration decl : program.getDecl()) {
             switch (decl.unionField()) {

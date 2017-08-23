@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.testing.service
+namespace java net.morimekta.test.service
 
 include "service2.thrift"
 
