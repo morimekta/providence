@@ -62,6 +62,9 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
      * @param registry The registry for the given program.
      */
     public void registerInclude(String programName, RecursiveTypeRegistry registry) {
+        if (registry == this) {
+            throw new IllegalArgumentException("Registering include back to itself: " + programName);
+        }
         if (includes.containsKey(programName)) {
             return;
         }
@@ -100,14 +103,14 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
         String program = finalName.replaceAll("\\..*", "");
         String name = finalName.replaceAll(".*\\.", "");
 
-        if (services.containsKey(name)) {
-            return services.get(name);
-        }
         if (localProgramContext.equals(program)) {
+            if (services.containsKey(name)) {
+                return services.get(name);
+            }
             throw new IllegalArgumentException("No such service \"" + name + "\" in program \"" + program + "\"");
         }
-        if (services.containsKey(finalName)) {
-            return services.get(finalName);
+        if (includes.containsKey(program)) {
+            return includes.get(program).getService(name, program);
         }
         throw new IllegalArgumentException("No such program \"" + program + "\" known for service \"" + serviceName + "\"");
     }
@@ -118,10 +121,11 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
         String program = service.getProgramName();
 
         if (!localProgramContext.equals(program)) {
-            if (!includes.containsKey(program)) {
+            if (includes.containsKey(program)) {
                 includes.get(program).registerRecursively(service);
+                return true;
             }
-            throw new IllegalArgumentException("No include for type: " + service.getQualifiedName());
+            throw new IllegalArgumentException("No such include \"" + program + "\" for type " + service.getQualifiedName() + " in " + localProgramContext);
         }
         String serviceName = service.getName();
 

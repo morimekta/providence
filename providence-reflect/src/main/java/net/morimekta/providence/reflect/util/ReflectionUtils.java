@@ -46,7 +46,9 @@ public class ReflectionUtils {
             !lowerCased.endsWith(".pvd")) {
             return "";
         }
-
+        if (filePath.contains("/") || filePath.contains("\\")) {
+            filePath = filePath.replaceAll(".*[/\\\\]", "");
+        }
         if (lowerCased.endsWith(".providence")) {
             filePath = filePath.substring(0, filePath.length() - 11);
         } else if (lowerCased.endsWith(".thrift")) {
@@ -54,10 +56,6 @@ public class ReflectionUtils {
         } else if (lowerCased.endsWith(".thr") || lowerCased.endsWith(".pvd")) {
             filePath = filePath.substring(0, filePath.length() - 4);
         }
-        if (filePath.contains("/") || filePath.contains("\\")) {
-            filePath = filePath.replaceAll(".*[/\\\\]", "");
-        }
-
         return filePath.replaceAll("[-.]", "_");
     }
 }
