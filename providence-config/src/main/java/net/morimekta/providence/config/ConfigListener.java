@@ -1,4 +1,4 @@
-package net.morimekta.providence.config.core;
+package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;

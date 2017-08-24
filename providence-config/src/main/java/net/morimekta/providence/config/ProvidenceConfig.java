@@ -21,9 +21,8 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.config.core.ConfigResolver;
-import net.morimekta.providence.config.core.ConfigSupplier;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.impl.ProvidenceConfigParser;
+import net.morimekta.providence.config.impl.ProvidenceConfigSupplier;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.FileWatcher;

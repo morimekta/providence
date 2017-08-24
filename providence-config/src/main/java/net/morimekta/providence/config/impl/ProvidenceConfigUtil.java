@@ -18,10 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config.utils;
+package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -53,7 +54,7 @@ public class ProvidenceConfigUtil {
      * @return The value found or null.
      * @throws ProvidenceConfigException When unable to get value from message.
      */
-    public static Object getInMessage(PMessage message, String key) throws ProvidenceConfigException {
+    static Object getInMessage(PMessage message, String key) throws ProvidenceConfigException {
         return getInMessage(message, key, null);
     }
 
@@ -68,7 +69,7 @@ public class ProvidenceConfigUtil {
      * @return The value found or the default.
      * @throws ProvidenceConfigException When unable to get value from message.
      */
-    public static Object getInMessage(PMessage message, final String key, Object defValue)
+    static Object getInMessage(PMessage message, final String key, Object defValue)
             throws ProvidenceConfigException {
         String sub = key;
         String name;
@@ -176,7 +177,7 @@ public class ProvidenceConfigUtil {
      * @return The boolean value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    public static boolean asBoolean(Object value) throws ProvidenceConfigException {
+    static boolean asBoolean(Object value) throws ProvidenceConfigException {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof Double || value instanceof Float) {
@@ -216,7 +217,7 @@ public class ProvidenceConfigUtil {
      * @return The integer value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    public static int asInteger(Object value) throws ProvidenceConfigException {
+    static int asInteger(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
             return ((Number) value).intValue();
         } else if (value instanceof Numeric) {
@@ -245,7 +246,7 @@ public class ProvidenceConfigUtil {
      * @return The long value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    public static long asLong(Object value) throws ProvidenceConfigException {
+    static long asLong(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
             return ((Number) value).longValue();
         } else if (value instanceof Numeric) {
@@ -273,7 +274,7 @@ public class ProvidenceConfigUtil {
      * @return The double value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    public static double asDouble(Object value) throws ProvidenceConfigException {
+    static double asDouble(Object value) throws ProvidenceConfigException {
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         } else if (value instanceof Numeric) {
@@ -297,7 +298,7 @@ public class ProvidenceConfigUtil {
      * @return The string value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    public static String asString(Object value) throws ProvidenceConfigException {
+    static String asString(Object value) throws ProvidenceConfigException {
         if (value instanceof Collection || value instanceof Map) {
             throw new ProvidenceConfigException(
                     "Unable to convert " + value.getClass().getSimpleName() + " to a string");
@@ -319,7 +320,7 @@ public class ProvidenceConfigUtil {
      * @throws ProvidenceConfigException When unable to convert value.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Collection<T> asCollection(Object value) throws ProvidenceConfigException {
+    static <T> Collection<T> asCollection(Object value) throws ProvidenceConfigException {
         if (value instanceof Collection) {
             return (Collection) value;
         }

@@ -1,6 +1,6 @@
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Database;
@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
-import static net.morimekta.providence.config.ProvidenceConfigParser.resolveFile;
+import static net.morimekta.providence.config.impl.ProvidenceConfigParser.resolveFile;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
@@ -50,8 +50,8 @@ public class ProvidenceConfigParserTest {
 
     @Test
     public void testParseWithUnknownInclude() throws IOException {
-        copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
-        File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/unknown.cfg", temp.getRoot());
+        File file = copyResourceTo("/net/morimekta/providence/config/files/unknown_include.cfg", temp.getRoot());
 
         Pair<Database, Set<String>> cfg = parser.parseConfig(file, null);
 
@@ -60,13 +60,13 @@ public class ProvidenceConfigParserTest {
                      "driver = \"org.h2.Driver\"",
                      debugString(cfg.first));
 
-        file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
+        file = copyResourceTo("/net/morimekta/providence/config/files/unknown_field.cfg", temp.getRoot());
         cfg = parser.parseConfig(file, null);
         assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
                      "driver = \"org.h2.Driver\"",
                      debugString(cfg.first));
 
-        file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
+        file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value.cfg", temp.getRoot());
         cfg = parser.parseConfig(file, null);
         assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
                      "driver = \"org.h2.Driver\"",
@@ -75,8 +75,8 @@ public class ProvidenceConfigParserTest {
 
     @Test
     public void testParseWithUnknown_strict() throws IOException {
-        copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
-        File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/unknown.cfg", temp.getRoot());
+        File file = copyResourceTo("/net/morimekta/providence/config/files/unknown_include.cfg", temp.getRoot());
 
         ProvidenceConfigParser config = new ProvidenceConfigParser(registry, true);
         try {
@@ -86,7 +86,7 @@ public class ProvidenceConfigParserTest {
             assertEquals("Unknown declared type: unknown.OtherConfig", e.getMessage());
         }
 
-        file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
+        file = copyResourceTo("/net/morimekta/providence/config/files/unknown_field.cfg", temp.getRoot());
         try {
             config.parseConfig(file, null);
             fail("no exception");
@@ -94,7 +94,7 @@ public class ProvidenceConfigParserTest {
             assertEquals("No such field unknown_field in config.Database", e.getMessage());
         }
 
-        file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
+        file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value.cfg", temp.getRoot());
         try {
             config.parseConfig(file, null);
             fail("no exception");

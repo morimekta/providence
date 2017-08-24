@@ -3,7 +3,7 @@ package net.morimekta.providence.tools.common.options;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.ProvidenceConfig;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;

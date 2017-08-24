@@ -18,14 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config.core;
+package net.morimekta.providence.config;
 
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
-import net.morimekta.providence.config.utils.UncheckedProvidenceConfigException;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -46,7 +44,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import static net.morimekta.providence.config.ProvidenceConfigParser.UNDEFINED;
+import static net.morimekta.providence.config.impl.ProvidenceConfigParser.UNDEFINED;
 
 /**
  * A supplier of a providence message config based on a parent config

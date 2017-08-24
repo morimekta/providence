@@ -1,11 +1,10 @@
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
-import net.morimekta.providence.config.utils.ProvidenceConfigUtil;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -20,7 +19,6 @@ import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Pair;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
@@ -42,11 +40,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static net.morimekta.providence.config.utils.ProvidenceConfigUtil.asBoolean;
-import static net.morimekta.providence.config.utils.ProvidenceConfigUtil.asDouble;
-import static net.morimekta.providence.config.utils.ProvidenceConfigUtil.asInteger;
-import static net.morimekta.providence.config.utils.ProvidenceConfigUtil.asLong;
-import static net.morimekta.providence.config.utils.ProvidenceConfigUtil.asString;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asBoolean;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asDouble;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asInteger;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asLong;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asString;
 
 /**
  * This parser parses config files. The class in itself should be stateless, so
@@ -63,7 +61,7 @@ public class ProvidenceConfigParser {
         MESSAGE
     }
 
-    ProvidenceConfigParser(TypeRegistry registry, boolean strict) {
+    public ProvidenceConfigParser(TypeRegistry registry, boolean strict) {
         this.registry = registry;
         this.strict = strict;
     }
@@ -113,17 +111,21 @@ public class ProvidenceConfigParser {
             stackList.add(filePath);
 
             return parseConfigRecursively(configFile, parent, stackList.toArray(new String[stackList.size()]));
-        } catch (ProvidenceConfigException e) {
-            if (e.getFile() == null) {
-                e.setFile(configFile.getName());
-            }
-            throw e;
-        } catch (TokenizerException e) {
-            if (e.getFile() == null) {
-                e.setFile(configFile.getName());
-            }
-            throw new ProvidenceConfigException(e);
         } catch (IOException e) {
+            if (e instanceof ProvidenceConfigException) {
+                ProvidenceConfigException pce = (ProvidenceConfigException) e;
+                if (pce.getFile() == null) {
+                    pce.setFile(configFile.getName());
+                }
+                throw pce;
+            }
+            if (e instanceof TokenizerException) {
+                TokenizerException te = (TokenizerException) e;
+                if (te.getFile() == null) {
+                    te.setFile(configFile.getName());
+                }
+                throw new ProvidenceConfigException(te);
+            }
             ProvidenceConfigException ex = new ProvidenceConfigException(e, e.getMessage());
             ex.setFile(configFile.getName());
             throw ex;
@@ -315,6 +317,11 @@ public class ProvidenceConfigParser {
             // Message type.
             PMessageDescriptor descriptor;
             try {
+                // These extra casts needs to be there, otherwise we'd get this error:
+                // incompatible types: inference variable T has incompatible upper bounds
+                // net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
+                // net.morimekta.providence.descriptor.PEnumDescriptor
+                // TODO: Figure out a way to fix the generic cast.
                 descriptor = (PMessageDescriptor) (Object) registry.getDeclaredType(token.asString());
             } catch (IllegalArgumentException e) {
                 // Unknown declared type. Fail if:
@@ -855,7 +862,7 @@ public class ProvidenceConfigParser {
     private <V> V resolveRequired(ProvidenceConfigContext context,
                                   Token token,
                                   Tokenizer tokenizer,
-                                  PDescriptor descriptor) throws TokenizerException, ProvidenceConfigException {
+                                  PDescriptor descriptor) throws TokenizerException {
         V result = resolve(context, token, tokenizer, descriptor);
         if (result == null) {
             throw new TokenizerException("Nu");
@@ -876,7 +883,7 @@ public class ProvidenceConfigParser {
     private <V> V resolve(ProvidenceConfigContext context,
                           Token token,
                           Tokenizer tokenizer,
-                          PDescriptor descriptor) throws TokenizerException, ProvidenceConfigException {
+                          PDescriptor descriptor) throws TokenizerException {
         Object value = resolveAny(context, token, tokenizer);
         if (value == null) {
             return null;
@@ -1008,8 +1015,7 @@ public class ProvidenceConfigParser {
      * @throws FileNotFoundException When the file is not found.
      * @throws IOException When unable to make canonical path.
      */
-    @VisibleForTesting
-    static File resolveFile(File ref, String path) throws IOException {
+    protected static File resolveFile(File ref, String path) throws IOException {
         if (ref == null) {
             // relative to PWD from initial load file path.
             File tmp = new File(path).getCanonicalFile().getAbsoluteFile();

@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.providence.config.core.ConfigSupplier;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.RefConfig1;
@@ -77,12 +76,12 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testResolveConfig_simple() throws IOException {
-        copyResourceTo("/net/morimekta/providence/config/base_service.cfg", temp.getRoot());
-        copyResourceTo("/net/morimekta/providence/config/prod_db.cfg", temp.getRoot());
-        copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/prod_db.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
 
-        File prod = copyResourceTo("/net/morimekta/providence/config/prod.cfg", temp.getRoot());
-        File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
+        File prod = copyResourceTo("/net/morimekta/providence/config/files/prod.cfg", temp.getRoot());
+        File stage = copyResourceTo("/net/morimekta/providence/config/files/stage.cfg", temp.getRoot());
 
         ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
         Service stage_service = config.getConfig(stage);
@@ -136,8 +135,8 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testResolveConfig_withParent() throws IOException {
-        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
-        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/files/stage_nocred.cfg", temp.getRoot());
 
         ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
         ConfigSupplier<Database,Database._Field> stage_db = config.resolveConfig(f_stage_db);
@@ -150,7 +149,7 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testGetConfig() throws IOException {
-        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
 
         ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
         Database stage_db = config.getConfig(f_stage_db);
@@ -166,8 +165,8 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testGetConfig_withParent() throws IOException {
-        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
-        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/files/stage_nocred.cfg", temp.getRoot());
 
         ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
         Database stage_db = config.getConfig(f_stage_db);
@@ -181,7 +180,7 @@ public class ProvidenceConfigTest {
     @Test
     public void testDefinesEveryType() throws IOException {
         ProvidenceConfig config = new ProvidenceConfig(registry);
-        File defs = copyResourceTo("/net/morimekta/providence/config/all_defs.cfg", temp.getRoot());
+        File defs = copyResourceTo("/net/morimekta/providence/config/files/all_defs.cfg", temp.getRoot());
         RefConfig1 ref = config.getConfig(defs);
 
         // Make sure every field is overridden.
@@ -204,9 +203,9 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testReload() throws IOException {
-        copyResourceTo("/net/morimekta/providence/config/base_service.cfg", temp.getRoot());
-        File stageDb = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
-        File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", temp.getRoot());
+        File stageDb = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+        File stage = copyResourceTo("/net/morimekta/providence/config/files/stage.cfg", temp.getRoot());
 
         FileWatcher watcher = new FileWatcher();
 
@@ -239,7 +238,7 @@ public class ProvidenceConfigTest {
         watcher.addWatcher(file -> watcherCalled.set(true));
 
         File tmp = temp.newFile();
-        writeContentTo(getResourceAsString("/net/morimekta/providence/config/stage_db2.cfg"), tmp);
+        writeContentTo(getResourceAsString("/net/morimekta/providence/config/files/stage_db2.cfg"), tmp);
         Files.move(tmp.toPath(), stageDb.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
 
         await().atMost(Duration.TEN_SECONDS).untilTrue(watcherCalled);
@@ -267,6 +266,5 @@ public class ProvidenceConfigTest {
                      "  }\n" +
                      "}",
                      debugString(stage_service.get()));
-
     }
 }

@@ -1,4 +1,4 @@
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.serializer.pretty.Token;
@@ -11,30 +11,31 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * Context object related to a providence file being parsed. Takes care of
+ * knowing about includes and registered references.
  */
-public class ProvidenceConfigContext {
+class ProvidenceConfigContext {
     private final Set<String>                     includeAliases;
     private final Map<String, Object>             references;
     private final Map<String, TokenizerException> referenceExceptions;
 
-    public ProvidenceConfigContext() {
+    ProvidenceConfigContext() {
         this.references = new HashMap<>();
         this.referenceExceptions = new HashMap<>();
         this.includeAliases = new HashSet<>();
     }
 
-    public boolean containsReference(String name) {
+    boolean containsReference(String name) {
         return referenceExceptions.containsKey(name) ||
                references.containsKey(name);
     }
 
-    public void setInclude(String alias, PMessage include) {
+    void setInclude(String alias, PMessage include) {
         references.put(alias, include);
         includeAliases.add(alias);
     }
 
-    public String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
+    String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
         String reference = token.asString();
         if (ProvidenceConfigParser.RESERVED_WORDS.contains(reference)) {
             throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine(token.getLineNo()));
@@ -68,7 +69,7 @@ public class ProvidenceConfigContext {
         return reference;
     }
 
-    public Object setReference(String reference, Object value) {
+    Object setReference(String reference, Object value) {
         if (reference != null) {
             if (!referenceExceptions.containsKey(reference)) {
                 throw new RuntimeException("Reference '" + reference + "' not initialised");
@@ -78,7 +79,7 @@ public class ProvidenceConfigContext {
         return value;
     }
 
-    public Object getReference(String reference, Token token, Tokenizer tokenizer) throws TokenizerException {
+    Object getReference(String reference, Token token, Tokenizer tokenizer) throws TokenizerException {
         if (references.containsKey(reference)) {
             return references.get(reference);
         }

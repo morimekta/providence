@@ -18,12 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.config.core.ConfigListener;
-import net.morimekta.providence.config.core.ConfigSupplier;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.ConfigListener;
+import net.morimekta.providence.config.ConfigSupplier;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
@@ -38,12 +38,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A supplier to get a config (aka message) from a resource location. This is
- * a fixed static supplier, so listening to changes will never do anything.
- *
- * <pre>{@code
- *     Supplier<Service> supplier = new ResourceConfigSupplier<>(resourceName, Service.kDescriptor);
- * }</pre>
+ * A supplier to get a config (aka message) from a providence config. This is
+ * essentially the initiator for the config. It will always have a config
+ * message instance, and will log (error) if it later fails to load an updated
+ * config.
  */
 public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
         extends ConfigSupplier<Message, Field> {
@@ -98,7 +96,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     /**
      * Trigger reloading of the config file.
      */
-    protected void reload() {
+    private void reload() {
         try {
             LOGGER.trace("Config reload triggered for " + configFile);
             if (parentSupplier != null) {

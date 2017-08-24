@@ -1,4 +1,4 @@
-package net.morimekta.providence.config.utils;
+package net.morimekta.providence.config;
 
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.pretty.TokenizerException;

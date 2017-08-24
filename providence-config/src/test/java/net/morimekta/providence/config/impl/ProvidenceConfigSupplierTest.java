@@ -18,9 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.config.impl.ProvidenceConfigParser;
+import net.morimekta.providence.config.impl.ProvidenceConfigSupplier;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;

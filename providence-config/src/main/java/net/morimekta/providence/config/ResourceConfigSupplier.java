@@ -18,10 +18,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config.core;
+package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.JsonSerializer;
@@ -36,9 +35,10 @@ import java.io.InputStream;
  * A supplier to get a config (aka message) from a resource location. This is
  * a fixed static supplier, so listening to changes will never do anything.
  *
- * <pre>{@code
- *     Supplier<Service> supplier = new ResourceConfigSupplier<>(resourceName, Service.kDescriptor);
- * }</pre>
+ * <pre>
+ *     ConfigSupplier&lt;Service, Service._Field&gt; supplier =
+ *             new ResourceConfigSupplier&lt;&gt;(resourceName, Service.kDescriptor);
+ * </pre>
  */
 public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
         extends ConfigSupplier<Message, Field> {
@@ -69,12 +69,16 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
     private static <Message extends PMessage<Message, Field>, Field extends PField>
     Message loadInternal(String resourceName, PMessageDescriptor<Message, Field> descriptor) throws ProvidenceConfigException {
         int lastDot = resourceName.lastIndexOf(".");
-        String suffix = resourceName.substring(lastDot + 1).toLowerCase();
+        if (lastDot < 1) {
+            throw new ProvidenceConfigException("No file ending, or no resource file name: " + resourceName);
+        }
+        String suffix = resourceName.substring(lastDot).toLowerCase();
         Serializer serializer;
         switch (suffix) {
             case ".json":
                 serializer = new JsonSerializer();
                 break;
+            case ".cfg":
             case ".cnf":
             case ".config":
             case ".pvd":
@@ -83,7 +87,9 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
                 break;
             // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
             default:
-                throw new ProvidenceConfigException("");
+                throw new ProvidenceConfigException(
+                        String.format("Unrecognized resource config type: %s (%s)",
+                                      suffix, resourceName));
         }
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         InputStream in = classLoader.getResourceAsStream(resourceName);

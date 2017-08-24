@@ -18,9 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config.core;
+package net.morimekta.providence.config;
 
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
+import net.morimekta.providence.config.ConfigSupplier;
+import net.morimekta.providence.config.OverrideConfigSupplier;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.config.Credentials;

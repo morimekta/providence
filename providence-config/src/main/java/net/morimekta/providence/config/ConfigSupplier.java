@@ -1,4 +1,4 @@
-package net.morimekta.providence.config.core;
+package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
@@ -77,11 +77,13 @@ public class ConfigSupplier<M extends PMessage<M,F>, F extends PField> implement
     }
 
     /**
-     * Set a new config value to the supplier.
+     * Set a new config value to the supplier. This is protected as it is
+     * usually up to the supplier implementation to enable updating the
+     * config at later stages.
      *
      * @param config The new config instance.
      */
-    public final void set(M config) {
+    protected final void set(M config) {
         LinkedList<WeakReference<ConfigListener<M,F>>> iterateOver;
         synchronized (this) {
             instance.set(config);

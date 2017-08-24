@@ -1,7 +1,7 @@
-package net.morimekta.providence.config;
+package net.morimekta.providence.config.impl;
 
-import net.morimekta.providence.config.utils.ProvidenceConfigException;
-import net.morimekta.providence.config.utils.ProvidenceConfigUtil;
+import net.morimekta.providence.config.ProvidenceConfig;
+import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.util.SimpleTypeRegistry;
@@ -44,10 +44,10 @@ public class ProvidenceConfigUtilTest {
         SimpleTypeRegistry registry = new SimpleTypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
 
-        copyResourceTo("/net/morimekta/providence/config/base_service.cfg", tmp.getRoot());
-        copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", tmp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", tmp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", tmp.getRoot());
 
-        File cfg = copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
+        File cfg = copyResourceTo("/net/morimekta/providence/config/files/stage.cfg", tmp.getRoot());
 
         service = new ProvidenceConfig(registry).getConfig(cfg);
     }

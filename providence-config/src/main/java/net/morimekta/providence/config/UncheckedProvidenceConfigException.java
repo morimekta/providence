@@ -1,7 +1,8 @@
-package net.morimekta.providence.config.utils;
+package net.morimekta.providence.config;
 
 /**
- * Uc
+ * Unchecked config exception wrapping the providence config exception.
+ * Handy for using config in streams etc.
  */
 public class UncheckedProvidenceConfigException extends RuntimeException {
     public UncheckedProvidenceConfigException(ProvidenceConfigException cause) {
