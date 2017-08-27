@@ -24,6 +24,7 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.config.impl.UpdatingConfigSupplier;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -35,6 +36,7 @@ import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.Tokenizer;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -61,10 +63,12 @@ import static net.morimekta.providence.config.impl.ProvidenceConfigParser.UNDEFI
  * }</pre>
  */
 public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        extends ConfigSupplier<Message, Field> {
+        extends UpdatingConfigSupplier<Message, Field> {
     // Make sure the listener cannot be GC'd as long as this instance
     // survives.
     private final ConfigListener<Message, Field> listener;
+    private final ConfigSupplier<Message, Field> parent;
+    private final Map<String, String> overrides;
 
     /**
      * Create a config that wraps a providence message instance. This message
@@ -109,7 +113,9 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                                   boolean strict)
             throws ProvidenceConfigException {
         synchronized (this) {
-            listener = updated -> {
+            this.parent = parent;
+            this.overrides = overrides;
+            this.listener = updated -> {
                 try {
                     set(buildOverrideConfig(updated, overrides, strict));
                 } catch (ProvidenceConfigException e) {
@@ -119,6 +125,16 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             parent.addListener(listener);
             set(buildOverrideConfig(parent.get(), overrides, strict));
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("OverrideConfig{[%s], parent=%s}", Strings.join(", ", overrides.keySet()), parent.getName());
+    }
+
+    @Override
+    public String getName() {
+        return String.format("OverrideConfig{[%s]}", Strings.join(", ", overrides.keySet()));
     }
 
     private static <Message extends PMessage<Message, Field>, Field extends PField>

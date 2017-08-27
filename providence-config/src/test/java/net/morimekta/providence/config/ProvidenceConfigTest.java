@@ -267,4 +267,21 @@ public class ProvidenceConfigTest {
                      "}",
                      debugString(stage_service.get()));
     }
+
+    @Test
+    public void testName() throws ProvidenceConfigException {
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/files/stage_nocred.cfg", temp.getRoot());
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
+
+        ConfigSupplier<Service,Service._Field> stage_db = config.resolveConfig(f_stage_db);
+        ConfigSupplier<Service,Service._Field> stage_nocred = config.resolveConfig(f_stage_nocred, stage_db);
+
+        Assert.assertThat(stage_db.getName(), is("ProvidenceConfig{stage_db.cfg}"));
+        Assert.assertThat(stage_db.toString(), is("ProvidenceConfig{stage_db.cfg}"));
+
+        Assert.assertThat(stage_nocred.getName(), is("ProvidenceConfig{stage_nocred.cfg}"));
+        Assert.assertThat(stage_nocred.toString(), is("ProvidenceConfig{stage_nocred.cfg, parent=ProvidenceConfig{stage_db.cfg}}"));
+    }
 }

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.time.Clock;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ import java.util.Set;
  * config.
  */
 public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        extends ConfigSupplier<Message, Field> {
+        extends UpdatingConfigSupplier<Message, Field> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProvidenceConfigSupplier.class);
 
     private final File                           configFile;
@@ -55,12 +56,21 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     private final FileWatcher.Watcher            fileListener;
     private final ConfigSupplier<Message, Field> parentSupplier;
 
-    public ProvidenceConfigSupplier(File configFile,
-                                    ConfigSupplier<Message, Field> parentSupplier,
-                                    FileWatcher fileWatcher,
-                                    ProvidenceConfigParser configParser)
+    public ProvidenceConfigSupplier(@Nonnull File configFile,
+                                    @Nullable ConfigSupplier<Message, Field> parentSupplier,
+                                    @Nullable FileWatcher fileWatcher,
+                                    @Nonnull ProvidenceConfigParser configParser)
             throws ProvidenceConfigException {
-        super();
+        this(configFile, parentSupplier, fileWatcher, configParser, Clock.systemUTC());
+    }
+
+    public ProvidenceConfigSupplier(@Nonnull File configFile,
+                                    @Nullable ConfigSupplier<Message, Field> parentSupplier,
+                                    @Nullable FileWatcher fileWatcher,
+                                    @Nonnull ProvidenceConfigParser configParser,
+                                    @Nonnull Clock clock)
+            throws ProvidenceConfigException {
+        super(clock);
         this.configFile = configFile;
         this.configParser = configParser;
         this.parentSupplier = parentSupplier;
@@ -91,6 +101,23 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
                 set(loadConfig(null));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ProvidenceConfig{" + configFile.getName());
+        if (parentSupplier != null) {
+            builder.append(", parent=");
+            builder.append(parentSupplier.getName());
+        }
+        builder.append("}");
+        return builder.toString();
+    }
+
+    @Override
+    public String getName() {
+        return "ProvidenceConfig{" + configFile.getName() + "}";
     }
 
     /**

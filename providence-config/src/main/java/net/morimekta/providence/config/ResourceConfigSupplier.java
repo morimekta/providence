@@ -30,6 +30,7 @@ import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Clock;
 
 /**
  * A supplier to get a config (aka message) from a resource location. This is
@@ -41,7 +42,9 @@ import java.io.InputStream;
  * </pre>
  */
 public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        extends ConfigSupplier<Message, Field> {
+        extends FixedConfigSupplier<Message, Field> {
+    private final String resourceName;
+
     /**
      * Create a config that wraps a providence message instance. This message
      * will be exposed without any key prefix. Note that reading from properties
@@ -53,17 +56,27 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
      */
     public ResourceConfigSupplier(String resourceName, PMessageDescriptor<Message, Field> descriptor)
             throws ProvidenceConfigException {
-        super(loadInternal(resourceName, descriptor));
+        this(resourceName, descriptor, Clock.systemUTC());
+    }
+
+    /**
+     * Create a config that wraps a providence message instance. This message
+     * will be exposed without any key prefix. Note that reading from properties
+     * are <b>never</b> strict.
+     *
+     * @param resourceName The resource name to load.
+     * @param descriptor The message type descriptor.
+     * @throws ProvidenceConfigException If message overriding failed
+     */
+    public ResourceConfigSupplier(String resourceName, PMessageDescriptor<Message, Field> descriptor, Clock clock)
+            throws ProvidenceConfigException {
+        super(loadInternal(resourceName, descriptor), clock.millis());
+        this.resourceName = resourceName;
     }
 
     @Override
-    public void addListener(ConfigListener<Message, Field> listener) {
-        // ignore, this never changes.
-    }
-
-    @Override
-    public void removeListener(ConfigListener<Message, Field> listener) {
-        // ignore, this never changes.
+    public String getName() {
+        return "ResourceConfig{" + resourceName + "}";
     }
 
     private static <Message extends PMessage<Message, Field>, Field extends PField>

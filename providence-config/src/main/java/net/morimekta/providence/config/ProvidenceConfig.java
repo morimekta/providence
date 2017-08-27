@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,9 +57,24 @@ public class ProvidenceConfig implements ConfigResolver {
      */
     public ProvidenceConfig(@Nonnull TypeRegistry registry,
                             @Nullable FileWatcher watcher, boolean strict) {
+        this(registry, watcher, strict, Clock.systemUTC());
+    }
+
+    /**
+     * Make a config instance.
+     *
+     * @param registry The type registry used to find message and enum types.
+     * @param watcher File watcher used to detect config file updates.
+     * @param strict If the config should be parsed strictly.
+     */
+    public ProvidenceConfig(@Nonnull TypeRegistry registry,
+                            @Nullable FileWatcher watcher,
+                            boolean strict,
+                            @Nonnull Clock clock) {
         this.loaded = new ConcurrentHashMap<>();
         this.watcher = watcher;
         this.parser = new ProvidenceConfigParser(registry, strict);
+        this.clock = clock;
     }
 
     @Nonnull
@@ -79,7 +95,7 @@ public class ProvidenceConfig implements ConfigResolver {
                 throw new ProvidenceConfigException(e, e.getMessage());
             }
         }
-        ProvidenceConfigSupplier<M,F> supplier = new ProvidenceConfigSupplier<>(configFile, parentConfig, watcher, parser);
+        ProvidenceConfigSupplier<M,F> supplier = new ProvidenceConfigSupplier<>(configFile, parentConfig, watcher, parser, clock);
         if (parentConfig == null) {
             loaded.put(path, supplier);
         }
@@ -116,11 +132,12 @@ public class ProvidenceConfig implements ConfigResolver {
     @Nonnull
     public <M extends PMessage<M, F>, F extends PField>
     M getConfig(@Nonnull File configFile, @Nonnull M parent) throws ProvidenceConfigException {
-        ConfigSupplier<M,F> supplier = resolveConfig(configFile, new ConfigSupplier<>(parent));
+        ConfigSupplier<M,F> supplier = resolveConfig(configFile, new FixedConfigSupplier<>(parent));
         return supplier.get();
     }
 
     private final Map<String, ConfigSupplier> loaded;
     private final ProvidenceConfigParser      parser;
     private final FileWatcher                 watcher;
+    private final Clock                       clock;
 }

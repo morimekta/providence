@@ -20,9 +20,7 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.providence.config.ConfigSupplier;
-import net.morimekta.providence.config.OverrideConfigSupplier;
-import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.config.util.TestConfigSupplier;
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.config.Credentials;
@@ -53,7 +51,7 @@ import static org.junit.Assert.fail;
  * Tests for the message config wrapper.
  */
 public class OverrideConfigSupplierTest {
-    private ConfigSupplier<Database,Database._Field> base = new ConfigSupplier<>();
+    private TestConfigSupplier<Database, Database._Field> base = new TestConfigSupplier<>();
 
     @Rule
     public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
@@ -61,11 +59,12 @@ public class OverrideConfigSupplierTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        base.set(Database.builder()
-                         .setUri("http://hostname:9057/path")
-                         .setDriver("driver")
-                         .setCredentials(new Credentials("username", "complicated password that no one guesses"))
-                         .build());
+        base.testUpdate(Database.builder()
+                                .setUri("http://hostname:9057/path")
+                                .setDriver("driver")
+                                .setCredentials(new Credentials("username",
+                                                            "complicated password that no one guesses"))
+                                .build());
     }
 
     @Test
@@ -85,11 +84,11 @@ public class OverrideConfigSupplierTest {
         assertThat(instance.getCredentials().getUsername(), is("username"));
         assertThat(instance.getCredentials().getPassword(), is("password"));  // it was updated.
 
-        base.set(Database.builder()
-                         .setUri("http://hostname:9057/path")
-                         .setDriver("otherDriver")
-                         .setCredentials(new Credentials("username", "complicated password that no one guesses"))
-                         .build());
+        base.testUpdate(Database.builder()
+                                .setUri("http://hostname:9057/path")
+                                .setDriver("otherDriver")
+                                .setCredentials(new Credentials("username", "complicated password that no one guesses"))
+                                .build());
 
         // updating the base updates the result.
         assertThat(supplier.get(), is(not(sameInstance(instance))));
@@ -164,13 +163,11 @@ public class OverrideConfigSupplierTest {
 
     @Test
     public void testOverrideEveryType() throws IOException {
-        ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
-        ref.set(generator.generate(RefConfig1.kDescriptor)
-                         .mutate()
-                         .clearMsgValue()
-                         .clearMapValue()
-                         .build());
-
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(generator.generate(RefConfig1.kDescriptor)
+                                                                                                 .mutate()
+                                                                                                 .clearMsgValue()
+                                                                                                 .clearMapValue()
+                                                                                                 .build());
         OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
                 ref,
                 ImmutableMap.<String,String>builder()
@@ -211,9 +208,7 @@ public class OverrideConfigSupplierTest {
 
     @Test
     public void testOverrideEveryType_alt() throws IOException {
-        ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
-        ref.set(RefConfig1.builder().build());
-
+        FixedConfigSupplier<RefConfig1,RefConfig1._Field> ref = new FixedConfigSupplier<>(RefConfig1.builder().build());
         OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
                 ref,
                 ImmutableMap.<String,String>builder()
@@ -282,8 +277,7 @@ public class OverrideConfigSupplierTest {
 
     private void assertOverrideFailure(String key, String value, String message) throws IOException {
         try {
-            ConfigSupplier<RefConfig1,RefConfig1._Field> ref = new ConfigSupplier<>();
-            ref.set(generator.generate(RefConfig1.kDescriptor));
+            FixedConfigSupplier<RefConfig1,RefConfig1._Field> ref = new FixedConfigSupplier<>(generator.generate(RefConfig1.kDescriptor));
 
             new OverrideConfigSupplier<>(
                     ref,

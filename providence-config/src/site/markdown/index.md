@@ -68,7 +68,7 @@ non-strict modes, it is also *forward* compatible. Forward compatible means that
 you can add new fields and references, and update the config files with content
 from those fields without breaking older users fo the same config files.
 
-### Config file Syntax
+## Config file Syntax
 
 In general the config files use the suffix `.cfg`, but `.pvd` should be fine
 too. In practice it should be irrelevant. But here is an overview over the
@@ -168,7 +168,7 @@ $ pvdcfg -I . print myfile.cfg
 }
 ```
 
-### Java Interface
+## Java Interface
 
 The interface for using this config in code should be fairly easy to use.
 In order to read a simple config structure, you can use a code snippet like
@@ -184,11 +184,63 @@ class Loader {
         reg.registerRecursive(From.kDescriptor);
     
         ProvidenceConfig cfg = new ProvidenceConfig(reg);
-        return cfg.load("myfile.cfg");
+        return cfg.getConfig("myfile.cfg");
     }
 }
 ```
 
 ### Includes
 
-Files referenced in the include statements must be relative to the PWD directory of the including file.
+Files referenced in the include statements must be relative to the PWD directory
+of the including file.
+
+## Advanced Usage
+
+It is possible to get more out of the configs by handling the config suppliers
+directly. This enables the program to react to config updates, and to always
+have the latest version of the config available.
+
+```java
+class Program implements ConfigListener<Service,Service._Field> {
+    ProvidenceConfig providenceConfig;
+    Service service;
+    
+    public Program() {
+        WritableTypeRegistry reg = new SimpleTypeRegistry();
+        // sadly all types needs to be registered, so a utility to register all
+        // subtypes are needed. 
+        reg.registerRecursive(Named.kDescriptor);
+        reg.registerRecursive(From.kDescriptor);
+        
+        this.providenceConfig = new ProvidenceConfig(reg);
+        
+        ConfigSupplier<Service,Service._Field> serviceSupplier = providenceConfig.resolveConfig("my_service.cfg");
+        this.service = serviceSupplier.get();
+        serviceSupplier.addListener(this);
+    }
+    
+    public Named onServiceUpdate(Service update) {
+        this.service = update;
+        // and react to the actual changes...
+    }    
+}
+```
+
+There are also other config suppliers available to make the providence config system more
+powerful.
+
+- **[FixedConfigSupplier]:** Just provides some config message as a config supplier. Will never
+  change, and never trigger config listeners.
+- **[ResourceConfigSupplier]:** Loads a system resource and provides it as a config supplier.
+  The config never changes, and never triggers config listeners.
+- **[ReferenceConfigSupplier]:** Uses a parent config and finds a reference (contained) message
+  within the parent using a reference path. the path is the '.' concatenation of the field names.
+  This supplier will forward changes in the parent config, but will not check for actual
+  changes.
+- **[OverrideConfigSupplier]:** Takes a parent config and overrides it with values based on an
+  override value map. Can only override "leaf" values, not whole messages. Uses the same reference
+  path as the `ReferenceConfigSupplier`, and tries as best it can to parse the string value given.
+  Handy to be able to override some values based on command line args or similar.
+  
+And in addition a config supplier meant to be used in testing called `TestConfigSupplier`. It exposes
+a `testUpdate` method that triggers updates the same way as the other updating configs.

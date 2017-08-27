@@ -49,4 +49,13 @@ public class ResourceConfigSupplierTest {
 
         assertThat(supplier.get(), is(equalToMessage(expected)));
     }
+
+    @Test
+    public void testName() throws ProvidenceConfigException {
+        ConfigSupplier<Service, Service._Field> supplier = new ResourceConfigSupplier<>(
+                "/net/morimekta/providence/config/service.cfg", Service.kDescriptor);
+
+        assertThat(supplier.getName(), is("ResourceConfig{/net/morimekta/providence/config/service.cfg}"));
+        assertThat(supplier.toString(), is("ResourceConfig{/net/morimekta/providence/config/service.cfg}"));
+    }
 }
