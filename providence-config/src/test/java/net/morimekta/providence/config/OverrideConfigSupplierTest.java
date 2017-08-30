@@ -27,6 +27,7 @@ import net.morimekta.test.providence.config.Credentials;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.RefConfig1;
 import net.morimekta.test.providence.config.Value;
+import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableList;
@@ -37,6 +38,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.util.Properties;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
@@ -51,14 +53,18 @@ import static org.junit.Assert.fail;
  * Tests for the message config wrapper.
  */
 public class OverrideConfigSupplierTest {
-    private TestConfigSupplier<Database, Database._Field> base = new TestConfigSupplier<>();
+    private TestConfigSupplier<Database, Database._Field> base;
 
     @Rule
     public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
+    Clock clock;
+
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
+        clock = new FakeClock();
+        base = new TestConfigSupplier<>(clock);
         base.testUpdate(Database.builder()
                                 .setUri("http://hostname:9057/path")
                                 .setDriver("driver")
@@ -70,6 +76,7 @@ public class OverrideConfigSupplierTest {
     @Test
     public void testSupplier() throws IOException {
         OverrideConfigSupplier<Database, Database._Field> supplier = new OverrideConfigSupplier<>(
+                clock,
                 base, ImmutableMap.of(
                         "credentials.password", "password",
                         "uri", "undefined"),
@@ -96,6 +103,7 @@ public class OverrideConfigSupplierTest {
         instance = supplier.get();
 
         assertThat(supplier.get(), is(sameInstance(instance)));
+        assertThat(supplier.configTimestamp(), is(clock.millis()));
         assertThat(instance.getUri(), is(nullValue()));  // it was reset.
         assertThat(instance.getDriver(), is("otherDriver"));
         assertThat(instance.getCredentials(), is(not(nullValue())));
@@ -107,6 +115,7 @@ public class OverrideConfigSupplierTest {
     public void testFailures() throws IOException {
         try {
             new OverrideConfigSupplier<>(
+                    clock,
                     base, ImmutableMap.of(
                             "pass.password", "password",
                             "uri", "undefined"),
@@ -118,6 +127,7 @@ public class OverrideConfigSupplierTest {
 
         try {
             new OverrideConfigSupplier<>(
+                    clock,
                     base, ImmutableMap.of(
                     "credentials.pass", "password",
                     "uri", "undefined"),

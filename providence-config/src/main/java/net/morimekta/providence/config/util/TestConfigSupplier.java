@@ -7,6 +7,7 @@ import net.morimekta.providence.descriptor.PField;
 import com.google.common.annotations.VisibleForTesting;
 
 import javax.annotation.Nonnull;
+import java.time.Clock;
 
 /**
  * Config supplier meant for testing only. It is an updating config supplier, but that
@@ -22,6 +23,27 @@ public class TestConfigSupplier<M extends PMessage<M,F>, F extends PField> exten
      * config suppliers.
      */
     public TestConfigSupplier() {
+    }
+
+    /**
+     * Start with no initial config. This is usually now allowed for "normal"
+     * config suppliers.
+     *
+     * @param clock The clock to use for timing.
+     */
+    public TestConfigSupplier(@Nonnull Clock clock) {
+        super(clock);
+    }
+
+    /**
+     * Start with an initial config value.
+     *
+     * @param clock The clock to use for timing.
+     * @param initialConfig The initial config value.
+     */
+    public TestConfigSupplier(@Nonnull Clock clock, @Nonnull M initialConfig) {
+        super(clock);
+        set(initialConfig);
     }
 
     /**

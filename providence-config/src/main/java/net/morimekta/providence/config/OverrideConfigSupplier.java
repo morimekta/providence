@@ -42,6 +42,7 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -112,6 +113,24 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                                   @Nonnull Map<String, String> overrides,
                                   boolean strict)
             throws ProvidenceConfigException {
+        this(Clock.systemUTC(), parent, overrides, strict);
+    }
+    /**
+     * Create a config that wraps a providence message instance. This message
+     * will be exposed without any key prefix.
+     *
+     * @param clock Clock used to time the updates.
+     * @param parent The parent message to override values of.
+     * @param overrides The message override values.
+     * @param strict If config should be read strictly.
+     * @throws ProvidenceConfigException If message overriding failed
+     */
+    public OverrideConfigSupplier(@Nonnull Clock clock,
+                                  @Nonnull ConfigSupplier<Message,Field> parent,
+                                  @Nonnull Map<String, String> overrides,
+                                  boolean strict)
+            throws ProvidenceConfigException {
+        super(clock);
         synchronized (this) {
             this.parent = parent;
             this.overrides = overrides;
