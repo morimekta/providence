@@ -162,6 +162,7 @@
                             <version>${project.version}</version>
                             <license>Apache 2.0</license>
                             <group>Development/Tools</group>
+                            <prefix>/usr/local</prefix>
 
                             <!-- dependencies -->
                             <requires>
