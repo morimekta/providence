@@ -66,6 +66,7 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
      *
      * @param resourceName The resource name to load.
      * @param descriptor The message type descriptor.
+     * @param clock The clock to use in timing config loads.
      * @throws ProvidenceConfigException If message overriding failed
      */
     public ResourceConfigSupplier(String resourceName, PMessageDescriptor<Message, Field> descriptor, Clock clock)
