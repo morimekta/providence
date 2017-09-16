@@ -693,33 +693,33 @@ public class ThriftProgramParserTest {
         copyResourceTo("/failure/unknown_type.thrift", tmp.getRoot());
         copyResourceTo("/failure/valid_reference.thrift", tmp.getRoot());
 
-        assertBadThrfit("Error on line 5, pos 10: Field separatedName has field with conflicting name in T\n" +
+        assertBadThrfit("Error in conflicting_field_name.thrift on line 5, pos 10: Field separatedName has field with conflicting name in T\n" +
                         "  2: i32 separatedName;\n" +
                         "---------^^^^^^^^^^^^^",
                         "conflicting_field_name.thrift");
-        assertBadThrfit("Error on line 6, pos 3: Field id 1 already exists in T\n" +
+        assertBadThrfit("Error in duplicate_field_id.thrift on line 6, pos 3: Field id 1 already exists in T\n" +
                         "  1: i32 second;\n" +
                         "--^",
                         "duplicate_field_id.thrift");
-        assertBadThrfit("Error on line 5, pos 10: Field first already exists in T\n" +
+        assertBadThrfit("Error in duplicate_field_name.thrift on line 5, pos 10: Field first already exists in T\n" +
                         "  2: i32 first;\n" +
                         "---------^^^^^",
                         "duplicate_field_name.thrift");
-        assertBadThrfit("Error on line 1, pos 16: Identifier with double '.'\n" +
+        assertBadThrfit("Error in invalid_namespace.thrift on line 1, pos 16: Identifier with double '.'\n" +
                         "namespace java org.apache..test.failure\n" +
                         "---------------^^^^^^^^^^^^",
                         "invalid_namespace.thrift");
         // assertBadThrift("Unknown Type 'i128'",
         //                 "/failure/unknown_type.thrift");
-        assertBadThrfit("Error on line 8, pos 1: Unexpected token 'include', expected type declaration\n" +
+        assertBadThrfit("Error in invalid_include.thrift on line 8, pos 1: Unexpected token 'include', expected type declaration\n" +
                         "include \"valid_reference.thrift\"\n" +
                         "^^^^^^^",
                         "invalid_include.thrift");
-        assertBadThrfit("Error on line 4, pos 6: Unknown program 'valid_reference' for type valid_reference.Message\n" +
+        assertBadThrfit("Error in unknown_program.thrift on line 4, pos 6: Unknown program 'valid_reference' for type valid_reference.Message\n" +
                         "  1: valid_reference.Message message;\n" +
                         "-----^^^^^^^^^^^^^^^^^^^^^^^",
                         "unknown_program.thrift");
-        assertBadThrfit("Error on line 3, pos 9: Included file not found no_such_file.thrift\n" +
+        assertBadThrfit("Error in unknown_include.thrift on line 3, pos 9: Included file not found no_such_file.thrift\n" +
                         "include \"no_such_file.thrift\"\n" +
                         "--------^^^^^^^^^^^^^^^^^^^^^",
                         "unknown_include.thrift");
@@ -730,7 +730,7 @@ public class ThriftProgramParserTest {
         copyResourceTo("/parser/calculator/calculator.thrift", tmp.getRoot());
         copyResourceTo("/parser/calculator/number.thrift", tmp.getRoot());
 
-        assertBadStrictThrfit("Error on line 14, pos 8: Missing enum value in strict declaration\n" +
+        assertBadStrictThrfit("Error in calculator.thrift on line 14, pos 8: Missing enum value in strict declaration\n" +
                               "    ADD,\n" +
                               "-------^",
                               "calculator.thrift");

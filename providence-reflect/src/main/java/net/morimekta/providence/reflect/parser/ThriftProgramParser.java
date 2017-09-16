@@ -37,6 +37,7 @@ import net.morimekta.providence.model.TypedefType;
 import net.morimekta.providence.reflect.parser.internal.ThriftTokenizer;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
@@ -100,6 +101,17 @@ public class ThriftProgramParser implements ProgramParser {
 
     @Override
     public ProgramType parse(InputStream in, File file, Collection<File> includeDirs) throws IOException {
+        try {
+            return parseInternal(in, file, includeDirs);
+        } catch (TokenizerException e) {
+            if (e.getFile() == null) {
+                e.setFile(file.getName());
+            }
+            throw e;
+        }
+    }
+
+    private ProgramType parseInternal(InputStream in, File file, Collection<File> includeDirs) throws IOException {
         ProgramType._Builder program = ProgramType.builder();
 
         String programName = ReflectionUtils.programNameFromPath(file.getName());
