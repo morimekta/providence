@@ -21,8 +21,6 @@
 package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.config.ProvidenceConfigException;
-import net.morimekta.providence.config.impl.ProvidenceConfigParser;
-import net.morimekta.providence.config.impl.ProvidenceConfigSupplier;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
@@ -76,7 +74,7 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser);
@@ -86,13 +84,13 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file, null);
-        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         verify(watcher, atLeast(1)).startWatching(any(File.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
 
@@ -114,7 +112,7 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser);
@@ -124,13 +122,13 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file, null);
-        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         verify(watcher, atMost(4)).startWatching(file);
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
 
@@ -151,12 +149,12 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).addWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser);
         assertThat(supplier.get(), is(first));
-        verify(watcher).addWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         reset(parser, watcher);
         when(parser.parseConfig(file, null)).thenThrow(new ProvidenceConfigException("test"));
 

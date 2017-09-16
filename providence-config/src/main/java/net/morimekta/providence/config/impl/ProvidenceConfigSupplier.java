@@ -87,7 +87,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
                         reload();
                     }
                 };
-                fileWatcher.addWatcher(fileListener);
+                fileWatcher.weakAddWatcher(fileListener);
             } else {
                 fileListener = null;
             }
