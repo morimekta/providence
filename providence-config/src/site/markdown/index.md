@@ -6,27 +6,31 @@ providence message objects. The reason for having a specific
 config format in this way is to solve the "structured + modular"
 problem. If you're not familiar here is a short wrap-up.
 
-#### The Problem of Structured Config
+#### The Problem of Strongly Typed Structured Config
 
 When choosing a config language (or config markup language), you
 need to consider what you use the config for. But what we would really
 like have four main properties:
 
-1. `schema-defined`: The config has a strict schema that can be used
-   to validate it, e.g. in testing pipelines. But the schema needs to
-   be at least as modular as the config itself, and possible to
-   define in a remote / distributed fashion.
-2. `structured`: The config must have structure that can be utilized to
-   group and pass a part of the whole. E.g. if you need 3 database
-   connections, but each should just produce a DBI instance, that is
-   an example of a good use for structured config: Each has a part of
-   the config that is internally identical configuring that DB connection.
-3. `type-safe`: The code that use the config should be type-safe, so
-   at compile-time, I know if the value I look at is an integer or a
-   string.
-4. `modular`: The config must support to be be split into multiple files,
-   that can be combined or merged into a single "config" without messing up
-   the "type" something in the config is.
+1. `schema-defined`: The config has a strict schema that can be used to
+   validate it, e.g. in testing pipelines. But the schema needs to be at least
+   as modular as the config itself, and possible to define in a remote /
+   distributed fashion, e.g. different git repositories contains different parts
+   of the schema.
+2. `structured`: The config must have structure that can be utilized to group
+   and pass a part of the whole. E.g. if you need 3 database connections, but
+   each should just produce a DBI instance, that is an example of a good use
+   for structured config: Each has a part of the config that is internally
+   identical configuring that DB connection.
+3. `type-safe`: The code that use the config should be type-safe, so at
+   compile-time, I know if the value I look at is an integer or a string. This
+   is also a way to always refer to config values that are defined in the schema
+   at all time.
+4. `modular`: The config must support to be be split into multiple files, that
+   can be combined or merged into a single "config" without messing up the
+   "type" something in the config is. The modular part has two variants; include
+   and extend. Included config is something that is included as a part of the
+   parsed config, and extended config is modifications on the same structure.
 
 In addition we want to avoid a couple of dogmas that makes it difficult to
 follow what goes on with the config: `arithmetics` and `scripting`. If you
@@ -74,33 +78,31 @@ In general the config files use the suffix `.cfg`, but `.pvd` should be fine
 too. In practice it should be irrelevant. But here is an overview over the
 providence config file syntax:
 
-- Comments follow the 'shell comment' syntax. Starts with a
-  `#`, and ends in a newline. In that line, everything is allowed.
-  The comment can start anywhere except inside a string literal.
-- The config has three parts, which _must_ come in this order,
-  where the two first are optional.
-    - The `includes`: Other config files included with an alias, so
-      they can be referenced from the config.
-    - The `defines`: A set of values that can also be referenced
-      in the config.
+- Comments follow the 'shell comment' syntax. Starts with a `#`, and ends in a
+  newline. In that line, everything is allowed.  The comment can start anywhere
+  except inside a string literal.
+- The config has three parts, which _must_ come in this order, where the two
+  first are optional.
+    - The `includes`: Other config files included with an alias, so they can be
+      referenced from the config.
+    - The `defines`: A set of values that can also be referenced in the config.
     - The `message`: The 'content' of the config itself.
-- The `includes` section is a set of recursively included config files.
-  Each file is given an `alias`. E.g. `include "other.cfg" as o` will
-  make the 'o' reference point to the content of the "other.cfg" config.
-  Files referenced in the include statements **MUST** be relative to the PWD
-  directory of the including file.
-- The `defines` follow a simple 'map' syntax where the key must be
-  a simple identifier `/[_a-z][_a-zA-Z0-9]/`, and a simple value (number,
-  string, enum, boolean). The params value may be a declared (known)
-  enum, with the double qualified identifier syntax `package.Name.VALUE`.
-- The `message` is a providence message, and is declared with the
-  qualified typename (package.Name), and the content, following this
-  syntax: `TYPENAME (':' EXTEND)? '{' FIELD_VALUE* '}'`, where the
-  `FIELD_VALUE` part follows the 'pretty' serializer syntax (using the '='
-  field-value separator), with added support for references for values.
-  The references can only reference params or content from imported
-  config files. Messages has four specific modes of value specification,
-  specified with what comes after the field name.
+- The `includes` section is a set of recursively included config files.  Each
+  file is given an `alias`. E.g. `include "other.cfg" as o` will make the 'o'
+  reference point to the content of the "other.cfg" config.  Files referenced
+  in the include statements **MUST** be relative to the PWD directory of the
+  including file.
+- The `defines` follow a simple 'map' syntax where the key must be a simple
+  identifier `/[_a-z][_a-zA-Z0-9]/`, and a simple value (number, string, enum,
+  boolean). The params value may be a declared (known) enum, with the double
+  qualified identifier syntax `package.Name.VALUE`.
+- The `message` is a providence message, and is declared with the qualified
+  typename (package.Name), and the content, following this syntax: `TYPENAME
+  (':' EXTEND)? '{' FIELD_VALUE* '}'`, where the `FIELD_VALUE` part follows the
+  'pretty' serializer syntax (using the '=' field-value separator), with added
+  support for references for values.  The references can only reference params
+  or content from imported config files. Messages has four specific modes of
+  value specification, specified with what comes after the field name.
     - '=' means "overwrite with", otherwise the parent (extended) message
       values will be used as the base message.
     - After the '=' there can be an optional reference to use as the base
@@ -110,13 +112,13 @@ providence config file syntax:
 
 #### A note on field values
 
-Note that both messages and maps can be extended, but lists and sets can
-not (yet at least). This is because managing lists and sets is a bit more
+Note that both messages and maps can be extended, but lists and sets can not
+(yet at least). This is because managing lists and sets is a bit more
 complicated in the form of how to make modifications explicit, truly visible
-and not confusing. E.g. if you need to remove a single element from a list
-e.g. with `slice()`, there is no way of showing which element is actually removed
-without referencing it with `.remove(value)`, and with syntax like that we
-get into the whole  world of "scripting".
+and not confusing. E.g. if you need to remove a single element from a list e.g.
+with `slice()`, there is no way of showing which element is actually removed
+without referencing it with `.remove(value)`, and with syntax like that we get
+into the whole  world of "scripting".
 
 Example of config syntax:
 
@@ -168,6 +170,14 @@ $ pvdcfg -I . print myfile.cfg
 }
 ```
 
+Note that when using the `resolveConfig("name", parent)` method, the config
+system does not support that the main struct in the config inherits (or
+extends) anything itself, and the config system will not keep a reference to
+the config supplier, as it does not really know if this is the same inherited
+or a different inherited config compared to other `resolveConfig` calls for the
+same file. In this case the config supplier must be cached by the caller, who
+probably only needs to set this up once at program startup.
+
 ## Java Interface
 
 The interface for using this config in code should be fairly easy to use.
@@ -182,7 +192,7 @@ class Loader {
         // subtypes are needed. 
         reg.registerRecursive(Named.kDescriptor);
         reg.registerRecursive(From.kDescriptor);
-    
+        
         ProvidenceConfig cfg = new ProvidenceConfig(reg);
         return cfg.getConfig("myfile.cfg");
     }
@@ -211,36 +221,42 @@ class Program implements ConfigListener<Service,Service._Field> {
         // subtypes are needed. 
         reg.registerRecursive(Named.kDescriptor);
         reg.registerRecursive(From.kDescriptor);
+        reg.registerRecursive(Service.kDescriptor);
         
         this.providenceConfig = new ProvidenceConfig(reg);
         
         ConfigSupplier<Service,Service._Field> serviceSupplier = providenceConfig.resolveConfig("my_service.cfg");
-        this.service = serviceSupplier.get();
         serviceSupplier.addListener(this);
+        this.service = serviceSupplier.get();
     }
     
-    public Named onServiceUpdate(Service update) {
+    @Override
+    public void onConfigChange(@Nonnull Service update) {
         this.service = update;
         // and react to the actual changes...
-    }    
+    }
 }
 ```
 
-There are also other config suppliers available to make the providence config system more
-powerful.
+There are also other config suppliers available to make the providence config
+system more powerful.
 
-- **[FixedConfigSupplier]:** Just provides some config message as a config supplier. Will never
-  change, and never trigger config listeners.
-- **[ResourceConfigSupplier]:** Loads a system resource and provides it as a config supplier.
-  The config never changes, and never triggers config listeners.
-- **[ReferenceConfigSupplier]:** Uses a parent config and finds a reference (contained) message
-  within the parent using a reference path. the path is the '.' concatenation of the field names.
-  This supplier will forward changes in the parent config, but will not check for actual
-  changes.
-- **[OverrideConfigSupplier]:** Takes a parent config and overrides it with values based on an
-  override value map. Can only override "leaf" values, not whole messages. Uses the same reference
-  path as the `ReferenceConfigSupplier`, and tries as best it can to parse the string value given.
-  Handy to be able to override some values based on command line args or similar.
+- **[FixedConfigSupplier]:** Just provides some config message as a config
+  supplier. Will never change, and never trigger config listeners.
+- **[ResourceConfigSupplier]:** Loads a system resource and provides it as a
+  config supplier.  The config never changes, and never triggers config
+  listeners.
+- **[ReferenceConfigSupplier]:** Uses a parent config and finds a reference
+  (contained) message within the parent using a reference path. the path is the
+  '.' concatenation of the field names.  This supplier will forward changes in
+  the parent config, but will not check for local changes.
+- **[OverrideConfigSupplier]:** Takes a parent config and overrides it with
+  values based on an override value map. Can only override "leaf" values, not
+  whole messages. Uses the same reference path as the
+  `ReferenceConfigSupplier`, and tries as best it can to parse the string value
+  given.  Handy to be able to override some values based on command line args
+  or similar.
   
-And in addition a config supplier meant to be used in testing called `TestConfigSupplier`. It exposes
-a `testUpdate` method that triggers updates the same way as the other updating configs.
+And in addition a config supplier meant to be used in testing called
+`TestConfigSupplier`. It exposes a `testUpdate` method that triggers updates
+the same way as the other updating configs.
