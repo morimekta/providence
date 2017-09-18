@@ -14,7 +14,7 @@ There are currently two IT test suites.
   code by using actual generated code against a local hazelcast instance
   including how thrift IDL updates are handled both forward and backward. 
 
-#### Serialization Speed
+### Serialization Speed
 
 To run the serialization integration test suite, after installing the library,
 run:
@@ -42,7 +42,8 @@ focusing on some aspect or style of structures to test. Exceptions are **not** t
 as part of this, as the way the stack traces are handled quickly deteriorates the
 results for reading providence, though not affecting the others much.
 
-**Many containers:**
+#### Many containers:
+
 ```
                            READ          WRITE            SUM            SIZE
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)
@@ -59,7 +60,8 @@ results for reading providence, though not affecting the others much.
          json_pretty:  15.55       -- 10.38        =  12.96       -- ( 2.60 / 664.2 KiB)
 ```
 
-**Many Optional Fields:**
+#### Many Optional Fields:
+
 ```
                            READ          WRITE            SUM            SIZE
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)
@@ -76,7 +78,8 @@ results for reading providence, though not affecting the others much.
          json_pretty:  13.91       -- 10.83        =  12.37       -- ( 2.02 / 252.7 KiB)
 ```
 
-**Many Required Fields:**
+#### Many Required Fields:
+
 ```
                            READ          WRITE            SUM            SIZE
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)
@@ -93,7 +96,8 @@ results for reading providence, though not affecting the others much.
          json_pretty:  13.94       -- 11.21        =  12.58       -- ( 2.04 / 251.1 KiB)
 ```
 
-**Deep Structure:**
+#### Deep Structure:
+
 ```
                            READ          WRITE            SUM            SIZE
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)
