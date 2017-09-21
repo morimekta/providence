@@ -28,7 +28,7 @@ public enum Format implements Comparable<Format> {
     json_pretty(new JsonSerializer(true).pretty(),
                 null),
     json_named(new JsonSerializer(true).named(),
-               null),
+               null, true),
     json(new JsonSerializer(true),
          null),
     config(new PrettySerializer(true).config(),
@@ -51,10 +51,18 @@ public enum Format implements Comparable<Format> {
 
     public final Serializer serializer;
     public final TProtocolFactory protocolFactory;
+    public final boolean jackson;
 
     Format(Serializer ps,
            TProtocolFactory pf) {
+        this(ps, pf, false);
+    }
+
+    Format(Serializer ps,
+           TProtocolFactory pf,
+           boolean j) {
         serializer = ps;
         protocolFactory = pf;
+        jackson = j;
     }
 }

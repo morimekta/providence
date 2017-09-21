@@ -22,6 +22,7 @@
             <item href="providence-core/index.html"               name="Core" />
             <item href="providence-core-client/index.html"        name="Core : Client" />
             <item href="providence-core-server/index.html"        name="Core : Server" />
+            <item href="providence-core-jackson/index.html"       name="Core : Jackson" />
 
             <item href="providence-reflect/index.html"            name="Utils : Reflect" />
             <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />

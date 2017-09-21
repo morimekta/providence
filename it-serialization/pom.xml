@@ -38,6 +38,11 @@
             <artifactId>providence-testing</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core-jackson</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
@@ -166,6 +171,9 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <jackson>true</jackson>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -130,10 +130,6 @@ public class GeneratorWatcher<
     public <M extends PMessage<M, F>, F extends PField> M generate(
             Context context,
             PMessageDescriptor<M, F> descriptor) {
-        if (!started) {
-            throw new IllegalStateException("Watcher is not started");
-        }
-
         M instance;
         if (reader != null) {
             try {

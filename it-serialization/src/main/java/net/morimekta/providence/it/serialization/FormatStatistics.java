@@ -20,15 +20,23 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
     public final DescriptiveStatistics PtotalWriteStat;
     public final DescriptiveStatistics PreadStat;
     public final DescriptiveStatistics PtotalReadStat;
+
     public final DescriptiveStatistics TwriteStat;
     public final DescriptiveStatistics TtotalWriteStat;
     public final DescriptiveStatistics TreadStat;
     public final DescriptiveStatistics TtotalReadStat;
 
+    public final DescriptiveStatistics JwriteStat;
+    public final DescriptiveStatistics JtotalWriteStat;
+    public final DescriptiveStatistics JreadStat;
+    public final DescriptiveStatistics JtotalReadStat;
+
     public double read;
     public double read_thrift;
+    public double read_jackson;
     public double write;
     public double write_thrift;
+    public double write_jackson;
     public int    size;
 
     public FormatStatistics(Format format) {
@@ -36,15 +44,18 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
 
         PwriteStat = new DescriptiveStatistics();
         PtotalWriteStat = new DescriptiveStatistics();
-
         PreadStat = new DescriptiveStatistics();
         PtotalReadStat = new DescriptiveStatistics();
 
         TwriteStat = new DescriptiveStatistics();
         TtotalWriteStat = new DescriptiveStatistics();
-
         TreadStat = new DescriptiveStatistics();
         TtotalReadStat = new DescriptiveStatistics();
+
+        JwriteStat = new DescriptiveStatistics();
+        JtotalWriteStat = new DescriptiveStatistics();
+        JreadStat = new DescriptiveStatistics();
+        JtotalReadStat = new DescriptiveStatistics();
     }
 
     public double totalPvd() {
@@ -97,8 +108,8 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
         return  HEADER_L1 + "\n" + HEADER_L2;
     }
 
-    private static final String HEADER_L1 = "                           READ          WRITE            SUM            SIZE";
-    private static final String HEADER_L2 = "        name        :   pvd   thr  --  pvd   thr   =   pvd   thr  -- (ratio / size)";
+    private static final String HEADER_L1 = "                              READ                 WRITE                  SUM              SIZE";
+    private static final String HEADER_L2 = "        name        :   pvd   thr   jck  --  pvd   thr   jck   =   pvd   thr   jck  -- (ratio / size)";
 
     public String statistics(FormatStatistics rel) {
         double r = read / rel.read_thrift;
@@ -112,7 +123,7 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
             double rwt = (rt + wt) / 2;
 
             return String.format(
-                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f -- (%5.2f / %s)",
+                    "%20s:  %5.2f %5.2f       -- %5.2f %5.2f        =  %5.2f %5.2f       -- (%5.2f / %s)",
                     format.name(),
                     r,
                     rt,
@@ -122,9 +133,25 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
                     rwt,
                     size_ratio,
                     humanReadableByteCount(size, false));
+        } else if (read_jackson > 0 || write_jackson > 0){
+            double rj = read_jackson / rel.read_thrift;
+            double wj = write_jackson / rel.write_thrift;
+            double rwj = (rj + wj) / 2;
+
+            return String.format(
+                    "%20s:  %5.2f       %5.2f -- %5.2f       %5.2f  =  %5.2f       %5.2f -- (%5.2f / %s)",
+                    format.name(),
+                    r,
+                    rj,
+                    w,
+                    wj,
+                    rw,
+                    rwj,
+                    size_ratio,
+                    humanReadableByteCount(size, false));
         } else {
             return String.format(
-                    "%20s:  %5.2f       -- %5.2f        =  %5.2f       -- (%5.2f / %s)",
+                    "%20s:  %5.2f             -- %5.2f              =  %5.2f             -- (%5.2f / %s)",
                     format.name(),
                     r,
                     w,
@@ -146,12 +173,20 @@ public class FormatStatistics implements Comparable<FormatStatistics> {
     public void calculate() {
         final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
         final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
+
         final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
         final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
 
+        final long JReadMs = (long) JtotalReadStat.getSum() / 1000000;
+        final long JWriteMs = (long) JtotalWriteStat.getSum() / 1000000;
+
         read = ((double) PReadMs) / 1000;
         write = ((double) PWriteMs) / 1000;
+
         read_thrift = ((double) TReadMs) / 1000;
         write_thrift = ((double) TWriteMs) / 1000;
+
+        read_jackson = ((double) JReadMs) / 1000;
+        write_jackson = ((double) JWriteMs) / 1000;
     }
 }

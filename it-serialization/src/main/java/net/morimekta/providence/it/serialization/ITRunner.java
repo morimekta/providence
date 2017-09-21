@@ -4,8 +4,12 @@ import net.morimekta.console.chr.Char;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.jackson.ProvidenceModule;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.util.io.IOUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.common.collect.ImmutableList;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
@@ -18,6 +22,7 @@ import org.apache.thrift.transport.TTransport;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -26,6 +31,8 @@ import java.util.function.Supplier;
  */
 public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
                       TM extends TBase<TM, TF>, TF extends TFieldIdEnum> {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private final PMessageDescriptor<PM, PF> descriptor;
     private final Supplier<TM>               supplier;
     private final List<PM>                   pvdList;
@@ -39,12 +46,17 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
         this.supplier = supplier;
         this.pvdList = ImmutableList.copyOf(pvdList);
         this.thrList = ImmutableList.copyOf(thrList);
+
+        ProvidenceModule.register(MAPPER);
     }
 
     public void run(FormatStatistics statistics) throws TException, IOException {
         runProvidence(statistics);
         if (statistics.format.protocolFactory != null) {
             runThrift(statistics);
+        }
+        if (statistics.format.jackson) {
+            runJackson(statistics);
         }
     }
 
@@ -142,5 +154,64 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
         }
 
         statistics.TtotalReadStat.addValue(totalTime);
+    }
+
+    private void runJackson(FormatStatistics statistics) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        long totalTime = 0;
+
+        PM instance = null;
+        for (PM pvd : pvdList) {
+            long start = System.nanoTime();
+
+            MAPPER.writerFor(pvd.getClass()).writeValue(baos, pvd);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            statistics.JwriteStat.addValue(time);
+
+            baos.write('\n');
+            instance = pvd;
+        }
+
+        statistics.JtotalWriteStat.addValue(totalTime);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+        ObjectReader reader = MAPPER.readerFor(instance.getClass());
+
+        totalTime = 0;
+
+        Iterator<PM> iterator = pvdList.iterator();
+
+        while (bais.available() > 0) {
+            String tmp = IOUtils.readString(bais, '\n');
+
+            long start = System.nanoTime();
+
+            PM pvd = reader.readValue(tmp);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            statistics.JreadStat.addValue(time);
+
+            if (!iterator.hasNext()) {
+                throw new AssertionError("More read than written objects!");
+            }
+            PM next = iterator.next();
+            if (!pvd.equals(next)) {
+                throw new AssertionError("Read value not equal written");
+            }
+        }
+        if (iterator.hasNext()) {
+            throw new AssertionError("More written than read objects!");
+        }
+
+        statistics.JtotalReadStat.addValue(totalTime);
     }
 }

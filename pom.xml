@@ -130,6 +130,11 @@
             </dependency>
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-core-jackson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-core-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -966,6 +971,7 @@
                 <module>providence-core</module>
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
+                <module>providence-core-jackson</module>
 
                 <!-- Tooling Modules -->
                 <module>providence-reflect</module>

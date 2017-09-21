@@ -1,5 +1,6 @@
 package net.morimekta.providence.gentests;
 
+import net.morimekta.providence.jackson.ProvidenceModule;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorBase;
@@ -121,6 +122,7 @@ public class JacksonTest {
                          "}";
 
         ObjectMapper mapper = new ObjectMapper();
+        ProvidenceModule.register(mapper);
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
@@ -145,6 +147,7 @@ public class JacksonTest {
                          "}]";
 
         ObjectMapper mapper = new ObjectMapper();
+        ProvidenceModule.register(mapper);
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
@@ -162,6 +165,8 @@ public class JacksonTest {
     @Test
     public void testJsonSerializerCompat() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        ProvidenceModule.register(mapper);
+
         JsonSerializer compact = new JsonSerializer();
         JsonSerializer pretty = new JsonSerializer().pretty();
 
@@ -183,6 +188,7 @@ public class JacksonTest {
 
     private String serialize(Object value) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        ProvidenceModule.register(mapper);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         mapper.writeValue(out, value);
         return new String(out.toByteArray(), StandardCharsets.UTF_8);
