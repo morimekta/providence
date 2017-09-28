@@ -176,6 +176,15 @@ public class BinarySerializer extends Serializer {
                 }
 
                 if (methodNameLen > MAX_METHOD_NAME_LEN) {
+                    if (methodNameLen >>> 24 == '<') {
+                        throw new SerializerException("Received HTML in service call")
+                                .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
+                    }
+                    if (methodNameLen >>> 24 == '{' || methodNameLen >>> 24 == '[') {
+                        throw new SerializerException("Received JSON in service call")
+                                .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
+                    }
+
                     throw new SerializerException("Exceptionally long method name of %s bytes", methodNameLen)
                             .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
                 }

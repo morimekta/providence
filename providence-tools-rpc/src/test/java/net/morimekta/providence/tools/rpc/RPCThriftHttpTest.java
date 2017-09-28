@@ -20,10 +20,20 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static j2html.TagCreator.body;
+import static j2html.TagCreator.h1;
+import static j2html.TagCreator.head;
+import static j2html.TagCreator.html;
+import static j2html.TagCreator.span;
+import static j2html.TagCreator.title;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.tools.rpc.internal.TestNetUtil.getExposedPort;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
@@ -39,7 +49,9 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class RPCThriftHttpTest {
-    private static final String ENDPOINT = "test";
+    private static final String ENDPOINT = "/test";
+    private static final String HTML_ENDPOINT = "/html";
+    private static final String JSON_ENDPOINT = "/json";
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
@@ -54,8 +66,8 @@ public class RPCThriftHttpTest {
     private RPC             rpc;
     private int             exitCode;
 
-    private String endpoint() {
-        return "http://localhost:" + port + "/" + ENDPOINT;
+    private String endpoint(String path) {
+        return "http://localhost:" + port + path;
     }
 
     @Before
@@ -70,7 +82,26 @@ public class RPCThriftHttpTest {
         server = new Server(port);
         ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TServlet(new MyService.Processor<>(impl),
-                                                          new TBinaryProtocol.Factory(true, true))), "/" + ENDPOINT);
+                                                          new TBinaryProtocol.Factory(true, true))), ENDPOINT);
+        handler.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+                    throws ServletException, IOException {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write(
+                        html(head(title("Fail!")),
+                             body(h1("Fail!"),
+                                  span("Truly failure"))).render());
+            }
+        }), HTML_ENDPOINT);
+        handler.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+                    throws ServletException, IOException {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write("{\"error\":\"Fail!\"}");
+            }
+        }), JSON_ENDPOINT);
 
         server.setHandler(handler);
         server.start();
@@ -104,7 +135,7 @@ public class RPCThriftHttpTest {
         rpc.run("--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
-                endpoint());
+                endpoint(ENDPOINT));
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(
@@ -133,7 +164,7 @@ public class RPCThriftHttpTest {
                 "-s", "test.MyService",
                 "-i", "file:" + inFile.getAbsolutePath(),
                 "-o", "json,file:" + outFile.getAbsolutePath(),
-                endpoint());
+                endpoint(ENDPOINT));
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(""));
@@ -152,7 +183,7 @@ public class RPCThriftHttpTest {
         rpc.run("--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
-                endpoint());
+                endpoint(ENDPOINT));
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(
@@ -177,13 +208,51 @@ public class RPCThriftHttpTest {
 
         rpc.run("--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
+                "-o", "binary",
                 "-s", "test.MyService",
-                endpoint() + "_does_not_exsist");
+                endpoint(ENDPOINT) + "_does_not_exsist");
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(
                 "Received 405 HTTP method POST is not supported by this URL\n" +
                 " - from: http://localhost:" + port + "/test_does_not_exsist\n"));
+        assertThat(exitCode, is(not(0)));
+    }
+
+    @Test
+    public void testSimpleRequest_respondWithHtml() throws IOException, TException {
+        console.setInput(getResourceAsBytes("/req1.json"));
+
+        when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
+
+        rpc.run("--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-o", "binary",
+                "-s", "test.MyService",
+                endpoint(HTML_ENDPOINT));
+
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(
+                "Serializer error: Error: Received HTML in service call\n"));
+        assertThat(exitCode, is(not(0)));
+    }
+
+
+    @Test
+    public void testSimpleRequest_respondWithJson() throws IOException, TException {
+        console.setInput(getResourceAsBytes("/req1.json"));
+
+        when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
+
+        rpc.run("--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-o", "binary",
+                "-s", "test.MyService",
+                endpoint(JSON_ENDPOINT));
+
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(
+                "Serializer error: Error: Received JSON in service call\n"));
         assertThat(exitCode, is(not(0)));
     }
 }
