@@ -1,5 +1,6 @@
 package net.morimekta.providence.server;
 
+import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
@@ -31,22 +32,25 @@ import static net.morimekta.providence.server.internal.TestNetUtil.getExposedPor
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class ProvidenceServletTest {
-    private static int                port;
-    private static TestService.Iface  impl;
-    private static Server             server;
-    private static SerializerProvider provider;
+    private static int                    port;
+    private static TestService.Iface      impl;
+    private static Server                 server;
+    private static SerializerProvider     provider;
+    private static ServiceInstrumentation instrumentation;
 
     private static final String ENDPOINT = "test";
 
@@ -59,12 +63,13 @@ public class ProvidenceServletTest {
         Log.setLog(new NoLogging());
 
         impl = mock(TestService.Iface.class);
+        instrumentation = mock(ServiceInstrumentation.class);
 
         provider = new DefaultSerializerProvider();
 
         server = new Server(0);
         ServletContextHandler handler = new ServletContextHandler();
-        handler.addServlet(new ServletHolder(new ProvidenceServlet(new TestService.Processor(impl), provider)),
+        handler.addServlet(new ServletHolder(new ProvidenceServlet(new TestService.Processor(impl), provider, instrumentation)),
                            "/" + ENDPOINT);
 
         server.setHandler(handler);
@@ -74,7 +79,7 @@ public class ProvidenceServletTest {
 
     @Before
     public void setUp() throws Exception {
-        reset(impl);
+        reset(impl, instrumentation);
     }
 
     @AfterClass
@@ -97,6 +102,8 @@ public class ProvidenceServletTest {
 
         assertNotNull(response);
         assertEquals("{text:\"response\"}", response.asString());
+        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verifyNoMoreInteractions(instrumentation);
     }
 
     @Test
@@ -115,6 +122,9 @@ public class ProvidenceServletTest {
         } catch (Failure ex) {
             assertEquals("failure", ex.getText());
         }
+
+        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verifyNoMoreInteractions(instrumentation);
     }
 
     @Test
@@ -134,6 +144,8 @@ public class ProvidenceServletTest {
         } catch (HttpResponseException ex) {
             assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
         }
+
+        verifyZeroInteractions(impl, instrumentation);
     }
 
     @Test
@@ -147,7 +159,8 @@ public class ProvidenceServletTest {
         client.voidMethod(55);
 
         verify(impl).voidMethod(55);
-        verifyNoMoreInteractions(impl);
+        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verifyNoMoreInteractions(impl, instrumentation);
     }
 
     @Test
@@ -169,6 +182,7 @@ public class ProvidenceServletTest {
         }
 
         verify(impl).voidMethod(55);
-        verifyNoMoreInteractions(impl);
+        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verifyNoMoreInteractions(impl, instrumentation);
     }
 }

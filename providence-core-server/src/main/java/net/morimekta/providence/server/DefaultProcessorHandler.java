@@ -75,9 +75,8 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                 writer.write(reply);
                 return;
             } catch (Exception e2) {
-                IOException e3 = new IOException(e.getMessage(), e);
-                e3.addSuppressed(e2);
-                throw e3;
+                e.addSuppressed(e2);
+                throw e;
             }
         }
 
@@ -91,9 +90,8 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                 writer.write(reply);
                 return;
             } catch (Exception e2) {
-                IOException e3 = new IOException(e.getMessage(), e);
-                e3.addSuppressed(e2);
-                throw e3;
+                e.addSuppressed(e2);
+                throw e;
             }
         }
 
@@ -107,9 +105,8 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                     reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
                     writer.write(reply);
                 } catch (Exception e2) {
-                    IOException e3 = new IOException(e.getMessage(), e);
-                    e3.addSuppressed(e2);
-                    throw e3;
+                    e.addSuppressed(e2);
+                    throw e;
                 }
             }
         }

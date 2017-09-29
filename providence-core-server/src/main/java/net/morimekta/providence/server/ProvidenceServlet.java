@@ -21,6 +21,7 @@
 package net.morimekta.providence.server;
 
 import net.morimekta.providence.PProcessor;
+import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.mio.IOMessageReader;
 import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
@@ -32,12 +33,14 @@ import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A javax.servlet implementation for providence. Transfers data like the
@@ -48,6 +51,7 @@ public class ProvidenceServlet extends HttpServlet {
 
     private final ProcessorProvider  processorProvider;
     private final SerializerProvider serializerProvider;
+    private final ServiceInstrumentation instrumentation;
 
     /**
      * Creates a providence servlet that uses the same processor every time.
@@ -55,9 +59,23 @@ public class ProvidenceServlet extends HttpServlet {
      * @param processor The providence service processor.
      * @param serializerProvider The serializer provider.
      */
-    public ProvidenceServlet(PProcessor processor, SerializerProvider serializerProvider) {
+    public ProvidenceServlet(@Nonnull PProcessor processor,
+                             @Nonnull SerializerProvider serializerProvider) {
         // Default is to always use the same processor.
         this(r -> processor, serializerProvider);
+    }
+
+    /**
+     * Creates a providence servlet that uses the same processor every time.
+     *
+     * @param processor The providence service processor.
+     * @param serializerProvider The serializer provider.
+     */
+    public ProvidenceServlet(@Nonnull PProcessor processor,
+                             @Nonnull SerializerProvider serializerProvider,
+                             @Nonnull ServiceInstrumentation instrumentation) {
+        // Default is to always use the same processor.
+        this(r -> processor, serializerProvider, instrumentation);
     }
 
     /**
@@ -66,9 +84,23 @@ public class ProvidenceServlet extends HttpServlet {
      * @param processorProvider The processor supplier.
      * @param serializerProvider The serializer provider.
      */
-    public ProvidenceServlet(ProcessorProvider processorProvider, SerializerProvider serializerProvider) {
+    public ProvidenceServlet(@Nonnull ProcessorProvider processorProvider,
+                             @Nonnull SerializerProvider serializerProvider) {
+        this(processorProvider, serializerProvider, (call, response, time) -> {});
+    }
+
+    /**
+     * Creates a providence servlet that uses a per request processor.
+     *
+     * @param processorProvider The processor supplier.
+     * @param serializerProvider The serializer provider.
+     */
+    public ProvidenceServlet(@Nonnull ProcessorProvider processorProvider,
+                             @Nonnull SerializerProvider serializerProvider,
+                             @Nonnull ServiceInstrumentation instrumentation) {
         this.processorProvider = processorProvider;
         this.serializerProvider = serializerProvider;
+        this.instrumentation = instrumentation;
     }
 
     /**
@@ -86,7 +118,16 @@ public class ProvidenceServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PProcessor processor = processorProvider.processorForRequest(req);
+        long start = System.nanoTime();
+
+        AtomicReference<PServiceCall> callRef = new AtomicReference<>();
+        AtomicReference<PServiceCall> responseRef = new AtomicReference<>();
+        PProcessor processor = new WrappedProcessor(processorProvider.processorForRequest(req), (c, r) -> {
+            callRef.set(c);
+            responseRef.set(r.handleCall(c));
+            return responseRef.get();
+        });
+
         try {
             Serializer requestSerializer = serializerProvider.getDefault();
             if (req.getContentType() != null) {
@@ -140,6 +181,9 @@ public class ProvidenceServlet extends HttpServlet {
         } catch (Exception e) {
             LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(), e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());
+        } finally {
+            long duration = System.nanoTime() - start;
+            instrumentation.afterCall(callRef.get(), responseRef.get(), ((double) duration) / 1_000_000);
         }
     }
 }
