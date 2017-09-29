@@ -71,6 +71,19 @@ public class ProvidenceServlet extends HttpServlet {
         this.serializerProvider = serializerProvider;
     }
 
+    /**
+     * Override if you want to do fancy stuff with the processor.
+     *
+     * @param processor The processor to handle the service call.
+     * @return The processor handler to be used.
+     */
+    protected ProcessorHandler getHandler(PProcessor processor) {
+        // Create a new processor handler instance for each request, as
+        // they may be request context dependent. E.g. depends on
+        // information in header, servlet context etc.
+        return new DefaultProcessorHandler(processor);
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PProcessor processor = processorProvider.processorForRequest(req);
@@ -114,15 +127,16 @@ public class ProvidenceServlet extends HttpServlet {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             MessageWriter writer = new IOMessageWriter(baos, responseSerializer);
 
-            // Create a new processor handler instance for each request, as
-            // they may be request context dependent. E.g. depends on
-            // information in header, servlet context etc.
-            new DefaultProcessorHandler(processor).process(reader, writer);
-
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType(responseSerializer.mediaType());
-            resp.setContentLength(baos.size());
-            resp.getOutputStream().write(baos.toByteArray());
+            getHandler(processor).process(reader, writer);
+            if (baos.size() > 0) {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.setContentType(responseSerializer.mediaType());
+                resp.setContentLength(baos.size());
+                resp.getOutputStream().write(baos.toByteArray());
+                resp.getOutputStream().flush();
+            } else {
+                resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+            }
         } catch (Exception e) {
             LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(), e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());

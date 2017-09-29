@@ -59,7 +59,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean process(MessageReader reader, MessageWriter writer) throws IOException {
+    public void process(MessageReader reader, MessageWriter writer) throws IOException {
         PServiceCall call, reply;
         try {
             call = reader.read(processor.getDescriptor());
@@ -73,7 +73,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                 PApplicationException oe = new PApplicationException(e.getMessage(), e.getExceptionType());
                 reply = new PServiceCall<>(e.getMethodName(), PServiceCallType.EXCEPTION, e.getSequenceNo(), oe);
                 writer.write(reply);
-                return false;
+                return;
             } catch (Exception e2) {
                 IOException e3 = new IOException(e.getMessage(), e);
                 e3.addSuppressed(e2);
@@ -89,7 +89,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                 PApplicationException oe = new PApplicationException(e.getMessage(), PApplicationExceptionType.INTERNAL_ERROR);
                 reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
                 writer.write(reply);
-                return false;
+                return;
             } catch (Exception e2) {
                 IOException e3 = new IOException(e.getMessage(), e);
                 e3.addSuppressed(e2);
@@ -106,8 +106,6 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                     PApplicationException oe = new PApplicationException(e.getMessage(), e.getExceptionType());
                     reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
                     writer.write(reply);
-                    // Even though the method returned, we didn't return the proper reply.
-                    return false;
                 } catch (Exception e2) {
                     IOException e3 = new IOException(e.getMessage(), e);
                     e3.addSuppressed(e2);
@@ -116,6 +114,5 @@ public class DefaultProcessorHandler implements ProcessorHandler {
             }
         }
 
-        return true;
     }
 }
