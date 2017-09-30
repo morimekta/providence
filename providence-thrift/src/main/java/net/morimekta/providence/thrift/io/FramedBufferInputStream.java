@@ -24,6 +24,7 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -33,10 +34,12 @@ import static java.lang.Math.min;
 
 /**
  * Wrap an input stream in a framed buffer reader similar to the thrift
- * TFramedTransport.
+ * TFramedTransport. The input stream will read one whole frame from the
+ * byte channel regardless of how many bytes are read, but can be reset
+ * at the end
  */
-public class FramedBufferInputSteram extends InputStream {
-    private static Logger LOGGER = LoggerFactory.getLogger(FramedBufferInputSteram.class.getName());
+public class FramedBufferInputStream extends InputStream {
+    private static Logger LOGGER = LoggerFactory.getLogger(FramedBufferInputStream.class.getName());
 
     private static final int MAX_BUFFER_SIZE = 16384000;  // 16M.
 
@@ -44,16 +47,20 @@ public class FramedBufferInputSteram extends InputStream {
     private final ReadableByteChannel in;
     private final ByteBuffer          buffer;
 
-    public FramedBufferInputSteram(ReadableByteChannel in) {
+    public FramedBufferInputStream(ReadableByteChannel in) {
+        this(in, MAX_BUFFER_SIZE);
+    }
+
+    public FramedBufferInputStream(ReadableByteChannel in, int maxFrameSize) {
         this.in = in;
         this.frameSizeBuffer = ByteBuffer.allocate(Integer.BYTES);
-        this.buffer = ByteBuffer.allocateDirect(MAX_BUFFER_SIZE);
+        this.buffer = ByteBuffer.allocateDirect(maxFrameSize);
         this.buffer.limit(0);
     }
 
     @Override
     public int read() throws IOException {
-        if (!buffer.hasRemaining()) {
+        if (buffer.limit() == 0) {
             if (readFrame() < 0) {
                 return -1;
             }
@@ -67,12 +74,12 @@ public class FramedBufferInputSteram extends InputStream {
     }
 
     @Override
-    public int read(byte[] data) throws IOException {
+    public int read(@Nonnull byte[] data) throws IOException {
         return read(data, 0, data.length);
     }
 
     @Override
-    public int read(byte[] data, int off, int len) throws IOException {
+    public int read(@Nonnull byte[] data, int off, int len) throws IOException {
         if (off < 0 || len < 0) {
             throw new IOException();
         }
@@ -82,22 +89,35 @@ public class FramedBufferInputSteram extends InputStream {
 
         int pos = 0;
         while (pos < len) {
-            if (!buffer.hasRemaining()) {
+            // nothing is read yet.
+            if (buffer.limit() == 0) {
                 if (readFrame() < 0) {
                     return pos;
                 }
             }
+            if (buffer.remaining() == 0) {
+                return pos;
+            }
+
             int remaining = buffer.remaining();
-            buffer.get(data, off + pos, min(len - pos, remaining));
-            pos += remaining;
+            int readLen = min(len - pos, remaining);
+            buffer.get(data, off + pos, readLen);
+            pos += readLen;
         }
 
         return pos;
     }
 
+    /**
+     * Skip the rest of the current frame, regardless of how much has bean read / used.
+     */
+    public void nextFrame() {
+        buffer.rewind();
+        buffer.limit(0);
+    }
+
     private int readFrame() throws IOException {
         frameSizeBuffer.rewind();
-        frameSizeBuffer.limit(Integer.BYTES);
 
         in.read(frameSizeBuffer);
         if (frameSizeBuffer.position() == 0) {
@@ -108,8 +128,28 @@ public class FramedBufferInputSteram extends InputStream {
         }
 
         int frameSize = TFramedTransport.decodeFrameSize(frameSizeBuffer.array());
-        if (frameSize < 1 || frameSize > MAX_BUFFER_SIZE) {
-            throw new IOException();
+        if (frameSize < 1) {
+            throw new IOException("Invalid frame size " + frameSize);
+        } else if (frameSize > buffer.capacity()) {
+            IOException ex = new IOException("Frame size too large " + frameSize + " > " + buffer.capacity());
+            try {
+                // Try to consume the frame so we can continue with the next.
+                while (frameSize > 0) {
+                    buffer.rewind();
+                    buffer.limit(Math.max(frameSize, buffer.capacity()));
+
+                    int r = in.read(buffer);
+                    if (r > 0) {
+                        frameSize -= r;
+                    } else {
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                ex.addSuppressed(e);
+            }
+
+            throw ex;
         }
 
         buffer.rewind();

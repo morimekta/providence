@@ -40,7 +40,8 @@ import java.net.SocketAddress;
 
 /**
  * Client handler for thrift RPC using the TSimpleServer that does <b>not</b>
- * use the TFramedTransport message wrapper.
+ * use the TFramedTransport message wrapper. It will create a local socket
+ * and connect for each call.
  */
 public class SocketClientHandler implements PServiceCallHandler {
     private final Serializer    serializer;

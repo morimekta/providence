@@ -29,32 +29,55 @@ import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.thrift.io.FramedBufferInputSteram;
+import net.morimekta.providence.thrift.io.FramedBufferInputStream;
 import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Client handler for thrift RPC using the TNonblockingServer, or similar that
- * uses the TFramedTransport message wrapper.
+ * uses the TFramedTransport message wrapper. It is able to handle a true
+ * async-like message and response order, so even if the server sends responses
+ * out of order this client will match to the correct caller.
+ *
+ * The client handler is dependent on that there is a single client with unique
+ * sequence IDs on incoming service calls, otherwise there will be trouble with
+ * matching responses to the requesting thread.
  *
  * When using this client handler make sure to close it when no longer in use.
  * Otherwise it will keep the socket channel open almost indefinitely.
  */
 public class NonblockingSocketClientHandler implements PServiceCallHandler, Closeable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NonblockingSocketClientHandler.class);
+
     private final Serializer    serializer;
     private final SocketAddress address;
     private final int           connect_timeout;
     private final int           read_timeout;
+    private final int           response_timeout;
 
-    private SocketChannel channel;
+    private final Map<Integer,CompletableFuture<PServiceCall>> responseFutures;
+    private final ExecutorService                   responseExecutor;
+
+    private volatile SocketChannel channel;
+    private volatile FramedBufferOutputStream out;
 
     public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address) {
         this(serializer, address, 10000, 10000);
@@ -65,11 +88,17 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
         this.address = address;
         this.connect_timeout = connect_timeout;
         this.read_timeout = read_timeout;
+        // TODO: Set up response timeout.
+        this.response_timeout = connect_timeout + read_timeout * 2;
+        this.responseFutures = new ConcurrentHashMap<>();
+        this.responseExecutor = Executors.newSingleThreadExecutor();
     }
 
     @Nonnull
-    private SocketChannel connect() throws IOException {
-        if (channel == null) {
+    private void ensureConnected(PService service) throws IOException {
+        if (channel == null || !channel.isConnected()) {
+            close();
+
             channel = SocketChannel.open();
             Socket socket = channel.socket();
             socket.setSoLinger(false, 0);
@@ -80,22 +109,31 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
             // The channel is always in blocking mode.
             channel.configureBlocking(true);
             channel.socket().connect(address, connect_timeout);
+
+            out = new FramedBufferOutputStream(channel);
+            responseExecutor.submit(() -> this.handleReadResponses(channel, service));
         }
-        return channel;
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         if (channel != null) {
+            SocketChannel ch = channel;
+            OutputStream o = out;
+
+            channel = null;
+            out = null;
+
             try {
-                channel.close();
+                o.close();
             } finally {
-                channel = null;
+                ch.close();
             }
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <Request extends PMessage<Request, RequestField>,
             Response extends PMessage<Response, ResponseField>,
             RequestField extends PField,
@@ -107,27 +145,73 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                                             PApplicationExceptionType.INVALID_MESSAGE_TYPE);
         }
 
-        SocketChannel channel = connect();
-
-        OutputStream out = new FramedBufferOutputStream(channel);
-        serializer.serialize(out, call);
-        out.flush();
-
-        PServiceCall<Response, ResponseField> reply = null;
+        CompletableFuture<PServiceCall> responseFuture = null;
         if (call.getType() == PServiceCallType.CALL) {
-            InputStream in = new FramedBufferInputSteram(channel);
-            reply = serializer.deserialize(in, service);
+            responseFuture = new CompletableFuture<>();
+            // Each sequence No must be unique for the client, otherwise this will be messed up.
+            responseFutures.put(call.getSequence(), responseFuture);
+        }
 
-            if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
-                throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
-                                                PApplicationExceptionType.INVALID_MESSAGE_TYPE);
-            }
-            if (reply.getSequence() != call.getSequence()) {
-                throw new PApplicationException("Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
-                                                PApplicationExceptionType.BAD_SEQUENCE_ID);
+        synchronized (this) {
+            try {
+                ensureConnected(service);
+                serializer.serialize(out, call);
+            } finally {
+                if (out != null) {
+                    out.completeFrame();
+                }
             }
         }
 
-        return reply;
+        if (responseFuture != null) {
+            try {
+                if (response_timeout > 0) {
+                    return (PServiceCall<Response, ResponseField>) responseFuture.get(response_timeout, TimeUnit.MILLISECONDS);
+                } else {
+                    return (PServiceCall<Response, ResponseField>) responseFuture.get();
+                }
+            } catch (TimeoutException|InterruptedException e) {
+                responseFuture.completeExceptionally(e);
+                throw new IOException(e.getMessage(), e);
+            } catch (ExecutionException e) {
+                throw new IOException(e.getMessage(), e);
+            } finally {
+                responseFutures.remove(call.getSequence());
+            }
+        }
+
+        return null;
+    }
+
+    private void handleReadResponses(SocketChannel channel, PService service) {
+        while (this.channel == channel && channel.isConnected()) {
+            FramedBufferInputStream in = new FramedBufferInputStream(channel);
+            try {
+                in.nextFrame();
+                PServiceCall reply = serializer.deserialize(in, service);
+
+                if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                    throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                    PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                }
+
+                CompletableFuture<PServiceCall> future = responseFutures.get(reply.getSequence());
+                if (future == null) {
+                    LOGGER.error("No future for sequence ID " + reply.getSequence());
+                    continue;
+                }
+
+                responseFutures.remove(reply.getSequence());
+                future.complete(reply);
+            } catch (Exception e) {
+                LOGGER.error("Exception in channel response reading", e);
+            }
+        }
+
+        if (responseFutures.size() > 0) {
+            LOGGER.warn("Channel closed with {} unfinished calls", responseFutures.size());
+            responseFutures.forEach((s, f) -> f.completeExceptionally(new IOException("Channel closed")));
+            responseFutures.clear();
+        }
     }
 }

@@ -37,9 +37,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -100,6 +102,27 @@ public class NonblockingSocketClientHandlerTest {
         verify(impl).test(any(net.morimekta.test.thrift.thrift.service.Request.class));
 
         assertThat(response, is(equalToMessage(new Response("response"))));
+    }
+
+    @Test
+    public void testMultipleRequests()
+            throws IOException, TException, net.morimekta.test.providence.thrift.service.Failure {
+        when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test")))
+                .thenReturn(new net.morimekta.test.thrift.thrift.service.Response("response"));
+        when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test2")))
+                .thenReturn(new net.morimekta.test.thrift.thrift.service.Response("response2"));
+
+        MyService.Iface client = new MyService.Client(new NonblockingSocketClientHandler(serializer, address));
+
+        Response response = client.test(Request.builder().setText("test").build());
+        Response response2 = client.test(Request.builder().setText("test2").build());
+
+        verify(impl).test(eq(new net.morimekta.test.thrift.thrift.service.Request("test")));
+        verify(impl).test(eq(new net.morimekta.test.thrift.thrift.service.Request("test2")));
+        verifyNoMoreInteractions(impl);
+
+        assertThat(response, is(equalToMessage(new Response("response"))));
+        assertThat(response2, is(equalToMessage(new Response("response2"))));
     }
 
     @Test
