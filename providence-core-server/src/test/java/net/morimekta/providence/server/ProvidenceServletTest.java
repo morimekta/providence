@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -160,6 +161,21 @@ public class ProvidenceServletTest {
 
         verify(impl).voidMethod(55);
         verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verifyNoMoreInteractions(impl, instrumentation);
+    }
+
+    @Test
+    public void testThriftClient_oneway() throws TException, IOException, Failure {
+        ApacheHttpTransport transport = new ApacheHttpTransport();
+        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
+        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
+        net.morimekta.test.thrift.service.TestService.Iface client =
+                new net.morimekta.test.thrift.service.TestService.Client(protocol);
+
+        client.ping();
+
+        verify(impl).ping();
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
         verifyNoMoreInteractions(impl, instrumentation);
     }
 

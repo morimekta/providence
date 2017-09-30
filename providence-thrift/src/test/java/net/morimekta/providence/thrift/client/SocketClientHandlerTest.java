@@ -100,6 +100,15 @@ public class SocketClientHandlerTest {
     }
 
     @Test
+    public void testOnewayRequest() throws IOException, TException, Failure {
+        MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
+
+        client.ping();
+
+        verify(impl).ping();
+    }
+
+    @Test
     public void testSimpleRequest_exception() throws IOException, TException, Failure {
         when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));

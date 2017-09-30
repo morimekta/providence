@@ -173,14 +173,12 @@ public class ProvidenceServlet extends HttpServlet {
             MessageWriter writer = new IOMessageWriter(baos, responseSerializer);
 
             getHandler(processor).process(reader, writer);
+            resp.setStatus(HttpServletResponse.SC_OK);
             if (baos.size() > 0) {
-                resp.setStatus(HttpServletResponse.SC_OK);
                 resp.setContentType(responseSerializer.mediaType());
                 resp.setContentLength(baos.size());
                 resp.getOutputStream().write(baos.toByteArray());
                 resp.getOutputStream().flush();
-            } else {
-                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } catch (Exception e) {
             String logName = processor.getDescriptor().getQualifiedName();

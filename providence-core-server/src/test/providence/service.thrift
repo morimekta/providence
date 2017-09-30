@@ -13,6 +13,8 @@ exception Failure {
 } (java.public.constructor)
 
 service BaseTestService {
+    oneway void ping();
+
     i32 inBaseService();
 }
 

@@ -371,6 +371,11 @@
                 <artifactId>jfairy</artifactId>
                 <version>${jfairy.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>3.0.0</version>
+            </dependency>
 
             <!-- USING JETTY AND DROPWIZARD FOR TESTING SERVLETS -->
             <dependency>

@@ -155,7 +155,11 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
         synchronized (this) {
             try {
                 ensureConnected(service);
+                if (out == null) {
+                    throw new IOException("Closed channel");
+                }
                 serializer.serialize(out, call);
+                out.flush();
             } finally {
                 if (out != null) {
                     out.completeFrame();

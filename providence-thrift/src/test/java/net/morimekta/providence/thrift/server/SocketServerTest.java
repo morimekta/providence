@@ -15,18 +15,25 @@ import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
+import org.awaitility.Duration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.awaitility.Awaitility.setDefaultPollDelay;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -41,6 +48,8 @@ public class SocketServerTest {
 
     @BeforeClass
     public static void setUpClass() {
+        setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
+
         impl = mock(Iface.class);
         instrumentation = mock(ServiceInstrumentation.class);
         server = SocketServer.builder(new Processor(impl))
@@ -74,9 +83,13 @@ public class SocketServerTest {
             TProtocol protocol = new TBinaryProtocol(socket);
             Client client = new Client(protocol);
 
-            when(impl.test(any(Request.class))).thenReturn(Response.builder()
-                                                                   .setText("Yay!")
-                                                                   .build());
+            AtomicBoolean called = new AtomicBoolean();
+            when(impl.test(any(Request.class))).thenAnswer(i -> {
+                called.set(true);
+                return Response.builder()
+                        .setText("Yay!")
+                        .build();
+            });
 
             net.morimekta.test.thrift.thrift.service.Response response = client.test(new net.morimekta.test.thrift.thrift.service.Request(
                     "Really!"));
@@ -86,9 +99,32 @@ public class SocketServerTest {
                                      .setText("Really!")
                                      .build());
 
-            Thread.sleep(1);
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+            verifyNoMoreInteractions(impl, instrumentation);
+        }
+    }
+
+    @Test
+    public void testOneway() throws IOException, TException, Failure, InterruptedException {
+        try (TSocket socket = new TSocket("localhost", port)) {
+            socket.open();
+            TProtocol protocol = new TBinaryProtocol(socket);
+            Client client = new Client(protocol);
+
+            AtomicBoolean called = new AtomicBoolean();
+            doAnswer(i -> {
+                called.set(true);
+                return null;
+            }).when(impl).ping();
+
+            client.ping();
+
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+
+            verify(impl).ping();
+            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
             verifyNoMoreInteractions(impl, instrumentation);
         }
     }
@@ -100,27 +136,34 @@ public class SocketServerTest {
             TProtocol protocol = new TBinaryProtocol(socket);
             Client client = new Client(protocol);
 
-            when(impl.test(any(Request.class))).thenReturn(Response.builder()
-                                                                   .setText("Yay!")
-                                                                   .build());
+            AtomicBoolean called = new AtomicBoolean();
+            when(impl.test(any(Request.class))).thenAnswer(i -> {
+                called.set(true);
+                return Response.builder()
+                               .setText("Yay!")
+                               .build();
+            });
 
             net.morimekta.test.thrift.thrift.service.Response response = client.test(new net.morimekta.test.thrift.thrift.service.Request(
                     "Really!"));
             assertThat(response.getText(), is("Yay!"));
 
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+            called.set(false);
+
             verify(impl).test(Request.builder()
                                      .setText("Really!")
                                      .build());
-
-            Thread.sleep(1);
-
             verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
             reset(impl, instrumentation);
 
-            when(impl.test(any(Request.class))).thenReturn(Response.builder()
-                                                                   .setText("Woot!")
-                                                                   .build());
+            when(impl.test(any(Request.class))).thenAnswer(i -> {
+                called.set(true);
+                return Response.builder()
+                               .setText("Woot!")
+                               .build();
+            });
 
             response = client.test(new net.morimekta.test.thrift.thrift.service.Request(
                     "Doh!"));
@@ -130,7 +173,7 @@ public class SocketServerTest {
                                      .setText("Doh!")
                                      .build());
 
-            Thread.sleep(1);
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
@@ -144,9 +187,13 @@ public class SocketServerTest {
             TProtocol protocol = new TBinaryProtocol(socket);
             Client client = new Client(protocol);
 
-            when(impl.test(any(Request.class))).thenThrow(Failure.builder()
-                                                                 .setText("Noooo!")
-                                                                 .build());
+            AtomicBoolean called = new AtomicBoolean();
+            when(impl.test(any(Request.class))).thenAnswer(i -> {
+                called.set(true);
+                throw Failure.builder()
+                             .setText("Noooo!")
+                             .build();
+            });
 
             try {
                 client.test(new net.morimekta.test.thrift.thrift.service.Request("O'Really???"));
@@ -155,12 +202,11 @@ public class SocketServerTest {
                 assertThat(e.getText(), is("Noooo!"));
             }
 
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+
             verify(impl).test(Request.builder()
                                      .setText("O'Really???")
                                      .build());
-
-            Thread.sleep(1);
-
             verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
         }
