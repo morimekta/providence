@@ -124,7 +124,7 @@ public class FramedBufferInputStream extends InputStream {
             return -1;
         }
         if (frameSizeBuffer.position() < Integer.BYTES) {
-            throw new IOException();
+            throw new IOException("Not enough bytes for frame size: " + frameSizeBuffer.position());
         }
 
         int frameSize = TFramedTransport.decodeFrameSize(frameSizeBuffer.array());

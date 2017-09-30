@@ -36,7 +36,6 @@ import net.morimekta.providence.util.ServiceCallInstrumentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -103,32 +102,40 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                                           ServiceCallInstrumentation instrumentation,
                                           int connect_timeout,
                                           int read_timeout) {
+        this(serializer, address, instrumentation, connect_timeout, read_timeout, connect_timeout + 2 * read_timeout);
+    }
+
+    public NonblockingSocketClientHandler(Serializer serializer,
+                                          SocketAddress address,
+                                          ServiceCallInstrumentation instrumentation,
+                                          int connect_timeout,
+                                          int read_timeout,
+                                          int response_timeout) {
         this.serializer = serializer;
         this.address = address;
         this.instrumentation = instrumentation;
         this.connect_timeout = connect_timeout;
         this.read_timeout = read_timeout;
-        // TODO: Set up response timeout.
-        this.response_timeout = connect_timeout + read_timeout * 2;
+        this.response_timeout = response_timeout;
         this.responseFutures = new ConcurrentHashMap<>();
         this.responseExecutor = Executors.newSingleThreadExecutor();
     }
 
-    @Nonnull
     private void ensureConnected(PService service) throws IOException {
         if (channel == null || !channel.isConnected()) {
             close();
 
             channel = SocketChannel.open();
+            // The client channel is always in blocking mode. The read and write
+            // threads handle the asynchronous nature of the protocol.
+            channel.configureBlocking(true);
+
             Socket socket = channel.socket();
             socket.setSoLinger(false, 0);
             socket.setTcpNoDelay(true);
             socket.setKeepAlive(true);
             socket.setSoTimeout(read_timeout);
-
-            // The channel is always in blocking mode.
-            channel.configureBlocking(true);
-            channel.socket().connect(address, connect_timeout);
+            socket.connect(address, connect_timeout);
 
             out = new FramedBufferOutputStream(channel);
             responseExecutor.submit(() -> this.handleReadResponses(channel, service));
@@ -138,16 +145,10 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
     @Override
     public synchronized void close() throws IOException {
         if (channel != null) {
-            SocketChannel ch = channel;
-            OutputStream o = out;
-
-            channel = null;
-            out = null;
-
-            try {
-                o.close();
-            } finally {
-                ch.close();
+            try (SocketChannel ignore1 = channel;
+                 OutputStream ignore2 = out) {
+                channel = null;
+                out = null;
             }
         }
     }

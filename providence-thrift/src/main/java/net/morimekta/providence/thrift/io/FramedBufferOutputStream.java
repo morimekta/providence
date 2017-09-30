@@ -75,7 +75,7 @@ public class FramedBufferOutputStream extends OutputStream {
             throw new IOException(String.format("Frame size exceeded: %d needed, %d remaining, %d total",
                                                 len, buffer.remaining(), buffer.capacity()));
         }
-        buffer.put(var1, off, off);
+        buffer.put(var1, off, len);
     }
 
     /**
@@ -88,12 +88,15 @@ public class FramedBufferOutputStream extends OutputStream {
         int frameSize = buffer.position();
         if (frameSize > 0) {
             TFramedTransport.encodeFrameSize(frameSize, frameSizeBuffer);
-            out.write(ByteBuffer.wrap(frameSizeBuffer));
-
             buffer.flip();
-            while (buffer.hasRemaining()) {
-                out.write(buffer);
+
+            synchronized (out) {
+                out.write(ByteBuffer.wrap(frameSizeBuffer));
+                while (buffer.hasRemaining()) {
+                    out.write(buffer);
+                }
             }
+
             buffer.rewind();
             buffer.limit(buffer.capacity());
         }
