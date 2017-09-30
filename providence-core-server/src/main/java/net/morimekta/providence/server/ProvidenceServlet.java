@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ProvidenceServlet extends HttpServlet {
     private final static Logger LOGGER = LoggerFactory.getLogger(ProvidenceServlet.class);
-    private final static long NS_IN_MILLIS = TimeUnit.NANOSECONDS.toMillis(1);
+    private final static long NS_IN_MILLIS = TimeUnit.MILLISECONDS.toNanos(1);
 
     private final ProcessorProvider  processorProvider;
     private final SerializerProvider serializerProvider;
