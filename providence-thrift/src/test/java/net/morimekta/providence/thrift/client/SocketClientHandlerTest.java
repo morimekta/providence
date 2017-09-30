@@ -17,6 +17,8 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.transport.TServerSocket;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,16 +30,20 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.morimekta.providence.PApplicationExceptionType.UNKNOWN_METHOD;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.thrift.util.TestUtil.findFreePort;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -56,6 +62,8 @@ public class SocketClientHandlerTest {
 
     @BeforeClass
     public static void setUpServer() throws Exception {
+        Awaitility.setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
+
         port = findFreePort();
         impl = Mockito.mock(Iface.class);
 
@@ -87,13 +95,18 @@ public class SocketClientHandlerTest {
 
     @Test
     public void testSimpleRequest() throws IOException, TException, Failure {
+        AtomicBoolean called = new AtomicBoolean();
         when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test")))
-                .thenReturn(new net.morimekta.test.thrift.thrift.service.Response("response"));
+                .thenAnswer(i -> {
+                    called.set(true);
+                    return new net.morimekta.test.thrift.thrift.service.Response("response");
+                });
 
         MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
 
         Response response = client.test(new Request("test"));
 
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
         verify(impl).test(any(net.morimekta.test.thrift.thrift.service.Request.class));
 
         assertThat(response, is(equalToMessage(new Response("response"))));
@@ -103,7 +116,15 @@ public class SocketClientHandlerTest {
     public void testOnewayRequest() throws IOException, TException, Failure {
         MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
 
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).ping();
+
         client.ping();
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).ping();
     }
@@ -125,7 +146,7 @@ public class SocketClientHandlerTest {
 
     @Test
     public void testSimpleRequest_wrongMethod()
-            throws IOException, TException, DecoderException, Failure {
+            throws IOException, TException, DecoderException, Failure, InterruptedException {
         when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
@@ -139,11 +160,13 @@ public class SocketClientHandlerTest {
             assertThat(e.getMessage(), is(equalTo("Invalid method name: 'testing'")));
         }
 
+        Thread.sleep(10L);
+
         verifyZeroInteractions(impl);
     }
 
     @Test
-    public void testSimpleRequest_cannotConnect() throws IOException, TException, Failure {
+    public void testSimpleRequest_cannotConnect() throws IOException, TException, Failure, InterruptedException {
         Serializer serializer = new BinarySerializer();
         InetSocketAddress address = new InetSocketAddress("localhost", port - 10);
         MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
@@ -154,6 +177,8 @@ public class SocketClientHandlerTest {
         } catch (ConnectException e) {
             assertThat(e.getMessage(), startsWith("Connection refused"));
         }
+
+        Thread.sleep(10L);
 
         verifyZeroInteractions(impl);
     }

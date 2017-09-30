@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static net.morimekta.providence.server.internal.TestNetUtil.factory;
 import static net.morimekta.providence.server.internal.TestNetUtil.getExposedPort;
