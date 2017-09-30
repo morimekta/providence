@@ -87,6 +87,10 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
     protected final void set(M config) {
         LinkedList<WeakReference<ConfigListener<M,F>>> iterateOver;
         synchronized (this) {
+            if (instance.get() != null && instance.get().equals(config)) {
+                return;
+            }
+
             instance.set(config);
             lastUpdateTimestamp.set(clock.millis());
             listeners.removeIf(Objects::isNull);

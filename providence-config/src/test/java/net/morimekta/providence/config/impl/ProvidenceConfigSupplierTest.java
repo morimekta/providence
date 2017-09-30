@@ -67,8 +67,12 @@ public class ProvidenceConfigSupplierTest {
 
     @Test
     public void testSupplier() throws IOException {
-        Database first = Database.builder().build();
-        Database second = Database.builder().build();
+        Database first = Database.builder()
+                                 .setDriver("com.mysql.Driver")
+                                 .build();
+        Database second = Database.builder()
+                                  .setDriver("org.h2.Driver")
+                                  .build();
 
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
@@ -105,8 +109,12 @@ public class ProvidenceConfigSupplierTest {
 
     @Test
     public void testWatchedSupplier() throws IOException {
-        Database first = Database.builder().build();
-        Database second = Database.builder().build();
+        Database first = Database.builder()
+                                 .setDriver("com.mysql.Driver")
+                                 .build();
+        Database second = Database.builder()
+                                  .setDriver("org.h2.Driver")
+                                  .build();
 
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
