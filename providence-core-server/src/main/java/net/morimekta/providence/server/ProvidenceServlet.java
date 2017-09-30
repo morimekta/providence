@@ -158,7 +158,8 @@ public class ProvidenceServlet extends HttpServlet {
 
                     try {
                         MediaType mediaType = MediaType.parse(entry);
-                        responseSerializer = serializerProvider.getSerializer(mediaType.type() + "/" + mediaType.subtype());
+                        responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters()
+                                                                                       .toString());
                         break;
                     } catch (IllegalArgumentException ignore) {
                         // Ignore. Bad header input is pretty common.
@@ -179,7 +180,7 @@ public class ProvidenceServlet extends HttpServlet {
                 resp.getOutputStream().write(baos.toByteArray());
                 resp.getOutputStream().flush();
             } else {
-                resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } catch (Exception e) {
             String logName = processor.getDescriptor().getQualifiedName();
