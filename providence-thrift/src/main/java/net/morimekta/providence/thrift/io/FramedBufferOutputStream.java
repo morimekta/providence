@@ -81,6 +81,8 @@ public class FramedBufferOutputStream extends OutputStream {
     /**
      * Write the frame at the current state, and reset the buffer to be able to
      * generate a new frame.
+     *
+     * @throws IOException On failed write.
      */
     public void completeFrame() throws IOException {
         int frameSize = buffer.position();

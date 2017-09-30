@@ -72,6 +72,7 @@ public class ProvidenceServlet extends HttpServlet {
      *
      * @param processor The providence service processor.
      * @param serializerProvider The serializer provider.
+     * @param instrumentation Instrumentation instance.
      */
     public ProvidenceServlet(@Nonnull PProcessor processor,
                              @Nonnull SerializerProvider serializerProvider,
@@ -96,6 +97,7 @@ public class ProvidenceServlet extends HttpServlet {
      *
      * @param processorProvider The processor supplier.
      * @param serializerProvider The serializer provider.
+     * @param instrumentation Instrumentation instance.
      */
     public ProvidenceServlet(@Nonnull ProcessorProvider processorProvider,
                              @Nonnull SerializerProvider serializerProvider,
