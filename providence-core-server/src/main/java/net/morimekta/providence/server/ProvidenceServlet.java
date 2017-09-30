@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -48,6 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ProvidenceServlet extends HttpServlet {
     private final static Logger LOGGER = LoggerFactory.getLogger(ProvidenceServlet.class);
+    private final static long NS_IN_MILLIS = TimeUnit.NANOSECONDS.toMillis(1);
 
     private final ProcessorProvider  processorProvider;
     private final SerializerProvider serializerProvider;
@@ -86,7 +88,7 @@ public class ProvidenceServlet extends HttpServlet {
      */
     public ProvidenceServlet(@Nonnull ProcessorProvider processorProvider,
                              @Nonnull SerializerProvider serializerProvider) {
-        this(processorProvider, serializerProvider, (call, response, time) -> {});
+        this(processorProvider, serializerProvider, (time, call, response) -> {});
     }
 
     /**
@@ -133,7 +135,8 @@ public class ProvidenceServlet extends HttpServlet {
             if (req.getContentType() != null) {
                 try {
                     MediaType mediaType = MediaType.parse(req.getContentType());
-                    requestSerializer = serializerProvider.getSerializer(mediaType.withoutParameters().toString());
+                    requestSerializer = serializerProvider.getSerializer(mediaType.withoutParameters()
+                                                                                  .toString());
                 } catch (IllegalArgumentException e) {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown content-type: " + req.getContentType());
                     LOGGER.warn("Unknown content type in request", e);
@@ -179,11 +182,20 @@ public class ProvidenceServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
         } catch (Exception e) {
-            LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(), e);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());
+            String logName = processor.getDescriptor().getQualifiedName();
+            if (callRef.get() != null) {
+                logName = logName + "." + callRef.get().getMethod();
+            }
+
+            LOGGER.error("Unhandled exception in service call {}", logName, e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         } finally {
-            long duration = System.nanoTime() - start;
-            instrumentation.afterCall(callRef.get(), responseRef.get(), ((double) duration) / 1_000_000);
+            try {
+                long duration = System.nanoTime() - start;
+                instrumentation.afterCall(((double) duration) / NS_IN_MILLIS, callRef.get(), responseRef.get());
+            } catch (Throwable th) {
+                LOGGER.error("Exception in service instrumentation", th);
+            }
         }
     }
 }

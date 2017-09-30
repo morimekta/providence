@@ -102,7 +102,7 @@ public class ProvidenceServletTest {
 
         assertNotNull(response);
         assertEquals("{text:\"response\"}", response.asString());
-        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }
 
@@ -123,7 +123,7 @@ public class ProvidenceServletTest {
             assertEquals("failure", ex.getText());
         }
 
-        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }
 
@@ -159,7 +159,7 @@ public class ProvidenceServletTest {
         client.voidMethod(55);
 
         verify(impl).voidMethod(55);
-        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
     }
 
@@ -182,7 +182,7 @@ public class ProvidenceServletTest {
         }
 
         verify(impl).voidMethod(55);
-        verify(instrumentation).afterCall(any(PServiceCall.class), any(PServiceCall.class), anyDouble());
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
     }
 }
