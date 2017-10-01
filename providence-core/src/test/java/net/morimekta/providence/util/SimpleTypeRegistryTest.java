@@ -48,13 +48,13 @@ public class SimpleTypeRegistryTest {
             registry.getService("gurba.Calculator");
             fail("no exception");
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("No such program \"gurba\" exists for service \"Calculator\""));
+            assertThat(e.getMessage(), is("No such program \"gurba\" known for service \"Calculator\""));
         }
         try {
             registry.getService("Calculator", "gurba");
             fail("no exception");
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("No such program \"gurba\" exists for service \"Calculator\""));
+            assertThat(e.getMessage(), is("No such program \"gurba\" known for service \"Calculator\""));
         }
 
         try {

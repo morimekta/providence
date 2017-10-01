@@ -45,7 +45,8 @@ public class MessageProgramParser implements ProgramParser {
         try {
             return mSerializer.deserialize(in, ProgramType.kDescriptor);
         } catch (SerializerException tse) {
-            throw new ParseException("Failed to deserialize definition file.", tse);
+            throw new ParseException(tse, "Failed to deserialize definition file %s", file.getName())
+                    .setFile(file.getName());
         }
     }
 }

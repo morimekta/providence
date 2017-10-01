@@ -19,7 +19,21 @@
 
 package net.morimekta.providence.reflect.parser;
 
+import net.morimekta.providence.model.ProgramType;
+import net.morimekta.providence.serializer.JsonSerializer;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
@@ -27,7 +41,37 @@ import org.junit.Test;
  */
 public class MessageProgramParserTest {
     @Test
-    public void testParse() {
+    public void testParse() throws IOException {
+        MessageProgramParser parser = new MessageProgramParser(new JsonSerializer());
+        ByteArrayInputStream in = new ByteArrayInputStream(
+                ("{\n" +
+                 "  \"namespaces\": {\n" +
+                 "    \"java\": \"net.morimekta.providence\"\n" +
+                 "  }\n" +
+                 "}").getBytes(StandardCharsets.UTF_8));
 
+        ProgramType program = parser.parse(in, new File("test.json"), ImmutableSet.of());
+
+        assertThat(program.getNamespaces(), is(ImmutableMap.of(
+                "java", "net.morimekta.providence"
+        )));
+    }
+
+    @Test
+    public void testFail() throws IOException {
+        MessageProgramParser parser = new MessageProgramParser(new JsonSerializer());
+        ByteArrayInputStream in = new ByteArrayInputStream(
+                ("{\n" +
+                 "  \"namespaces\": {\n" +
+                 "    \"java\": \"net.morimekta.providence\"\n" +
+                 "  },\n" +
+                 "}").getBytes(StandardCharsets.UTF_8));
+
+        try {
+            parser.parse(in, new File("test.json"), ImmutableSet.of());
+            fail("no exception");
+        } catch (ParseException e) {
+            assertThat(e.getMessage(), is("Failed to deserialize definition file test.json"));
+        }
     }
 }

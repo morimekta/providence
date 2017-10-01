@@ -82,7 +82,7 @@ public class SimpleTypeRegistry extends BaseTypeRegistry {
         if (knownPrograms.contains(program)) {
             throw new IllegalArgumentException("No such service \"" + name + "\" in program \"" + program + "\"");
         } else {
-            throw new IllegalArgumentException("No such program \"" + program + "\" exists for service \"" + serviceName + "\"");
+            throw new IllegalArgumentException("No such program \"" + program + "\" known for service \"" + serviceName + "\"");
         }
     }
 

@@ -440,11 +440,17 @@ public class ThriftProgramParserTest {
                            "    }\n" +
                            "  },\n" +
                            "  {\n" +
+                           "    decl_typedef = {\n" +
+                           "      type = \"Imaginary\"\n" +
+                           "      name = \"I\"\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
                            "    decl_const = {\n" +
                            "      type = \"Imaginary\"\n" +
                            "      name = \"kSqrtMinusOne\"\n" +
                            "      value = \"{\\n  \\\"v\\\": 0.0,\\n  \\\"i\\\": -1.0\\n}\"\n" +
-                           "      start_line_no = 11\n" +
+                           "      start_line_no = 13\n" +
                            "      start_line_pos = 33\n" +
                            "    }\n" +
                            "  }\n" +

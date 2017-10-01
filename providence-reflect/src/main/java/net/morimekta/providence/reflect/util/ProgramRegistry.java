@@ -67,32 +67,32 @@ public class ProgramRegistry implements TypeRegistry {
     @Override
     public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String typeName,
                                                                 @Nonnull String programContext) {
-        return handle(typeName, programContext,
+        return handle(typeName, programContext, false,
                       p -> p.getDeclaredType(typeName, programContext));
     }
 
     @Nonnull
     @Override
     public PService getService(String serviceName, String programContext) {
-        return handle(serviceName, programContext,
+        return handle(serviceName, programContext,true,
                       r -> r.getService(serviceName, programContext));
     }
 
     @Nonnull
     @Override
     public PDescriptorProvider getProvider(String typeName, String programContext, Map<String, String> annotations) {
-        return handle(typeName, programContext,
+        return handle(typeName, programContext, false,
                       r -> r.getProvider(typeName, programContext, annotations));
     }
 
     @Nonnull
     @Override
     public PServiceProvider getServiceProvider(String serviceName, String programContext) {
-        return handle(serviceName, programContext,
+        return handle(serviceName, programContext, true,
                       r -> r.getServiceProvider(serviceName, programContext));
     }
 
-    private <T> T handle(String typeName, String programContext, Function<ProgramTypeRegistry, T> f) {
+    private <T> T handle(String typeName, String programContext, boolean isService, Function<ProgramTypeRegistry, T> f) {
         Exception e = null;
         String context = getProgramContext(typeName, programContext);
 
@@ -108,10 +108,18 @@ public class ProgramRegistry implements TypeRegistry {
         if (e != null) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        throw new IllegalArgumentException("No program \"" + context + "\" found for type \"" + typeName + "\"");
+        if (isService) {
+            throw new IllegalArgumentException("No such program \"" + context + "\" known for service \"" + typeName + "\"");
+        }
+        throw new IllegalArgumentException("No such program \"" + context + "\" known for type \"" + typeName + "\"");
     }
 
     private String getProgramContext(String typeName, String programContext) {
+        String[] tmp = typeName.split("[<]", 2);
+        if (tmp.length > 1) {
+            // if this is a list, set or map.
+            return programContext;
+        }
         if (typeName.contains(".")) {
             return typeName.substring(0, typeName.indexOf("."));
         }

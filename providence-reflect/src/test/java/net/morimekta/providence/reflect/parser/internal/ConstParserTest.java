@@ -13,6 +13,7 @@ import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -70,6 +71,8 @@ public class ConstParserTest {
         assertThat(parse("test", "string", "null"),
                    is(nullValue()));
         assertThat(parse("test", "binary", "'AAAA'"),
+                   is(Binary.fromBase64("AAAA")));
+        assertThat(parse("test", "binary", "\"AAAA\""),
                    is(Binary.fromBase64("AAAA")));
         assertThat(parse("test", "binary", "null"),
                    is(nullValue()));
@@ -159,6 +162,41 @@ public class ConstParserTest {
                                 .setDoubleList(ImmutableList.of(0.0, 0.1, 4.2e-4))
                                 .setStringList(ImmutableList.of())
                                 .build()));
+    }
+
+    @Test
+    public void testMapListSet() throws IOException {
+        assertThat(parse("providence", "map<Value,list<i32>>",
+                         "{\n" +
+                         "  Value.FIRST: [1, 2, 3, 4]," +
+                         "  2: [4, 3, 2, 1]" +
+                         "}"),
+                   is(ImmutableMap.of(
+                           Value.FIRST, ImmutableList.of(1, 2, 3, 4),
+                           Value.SECOND, ImmutableList.of(4, 3, 2, 1)
+                   )));
+        assertThat(parse("providence", "map<bool,set<i32>>",
+                         "{\n" +
+                         "  true: [1, 2, 3, 4]," +
+                         "  false: [5, 6, 7, 8]" +
+                         "}"),
+                   is(ImmutableMap.of(
+                           Boolean.TRUE, ImmutableSet.of(1, 2, 3, 4),
+                           Boolean.FALSE, ImmutableSet.of(5, 6, 7, 8)
+                   )));
+
+        assertThat(parse("providence", "map<i32,i32>",
+                         "{\n" +
+                         "}"),
+                   is(ImmutableMap.of()));
+        assertThat(parse("providence", "list<i32>",
+                         "[\n" +
+                         "]"),
+                   is(ImmutableList.of()));
+        assertThat(parse("providence", "set<i32>",
+                         "[\n" +
+                         "]"),
+                   is(ImmutableSet.of()));
     }
 
     @Test
