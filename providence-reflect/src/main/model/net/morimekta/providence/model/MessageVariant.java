@@ -8,14 +8,6 @@ package net.morimekta.providence.model;
  * UNION: No required fields. Only one field set to be valid.
  * EXCEPTION: No &#39;cause&#39; field, &#39;message&#39; field *must* be a string (java).
  */
-/**
- * Struct variant for StructType. The lower-case of the enum value is the
- * thrift keyword.
- * <p>
- * struct: No &#39;required&#39; fields must be present (set to non-null value).
- * UNION: No required fields. Only one field set to be valid.
- * EXCEPTION: No &#39;cause&#39; field, &#39;message&#39; field *must* be a string (java).
- */
 @javax.annotation.Generated("providence-maven-plugin")
 public enum MessageVariant
         implements net.morimekta.providence.PEnumValue<MessageVariant> {

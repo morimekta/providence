@@ -70,11 +70,6 @@ public class BaseEnumFormatter {
             classComment.finish();
         }
 
-        if (type.getDocumentation() != null) {
-            new BlockCommentBuilder(writer)
-                    .comment(type.getDocumentation())
-                    .finish();
-        }
         formatters.forEach(f -> f.appendClassAnnotations(type));
 
         writer.formatln("public enum %s", simpleClass)
