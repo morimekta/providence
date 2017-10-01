@@ -92,7 +92,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
     public T valueForName(String name) {
         T value = findByName(name);
         if (value == null) {
-            throw new IllegalArgumentException("No " + getQualifiedName() + " for name \" " + name + "\"");
+            throw new IllegalArgumentException("No " + getQualifiedName() + " for name \"" + name + "\"");
         }
         return value;
     }

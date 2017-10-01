@@ -20,6 +20,7 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
 import net.morimekta.test.providence.core.CompactFields;
 import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.DefaultFields;
@@ -41,6 +42,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
@@ -90,6 +92,34 @@ public class PStructDescriptorTest {
         assertThat(base, is(same));
         assertThat(base, not(size));
         assertThat(base, not(diff));
+    }
+
+    @Test
+    public void testFindField() {
+        assertThat(Operation.kDescriptor.fieldForId(1), is(Operation._Field.OPERATOR));
+        assertThat(Operation.kDescriptor.fieldForName("operands"), is(Operation._Field.OPERANDS));
+        assertThat(Operation.kDescriptor.getField(1), is(Operation._Field.OPERATOR));
+        assertThat(Operation.kDescriptor.getField("operands"), is(Operation._Field.OPERANDS));
+
+        try {
+            Operation.kDescriptor.fieldForId(5);
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("No field key 5 in calculator.Operation"));
+        }
+        try {
+            Operation.kDescriptor.fieldForName("bar");
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("No field \"bar\" in calculator.Operation"));
+        }
+    }
+
+    @Test
+    public void testExtra() {
+        assertThat(Operation.kDescriptor.getType(), is(PType.MESSAGE));
+        assertThat(Operation.kDescriptor.getVariant(), is(PMessageVariant.STRUCT));
+        assertThat(Operation.kDescriptor.isSimple(), is(false));
     }
 
     private static class Dummy extends  PStructDescriptor {

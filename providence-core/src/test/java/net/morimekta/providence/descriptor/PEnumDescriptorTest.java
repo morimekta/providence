@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class PEnumDescriptorTest {
     @Test
@@ -41,6 +42,24 @@ public class PEnumDescriptorTest {
         assertThat(base, is(same));
         assertThat(base, not(size));
         assertThat(base, not(diff));
+    }
+
+    @Test
+    public void testValue() {
+        assertThat(Operator.kDescriptor.valueForId(4), is(Operator.MULTIPLY));
+        assertThat(Operator.kDescriptor.valueForName("ADD"), is(Operator.ADD));
+        try {
+            Operator.kDescriptor.valueForId(55);
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("No calculator.Operator for id 55"));
+        }
+        try {
+            Operator.kDescriptor.valueForName("MODULO");
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("No calculator.Operator for name \"MODULO\""));
+        }
     }
 
     private static class Dummy extends PEnumDescriptor {

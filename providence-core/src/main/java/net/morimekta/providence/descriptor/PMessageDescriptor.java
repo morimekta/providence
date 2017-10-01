@@ -76,7 +76,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     public F fieldForName(String name) {
         F field = findFieldByName(name);
         if (field == null) {
-            throw new IllegalArgumentException("No field " + name + " in " + getQualifiedName());
+            throw new IllegalArgumentException("No field \"" + name + "\" in " + getQualifiedName());
         }
         return field;
     }
