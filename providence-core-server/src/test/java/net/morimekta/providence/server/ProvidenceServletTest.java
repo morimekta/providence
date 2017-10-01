@@ -16,6 +16,8 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.THttpClient;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -27,16 +29,18 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.morimekta.providence.server.internal.TestNetUtil.factory;
 import static net.morimekta.providence.server.internal.TestNetUtil.getExposedPort;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -62,6 +66,7 @@ public class ProvidenceServletTest {
 
     @BeforeClass
     public static void setUpServer() throws Exception {
+        Awaitility.setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
         Log.setLog(new NoLogging());
 
         impl = mock(TestService.Iface.class);
@@ -95,12 +100,18 @@ public class ProvidenceServletTest {
 
     @Test
     public void testSimpleRequest() throws IOException, Failure {
-        when(impl.test(any(Request.class))).thenReturn(new Response("response"));
+        AtomicBoolean called = new AtomicBoolean();
+        when(impl.test(any(Request.class))).thenAnswer(i -> {
+            called.set(true);
+            return new Response("response");
+        });
 
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 ProvidenceServletTest::endpoint, factory(), provider));
 
         Response response = client.test(new Request("request"));
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         assertNotNull(response);
         assertEquals("{text:\"response\"}", response.asString());
@@ -110,9 +121,13 @@ public class ProvidenceServletTest {
 
     @Test
     public void testSimpleRequest_exception() throws IOException, Failure {
-        when(impl.test(any(Request.class))).thenThrow(Failure.builder()
-                                                             .setText("failure")
-                                                             .build());
+        AtomicBoolean called = new AtomicBoolean();
+        when(impl.test(any(Request.class))).thenAnswer(i -> {
+            called.set(true);
+            throw Failure.builder()
+                   .setText("failure")
+                   .build();
+        });
 
         TestService.Iface client = new TestService.Client(new HttpClientHandler(ProvidenceServletTest::endpoint,
                                                                                 factory(),
@@ -125,12 +140,14 @@ public class ProvidenceServletTest {
             assertEquals("failure", ex.getText());
         }
 
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+
         verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }
 
     @Test
-    public void testSimpleRequest_404() throws IOException, Failure {
+    public void testSimpleRequest_404() throws IOException, Failure, InterruptedException {
         when(impl.test(any(Request.class))).thenThrow(Failure.builder()
                                                              .setText("failure")
                                                              .build());
@@ -147,6 +164,8 @@ public class ProvidenceServletTest {
             assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
         }
 
+        Thread.sleep(10L);
+
         verifyZeroInteractions(impl, instrumentation);
     }
 
@@ -158,7 +177,15 @@ public class ProvidenceServletTest {
         net.morimekta.test.thrift.service.TestService.Iface client =
                 new net.morimekta.test.thrift.service.TestService.Client(protocol);
 
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).voidMethod(55);
+
         client.voidMethod(55);
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).voidMethod(55);
         verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
@@ -173,7 +200,15 @@ public class ProvidenceServletTest {
         net.morimekta.test.thrift.service.TestService.Iface client =
                 new net.morimekta.test.thrift.service.TestService.Client(protocol);
 
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).ping();
+
         client.ping();
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).ping();
         verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
@@ -188,15 +223,19 @@ public class ProvidenceServletTest {
         net.morimekta.test.thrift.service.TestService.Iface client =
                 new net.morimekta.test.thrift.service.TestService.Client(protocol);
 
-        doThrow(new Failure("test"))
-                .when(impl)
-                .voidMethod(55);
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            throw new Failure("test");
+        }).when(impl).voidMethod(55);
 
         try {
             client.voidMethod(55);
         } catch (net.morimekta.test.thrift.service.Failure e) {
             assertEquals("test", e.getText());
         }
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).voidMethod(55);
         verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
