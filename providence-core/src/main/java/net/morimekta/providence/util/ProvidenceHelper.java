@@ -66,9 +66,13 @@ public class ProvidenceHelper {
                          PMessageDescriptor<Message, Field> descriptor,
                          Serializer serializer)
             throws IOException {
-        InputStream in = ProvidenceHelper.class.getResourceAsStream(resource);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream in = classLoader.getResourceAsStream(resource);
         if(in == null) {
-            throw new IOException("No such resource " + resource);
+            in = ProvidenceHelper.class.getResourceAsStream(resource);
+            if (in == null) {
+                throw new IOException("No such resource " + resource);
+            }
         }
         return serializer.deserialize(new BufferedInputStream(in), descriptor);
     }

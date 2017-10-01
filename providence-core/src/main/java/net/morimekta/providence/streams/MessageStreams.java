@@ -111,9 +111,13 @@ public class MessageStreams {
                              @Nonnull Serializer serializer,
                              @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
-        InputStream in = MessageStreams.class.getResourceAsStream(resource);
-        if (in == null) {
-            throw new IOException("No such resource " + resource);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream in = classLoader.getResourceAsStream(resource);
+        if(in == null) {
+            in = MessageStreams.class.getResourceAsStream(resource);
+            if (in == null) {
+                throw new IOException("No such resource " + resource);
+            }
         }
         in = new BufferedInputStream(in);
         return stream(in, serializer, descriptor);
