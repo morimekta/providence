@@ -47,6 +47,10 @@ public class Containers
     private final transient net.morimekta.test.providence.core.UnionFields mUnionFields;
     private final transient net.morimekta.test.providence.core.ExceptionFields mExceptionFields;
     private final transient net.morimekta.test.providence.core.DefaultValues mDefaultValues;
+    private final transient java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> mMapListCompact;
+    private final transient java.util.List<java.util.Map<Integer,Integer>> mListMapNumbers;
+    private final transient java.util.Set<java.util.List<Integer>> mSetListNumbers;
+    private final transient java.util.List<java.util.List<Integer>> mListListNumbers;
 
     private volatile transient int tHashCode;
 
@@ -215,6 +219,26 @@ public class Containers
         mUnionFields = builder.mUnionFields_builder != null ? builder.mUnionFields_builder.build() : builder.mUnionFields;
         mExceptionFields = builder.mExceptionFields_builder != null ? builder.mExceptionFields_builder.build() : builder.mExceptionFields;
         mDefaultValues = builder.mDefaultValues_builder != null ? builder.mDefaultValues_builder.build() : builder.mDefaultValues;
+        if (builder.isSetMapListCompact()) {
+            mMapListCompact = com.google.common.collect.ImmutableMap.copyOf(builder.mMapListCompact);
+        } else {
+            mMapListCompact = null;
+        }
+        if (builder.isSetListMapNumbers()) {
+            mListMapNumbers = com.google.common.collect.ImmutableList.copyOf(builder.mListMapNumbers);
+        } else {
+            mListMapNumbers = null;
+        }
+        if (builder.isSetSetListNumbers()) {
+            mSetListNumbers = com.google.common.collect.ImmutableSet.copyOf(builder.mSetListNumbers);
+        } else {
+            mSetListNumbers = null;
+        }
+        if (builder.isSetListListNumbers()) {
+            mListListNumbers = com.google.common.collect.ImmutableList.copyOf(builder.mListListNumbers);
+        } else {
+            mListListNumbers = null;
+        }
     }
 
     public int numBooleanList() {
@@ -758,6 +782,66 @@ public class Containers
         return mDefaultValues;
     }
 
+    public int numMapListCompact() {
+        return mMapListCompact != null ? mMapListCompact.size() : 0;
+    }
+
+    public boolean hasMapListCompact() {
+        return mMapListCompact != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> getMapListCompact() {
+        return mMapListCompact;
+    }
+
+    public int numListMapNumbers() {
+        return mListMapNumbers != null ? mListMapNumbers.size() : 0;
+    }
+
+    public boolean hasListMapNumbers() {
+        return mListMapNumbers != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public java.util.List<java.util.Map<Integer,Integer>> getListMapNumbers() {
+        return mListMapNumbers;
+    }
+
+    public int numSetListNumbers() {
+        return mSetListNumbers != null ? mSetListNumbers.size() : 0;
+    }
+
+    public boolean hasSetListNumbers() {
+        return mSetListNumbers != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public java.util.Set<java.util.List<Integer>> getSetListNumbers() {
+        return mSetListNumbers;
+    }
+
+    public int numListListNumbers() {
+        return mListListNumbers != null ? mListListNumbers.size() : 0;
+    }
+
+    public boolean hasListListNumbers() {
+        return mListListNumbers != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public java.util.List<java.util.List<Integer>> getListListNumbers() {
+        return mListListNumbers;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -798,6 +882,10 @@ public class Containers
             case 54: return hasUnionFields();
             case 55: return hasExceptionFields();
             case 56: return hasDefaultValues();
+            case 61: return hasMapListCompact();
+            case 62: return hasListMapNumbers();
+            case 63: return hasSetListNumbers();
+            case 64: return hasListListNumbers();
             default: return false;
         }
     }
@@ -842,6 +930,10 @@ public class Containers
             case 54: return hasUnionFields() ? 1 : 0;
             case 55: return hasExceptionFields() ? 1 : 0;
             case 56: return hasDefaultValues() ? 1 : 0;
+            case 61: return numMapListCompact();
+            case 62: return numListMapNumbers();
+            case 63: return numSetListNumbers();
+            case 64: return numListListNumbers();
             default: return 0;
         }
     }
@@ -886,6 +978,10 @@ public class Containers
             case 54: return getUnionFields();
             case 55: return getExceptionFields();
             case 56: return getDefaultValues();
+            case 61: return getMapListCompact();
+            case 62: return getListMapNumbers();
+            case 63: return getSetListNumbers();
+            case 64: return getListListNumbers();
             default: return null;
         }
     }
@@ -931,7 +1027,11 @@ public class Containers
                java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
                java.util.Objects.equals(mUnionFields, other.mUnionFields) &&
                java.util.Objects.equals(mExceptionFields, other.mExceptionFields) &&
-               java.util.Objects.equals(mDefaultValues, other.mDefaultValues);
+               java.util.Objects.equals(mDefaultValues, other.mDefaultValues) &&
+               java.util.Objects.equals(mMapListCompact, other.mMapListCompact) &&
+               java.util.Objects.equals(mListMapNumbers, other.mListMapNumbers) &&
+               java.util.Objects.equals(mSetListNumbers, other.mSetListNumbers) &&
+               java.util.Objects.equals(mListListNumbers, other.mListListNumbers);
     }
 
     @Override
@@ -975,7 +1075,11 @@ public class Containers
                     _Field.OPTIONAL_FIELDS, mOptionalFields,
                     _Field.UNION_FIELDS, mUnionFields,
                     _Field.EXCEPTION_FIELDS, mExceptionFields,
-                    _Field.DEFAULT_VALUES, mDefaultValues);
+                    _Field.DEFAULT_VALUES, mDefaultValues,
+                    _Field.MAP_LIST_COMPACT, mMapListCompact,
+                    _Field.LIST_MAP_NUMBERS, mListMapNumbers,
+                    _Field.SET_LIST_NUMBERS, mSetListNumbers,
+                    _Field.LIST_LIST_NUMBERS, mListListNumbers);
         }
         return tHashCode;
     }
@@ -1208,9 +1312,33 @@ public class Containers
                .append(mExceptionFields.asString());
         }
         if (hasDefaultValues()) {
-            if (!first) out.append(',');
+            if (first) first = false;
+            else out.append(',');
             out.append("defaultValues:")
                .append(mDefaultValues.asString());
+        }
+        if (hasMapListCompact()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("map_list_compact:")
+               .append(net.morimekta.util.Strings.asString(mMapListCompact));
+        }
+        if (hasListMapNumbers()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("list_map_numbers:")
+               .append(net.morimekta.util.Strings.asString(mListMapNumbers));
+        }
+        if (hasSetListNumbers()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("set_list_numbers:")
+               .append(net.morimekta.util.Strings.asString(mSetListNumbers));
+        }
+        if (hasListListNumbers()) {
+            if (!first) out.append(',');
+            out.append("list_list_numbers:")
+               .append(net.morimekta.util.Strings.asString(mListListNumbers));
         }
         out.append('}');
         return out.toString();
@@ -1476,6 +1604,34 @@ public class Containers
         if (c != 0) return c;
         if (mDefaultValues != null) {
             c = mDefaultValues.compareTo(other.mDefaultValues);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mMapListCompact != null, other.mMapListCompact != null);
+        if (c != 0) return c;
+        if (mMapListCompact != null) {
+            c = Integer.compare(mMapListCompact.hashCode(), other.mMapListCompact.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mListMapNumbers != null, other.mListMapNumbers != null);
+        if (c != 0) return c;
+        if (mListMapNumbers != null) {
+            c = Integer.compare(mListMapNumbers.hashCode(), other.mListMapNumbers.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mSetListNumbers != null, other.mSetListNumbers != null);
+        if (c != 0) return c;
+        if (mSetListNumbers != null) {
+            c = Integer.compare(mSetListNumbers.hashCode(), other.mSetListNumbers.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mListListNumbers != null, other.mListListNumbers != null);
+        if (c != 0) return c;
+        if (mListListNumbers != null) {
+            c = Integer.compare(mListListNumbers.hashCode(), other.mListListNumbers.hashCode());
             if (c != 0) return c;
         }
 
@@ -1887,6 +2043,66 @@ public class Containers
             length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDefaultValues);
         }
 
+        if (hasMapListCompact()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 61);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeByte((byte) 15);
+            length += writer.writeUInt32(mMapListCompact.size());
+            for (java.util.Map.Entry<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> entry_38 : mMapListCompact.entrySet()) {
+                length += writer.writeInt(entry_38.getKey());
+                length += writer.writeByte((byte) 12);
+                length += writer.writeUInt32(entry_38.getValue().size());
+                for (net.morimekta.test.providence.core.CompactFields entry_39 : entry_38.getValue()) {
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_39);
+                }
+            }
+        }
+
+        if (hasListMapNumbers()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 62);
+            length += writer.writeByte((byte) 13);
+            length += writer.writeUInt32(mListMapNumbers.size());
+            for (java.util.Map<Integer,Integer> entry_40 : mListMapNumbers) {
+                length += writer.writeByte((byte) 8);
+                length += writer.writeByte((byte) 8);
+                length += writer.writeUInt32(entry_40.size());
+                for (java.util.Map.Entry<Integer,Integer> entry_41 : entry_40.entrySet()) {
+                    length += writer.writeInt(entry_41.getKey());
+                    length += writer.writeInt(entry_41.getValue());
+                }
+            }
+        }
+
+        if (hasSetListNumbers()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 63);
+            length += writer.writeByte((byte) 15);
+            length += writer.writeUInt32(mSetListNumbers.size());
+            for (java.util.List<Integer> entry_42 : mSetListNumbers) {
+                length += writer.writeByte((byte) 8);
+                length += writer.writeUInt32(entry_42.size());
+                for (Integer entry_43 : entry_42) {
+                    length += writer.writeInt(entry_43);
+                }
+            }
+        }
+
+        if (hasListListNumbers()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 64);
+            length += writer.writeByte((byte) 15);
+            length += writer.writeUInt32(mListListNumbers.size());
+            for (java.util.List<Integer> entry_44 : mListListNumbers) {
+                length += writer.writeByte((byte) 8);
+                length += writer.writeUInt32(entry_44.size());
+                for (Integer entry_45 : entry_44) {
+                    length += writer.writeInt(entry_45);
+                }
+            }
+        }
+
         length += writer.writeByte((byte) 0);
         return length;
     }
@@ -1935,6 +2151,10 @@ public class Containers
         UNION_FIELDS(54, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "unionFields", net.morimekta.test.providence.core.UnionFields.provider(), null),
         EXCEPTION_FIELDS(55, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptionFields", net.morimekta.test.providence.core.ExceptionFields.provider(), null),
         DEFAULT_VALUES(56, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultValues", net.morimekta.test.providence.core.DefaultValues.provider(), null),
+        MAP_LIST_COMPACT(61, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "map_list_compact", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.I32.provider(),net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.CompactFields.provider())), null),
+        LIST_MAP_NUMBERS(62, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "list_map_numbers", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.I32.provider(),net.morimekta.providence.descriptor.PPrimitive.I32.provider())), null),
+        SET_LIST_NUMBERS(63, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "set_list_numbers", net.morimekta.providence.descriptor.PSet.provider(net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.I32.provider())), null),
+        LIST_LIST_NUMBERS(64, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "list_list_numbers", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.I32.provider())), null),
         ;
 
         private final int mId;
@@ -2019,6 +2239,10 @@ public class Containers
                 case 54: return _Field.UNION_FIELDS;
                 case 55: return _Field.EXCEPTION_FIELDS;
                 case 56: return _Field.DEFAULT_VALUES;
+                case 61: return _Field.MAP_LIST_COMPACT;
+                case 62: return _Field.LIST_MAP_NUMBERS;
+                case 63: return _Field.SET_LIST_NUMBERS;
+                case 64: return _Field.LIST_LIST_NUMBERS;
             }
             return null;
         }
@@ -2066,6 +2290,10 @@ public class Containers
                 case "unionFields": return _Field.UNION_FIELDS;
                 case "exceptionFields": return _Field.EXCEPTION_FIELDS;
                 case "defaultValues": return _Field.DEFAULT_VALUES;
+                case "map_list_compact": return _Field.MAP_LIST_COMPACT;
+                case "list_map_numbers": return _Field.LIST_MAP_NUMBERS;
+                case "set_list_numbers": return _Field.SET_LIST_NUMBERS;
+                case "list_list_numbers": return _Field.LIST_LIST_NUMBERS;
             }
             return null;
         }
@@ -2201,13 +2429,17 @@ public class Containers
         private net.morimekta.test.providence.core.ExceptionFields._Builder mExceptionFields_builder;
         private net.morimekta.test.providence.core.DefaultValues mDefaultValues;
         private net.morimekta.test.providence.core.DefaultValues._Builder mDefaultValues_builder;
+        private java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> mMapListCompact;
+        private java.util.List<java.util.Map<Integer,Integer>> mListMapNumbers;
+        private java.util.Set<java.util.List<Integer>> mSetListNumbers;
+        private java.util.List<java.util.List<Integer>> mListListNumbers;
 
         /**
          * Make a providence.Containers builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(37);
-            modified = new java.util.BitSet(37);
+            optionals = new java.util.BitSet(41);
+            modified = new java.util.BitSet(41);
         }
 
         /**
@@ -2365,6 +2597,22 @@ public class Containers
             if (base.hasDefaultValues()) {
                 optionals.set(36);
                 mDefaultValues = base.mDefaultValues;
+            }
+            if (base.hasMapListCompact()) {
+                optionals.set(37);
+                mMapListCompact = base.mMapListCompact;
+            }
+            if (base.hasListMapNumbers()) {
+                optionals.set(38);
+                mListMapNumbers = base.mListMapNumbers;
+            }
+            if (base.hasSetListNumbers()) {
+                optionals.set(39);
+                mSetListNumbers = base.mSetListNumbers;
+            }
+            if (base.hasListListNumbers()) {
+                optionals.set(40);
+                mListListNumbers = base.mListListNumbers;
             }
         }
 
@@ -2633,6 +2881,30 @@ public class Containers
                 } else {
                     mDefaultValues = from.getDefaultValues();
                 }
+            }
+
+            if (from.hasMapListCompact()) {
+                optionals.set(37);
+                modified.set(37);
+                mutableMapListCompact().putAll(from.getMapListCompact());
+            }
+
+            if (from.hasListMapNumbers()) {
+                optionals.set(38);
+                modified.set(38);
+                mListMapNumbers = from.getListMapNumbers();
+            }
+
+            if (from.hasSetListNumbers()) {
+                optionals.set(39);
+                modified.set(39);
+                mutableSetListNumbers().addAll(from.getSetListNumbers());
+            }
+
+            if (from.hasListListNumbers()) {
+                optionals.set(40);
+                modified.set(40);
+                mListListNumbers = from.getListListNumbers();
             }
             return this;
         }
@@ -5717,6 +5989,340 @@ public class Containers
             return mDefaultValues;
         }
 
+        /**
+         * Sets the value of map_list_compact.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setMapListCompact(java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> value) {
+            if (value == null) {
+                return clearMapListCompact();
+            }
+
+            optionals.set(37);
+            modified.set(37);
+            mMapListCompact = com.google.common.collect.ImmutableMap.copyOf(value);
+            return this;
+        }
+
+        /**
+         * Adds a mapping to map_list_compact.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder putInMapListCompact(int key, java.util.List<net.morimekta.test.providence.core.CompactFields> value) {
+            optionals.set(37);
+            modified.set(37);
+            mutableMapListCompact().put(key, value);
+            return this;
+        }
+
+        /**
+         * Checks for presence of the map_list_compact field.
+         *
+         * @return True if map_list_compact has been set.
+         */
+        public boolean isSetMapListCompact() {
+            return optionals.get(37);
+        }
+
+        /**
+         * Checks if map_list_compact has been modified since the _Builder was created.
+         *
+         * @return True if map_list_compact has been modified.
+         */
+        public boolean isModifiedMapListCompact() {
+            return modified.get(37);
+        }
+
+        /**
+         * Clears the map_list_compact field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearMapListCompact() {
+            optionals.clear(37);
+            modified.set(37);
+            mMapListCompact = null;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained map_list_compact.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> mutableMapListCompact() {
+            optionals.set(37);
+            modified.set(37);
+
+            if (mMapListCompact == null) {
+                mMapListCompact = new java.util.HashMap<>();
+            } else if (!(mMapListCompact instanceof java.util.HashMap)) {
+                mMapListCompact = new java.util.HashMap<>(mMapListCompact);
+            }
+            return mMapListCompact;
+        }
+
+        /**
+         * Sets the value of list_map_numbers.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setListMapNumbers(java.util.Collection<java.util.Map<Integer,Integer>> value) {
+            if (value == null) {
+                return clearListMapNumbers();
+            }
+
+            optionals.set(38);
+            modified.set(38);
+            mListMapNumbers = com.google.common.collect.ImmutableList.copyOf(value);
+            return this;
+        }
+
+        /**
+         * Adds entries to list_map_numbers.
+         *
+         * @param values The added value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder addToListMapNumbers(java.util.Map<Integer,Integer>... values) {
+            optionals.set(38);
+            modified.set(38);
+            java.util.List<java.util.Map<Integer,Integer>> _container = mutableListMapNumbers();
+            for (java.util.Map<Integer,Integer> item : values) {
+                _container.add(item);
+            }
+            return this;
+        }
+
+        /**
+         * Checks for presence of the list_map_numbers field.
+         *
+         * @return True if list_map_numbers has been set.
+         */
+        public boolean isSetListMapNumbers() {
+            return optionals.get(38);
+        }
+
+        /**
+         * Checks if list_map_numbers has been modified since the _Builder was created.
+         *
+         * @return True if list_map_numbers has been modified.
+         */
+        public boolean isModifiedListMapNumbers() {
+            return modified.get(38);
+        }
+
+        /**
+         * Clears the list_map_numbers field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearListMapNumbers() {
+            optionals.clear(38);
+            modified.set(38);
+            mListMapNumbers = null;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained list_map_numbers.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public java.util.List<java.util.Map<Integer,Integer>> mutableListMapNumbers() {
+            optionals.set(38);
+            modified.set(38);
+
+            if (mListMapNumbers == null) {
+                mListMapNumbers = new java.util.LinkedList<>();
+            } else if (!(mListMapNumbers instanceof java.util.LinkedList)) {
+                mListMapNumbers = new java.util.LinkedList<>(mListMapNumbers);
+            }
+            return mListMapNumbers;
+        }
+
+        /**
+         * Sets the value of set_list_numbers.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setSetListNumbers(java.util.Collection<java.util.List<Integer>> value) {
+            if (value == null) {
+                return clearSetListNumbers();
+            }
+
+            optionals.set(39);
+            modified.set(39);
+            mSetListNumbers = com.google.common.collect.ImmutableSet.copyOf(value);
+            return this;
+        }
+
+        /**
+         * Adds entries to set_list_numbers.
+         *
+         * @param values The added value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder addToSetListNumbers(java.util.List<Integer>... values) {
+            optionals.set(39);
+            modified.set(39);
+            java.util.Set<java.util.List<Integer>> _container = mutableSetListNumbers();
+            for (java.util.List<Integer> item : values) {
+                _container.add(item);
+            }
+            return this;
+        }
+
+        /**
+         * Checks for presence of the set_list_numbers field.
+         *
+         * @return True if set_list_numbers has been set.
+         */
+        public boolean isSetSetListNumbers() {
+            return optionals.get(39);
+        }
+
+        /**
+         * Checks if set_list_numbers has been modified since the _Builder was created.
+         *
+         * @return True if set_list_numbers has been modified.
+         */
+        public boolean isModifiedSetListNumbers() {
+            return modified.get(39);
+        }
+
+        /**
+         * Clears the set_list_numbers field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearSetListNumbers() {
+            optionals.clear(39);
+            modified.set(39);
+            mSetListNumbers = null;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained set_list_numbers.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public java.util.Set<java.util.List<Integer>> mutableSetListNumbers() {
+            optionals.set(39);
+            modified.set(39);
+
+            if (mSetListNumbers == null) {
+                mSetListNumbers = new java.util.HashSet<>();
+            } else if (!(mSetListNumbers instanceof java.util.HashSet)) {
+                mSetListNumbers = new java.util.HashSet<>(mSetListNumbers);
+            }
+            return mSetListNumbers;
+        }
+
+        /**
+         * Sets the value of list_list_numbers.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setListListNumbers(java.util.Collection<java.util.List<Integer>> value) {
+            if (value == null) {
+                return clearListListNumbers();
+            }
+
+            optionals.set(40);
+            modified.set(40);
+            mListListNumbers = com.google.common.collect.ImmutableList.copyOf(value);
+            return this;
+        }
+
+        /**
+         * Adds entries to list_list_numbers.
+         *
+         * @param values The added value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder addToListListNumbers(java.util.List<Integer>... values) {
+            optionals.set(40);
+            modified.set(40);
+            java.util.List<java.util.List<Integer>> _container = mutableListListNumbers();
+            for (java.util.List<Integer> item : values) {
+                _container.add(item);
+            }
+            return this;
+        }
+
+        /**
+         * Checks for presence of the list_list_numbers field.
+         *
+         * @return True if list_list_numbers has been set.
+         */
+        public boolean isSetListListNumbers() {
+            return optionals.get(40);
+        }
+
+        /**
+         * Checks if list_list_numbers has been modified since the _Builder was created.
+         *
+         * @return True if list_list_numbers has been modified.
+         */
+        public boolean isModifiedListListNumbers() {
+            return modified.get(40);
+        }
+
+        /**
+         * Clears the list_list_numbers field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearListListNumbers() {
+            optionals.clear(40);
+            modified.set(40);
+            mListListNumbers = null;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained list_list_numbers.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public java.util.List<java.util.List<Integer>> mutableListListNumbers() {
+            optionals.set(40);
+            modified.set(40);
+
+            if (mListListNumbers == null) {
+                mListListNumbers = new java.util.LinkedList<>();
+            } else if (!(mListListNumbers instanceof java.util.LinkedList)) {
+                mListListNumbers = new java.util.LinkedList<>(mListListNumbers);
+            }
+            return mListListNumbers;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -5759,7 +6365,11 @@ public class Containers
                    java.util.Objects.equals(getOptionalFields(), other.getOptionalFields()) &&
                    java.util.Objects.equals(getUnionFields(), other.getUnionFields()) &&
                    java.util.Objects.equals(getExceptionFields(), other.getExceptionFields()) &&
-                   java.util.Objects.equals(getDefaultValues(), other.getDefaultValues());
+                   java.util.Objects.equals(getDefaultValues(), other.getDefaultValues()) &&
+                   java.util.Objects.equals(mMapListCompact, other.mMapListCompact) &&
+                   java.util.Objects.equals(mListMapNumbers, other.mListMapNumbers) &&
+                   java.util.Objects.equals(mSetListNumbers, other.mSetListNumbers) &&
+                   java.util.Objects.equals(mListListNumbers, other.mListListNumbers);
         }
 
         @Override
@@ -5802,7 +6412,11 @@ public class Containers
                     _Field.OPTIONAL_FIELDS, getOptionalFields(),
                     _Field.UNION_FIELDS, getUnionFields(),
                     _Field.EXCEPTION_FIELDS, getExceptionFields(),
-                    _Field.DEFAULT_VALUES, getDefaultValues());
+                    _Field.DEFAULT_VALUES, getDefaultValues(),
+                    _Field.MAP_LIST_COMPACT, mMapListCompact,
+                    _Field.LIST_MAP_NUMBERS, mListMapNumbers,
+                    _Field.SET_LIST_NUMBERS, mSetListNumbers,
+                    _Field.LIST_LIST_NUMBERS, mListListNumbers);
         }
 
         @Override
@@ -5862,6 +6476,10 @@ public class Containers
                 case 54: setUnionFields((net.morimekta.test.providence.core.UnionFields) value); break;
                 case 55: setExceptionFields((net.morimekta.test.providence.core.ExceptionFields) value); break;
                 case 56: setDefaultValues((net.morimekta.test.providence.core.DefaultValues) value); break;
+                case 61: setMapListCompact((java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>>) value); break;
+                case 62: setListMapNumbers((java.util.List<java.util.Map<Integer,Integer>>) value); break;
+                case 63: setSetListNumbers((java.util.Set<java.util.List<Integer>>) value); break;
+                case 64: setListListNumbers((java.util.List<java.util.List<Integer>>) value); break;
                 default: break;
             }
             return this;
@@ -5907,6 +6525,10 @@ public class Containers
                 case 54: return optionals.get(34);
                 case 55: return optionals.get(35);
                 case 56: return optionals.get(36);
+                case 61: return optionals.get(37);
+                case 62: return optionals.get(38);
+                case 63: return optionals.get(39);
+                case 64: return optionals.get(40);
                 default: break;
             }
             return false;
@@ -5952,6 +6574,10 @@ public class Containers
                 case 54: return modified.get(34);
                 case 55: return modified.get(35);
                 case 56: return modified.get(36);
+                case 61: return modified.get(37);
+                case 62: return modified.get(38);
+                case 63: return modified.get(39);
+                case 64: return modified.get(40);
                 default: break;
             }
             return false;
@@ -5980,6 +6606,9 @@ public class Containers
                 case 32: addToEnumSet((net.morimekta.test.providence.core.Value) value); break;
                 case 41: addToMessageList((net.morimekta.test.providence.core.DefaultFields) value); break;
                 case 42: addToMessageSet((net.morimekta.test.providence.core.DefaultFields) value); break;
+                case 62: addToListMapNumbers((java.util.Map<Integer,Integer>) value); break;
+                case 63: addToSetListNumbers((java.util.List<Integer>) value); break;
+                case 64: addToListListNumbers((java.util.List<Integer>) value); break;
                 default: break;
             }
             return this;
@@ -6026,6 +6655,10 @@ public class Containers
                 case 54: clearUnionFields(); break;
                 case 55: clearExceptionFields(); break;
                 case 56: clearDefaultValues(); break;
+                case 61: clearMapListCompact(); break;
+                case 62: clearListMapNumbers(); break;
+                case 63: clearSetListNumbers(); break;
+                case 64: clearListListNumbers(); break;
                 default: break;
             }
             return this;
@@ -6788,6 +7421,42 @@ public class Containers
                             optionals.set(36);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.defaultValues, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 61: {
+                        if (type == 13) {
+                            mMapListCompact = (java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>>) net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), _Field.MAP_LIST_COMPACT.getDescriptor(), strict);
+                            optionals.set(37);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.map_list_compact, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 62: {
+                        if (type == 15) {
+                            mListMapNumbers = (java.util.List<java.util.Map<Integer,Integer>>) net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), _Field.LIST_MAP_NUMBERS.getDescriptor(), strict);
+                            optionals.set(38);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.list_map_numbers, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 63: {
+                        if (type == 14) {
+                            mSetListNumbers = (java.util.Set<java.util.List<Integer>>) net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), _Field.SET_LIST_NUMBERS.getDescriptor(), strict);
+                            optionals.set(39);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.set_list_numbers, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 64: {
+                        if (type == 15) {
+                            mListListNumbers = (java.util.List<java.util.List<Integer>>) net.morimekta.providence.serializer.binary.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.binary.BinaryFormatUtils.FieldInfo(field, type), _Field.LIST_LIST_NUMBERS.getDescriptor(), strict);
+                            optionals.set(40);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Containers.list_list_numbers, should be struct(12)");
                         }
                         break;
                     }

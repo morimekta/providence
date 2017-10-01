@@ -82,9 +82,6 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
         if (name.startsWith("map<") && name.endsWith(">")) {
             String[] parts = name.substring(4, name.length() - 1)
                                  .split(",", 2);
-            if (parts.length != 2) {
-                throw new IllegalArgumentException(name + " is not a valid map descriptor, wrong number of types.");
-            }
             String keyType = parts[0];
             String valueType = parts[1];
             switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
@@ -115,13 +112,8 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
             return PList.provider(getProvider(itemType, context, null));
         }
 
-        if (name.split("[.]").length != 2) {
-            throw new IllegalArgumentException(name + " is not a valid declared type identifier.");
-        }
-
-        final String finalName = name;
-
         // Otherwise it's a declared type.
+        final String finalName = name;
         return () -> getDeclaredType(finalName, context);
     }
 

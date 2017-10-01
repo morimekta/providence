@@ -163,6 +163,11 @@ struct Containers {
     54: optional UnionFields unionFields;
     55: optional ExceptionFields exceptionFields;
     56: optional DefaultValues defaultValues;
+
+    61: optional map<i32,list<CompactFields>> map_list_compact;
+    62: optional list<map<i32,i32>> list_map_numbers;
+    63: optional set<list<i32>> set_list_numbers;
+    64: optional list<list<i32>> list_list_numbers;
 }
 
 struct ConsumeAll {
