@@ -41,13 +41,19 @@ exception CalculateException {
     2: Operation operation;
 }
 
-service Calculator {
+service BaseCalculator {
+    // line comment on method.
+    oneway void iamalive();
+} (deprecated = "Because reasons")
+
+/**
+ * Block comment on service
+ */
+service Calculator extends BaseCalculator {
     /**
      * Block comment on method.
      */
     Operand calculate(1: Operation op) throws (1: CalculateException ce);
-    // line comment on method.
-    oneway void iamalive();
 }
 
 /**

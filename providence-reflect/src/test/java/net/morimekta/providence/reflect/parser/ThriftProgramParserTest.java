@@ -165,7 +165,26 @@ public class ThriftProgramParserTest {
                            "  },\n" +
                            "  {\n" +
                            "    decl_service = {\n" +
+                           "      name = \"BaseCalculator\"\n" +
+                           "      methods = [\n" +
+                           "        {\n" +
+                           "          documentation = \"line comment on method.\"\n" +
+                           "          one_way = true\n" +
+                           "          name = \"iamalive\"\n" +
+                           "          params = [\n" +
+                           "          ]\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "      annotations = {\n" +
+                           "        \"deprecated\": \"Because reasons\"\n" +
+                           "      }\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_service = {\n" +
+                           "      documentation = \"Block comment on service\"\n" +
                            "      name = \"Calculator\"\n" +
+                           "      extend = \"BaseCalculator\"\n" +
                            "      methods = [\n" +
                            "        {\n" +
                            "          documentation = \"Block comment on method.\"\n" +
@@ -185,13 +204,6 @@ public class ThriftProgramParserTest {
                            "              name = \"ce\"\n" +
                            "            }\n" +
                            "          ]\n" +
-                           "        },\n" +
-                           "        {\n" +
-                           "          documentation = \"line comment on method.\"\n" +
-                           "          one_way = true\n" +
-                           "          name = \"iamalive\"\n" +
-                           "          params = [\n" +
-                           "          ]\n" +
                            "        }\n" +
                            "      ]\n" +
                            "    }\n" +
@@ -202,7 +214,7 @@ public class ThriftProgramParserTest {
                            "      type = \"Operand\"\n" +
                            "      name = \"PI\"\n" +
                            "      value = \"{\\n  \\\"number\\\": 3.141592\\n}\"\n" +
-                           "      start_line_no = 56\n" +
+                           "      start_line_no = 62\n" +
                            "      start_line_pos = 20\n" +
                            "    }\n" +
                            "  },\n" +
@@ -212,7 +224,7 @@ public class ThriftProgramParserTest {
                            "      type = \"set<Operator>\"\n" +
                            "      name = \"kComplexOperands\"\n" +
                            "      value = \"[\\n    Operator.MULTIPLY,\\n    Operator.DIVIDE\\n]\"\n" +
-                           "      start_line_no = 61\n" +
+                           "      start_line_no = 67\n" +
                            "      start_line_pos = 40\n" +
                            "    }\n" +
                            "  }\n" +

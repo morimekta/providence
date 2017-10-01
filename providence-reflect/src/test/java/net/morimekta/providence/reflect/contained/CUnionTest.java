@@ -16,15 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.reflect.contained;
 
 import org.junit.Test;
 
-/**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
- */
 public class CUnionTest {
     @Test
     public void testUnion() {

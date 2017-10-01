@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.reflect.contained;
 
 import org.junit.Before;
@@ -36,10 +35,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
- */
 public class CEnumValueTest {
     private CEnumDescriptor type;
     private CEnumValue      value3;

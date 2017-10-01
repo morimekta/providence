@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
@@ -36,10 +35,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-/**
- * @author Stein Eldar Johnsen
- * @since 20.09.15
- */
 public class CFieldTest {
     private PField field;
     private PField fieldSame;

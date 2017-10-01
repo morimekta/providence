@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.model.ProgramType;
@@ -21,6 +39,7 @@ import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class CMessageBuilderTest {
     @Rule
@@ -168,6 +187,79 @@ public class CMessageBuilderTest {
                 "  byteValue = 42\n" +
                 "  integerValue = 42\n" +
                 "}")));
+
+        CStruct.Builder bc = (CStruct.Builder) (CMessageBuilder) registry.getDeclaredType("test.Containers")
+                                                                         .builder();
+
+        bc.set(4, ImmutableList.of(123));
+        bc.addTo(4, 42);
+
+        bc.addTo(bc.descriptor().fieldForId(5), 42L);
+
+        bc.set(11, ImmutableSet.of(true));
+        bc.addTo(11, false);
+
+        bc.addTo(bc.descriptor().fieldForId(15), 42L);
+        bb.addTo(123, 42L);  // no effect.
+
+        assertThat(debugString(bc.build()), is(equalToLines(
+                "integerList = [123, 42]\n" +
+                "longList = [42]\n" +
+                "booleanSet = [true, false]\n" +
+                "longSet = [42]")));
+
+        assertThat(bc.toString(),
+                   is("test.Containers._Builder{values={4=[123, 42], 5=[42], 11=[true, false], 15=[42]}, modified=[4, 5, 11, 15]}"));
+    }
+
+    @Test
+    public void testValidity() {
+        CStruct.Builder ba = (CStruct.Builder) (CMessageBuilder) registry.getDeclaredType("test.OptionalFields")
+                                                                         .builder();
+        CStruct.Builder bb = (CStruct.Builder) (CMessageBuilder) registry.getDeclaredType("test.RequiredFields")
+                                                                         .builder();
+
+        assertThat(ba.isModified(1), is(false));
+        assertThat(ba.isSet(1), is(false));
+
+        ba.set(1, true);
+        ba.set(2, (byte) 42);
+
+        assertThat(ba.isModified(1), is(true));
+        assertThat(ba.isSet(1), is(true));
+
+        assertThat(ba.valid(), is(true));
+        ba.validate();  // no exception
+
+        bb.set(1, true);
+        bb.set(2, (byte) 42);
+        bb.set(3, (short) 42);
+        bb.set(4, 42);
+        bb.set(5, (long) 42);
+        bb.set(6, 42.42);
+        bb.set(7, "42");
+
+        assertThat(bb.valid(), is(false));
+        try {
+            bb.validate();
+            fail("no exception");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage(), is("Missing required fields binaryValue,enumValue,compactValue in message test.RequiredFields"));
+        }
+
+        try {
+            bb.addTo(2, null);
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Adding null value"));
+        }
+
+        try {
+            bb.addTo(2, 12L);
+            fail("no exception");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Field byteValue in test.RequiredFields is not a collection: byte"));
+        }
     }
 
 }

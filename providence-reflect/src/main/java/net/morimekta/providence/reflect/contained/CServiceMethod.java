@@ -25,6 +25,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -51,7 +52,9 @@ public class CServiceMethod implements PServiceMethod,
         this.oneway = oneway;
         this.requestType = requestType;
         this.responseType = responseType;
-        this.annotations = annotations;
+        this.annotations = annotations == null
+                           ? Collections.EMPTY_MAP
+                           : annotations;
     }
 
     @Nonnull
@@ -80,30 +83,64 @@ public class CServiceMethod implements PServiceMethod,
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
-        if (annotations != null) {
-            return annotations.keySet();
-        }
-        return Collections.EMPTY_SET;
+        return annotations.keySet();
     }
 
     @Override
     public boolean hasAnnotation(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.containsKey(name);
-        }
-        return false;
+        return annotations.containsKey(name);
     }
 
     @Override
     public String getAnnotationValue(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.get(name);
-        }
-        return null;
+        return annotations.get(name);
     }
 
     @Override
     public String getDocumentation() {
         return comment;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(CServiceMethod.class,
+                            name, oneway, responseType, requestType, comment, annotations);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !o.getClass().equals(getClass())) return false;
+        CServiceMethod other = (CServiceMethod) o;
+
+        return Objects.equals(name, other.name) &&
+               Objects.equals(oneway, other.oneway) &&
+               Objects.equals(responseType, other.responseType) &&
+               Objects.equals(requestType, other.requestType) &&
+               Objects.equals(comment, other.comment) &&
+               Objects.equals(annotations, other.annotations);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ServiceMethod(");
+
+        if (oneway) {
+            builder.append("oneway ");
+        }
+        if (responseType != null) {
+            builder.append(responseType.fieldForId(0).getDescriptor().getQualifiedName());
+        } else {
+            builder.append("void");
+        }
+
+        builder.append(" ");
+        builder.append(name);
+        builder.append("([");
+        builder.append(requestType.getQualifiedName());
+
+        builder.append("])");
+        return builder.toString();
     }
 }

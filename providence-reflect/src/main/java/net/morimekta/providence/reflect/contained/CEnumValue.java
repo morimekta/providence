@@ -121,7 +121,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
-    public int compareTo(CEnumValue other) {
+    public int compareTo(@Nonnull CEnumValue other) {
         return Integer.compare(value, other.value);
     }
 

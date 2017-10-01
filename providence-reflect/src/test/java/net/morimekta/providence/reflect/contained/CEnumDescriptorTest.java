@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.util.ThriftAnnotation;
@@ -36,10 +35,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
- */
 public class CEnumDescriptorTest {
     CEnumDescriptor type;
 

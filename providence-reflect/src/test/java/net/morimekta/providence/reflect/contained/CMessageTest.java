@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PPrimitive;
@@ -39,10 +38,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
- */
 public class CMessageTest {
     private RecursiveTypeRegistry registry;
     private CStructDescriptor     structType;

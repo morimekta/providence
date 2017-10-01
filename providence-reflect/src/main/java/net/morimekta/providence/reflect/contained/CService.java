@@ -23,6 +23,8 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +46,9 @@ public class CService extends PService implements CAnnotatedDescriptor {
                     Map<String, String> annotations) {
         super(programName, name, extendsService, methods);
         this.documentation = documentation;
-        this.annotations = annotations;
+        this.annotations = annotations == null
+                           ? Collections.EMPTY_MAP
+                           : ImmutableMap.copyOf(annotations);
     }
 
     @Nonnull
@@ -75,26 +79,17 @@ public class CService extends PService implements CAnnotatedDescriptor {
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
-        if (annotations != null) {
-            return annotations.keySet();
-        }
-        return Collections.EMPTY_SET;
+        return annotations.keySet();
     }
 
     @Override
     public boolean hasAnnotation(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.containsKey(name);
-        }
-        return false;
+        return annotations.containsKey(name);
     }
 
     @Override
     public String getAnnotationValue(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.get(name);
-        }
-        return null;
+        return annotations.get(name);
     }
 
     @Override

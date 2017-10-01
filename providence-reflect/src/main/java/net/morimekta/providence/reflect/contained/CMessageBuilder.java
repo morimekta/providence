@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessage;
@@ -169,9 +187,9 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                 case SET: {
                     ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
                     if (ctype == ThriftCollection.SORTED) {
-                        values.put(key, ImmutableSortedSet.copyOf((Set) value));
+                        values.put(key, ImmutableSortedSet.copyOf((Collection) value));
                     } else {
-                        values.put(key, ImmutableSet.copyOf((Set) value));
+                        values.put(key, ImmutableSet.copyOf((Collection) value));
                     }
                     break;
                 }
@@ -236,7 +254,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             }
             set.add(value);
         } else {
-            throw new IllegalArgumentException("Key " + key + " is not a collection: " + field.getType());
+            throw new IllegalArgumentException("Field " + field.getName() + " in " + descriptor().getQualifiedName() + " is not a collection: " + field.getType());
         }
         modified.add(key);
         return (Builder) this;
@@ -310,7 +328,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(getClass())
+        return MoreObjects.toStringHelper(descriptor().getQualifiedName() + "._Builder")
                           .add("values", values)
                           .add("modified", modified)
                           .toString();
