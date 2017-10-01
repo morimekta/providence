@@ -98,6 +98,7 @@ public interface TypeRegistry {
      * @param annotations    Annotations affecting the type.
      * @return The type provider.
      */
+    @Nonnull
     PDescriptorProvider getProvider(String typeName, final String programContext, Map<String, String> annotations);
 
     /**
@@ -108,5 +109,6 @@ public interface TypeRegistry {
      * @param programContext The program context of the reference.
      * @return The service provider.
      */
+    @Nonnull
     PServiceProvider getServiceProvider(final String serviceName, final String programContext);
 }

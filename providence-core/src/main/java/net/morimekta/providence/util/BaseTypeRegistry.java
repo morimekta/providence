@@ -35,6 +35,7 @@ import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,9 +60,12 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
                      finalTypename(target, programContext));
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public PDescriptorProvider getProvider(String name, final String context, Map<String, String> annotations) {
+    public PDescriptorProvider getProvider(@Nonnull String name,
+                                           @Nonnull final String context,
+                                           @Nullable Map<String, String> annotations) {
         name = finalTypename(name, context);
 
         // Prepend package context to name
@@ -121,6 +125,7 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
         return () -> getDeclaredType(finalName, context);
     }
 
+    @Nonnull
     @Override
     public PServiceProvider getServiceProvider(final String serviceName, final String programContext) {
         return () -> getService(serviceName, programContext);
@@ -206,7 +211,7 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
             registerRecursively((PDeclaredDescriptor<?>) itemType);
         }
         if (containerType instanceof PMap) {
-            PDescriptor keyType = containerType.itemDescriptor();
+            PDescriptor keyType = ((PMap) containerType).keyDescriptor();
             if (keyType.getType() == PType.ENUM ||
                 keyType.getType() == PType.MESSAGE){
                 registerRecursively((PDeclaredDescriptor<?>) keyType);
@@ -227,18 +232,35 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
     private String qualifiedTypenameInternal(@Nonnull String typeName, @Nonnull String programContext) {
         if (PPrimitive.findByName(typeName) != null) return typeName;
         if (typeName.startsWith("map<") && typeName.endsWith(">")) {
-            String[] generic = typeName.substring(4, typeName.length() - 1).split(",");
+            String[] generic = typeName.substring(4, typeName.length() - 1).split(",", 2);
             if (generic.length != 2) {
-                throw new IllegalArgumentException("Invalid map generic part: \"" + typeName + "\"");
+                throw new IllegalArgumentException("Invalid map generic part \"" + typeName + "\": missing ',' kv separator");
             }
-            return "map<" + finalTypename(generic[0].trim(), programContext) +
-                   "," + finalTypename(generic[1].trim(), programContext) + ">";
+            try {
+                return "map<" + finalTypename(generic[0].trim(), programContext) + "," +
+                       finalTypename(generic[1].trim(), programContext) + ">";
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid map generic part \"" + typeName + "\": " +
+                                                   e.getMessage(), e);
+            }
         } else if (typeName.startsWith("set<") && typeName.endsWith(">")) {
             String generic = typeName.substring(4, typeName.length() - 1);
-            return "set<" + finalTypename(generic.trim(), programContext) + ">";
+            try {
+                return "set<" + finalTypename(generic.trim(), programContext) + ">";
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid set generic part \"" + typeName + "\": " +
+                                                   e.getMessage(), e);
+            }
         } else if (typeName.startsWith("list<") && typeName.endsWith(">")) {
             String generic = typeName.substring(5, typeName.length() - 1);
-            return "list<" + finalTypename(generic.trim(), programContext) + ">";
+            try {
+                return "list<" + finalTypename(generic.trim(), programContext) + ">";
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid list generic part \"" + typeName + "\": " +
+                                                   e.getMessage(), e);
+            }
+        } else if (!typeName.matches("([a-zA-Z_][a-zA-Z0-9_]*\\.)?[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new IllegalArgumentException("Invalid atomic type name " + typeName);
         } else {
             return qualifiedNameFromIdAndContext(typeName, programContext);
         }

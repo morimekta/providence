@@ -78,12 +78,14 @@ public class ProgramRegistry implements TypeRegistry {
                       r -> r.getService(serviceName, programContext));
     }
 
+    @Nonnull
     @Override
     public PDescriptorProvider getProvider(String typeName, String programContext, Map<String, String> annotations) {
         return handle(typeName, programContext,
                       r -> r.getProvider(typeName, programContext, annotations));
     }
 
+    @Nonnull
     @Override
     public PServiceProvider getServiceProvider(String serviceName, String programContext) {
         return handle(serviceName, programContext,
