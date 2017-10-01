@@ -802,50 +802,6 @@ public class Containers
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return numBooleanList();
-            case 2: return numByteList();
-            case 3: return numShortList();
-            case 4: return numIntegerList();
-            case 5: return numLongList();
-            case 6: return numDoubleList();
-            case 7: return numStringList();
-            case 8: return numBinaryList();
-            case 11: return numBooleanSet();
-            case 12: return numByteSet();
-            case 13: return numShortSet();
-            case 14: return numIntegerSet();
-            case 15: return numLongSet();
-            case 16: return numDoubleSet();
-            case 17: return numStringSet();
-            case 18: return numBinarySet();
-            case 21: return numBooleanMap();
-            case 22: return numByteMap();
-            case 23: return numShortMap();
-            case 24: return numIntegerMap();
-            case 25: return numLongMap();
-            case 26: return numDoubleMap();
-            case 27: return numStringMap();
-            case 28: return numBinaryMap();
-            case 31: return numEnumList();
-            case 32: return numEnumSet();
-            case 33: return numEnumMap();
-            case 41: return numMessageList();
-            case 42: return numMessageSet();
-            case 43: return numMessageMap();
-            case 44: return numMessageKeyMap();
-            case 51: return hasRequiredFields() ? 1 : 0;
-            case 52: return hasDefaultFields() ? 1 : 0;
-            case 53: return hasOptionalFields() ? 1 : 0;
-            case 54: return hasUnionFields() ? 1 : 0;
-            case 55: return hasExceptionFields() ? 1 : 0;
-            case 56: return hasDefaultValues() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getBooleanList();

@@ -114,17 +114,6 @@ public class EnumType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return 1;
-            case 3: return numValues();
-            case 4: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();

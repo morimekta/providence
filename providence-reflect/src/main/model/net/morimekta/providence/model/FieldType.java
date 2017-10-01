@@ -194,22 +194,6 @@ public class FieldType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasRequirement() ? 1 : 0;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return hasDefaultValue() ? 1 : 0;
-            case 7: return numAnnotations();
-            case 10: return hasStartLineNo() ? 1 : 0;
-            case 11: return hasStartLinePos() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();

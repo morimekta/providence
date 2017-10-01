@@ -154,18 +154,6 @@ public class Declaration
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDeclEnum() ? 1 : 0;
-            case 2: return hasDeclTypedef() ? 1 : 0;
-            case 3: return hasDeclStruct() ? 1 : 0;
-            case 4: return hasDeclService() ? 1 : 0;
-            case 5: return hasDeclConst() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDeclEnum();

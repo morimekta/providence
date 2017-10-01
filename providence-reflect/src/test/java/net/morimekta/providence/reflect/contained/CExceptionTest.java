@@ -63,9 +63,6 @@ public class CExceptionTest {
         assertThat(ex.has(num), is(false));
         assertThat(ex.has(5), is(false));
 
-        assertThat(ex.num(text), is(0));
-        assertThat(ex.num(num), is(0));
-
         assertThat(ex.get(text), is("text"));
         assertThat(ex.get(num), is(7));  // default
         assertThat(ex.get(5), is(nullValue()));

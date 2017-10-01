@@ -298,14 +298,6 @@ public class Calculator {
         }
 
         @Override
-        public int num(int key) {
-            switch(key) {
-                case 1: return hasOp() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
         public Object get(int key) {
             switch(key) {
                 case 1: return getOp();
@@ -875,15 +867,6 @@ public class Calculator {
                 case 0: return hasSuccess();
                 case 1: return hasCe();
                 default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                case 1: return hasCe() ? 1 : 0;
-                default: return 0;
             }
         }
 
@@ -1568,13 +1551,6 @@ public class Calculator {
         }
 
         @Override
-        public int num(int key) {
-            switch(key) {
-                default: return 0;
-            }
-        }
-
-        @Override
         public Object get(int key) {
             switch(key) {
                 default: return null;
@@ -1950,13 +1926,6 @@ public class Calculator {
         public boolean has(int key) {
             switch(key) {
                 default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                default: return 0;
             }
         }
 
@@ -2352,14 +2321,6 @@ public class Calculator {
             switch(key) {
                 case 0: return hasSuccess();
                 default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                default: return 0;
             }
         }
 

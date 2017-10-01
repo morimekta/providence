@@ -176,23 +176,6 @@ public class DefaultValues
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasBooleanValue() ? 1 : 0;
-            case 2: return hasByteValue() ? 1 : 0;
-            case 3: return hasShortValue() ? 1 : 0;
-            case 4: return hasIntegerValue() ? 1 : 0;
-            case 5: return hasLongValue() ? 1 : 0;
-            case 6: return hasDoubleValue() ? 1 : 0;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return isBooleanValue();

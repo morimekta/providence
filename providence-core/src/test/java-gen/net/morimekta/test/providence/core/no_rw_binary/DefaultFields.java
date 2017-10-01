@@ -185,23 +185,6 @@ public class DefaultFields
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return 1;
-            case 8: return 1;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return isBooleanValue();

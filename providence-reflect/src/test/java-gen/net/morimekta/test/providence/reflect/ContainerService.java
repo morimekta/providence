@@ -232,14 +232,6 @@ public class ContainerService {
         }
 
         @Override
-        public int num(int key) {
-            switch(key) {
-                case 1: return hasC() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
         public Object get(int key) {
             switch(key) {
                 case 1: return getC();
@@ -809,15 +801,6 @@ public class ContainerService {
                 case 0: return hasSuccess();
                 case 1: return hasEf();
                 default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                case 1: return hasEf() ? 1 : 0;
-                default: return 0;
             }
         }
 

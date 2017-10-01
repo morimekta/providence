@@ -87,7 +87,6 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
     @Override
     public void appendMethods(JMessage message) {
         appendPresence(message);
-        appendCounter(message);
         appendGetter(message);
         appendJsonCompact(message);
 
@@ -466,31 +465,6 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         }
 
         writer.appendln("default: return false;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendCounter(JMessage<?> message) {
-        writer.appendln("@Override")
-              .appendln("public int num(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.numericalOrderFields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s();", field.id(), field.counter());
-            } else if (field.alwaysPresent() && !message.isUnion()) {
-                writer.formatln("case %d: return 1;", field.id());
-            } else {
-                writer.formatln("case %d: return %s() ? 1 : 0;", field.id(), field.presence());
-            }
-        }
-
-        writer.appendln("default: return 0;")
               .end()
               .appendln('}')
               .end()

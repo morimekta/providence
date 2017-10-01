@@ -50,20 +50,6 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
 
     /**
      * @param key The key of the field.
-     * @return Number of values for the field.
-     */
-    int num(int key);
-
-    /**
-     * @param field The field.
-     * @return Whether the field is present.
-     */
-    default int num(@Nonnull Field field) {
-        return num(field.getId());
-    }
-
-    /**
-     * @param key The key of the field.
      * @return The value of the field.
      */
     Object get(int key);

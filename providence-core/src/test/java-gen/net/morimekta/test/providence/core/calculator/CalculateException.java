@@ -65,15 +65,6 @@ public class CalculateException
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return hasOperation() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getMessage();

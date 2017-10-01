@@ -26,13 +26,6 @@ public class ConsumeAll
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             default: return null;

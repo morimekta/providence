@@ -103,16 +103,6 @@ public class Operand
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperation() ? 1 : 0;
-            case 2: return hasNumber() ? 1 : 0;
-            case 3: return hasImaginary() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getOperation();

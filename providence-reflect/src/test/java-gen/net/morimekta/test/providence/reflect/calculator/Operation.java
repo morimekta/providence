@@ -63,15 +63,6 @@ public class Operation
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperator() ? 1 : 0;
-            case 2: return numOperands();
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getOperator();

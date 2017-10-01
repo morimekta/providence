@@ -129,18 +129,6 @@ public class MessageType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return hasVariant() ? 1 : 0;
-            case 3: return 1;
-            case 4: return numFields();
-            case 5: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();

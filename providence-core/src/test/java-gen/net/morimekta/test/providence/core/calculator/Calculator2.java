@@ -307,13 +307,6 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         @Override
-        public int num(int key) {
-            switch(key) {
-                default: return 0;
-            }
-        }
-
-        @Override
         public Object get(int key) {
             switch(key) {
                 default: return null;
@@ -715,14 +708,6 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             switch(key) {
                 case 0: return hasSuccess();
                 default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                default: return 0;
             }
         }
 

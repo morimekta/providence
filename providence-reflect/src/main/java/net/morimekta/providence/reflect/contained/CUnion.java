@@ -91,19 +91,6 @@ public class CUnion implements PUnion<CUnion,CField> {
     }
 
     @Override
-    public int num(int key) {
-        if (!has(key)) return 0;
-        switch (unionField.getType()) {
-            case MAP:
-                return ((Map) unionValue).size();
-            case LIST:
-            case SET:
-                return ((Collection) unionValue).size();
-        }
-        return 0;
-    }
-
-    @Override
     public Object get(int key) {
         return has(key) ? unionValue : null;
     }

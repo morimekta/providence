@@ -48,30 +48,6 @@ public interface CMessage<Message extends PMessage<Message, CField>>
     }
 
     @Override
-    default int num(int key) {
-        CField field = descriptor().findFieldById(key);
-        if (field == null) {
-            return 0;
-        }
-
-        // Non-present containers are empty.
-        if (!values().containsKey(key)) {
-            return 0;
-        }
-
-        switch (field.getDescriptor().getType()) {
-            case MAP:
-                return ((Map<?, ?>) values().get(key)).size();
-            case LIST:
-            case SET:
-                return ((Collection<?>) values().get(key)).size();
-            default:
-                // present non-containers also empty.
-                return 0;
-        }
-    }
-
-    @Override
     default Object get(int key) {
         CField field = descriptor().findFieldById(key);
         if (field != null) {

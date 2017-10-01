@@ -85,16 +85,6 @@ public class TypedefType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return 1;
-            case 3: return 1;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();

@@ -76,15 +76,6 @@ public class PApplicationException
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
-            case 2: return hasId() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getMessage();

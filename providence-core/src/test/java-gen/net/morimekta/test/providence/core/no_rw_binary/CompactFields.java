@@ -89,16 +89,6 @@ public class CompactFields
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return hasLabel() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getName();

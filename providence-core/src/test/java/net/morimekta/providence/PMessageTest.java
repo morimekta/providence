@@ -108,9 +108,8 @@ public class PMessageTest {
     }
 
     @Test
-    public void testHasNumGet() {
+    public void testHasGet() {
         assertThat(operation.has(OPERATOR), is(true));
-        assertThat(operation.num(OPERANDS), is(2));
         assertThat(operation.get(OPERATOR), is(Operator.MULTIPLY));
     }
 }

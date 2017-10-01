@@ -151,18 +151,6 @@ public class ProgramType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return 1;
-            case 3: return numIncludes();
-            case 4: return numNamespaces();
-            case 5: return numDecl();
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();

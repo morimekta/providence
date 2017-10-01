@@ -160,20 +160,6 @@ public class ConstType
     }
 
     @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDocumentation() ? 1 : 0;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return numAnnotations();
-            case 10: return hasStartLineNo() ? 1 : 0;
-            case 11: return hasStartLinePos() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
     public Object get(int key) {
         switch(key) {
             case 1: return getDocumentation();
