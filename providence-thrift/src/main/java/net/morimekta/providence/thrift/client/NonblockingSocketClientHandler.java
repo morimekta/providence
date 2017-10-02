@@ -31,6 +31,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.thrift.io.FramedBufferInputStream;
 import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static net.morimekta.providence.util.ServiceCallInstrumentation.NS_IN_MILLIS;
 
 /**
  * Client handler for thrift RPC using the TNonblockingServer, or similar that
@@ -73,19 +76,36 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
     private final int           read_timeout;
     private final int           response_timeout;
 
-    private final Map<Integer,CompletableFuture<PServiceCall>> responseFutures;
-    private final ExecutorService                   responseExecutor;
+    private final Map<Integer, CompletableFuture<PServiceCall>> responseFutures;
+    private final ExecutorService                               responseExecutor;
+    private final ServiceCallInstrumentation                    instrumentation;
 
     private volatile SocketChannel channel;
     private volatile FramedBufferOutputStream out;
 
     public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address) {
-        this(serializer, address, 10000, 10000);
+        this(serializer, address, (d, c, r) -> {}, 10000, 10000);
     }
 
-    public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address, int connect_timeout, int read_timeout) {
+    public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address, ServiceCallInstrumentation instrumentation) {
+        this(serializer, address, instrumentation, 10000, 10000);
+    }
+
+    public NonblockingSocketClientHandler(Serializer serializer,
+                                          SocketAddress address,
+                                          int connect_timeout,
+                                          int read_timeout ) {
+        this(serializer, address, (d, c, r) -> {}, connect_timeout, read_timeout);
+    }
+
+    public NonblockingSocketClientHandler(Serializer serializer,
+                                          SocketAddress address,
+                                          ServiceCallInstrumentation instrumentation,
+                                          int connect_timeout,
+                                          int read_timeout) {
         this.serializer = serializer;
         this.address = address;
+        this.instrumentation = instrumentation;
         this.connect_timeout = connect_timeout;
         this.read_timeout = read_timeout;
         // TODO: Set up response timeout.
@@ -145,6 +165,8 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                                             PApplicationExceptionType.INVALID_MESSAGE_TYPE);
         }
 
+        long startTime = System.nanoTime();
+        PServiceCall<Response, ResponseField> response = null;
         CompletableFuture<PServiceCall> responseFuture = null;
         if (call.getType() == PServiceCallType.CALL) {
             responseFuture = new CompletableFuture<>();
@@ -152,36 +174,46 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
             responseFutures.put(call.getSequence(), responseFuture);
         }
 
-        synchronized (this) {
-            try {
-                ensureConnected(service);
-                if (out == null) {
-                    throw new IOException("Closed channel");
-                }
-                serializer.serialize(out, call);
-                out.flush();
-            } finally {
-                if (out != null) {
-                    out.completeFrame();
+        try {
+            synchronized (this) {
+                try {
+                    ensureConnected(service);
+                    if (out == null) {
+                        throw new IOException("Closed channel");
+                    }
+                    serializer.serialize(out, call);
+                    out.flush();
+                } finally {
+                    if (out != null) {
+                        out.completeFrame();
+                    }
                 }
             }
-        }
 
-        if (responseFuture != null) {
-            try {
-                if (response_timeout > 0) {
-                    return (PServiceCall<Response, ResponseField>) responseFuture.get(response_timeout, TimeUnit.MILLISECONDS);
-                } else {
-                    return (PServiceCall<Response, ResponseField>) responseFuture.get();
+            if (responseFuture != null) {
+                try {
+                    if (response_timeout > 0) {
+                        response = (PServiceCall<Response, ResponseField>) responseFuture.get(response_timeout, TimeUnit.MILLISECONDS);
+                    } else {
+                        response = (PServiceCall<Response, ResponseField>) responseFuture.get();
+                    }
+                    return response;
+                } catch (TimeoutException | InterruptedException e) {
+                    responseFuture.completeExceptionally(e);
+                    throw new IOException(e.getMessage(), e);
+                } catch (ExecutionException e) {
+                    throw new IOException(e.getMessage(), e);
+                } finally {
+                    responseFutures.remove(call.getSequence());
                 }
-            } catch (TimeoutException|InterruptedException e) {
-                responseFuture.completeExceptionally(e);
-                throw new IOException(e.getMessage(), e);
-            } catch (ExecutionException e) {
-                throw new IOException(e.getMessage(), e);
-            } finally {
-                responseFutures.remove(call.getSequence());
             }
+        } finally {
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.afterCall(duration, call, response);
+            } catch (Exception ignore) {}
+
         }
 
         return null;

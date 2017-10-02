@@ -28,14 +28,17 @@ import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.net.MediaType;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.HttpHostConnectException;
@@ -46,20 +49,68 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.function.Supplier;
 
+import static net.morimekta.providence.util.ServiceCallInstrumentation.NS_IN_MILLIS;
+
 /**
  * HTTP client handler using the google HTTP client interface.
  */
 public class HttpClientHandler implements PServiceCallHandler {
-    private final HttpRequestFactory   factory;
-    private final SerializerProvider   serializerProvider;
-    private final Serializer           requestSerializer;
-    private final Supplier<GenericUrl> urlSupplier;
+    private final HttpRequestFactory factory;
+    private final SerializerProvider         serializerProvider;
+    private final Serializer                 requestSerializer;
+    private final Supplier<GenericUrl>       urlSupplier;
+    private final ServiceCallInstrumentation instrumentation;
 
-    public HttpClientHandler(Supplier<GenericUrl> urlSupplier, HttpRequestFactory factory, SerializerProvider serializerProvider) {
+    /**
+     * Create a HTTP client with default transport, serialization and no instrumentation.
+     *
+     * @param urlSupplier The HTTP url supplier.
+     */
+    public HttpClientHandler(@Nonnull Supplier<GenericUrl> urlSupplier) {
+        this(urlSupplier, new NetHttpTransport().createRequestFactory(), new DefaultSerializerProvider());
+    }
+
+    /**
+     * Create a HTTP client with default serialization and no instrumentation.
+     *
+     * @param urlSupplier The HTTP url supplier.
+     * @param factory The HTTP request factory.
+     */
+    public HttpClientHandler(@Nonnull Supplier<GenericUrl> urlSupplier,
+                             @Nonnull HttpRequestFactory factory) {
+        this(urlSupplier, factory, new DefaultSerializerProvider());
+    }
+
+    /**
+     * Create a HTTP client with no instrumentation.
+     *
+     * @param urlSupplier The HTTP url supplier.
+     * @param factory The HTTP request factory.
+     * @param serializerProvider The serializer provider.
+     */
+    public HttpClientHandler(@Nonnull Supplier<GenericUrl> urlSupplier,
+                             @Nonnull HttpRequestFactory factory,
+                             @Nonnull SerializerProvider serializerProvider) {
+        this(urlSupplier, factory, serializerProvider, (d, c, r) -> {});
+    }
+
+    /**
+     * Create a HTTP client.
+     *
+     * @param urlSupplier The HTTP url supplier.
+     * @param factory The HTTP request factory.
+     * @param serializerProvider The serializer provider.
+     * @param instrumentation The service call instrumentation.
+     */
+    public HttpClientHandler(@Nonnull Supplier<GenericUrl> urlSupplier,
+                             @Nonnull HttpRequestFactory factory,
+                             @Nonnull SerializerProvider serializerProvider,
+                             @Nonnull ServiceCallInstrumentation instrumentation) {
         this.urlSupplier = urlSupplier;
         this.factory = factory;
         this.serializerProvider = serializerProvider;
         this.requestSerializer = serializerProvider.getDefault();
+        this.instrumentation = instrumentation;
     }
 
     @Override
@@ -74,10 +125,13 @@ public class HttpClientHandler implements PServiceCallHandler {
                                             PApplicationExceptionType.INVALID_MESSAGE_TYPE);
         }
 
+        long startTime = System.nanoTime();
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         requestSerializer.serialize(baos, call);
 
         ByteArrayContent content = new ByteArrayContent(requestSerializer.mediaType(), baos.toByteArray());
+        PServiceCall<Response, ResponseField> reply = null;
 
         @Nonnull
         GenericUrl url = urlSupplier.get();
@@ -98,7 +152,6 @@ public class HttpClientHandler implements PServiceCallHandler {
                     }
                 }
 
-                PServiceCall<Response, ResponseField> reply = null;
                 if (call.getType() == PServiceCallType.CALL) {
                     // non 200 responses should have triggered a HttpResponseException,
                     // so this is safe.
@@ -127,6 +180,12 @@ public class HttpClientHandler implements PServiceCallHandler {
             // Normalize connection refused exceptions to HttpHostConnectException.
             // The native exception is not helpful (for when using NetHttpTransport).
             throw new HttpHostConnectException(e, new HttpHost(url.getHost(), url.getPort(), url.getScheme()));
+        } finally {
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.afterCall(duration, call, reply);
+            } catch (Exception ignore) {}
         }
     }
 }

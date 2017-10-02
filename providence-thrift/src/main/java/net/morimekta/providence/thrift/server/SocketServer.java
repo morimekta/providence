@@ -25,8 +25,8 @@ import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.server.DefaultProcessorHandler;
-import net.morimekta.providence.server.ServiceInstrumentation;
 import net.morimekta.providence.server.WrappedProcessor;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
@@ -47,15 +47,17 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static net.morimekta.providence.util.ServiceCallInstrumentation.NS_IN_MILLIS;
+
 /**
  * Based heavily on {@link org.apache.thrift.transport.TServerTransport},
  * and meant to be a providence replacement for it.
  */
 public class SocketServer implements AutoCloseable {
     public static class Builder {
-        private final PProcessor             processor;
-        private       ServiceInstrumentation instrumentation;
-        private       InetSocketAddress      bindAddress;
+        private final PProcessor                 processor;
+        private       ServiceCallInstrumentation instrumentation;
+        private       InetSocketAddress          bindAddress;
 
         private int clientTimeout       = 60000;  // 60 seconds
         private int backlog             = 50;
@@ -94,7 +96,7 @@ public class SocketServer implements AutoCloseable {
             return this;
         }
 
-        public Builder withInstrumentation(@Nonnull ServiceInstrumentation instrumentation) {
+        public Builder withInstrumentation(@Nonnull ServiceCallInstrumentation instrumentation) {
             this.instrumentation = instrumentation;
             return this;
         }
@@ -161,14 +163,13 @@ public class SocketServer implements AutoCloseable {
     }
 
     private final static Logger LOGGER = LoggerFactory.getLogger(SocketServer.class);
-    private final static long NS_IN_MILLIS = TimeUnit.MILLISECONDS.toNanos(1);
 
-    private final int                    clientTimeout;
-    private final PProcessor             processor;
-    private final ServiceInstrumentation instrumentation;
-    private final ServerSocket           serverSocket;
-    private final ExecutorService        workerExecutor;
-    private final Serializer             serializer;
+    private final int                        clientTimeout;
+    private final PProcessor                 processor;
+    private final ServiceCallInstrumentation instrumentation;
+    private final ServerSocket               serverSocket;
+    private final ExecutorService            workerExecutor;
+    private final Serializer                 serializer;
 
     private SocketServer(Builder builder) {
         try {
@@ -226,7 +227,6 @@ public class SocketServer implements AutoCloseable {
                 AtomicReference<PServiceCall> callRef = new AtomicReference<>();
                 AtomicReference<PServiceCall> responseRef = new AtomicReference<>();
                 try {
-
                     DefaultProcessorHandler handler = new DefaultProcessorHandler(new WrappedProcessor(processor, (c, p) -> {
                         callRef.set(c);
                         responseRef.set(p.handleCall(c));
@@ -238,11 +238,10 @@ public class SocketServer implements AutoCloseable {
                 } catch (IOException e) {
                     throw new UncheckedIOException(e.getMessage(), e);
                 } finally {
-                    long duration = System.nanoTime() - startTime;
+                    long endTime = System.nanoTime();
+                    double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
                     try {
-                        instrumentation.afterCall(((double) duration) / NS_IN_MILLIS,
-                                                  callRef.get(),
-                                                  responseRef.get());
+                        instrumentation.afterCall(duration, callRef.get(), responseRef.get());
                     } catch (Throwable th) {
                         LOGGER.error("Exception in service instrumentation", th);
                     }

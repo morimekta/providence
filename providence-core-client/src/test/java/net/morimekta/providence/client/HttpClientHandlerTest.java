@@ -1,8 +1,10 @@
 package net.morimekta.providence.client;
 
+import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.client.internal.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.client.Failure;
 import net.morimekta.test.providence.client.Request;
 import net.morimekta.test.providence.client.Response;
@@ -40,23 +42,27 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class HttpClientHandlerTest {
-    private static final String ENDPOINT = "test";
+    private static final String ENDPOINT  = "test";
     private static final String NOT_FOUND = "not_found";
 
-    private int                                                    port;
+    private int                                                port;
     private net.morimekta.test.thrift.client.TestService.Iface impl;
-    private Server                                                 server;
-    private SerializerProvider                                     provider;
-    private LinkedList<String>                                     contentTypes;
+    private Server                                             server;
+    private SerializerProvider                                 provider;
+    private LinkedList<String>                                 contentTypes;
+    private ServiceCallInstrumentation                         instrumentation;
 
     private GenericUrl endpoint() {
         return new GenericUrl("http://localhost:" + port + "/" + ENDPOINT);
@@ -68,6 +74,7 @@ public class HttpClientHandlerTest {
 
         impl = mock(net.morimekta.test.thrift.client.TestService.Iface.class);
         TProcessor processor = new net.morimekta.test.thrift.client.TestService.Processor<>(impl);
+        instrumentation = mock(ServiceCallInstrumentation.class);
 
         provider = new DefaultSerializerProvider();
         server = new Server(0);
@@ -106,12 +113,16 @@ public class HttpClientHandlerTest {
     @Test
     public void testSimpleRequest() throws IOException, TException, Failure {
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                this::endpoint, factory(), provider));
+                this::endpoint, factory(), provider, instrumentation));
 
         when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
                 .thenReturn(new net.morimekta.test.thrift.client.Response("response"));
 
         Response response = client.test(new Request("request"));
+
+        verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verifyNoMoreInteractions(impl, instrumentation);
 
         assertThat(response, is(equalToMessage(new Response("response"))));
         assertThat(contentTypes, is(equalTo(ImmutableList.of("application/vnd.apache.thrift.binary"))));
@@ -120,7 +131,7 @@ public class HttpClientHandlerTest {
     @Test
     public void testSimpleRequest_exception() throws IOException, Failure, TException {
         TestService.Iface client = new TestService.Client(
-                new HttpClientHandler(this::endpoint, factory(), provider));
+                new HttpClientHandler(this::endpoint, factory(), provider, instrumentation));
 
         when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.client.Failure("failure"));
@@ -131,6 +142,10 @@ public class HttpClientHandlerTest {
         } catch (Failure ex) {
             assertEquals("failure", ex.getText());
         }
+
+        verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verifyNoMoreInteractions(impl, instrumentation);
     }
 
     @Test
@@ -138,7 +153,7 @@ public class HttpClientHandlerTest {
         GenericUrl url = endpoint();
         url.setRawPath("/" + NOT_FOUND);
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                () -> url, factory(), provider));
+                () -> url, factory(), provider, instrumentation));
 
         try {
             client.test(new Request("request"));
@@ -148,7 +163,8 @@ public class HttpClientHandlerTest {
             assertThat(ex.getStatusMessage(), is("Not Found"));
         }
 
-        verifyZeroInteractions(impl);
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+        verifyNoMoreInteractions(impl, instrumentation);
     }
 
     @Test
@@ -156,7 +172,7 @@ public class HttpClientHandlerTest {
         GenericUrl url = endpoint();
         url.setRawPath("/does_not_exists");
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                () -> url, factory(), provider));
+                () -> url, factory(), provider, instrumentation));
 
         try {
             client.test(new Request("request"));
@@ -166,6 +182,7 @@ public class HttpClientHandlerTest {
             assertThat(ex.getStatusMessage(), is("HTTP method POST is not supported by this URL"));
         }
 
-        verifyZeroInteractions(impl);
+        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+        verifyNoMoreInteractions(impl, instrumentation);
     }
 }

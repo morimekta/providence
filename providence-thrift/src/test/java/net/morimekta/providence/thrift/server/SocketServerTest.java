@@ -2,7 +2,7 @@ package net.morimekta.providence.thrift.server;
 
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.server.ServiceInstrumentation;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.thrift.service.Failure;
 import net.morimekta.test.providence.thrift.service.MyService.Iface;
 import net.morimekta.test.providence.thrift.service.MyService.Processor;
@@ -41,21 +41,21 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class SocketServerTest {
-    private static Iface                  impl;
-    private static ServiceInstrumentation instrumentation;
-    private static SocketServer           server;
-    private static int                    port;
+    private static Iface                      impl;
+    private static ServiceCallInstrumentation instrumentation;
+    private static SocketServer               server;
+    private static int                        port;
 
     @BeforeClass
     public static void setUpClass() {
         setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
 
         impl = mock(Iface.class);
-        instrumentation = mock(ServiceInstrumentation.class);
+        instrumentation = mock(ServiceCallInstrumentation.class);
         server = SocketServer.builder(new Processor(impl))
                              .withSerializer(new BinarySerializer(true))
                              .withInstrumentation(instrumentation)
-                             .withMaxBacklog(2)
+                             .withMaxBacklog(1)
                              .withThreadFactory(new ThreadFactoryBuilder()
                                      .setDaemon(true)
                                      .setNameFormat("test-%d")

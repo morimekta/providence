@@ -28,6 +28,7 @@ import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;
@@ -40,8 +41,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static net.morimekta.providence.util.ServiceCallInstrumentation.NS_IN_MILLIS;
 
 /**
  * A javax.servlet implementation for providence. Transfers data like the
@@ -49,11 +51,10 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ProvidenceServlet extends HttpServlet {
     private final static Logger LOGGER = LoggerFactory.getLogger(ProvidenceServlet.class);
-    private final static long NS_IN_MILLIS = TimeUnit.MILLISECONDS.toNanos(1);
 
-    private final ProcessorProvider  processorProvider;
-    private final SerializerProvider serializerProvider;
-    private final ServiceInstrumentation instrumentation;
+    private final ProcessorProvider          processorProvider;
+    private final SerializerProvider         serializerProvider;
+    private final ServiceCallInstrumentation instrumentation;
 
     /**
      * Creates a providence servlet that uses the same processor every time.
@@ -76,7 +77,7 @@ public class ProvidenceServlet extends HttpServlet {
      */
     public ProvidenceServlet(@Nonnull PProcessor processor,
                              @Nonnull SerializerProvider serializerProvider,
-                             @Nonnull ServiceInstrumentation instrumentation) {
+                             @Nonnull ServiceCallInstrumentation instrumentation) {
         // Default is to always use the same processor.
         this(r -> processor, serializerProvider, instrumentation);
     }
@@ -101,7 +102,7 @@ public class ProvidenceServlet extends HttpServlet {
      */
     public ProvidenceServlet(@Nonnull ProcessorProvider processorProvider,
                              @Nonnull SerializerProvider serializerProvider,
-                             @Nonnull ServiceInstrumentation instrumentation) {
+                             @Nonnull ServiceCallInstrumentation instrumentation) {
         this.processorProvider = processorProvider;
         this.serializerProvider = serializerProvider;
         this.instrumentation = instrumentation;
@@ -122,7 +123,7 @@ public class ProvidenceServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long start = System.nanoTime();
+        long startTime = System.nanoTime();
 
         AtomicReference<PServiceCall> callRef = new AtomicReference<>();
         AtomicReference<PServiceCall> responseRef = new AtomicReference<>();
@@ -191,9 +192,10 @@ public class ProvidenceServlet extends HttpServlet {
             LOGGER.error("Unhandled exception in service call {}", logName, e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         } finally {
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {
-                long duration = System.nanoTime() - start;
-                instrumentation.afterCall(((double) duration) / NS_IN_MILLIS, callRef.get(), responseRef.get());
+                instrumentation.afterCall(duration, callRef.get(), responseRef.get());
             } catch (Throwable th) {
                 LOGGER.error("Exception in service instrumentation", th);
             }

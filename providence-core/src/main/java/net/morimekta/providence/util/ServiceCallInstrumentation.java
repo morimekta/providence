@@ -1,14 +1,15 @@
-package net.morimekta.providence.server;
+package net.morimekta.providence.util;
 
 import net.morimekta.providence.PServiceCall;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Interface handling the instrumentation of service calls.
  */
 @FunctionalInterface
-public interface ServiceInstrumentation {
+public interface ServiceCallInstrumentation {
     /**
      * After each service call this method is called with the duration, call and
      * response objects. Exceptions from the call is ignored, and will not affect
@@ -24,4 +25,9 @@ public interface ServiceInstrumentation {
     void afterCall(double duration,
                    @Nullable PServiceCall call,
                    @Nullable PServiceCall response);
+
+    /**
+     * Handy constant for calculating MS duration.
+     */
+    long NS_IN_MILLIS = TimeUnit.MILLISECONDS.toNanos(1);
 }

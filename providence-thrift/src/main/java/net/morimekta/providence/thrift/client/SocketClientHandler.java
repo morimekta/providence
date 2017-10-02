@@ -29,6 +29,7 @@ import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,24 +39,46 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import static net.morimekta.providence.util.ServiceCallInstrumentation.NS_IN_MILLIS;
+
 /**
  * Client handler for thrift RPC using the TSimpleServer that does <b>not</b>
  * use the TFramedTransport message wrapper. It will create a local socket
  * and connect for each call.
  */
 public class SocketClientHandler implements PServiceCallHandler {
-    private final Serializer    serializer;
-    private final SocketAddress address;
-    private final int connect_timeout;
-    private final int read_timeout;
+    private final Serializer                 serializer;
+    private final SocketAddress              address;
+    private final int                        connect_timeout;
+    private final int                        read_timeout;
+    private final ServiceCallInstrumentation instrumentation;
 
-    public SocketClientHandler(Serializer serializer, SocketAddress address) {
+    public SocketClientHandler(Serializer serializer,
+                               SocketAddress address) {
         this(serializer, address, 10000, 10000);
     }
 
-    public SocketClientHandler(Serializer serializer, SocketAddress address, int connect_timeout, int read_timeout) {
+    public SocketClientHandler(Serializer serializer,
+                               SocketAddress address,
+                               ServiceCallInstrumentation instrumentation) {
+        this(serializer, address, instrumentation, 10000, 10000);
+    }
+
+    public SocketClientHandler(Serializer serializer,
+                               SocketAddress address,
+                               int connect_timeout,
+                               int read_timeout) {
+        this(serializer, address, (d, c, r) -> {}, connect_timeout, read_timeout);
+    }
+
+    public SocketClientHandler(Serializer serializer,
+                               SocketAddress address,
+                               ServiceCallInstrumentation instrumentation,
+                               int connect_timeout,
+                               int read_timeout) {
         this.serializer = serializer;
         this.address = address;
+        this.instrumentation = instrumentation;
         this.connect_timeout = connect_timeout;
         this.read_timeout = read_timeout;
     }
@@ -82,12 +105,14 @@ public class SocketClientHandler implements PServiceCallHandler {
                                             PApplicationExceptionType.INVALID_MESSAGE_TYPE);
         }
 
+        long startTime = System.nanoTime();
+
+        PServiceCall<Response, ResponseField> reply = null;
         try (Socket socket = connect()) {
             OutputStream out = new BufferedOutputStream(socket.getOutputStream());
             serializer.serialize(out, call);
             out.flush();
 
-            PServiceCall<Response, ResponseField> reply = null;
             if (call.getType() == PServiceCallType.CALL) {
                 InputStream in = new BufferedInputStream(socket.getInputStream());
                 reply = serializer.deserialize(in, service);
@@ -102,6 +127,12 @@ public class SocketClientHandler implements PServiceCallHandler {
                 }
             }
             return reply;
+        } finally {
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.afterCall(duration, call, reply);
+            } catch (Exception ignore) {}
         }
     }
 }

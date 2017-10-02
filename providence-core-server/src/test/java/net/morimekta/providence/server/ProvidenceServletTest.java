@@ -5,6 +5,7 @@ import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.server.internal.NoLogging;
+import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
@@ -52,11 +53,11 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class ProvidenceServletTest {
-    private static int                    port;
-    private static TestService.Iface      impl;
-    private static Server                 server;
-    private static SerializerProvider     provider;
-    private static ServiceInstrumentation instrumentation;
+    private static int                        port;
+    private static TestService.Iface          impl;
+    private static Server                     server;
+    private static SerializerProvider         provider;
+    private static ServiceCallInstrumentation instrumentation;
 
     private static final String ENDPOINT = "test";
 
@@ -70,7 +71,7 @@ public class ProvidenceServletTest {
         Log.setLog(new NoLogging());
 
         impl = mock(TestService.Iface.class);
-        instrumentation = mock(ServiceInstrumentation.class);
+        instrumentation = mock(ServiceCallInstrumentation.class);
 
         provider = new DefaultSerializerProvider();
 
