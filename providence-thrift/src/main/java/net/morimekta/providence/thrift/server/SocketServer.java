@@ -163,7 +163,7 @@ public class SocketServer implements AutoCloseable {
     private final static Logger LOGGER = LoggerFactory.getLogger(SocketServer.class);
     private final static long NS_IN_MILLIS = TimeUnit.MILLISECONDS.toNanos(1);
 
-    private final long                   clientTimeout;
+    private final int                    clientTimeout;
     private final PProcessor             processor;
     private final ServiceInstrumentation instrumentation;
     private final ServerSocket           serverSocket;
@@ -185,8 +185,7 @@ public class SocketServer implements AutoCloseable {
             serverSocket.setReuseAddress(true);
             // Bind to listening port
             serverSocket.bind(builder.bindAddress, builder.backlog);
-
-            serverSocket.setSoTimeout(builder.clientTimeout);
+            serverSocket.setSoTimeout(0);
 
             workerExecutor = Executors.newFixedThreadPool(builder.workerThreads,
                                                           builder.workerThreadFactory);
@@ -199,6 +198,7 @@ public class SocketServer implements AutoCloseable {
     private void accept() {
         try {
             Socket socket = serverSocket.accept();
+            socket.setSoTimeout(clientTimeout);
             long startTime = System.nanoTime();
             workerExecutor.submit(() -> process(startTime, socket));
         } catch (SocketTimeoutException e) {
