@@ -26,9 +26,28 @@ public interface ServiceCallInstrumentation {
      * @param call     The call triggered.
      * @param reply    The reply returned.
      */
-    void afterCall(double duration,
-                   @Nullable PServiceCall call,
-                   @Nullable PServiceCall reply);
+    void onComplete(double duration,
+                    @Nullable PServiceCall call,
+                    @Nullable PServiceCall reply);
+
+    /**
+     * Called when the service call failed in the transport layer itself with something
+     * not related to the actual service call. E.g. in server side when the read
+     * message failed, write back failed etc. {@link #onComplete(double, PServiceCall, PServiceCall)}
+     * will NOT be called after the exception call.
+     *
+     * @param e        The exception thrown.
+     * @param duration The duration of handling the service call in milliseconds,
+     *                 including receiving and sending it.
+     * @param call     The service call.
+     * @param reply    The service reply.
+     */
+    default void onTransportException(Exception e,
+                                      double duration,
+                                      @Nullable PServiceCall call,
+                                      @Nullable PServiceCall reply) {
+        onComplete(duration, call, reply);
+    }
 
     /**
      * Handy constant for calculating MS duration.

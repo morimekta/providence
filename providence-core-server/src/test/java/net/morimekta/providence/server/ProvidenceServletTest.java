@@ -116,7 +116,7 @@ public class ProvidenceServletTest {
 
         assertNotNull(response);
         assertEquals("{text:\"response\"}", response.asString());
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }
 
@@ -143,7 +143,7 @@ public class ProvidenceServletTest {
 
         waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }
 
@@ -189,7 +189,7 @@ public class ProvidenceServletTest {
         waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).voidMethod(55);
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
     }
 
@@ -212,7 +212,7 @@ public class ProvidenceServletTest {
         waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).ping();
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
         verifyNoMoreInteractions(impl, instrumentation);
     }
 
@@ -239,7 +239,7 @@ public class ProvidenceServletTest {
         waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
         verify(impl).voidMethod(55);
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
     }
 }

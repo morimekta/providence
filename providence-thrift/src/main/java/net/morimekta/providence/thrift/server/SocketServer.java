@@ -235,16 +235,24 @@ public class SocketServer implements AutoCloseable {
 
                     handler.process(reader, writer);
                     out.flush();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e.getMessage(), e);
-                } finally {
+
                     long endTime = System.nanoTime();
                     double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
                     try {
-                        instrumentation.afterCall(duration, callRef.get(), responseRef.get());
+                        instrumentation.onComplete(duration, callRef.get(), responseRef.get());
                     } catch (Throwable th) {
                         LOGGER.error("Exception in service instrumentation", th);
                     }
+                } catch (IOException e) {
+                    long endTime = System.nanoTime();
+                    double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+                    try {
+                        instrumentation.onTransportException(e, duration, callRef.get(), responseRef.get());
+                    } catch (Throwable th) {
+                        LOGGER.error("Exception in service instrumentation", th);
+                    }
+
+                    throw new UncheckedIOException(e.getMessage(), e);
                 }
 
                 in.mark(1);

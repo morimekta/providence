@@ -121,7 +121,7 @@ public class HttpClientHandlerTest {
         Response response = client.test(new Request("request"));
 
         verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
 
         assertThat(response, is(equalToMessage(new Response("response"))));
@@ -144,7 +144,7 @@ public class HttpClientHandlerTest {
         }
 
         verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(impl, instrumentation);
     }
 
@@ -163,7 +163,7 @@ public class HttpClientHandlerTest {
             assertThat(ex.getStatusMessage(), is("Not Found"));
         }
 
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+        verify(instrumentation).onTransportException(any(HttpResponseException.class), anyDouble(), any(PServiceCall.class), isNull());
         verifyNoMoreInteractions(impl, instrumentation);
     }
 
@@ -182,7 +182,7 @@ public class HttpClientHandlerTest {
             assertThat(ex.getStatusMessage(), is("HTTP method POST is not supported by this URL"));
         }
 
-        verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+        verify(instrumentation).onTransportException(any(HttpResponseException.class), anyDouble(), any(PServiceCall.class), isNull());
         verifyNoMoreInteractions(impl, instrumentation);
     }
 }

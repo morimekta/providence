@@ -46,8 +46,7 @@ public class JavaGeneratorTest {
         generatorOptions.generator_program_name = "providence-generator-java/test";
 
         fileManager = new FileManager(out);
-        ProgramParser parser = new ThriftProgramParser();
-        typeLoader = new TypeLoader(ImmutableList.of(), parser);
+        typeLoader = new TypeLoader(ImmutableList.of());
         programRegistry = typeLoader.getProgramRegistry();
         programs = new LinkedList<>();
     }

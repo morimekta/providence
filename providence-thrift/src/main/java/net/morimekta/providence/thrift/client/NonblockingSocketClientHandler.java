@@ -197,6 +197,13 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                     } else {
                         response = (PServiceCall<Response, ResponseField>) responseFuture.get();
                     }
+
+                    long endTime = System.nanoTime();
+                    double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+                    try {
+                        instrumentation.onComplete(duration, call, response);
+                    } catch (Exception ignore) {}
+
                     return response;
                 } catch (TimeoutException | InterruptedException e) {
                     responseFuture.completeExceptionally(e);
@@ -207,13 +214,16 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                     responseFutures.remove(call.getSequence());
                 }
             }
-        } finally {
+        } catch (Exception e) {
             long endTime = System.nanoTime();
             double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {
-                instrumentation.afterCall(duration, call, response);
-            } catch (Exception ignore) {}
+                instrumentation.onTransportException(e, duration, call, response);
+            } catch (Exception ie) {
+                e.addSuppressed(ie);
+            }
 
+            throw e;
         }
 
         return null;

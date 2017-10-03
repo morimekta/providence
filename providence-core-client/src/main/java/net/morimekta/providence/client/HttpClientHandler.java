@@ -126,66 +126,79 @@ public class HttpClientHandler implements PServiceCallHandler {
         }
 
         long startTime = System.nanoTime();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        requestSerializer.serialize(baos, call);
-
-        ByteArrayContent content = new ByteArrayContent(requestSerializer.mediaType(), baos.toByteArray());
         PServiceCall<Response, ResponseField> reply = null;
-
-        @Nonnull
-        GenericUrl url = urlSupplier.get();
         try {
-            HttpRequest request = factory.buildPostRequest(url, content);
-            request.getHeaders()
-                   .setAccept(requestSerializer.mediaType());
-            HttpResponse response = request.execute();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            requestSerializer.serialize(baos, call);
+
+            ByteArrayContent content = new ByteArrayContent(requestSerializer.mediaType(), baos.toByteArray());
+
+            @Nonnull
+            GenericUrl url = urlSupplier.get();
             try {
-                Serializer responseSerializer = requestSerializer;
-                if (response.getContentType() != null) {
+                HttpRequest request = factory.buildPostRequest(url, content);
+                request.getHeaders()
+                       .setAccept(requestSerializer.mediaType());
+                HttpResponse response = request.execute();
+                try {
+                    Serializer responseSerializer = requestSerializer;
+                    if (response.getContentType() != null) {
+                        try {
+                            MediaType mediaType = MediaType.parse(response.getContentType());
+                            responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters()
+                                                                                           .toString());
+                        } catch (IllegalArgumentException e) {
+                            throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
+                                                            PApplicationExceptionType.INVALID_PROTOCOL).initCause(e);
+                        }
+                    }
+
+                    if (call.getType() == PServiceCallType.CALL) {
+                        // non 200 responses should have triggered a HttpResponseException,
+                        // so this is safe.
+                        reply = responseSerializer.deserialize(response.getContent(), service);
+
+                        if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                            throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                            PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                        }
+                        if (reply.getSequence() != call.getSequence()) {
+                            throw new PApplicationException(
+                                    "Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                                    PApplicationExceptionType.BAD_SEQUENCE_ID);
+                        }
+                    }
+
+                    long endTime = System.nanoTime();
+                    double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
                     try {
-                        MediaType mediaType = MediaType.parse(response.getContentType());
-                        responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters().toString());
-                    } catch (IllegalArgumentException e) {
-                        throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
-                                                        PApplicationExceptionType.INVALID_PROTOCOL).initCause(e);
+                        instrumentation.onComplete(duration, call, reply);
+                    } catch (Exception ignore) {
                     }
+
+                    return reply;
+                } finally {
+                    // Ignore whatever is left of the response when returning, in
+                    // case we did'nt read the whole response.
+                    response.ignore();
                 }
-
-                if (call.getType() == PServiceCallType.CALL) {
-                    // non 200 responses should have triggered a HttpResponseException,
-                    // so this is safe.
-                    reply = responseSerializer.deserialize(response.getContent(), service);
-
-                    if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
-                        throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
-                                                        PApplicationExceptionType.INVALID_MESSAGE_TYPE);
-                    }
-                    if (reply.getSequence() != call.getSequence()) {
-                        throw new PApplicationException(
-                                "Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
-                                PApplicationExceptionType.BAD_SEQUENCE_ID);
-                    }
-                }
-
-                return reply;
-            } finally {
-                // Ignore whatever is left of the response when returning, in
-                // case we did'nt read the whole response.
-                response.ignore();
+            } catch (HttpHostConnectException e) {
+                throw e;
+            } catch (ConnectException e) {
+                // Normalize connection refused exceptions to HttpHostConnectException.
+                // The native exception is not helpful (for when using NetHttpTransport).
+                throw new HttpHostConnectException(e, new HttpHost(url.getHost(), url.getPort(), url.getScheme()));
             }
-        } catch (HttpHostConnectException e) {
-            throw e;
-        } catch (ConnectException e) {
-            // Normalize connection refused exceptions to HttpHostConnectException.
-            // The native exception is not helpful (for when using NetHttpTransport).
-            throw new HttpHostConnectException(e, new HttpHost(url.getHost(), url.getPort(), url.getScheme()));
-        } finally {
+        } catch (Exception e) {
             long endTime = System.nanoTime();
             double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {
-                instrumentation.afterCall(duration, call, reply);
-            } catch (Exception ignore) {}
+                instrumentation.onTransportException(e, duration, call, reply);
+            } catch (Throwable ie) {
+                e.addSuppressed(ie);
+            }
+
+            throw e;
         }
     }
 }

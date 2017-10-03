@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -183,19 +184,36 @@ public class ProvidenceServlet extends HttpServlet {
                 resp.getOutputStream().write(baos.toByteArray());
                 resp.getOutputStream().flush();
             }
-        } catch (Exception e) {
-            String logName = processor.getDescriptor().getQualifiedName();
-            if (callRef.get() != null) {
-                logName = logName + "." + callRef.get().getMethod();
-            }
 
-            LOGGER.error("Unhandled exception in service call {}", logName, e);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        } finally {
             long endTime = System.nanoTime();
             double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {
-                instrumentation.afterCall(duration, callRef.get(), responseRef.get());
+                instrumentation.onComplete(duration, callRef.get(), responseRef.get());
+            } catch (Throwable th) {
+                LOGGER.error("Exception in service instrumentation", th);
+            }
+        } catch (EOFException e) {
+            // output stream closed before write is complete.
+            // So we cannot even try to respond.
+
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.onTransportException(e, duration, callRef.get(), responseRef.get());
+            } catch (Throwable th) {
+                LOGGER.error("Exception in service instrumentation", th);
+            }
+        } catch (Exception e) {
+            try {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            } catch (IOException ioEx) {
+                e.addSuppressed(ioEx);
+            }
+
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.onTransportException(e, duration, callRef.get(), responseRef.get());
             } catch (Throwable th) {
                 LOGGER.error("Exception in service instrumentation", th);
             }

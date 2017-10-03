@@ -101,7 +101,7 @@ public class SocketServerTest {
 
             waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
-            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+            verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
         }
     }
@@ -124,7 +124,7 @@ public class SocketServerTest {
             waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(impl).ping();
-            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), isNull());
+            verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
             verifyNoMoreInteractions(impl, instrumentation);
         }
     }
@@ -154,7 +154,7 @@ public class SocketServerTest {
             verify(impl).test(Request.builder()
                                      .setText("Really!")
                                      .build());
-            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+            verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
             reset(impl, instrumentation);
 
@@ -175,7 +175,7 @@ public class SocketServerTest {
 
             waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
 
-            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+            verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
         }
     }
@@ -207,7 +207,7 @@ public class SocketServerTest {
             verify(impl).test(Request.builder()
                                      .setText("O'Really???")
                                      .build());
-            verify(instrumentation).afterCall(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+            verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
         }
     }

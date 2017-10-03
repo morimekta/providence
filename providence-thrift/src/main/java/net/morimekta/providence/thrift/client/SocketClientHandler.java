@@ -126,13 +126,24 @@ public class SocketClientHandler implements PServiceCallHandler {
                                                     PApplicationExceptionType.BAD_SEQUENCE_ID);
                 }
             }
-            return reply;
-        } finally {
+
             long endTime = System.nanoTime();
             double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {
-                instrumentation.afterCall(duration, call, reply);
+                instrumentation.onComplete(duration, call, reply);
             } catch (Exception ignore) {}
+
+            return reply;
+        } catch (Exception e) {
+            long endTime = System.nanoTime();
+            double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
+            try {
+                instrumentation.onTransportException(e, duration, call, reply);
+            } catch (Exception ie) {
+                e.addSuppressed(ie);
+            }
+
+            throw e;
         }
     }
 }
