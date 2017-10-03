@@ -34,7 +34,8 @@ public interface ServiceCallInstrumentation {
      * Called when the service call failed in the transport layer itself with something
      * not related to the actual service call. E.g. in server side when the read
      * message failed, write back failed etc. {@link #onComplete(double, PServiceCall, PServiceCall)}
-     * will NOT be called after the exception call.
+     * will NOT be called after the exception call, but will be chained if this method
+     * has no override.
      *
      * @param e        The exception thrown.
      * @param duration The duration of handling the service call in milliseconds,
