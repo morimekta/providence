@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A reader helper class for matching a serializer with an input stream.
+ * A message reader that reads from a single file until the end.
  */
 public class FileMessageReader implements MessageReader {
     private final File       file;
@@ -43,6 +43,12 @@ public class FileMessageReader implements MessageReader {
 
     private InputStream in;
 
+    /**
+     * Create the file message reader.
+     *
+     * @param file The file to be read.
+     * @param serializer The serializer to use.
+     */
     public FileMessageReader(File file, Serializer serializer) {
         this.file = file;
         this.serializer = serializer;

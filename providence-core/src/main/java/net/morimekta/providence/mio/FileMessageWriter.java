@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * A writer helper class for matching a serializer with an output stream.
+ * A message writer that writes to a single file until the end.
  */
 public class FileMessageWriter implements MessageWriter {
     private final File       file;
@@ -87,7 +87,7 @@ public class FileMessageWriter implements MessageWriter {
         }
     }
 
-    private OutputStream getOutputStream() throws FileNotFoundException {
+    OutputStream getOutputStream() throws FileNotFoundException {
         if (out == null) {
             out = new BufferedOutputStream(new FileOutputStream(file, append));
         }

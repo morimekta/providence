@@ -33,10 +33,28 @@ import java.io.IOException;
  * An interface for reading messages and service calls.
  */
 public interface MessageReader extends Closeable {
+    /**
+     * Read a message from the stream.
+     *
+     * @param descriptor The descriptor for the message to be read.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The message read.
+     * @throws IOException If the message could not be read.
+     */
     <Message extends PMessage<Message, Field>, Field extends PField>
     Message read(PMessageDescriptor<Message, Field> descriptor)
             throws IOException;
 
+    /**
+     * Read a service call from the stream.
+     *
+     * @param service The service whose call should be read.
+     * @param <Message> The type of the contained params or response message.
+     * @param <Field> The field type of the contained params or response message.
+     * @return The service call read.
+     * @throws IOException If the service call could not be read.
+     */
     <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> read(PService service)
             throws IOException;
