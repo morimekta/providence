@@ -46,6 +46,15 @@ import java.util.concurrent.TimeUnit;
  * currentFileName instead of the resolution and prefix-suffix pair.
  * But this require that the rollingFilePattern is parsed into something
  * similar to the constructor params.
+ *
+ * TODO: add option to roll files on file size instead of on time only.
+ * This will require to separate the rolling file stuff into a
+ * RollingFilePolicy that has the rollingFileName getter, and state
+ * do do the correct rolling.
+ *
+ * TODO: add option to do file cleanup, on age, max size or number of files.
+ * Though should probably have to match the rolling policy, or be simply
+ * based on it.
  */
 @Beta
 public class RollingFileMessageWriter implements MessageWriter {

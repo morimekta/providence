@@ -130,18 +130,34 @@ public class QueuedMessageWriter implements MessageWriter {
     @SuppressWarnings("unchecked")
     private void writeLoop() {
         try {
+            long failDelay = 137L;
             while (!executor.isShutdown()) {
                 try {
                     while (messageQueue.size() > 0) {
                         writer.write(messageQueue.poll());
+                        failDelay = 137L;
                     }
                     sleep(3L);  // 3ms should be enough to do actual work.
                     // This is a very tight loop, so should be expensive to
                     // to have a short sleep time.
                 } catch (IOException e) {
-                    LOGGER.error("Unable to write message", e);
+                    if (failDelay >= 10_000) {
+                        LOGGER.error("Unable to write message, sleeping {}s",
+                                     (failDelay / 1000), e);
+                    } else {
+                        LOGGER.error("Unable to write message, sleeping {}ms",
+                                     failDelay, e);
+                    }
+
                     // Continue but with longer sleep on errors.
-                    sleep(137L);
+                    try {
+                        sleep(failDelay);
+                    } finally {
+                        failDelay = Math.min(
+                                TimeUnit.MINUTES.toMillis(10),
+                                // add 2/3 to the time for each consecutive failure.
+                                (long) (failDelay * 1.66666667));
+                    }
                 }
             }
         } catch (InterruptedException ignore) {
