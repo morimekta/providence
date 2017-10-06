@@ -50,12 +50,14 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
 
     /**
      * @param key The key of the field.
+     * @param <T> The return type.
      * @return The value of the field.
      */
     <T> T get(int key);
 
     /**
      * @param field The field.
+     * @param <T> The return type.
      * @return Whether the field is present.
      */
     default <T> T get(@Nonnull Field field) {
