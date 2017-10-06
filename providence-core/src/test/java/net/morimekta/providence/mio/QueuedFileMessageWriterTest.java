@@ -56,7 +56,7 @@ public class QueuedFileMessageWriterTest {
         sleep(10L);
 
         executorService.shutdown();
-        assertTrue(executorService.awaitTermination(1000L, TimeUnit.MILLISECONDS));
+        assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS));
 
         sleep(1L);
 
