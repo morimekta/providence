@@ -148,27 +148,28 @@ public class ConstType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 4: return true;
             case 5: return true;
             case 6: return true;
-            case 7: return hasAnnotations();
-            case 10: return hasStartLineNo();
-            case 11: return hasStartLinePos();
+            case 7: return mAnnotations != null;
+            case 10: return mStartLineNo != null;
+            case 11: return mStartLinePos != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 4: return getType();
-            case 5: return getName();
-            case 6: return getValue();
-            case 7: return getAnnotations();
-            case 10: return getStartLineNo();
-            case 11: return getStartLinePos();
+            case 1: return (T) mDocumentation;
+            case 4: return (T) mType;
+            case 5: return (T) mName;
+            case 6: return (T) mValue;
+            case 7: return (T) mAnnotations;
+            case 10: return (T) mStartLineNo;
+            case 11: return (T) mStartLinePos;
             default: return null;
         }
     }
@@ -495,11 +496,13 @@ public class ConstType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ConstType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
         return kDescriptor;
     }

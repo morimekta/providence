@@ -26,7 +26,8 @@ public class ConsumeAll
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
             default: return null;
         }
@@ -182,11 +183,13 @@ public class ConsumeAll
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ConsumeAll,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<ConsumeAll,_Field> descriptor() {
         return kDescriptor;
     }

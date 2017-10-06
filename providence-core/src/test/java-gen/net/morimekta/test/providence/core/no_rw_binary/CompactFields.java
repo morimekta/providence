@@ -83,17 +83,18 @@ public class CompactFields
         switch(key) {
             case 1: return true;
             case 2: return true;
-            case 3: return hasLabel();
+            case 3: return mLabel != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getName();
-            case 2: return getId();
-            case 3: return getLabel();
+            case 1: return (T) mName;
+            case 2: return (T) (Integer) mId;
+            case 3: return (T) mLabel;
             default: return null;
         }
     }
@@ -301,11 +302,13 @@ public class CompactFields
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<CompactFields,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> descriptor() {
         return kDescriptor;
     }

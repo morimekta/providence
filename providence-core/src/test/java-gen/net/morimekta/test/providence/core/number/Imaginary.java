@@ -68,10 +68,11 @@ public class Imaginary
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getV();
-            case 2: return getI();
+            case 1: return (T) (Double) mV;
+            case 2: return (T) (Double) mI;
             default: return null;
         }
     }
@@ -263,11 +264,13 @@ public class Imaginary
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Imaginary,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
         return kDescriptor;
     }

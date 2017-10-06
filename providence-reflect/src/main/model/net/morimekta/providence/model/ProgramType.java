@@ -141,9 +141,9 @@ public class ProgramType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 2: return true;
-            case 3: return hasIncludes();
+            case 3: return mIncludes != null;
             case 4: return true;
             case 5: return true;
             default: return false;
@@ -151,13 +151,14 @@ public class ProgramType
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getProgramName();
-            case 3: return getIncludes();
-            case 4: return getNamespaces();
-            case 5: return getDecl();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mProgramName;
+            case 3: return (T) mIncludes;
+            case 4: return (T) mNamespaces;
+            case 5: return (T) mDecl;
             default: return null;
         }
     }
@@ -440,11 +441,13 @@ public class ProgramType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ProgramType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> descriptor() {
         return kDescriptor;
     }

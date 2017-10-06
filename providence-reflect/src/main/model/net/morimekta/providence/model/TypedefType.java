@@ -77,7 +77,7 @@ public class TypedefType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 2: return true;
             case 3: return true;
             default: return false;
@@ -85,11 +85,12 @@ public class TypedefType
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getType();
-            case 3: return getName();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mType;
+            case 3: return (T) mName;
             default: return null;
         }
     }
@@ -318,11 +319,13 @@ public class TypedefType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<TypedefType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
         return kDescriptor;
     }

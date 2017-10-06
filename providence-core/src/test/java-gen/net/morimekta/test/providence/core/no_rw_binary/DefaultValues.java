@@ -160,33 +160,34 @@ public class DefaultValues
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasBooleanValue();
-            case 2: return hasByteValue();
-            case 3: return hasShortValue();
-            case 4: return hasIntegerValue();
-            case 5: return hasLongValue();
-            case 6: return hasDoubleValue();
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
+            case 1: return mBooleanValue != null;
+            case 2: return mByteValue != null;
+            case 3: return mShortValue != null;
+            case 4: return mIntegerValue != null;
+            case 5: return mLongValue != null;
+            case 6: return mDoubleValue != null;
+            case 7: return mStringValue != null;
+            case 8: return mBinaryValue != null;
+            case 9: return mEnumValue != null;
+            case 10: return mCompactValue != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
+            case 1: return (T) mBooleanValue;
+            case 2: return (T) mByteValue;
+            case 3: return (T) mShortValue;
+            case 4: return (T) mIntegerValue;
+            case 5: return (T) mLongValue;
+            case 6: return (T) mDoubleValue;
+            case 7: return (T) mStringValue;
+            case 8: return (T) mBinaryValue;
+            case 9: return (T) mEnumValue;
+            case 10: return (T) mCompactValue;
             default: return null;
         }
     }
@@ -524,11 +525,13 @@ public class DefaultValues
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<DefaultValues,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
         return kDescriptor;
     }

@@ -151,27 +151,28 @@ public class FunctionType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
-            case 2: return hasOneWay();
-            case 3: return hasReturnType();
+            case 1: return mDocumentation != null;
+            case 2: return mOneWay != null;
+            case 3: return mReturnType != null;
             case 4: return true;
             case 5: return true;
-            case 6: return hasExceptions();
-            case 7: return hasAnnotations();
+            case 6: return mExceptions != null;
+            case 7: return mAnnotations != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return isOneWay();
-            case 3: return getReturnType();
-            case 4: return getName();
-            case 5: return getParams();
-            case 6: return getExceptions();
-            case 7: return getAnnotations();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mOneWay;
+            case 3: return (T) mReturnType;
+            case 4: return (T) mName;
+            case 5: return (T) mParams;
+            case 6: return (T) mExceptions;
+            case 7: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -512,11 +513,13 @@ public class FunctionType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<FunctionType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
         return kDescriptor;
     }

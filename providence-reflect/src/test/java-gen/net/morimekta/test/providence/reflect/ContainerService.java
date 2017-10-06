@@ -226,15 +226,16 @@ public class ContainerService {
         @Override
         public boolean has(int key) {
             switch(key) {
-                case 1: return hasC();
+                case 1: return mC != null;
                 default: return false;
             }
         }
 
         @Override
-        public Object get(int key) {
+        @SuppressWarnings("unchecked")
+        public <T> T get(int key) {
             switch(key) {
-                case 1: return getC();
+                case 1: return (T) mC;
                 default: return null;
             }
         }
@@ -419,11 +420,13 @@ public class ContainerService {
 
         }
 
+        @javax.annotation.Nonnull
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_load_request,_Field> provider() {
             return new _Provider();
         }
 
         @Override
+        @javax.annotation.Nonnull
         public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
             return kDescriptor;
         }
@@ -798,17 +801,18 @@ public class ContainerService {
         @Override
         public boolean has(int key) {
             switch(key) {
-                case 0: return hasSuccess();
-                case 1: return hasEf();
+                case 0: return tUnionField == _Field.SUCCESS;
+                case 1: return tUnionField == _Field.EF;
                 default: return false;
             }
         }
 
         @Override
-        public Object get(int key) {
+        @SuppressWarnings("unchecked")
+        public <T> T get(int key) {
             switch(key) {
-                case 0: return getSuccess();
-                case 1: return getEf();
+                case 0: return (T) mSuccess;
+                case 1: return (T) mEf;
                 default: return null;
             }
         }
@@ -1031,11 +1035,13 @@ public class ContainerService {
 
         }
 
+        @javax.annotation.Nonnull
         public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_load_response,_Field> provider() {
             return new _Provider();
         }
 
         @Override
+        @javax.annotation.Nonnull
         public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
             return kDescriptor;
         }

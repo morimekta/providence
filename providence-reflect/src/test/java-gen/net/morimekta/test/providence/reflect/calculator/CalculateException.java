@@ -59,16 +59,17 @@ public class CalculateException
     public boolean has(int key) {
         switch(key) {
             case 1: return true;
-            case 2: return hasOperation();
+            case 2: return mOperation != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getMessage();
-            case 2: return getOperation();
+            case 1: return (T) mMessage;
+            case 2: return (T) mOperation;
             default: return null;
         }
     }
@@ -296,11 +297,13 @@ public class CalculateException
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PExceptionDescriptorProvider<CalculateException,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
         return kDescriptor;
     }

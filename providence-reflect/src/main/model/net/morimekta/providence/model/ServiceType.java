@@ -118,23 +118,24 @@ public class ServiceType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 2: return true;
-            case 3: return hasExtend();
+            case 3: return mExtend != null;
             case 4: return true;
-            case 5: return hasAnnotations();
+            case 5: return mAnnotations != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getName();
-            case 3: return getExtend();
-            case 4: return getMethods();
-            case 5: return getAnnotations();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mName;
+            case 3: return (T) mExtend;
+            case 4: return (T) mMethods;
+            case 5: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -423,11 +424,13 @@ public class ServiceType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
         return kDescriptor;
     }

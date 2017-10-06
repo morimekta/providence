@@ -93,21 +93,22 @@ public class EnumValue
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 2: return true;
-            case 3: return hasId();
-            case 4: return hasAnnotations();
+            case 3: return mId != null;
+            case 4: return mAnnotations != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getName();
-            case 3: return getId();
-            case 4: return getAnnotations();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mName;
+            case 3: return (T) mId;
+            case 4: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -373,11 +374,13 @@ public class EnumValue
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<EnumValue,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> descriptor() {
         return kDescriptor;
     }

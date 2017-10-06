@@ -119,23 +119,24 @@ public class MessageType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
-            case 2: return hasVariant();
+            case 1: return mDocumentation != null;
+            case 2: return mVariant != null;
             case 3: return true;
             case 4: return true;
-            case 5: return hasAnnotations();
+            case 5: return mAnnotations != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getVariant();
-            case 3: return getName();
-            case 4: return getFields();
-            case 5: return getAnnotations();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) mVariant;
+            case 3: return (T) mName;
+            case 4: return (T) mFields;
+            case 5: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -421,11 +422,13 @@ public class MessageType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<MessageType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
         return kDescriptor;
     }

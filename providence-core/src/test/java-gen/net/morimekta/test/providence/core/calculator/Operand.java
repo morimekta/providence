@@ -95,19 +95,20 @@ public class Operand
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasOperation();
-            case 2: return hasNumber();
-            case 3: return hasImaginary();
+            case 1: return tUnionField == _Field.OPERATION;
+            case 2: return tUnionField == _Field.NUMBER;
+            case 3: return tUnionField == _Field.IMAGINARY;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getOperation();
-            case 2: return getNumber();
-            case 3: return getImaginary();
+            case 1: return (T) mOperation;
+            case 2: return (T) mNumber;
+            case 3: return (T) mImaginary;
             default: return null;
         }
     }
@@ -348,11 +349,13 @@ public class Operand
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Operand,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
         return kDescriptor;
     }

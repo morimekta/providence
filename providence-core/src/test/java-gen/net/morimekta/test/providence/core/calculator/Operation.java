@@ -56,17 +56,18 @@ public class Operation
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasOperator();
-            case 2: return hasOperands();
+            case 1: return mOperator != null;
+            case 2: return mOperands != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getOperator();
-            case 2: return getOperands();
+            case 1: return (T) mOperator;
+            case 2: return (T) mOperands;
             default: return null;
         }
     }
@@ -280,11 +281,13 @@ public class Operation
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Operation,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> descriptor() {
         return kDescriptor;
     }

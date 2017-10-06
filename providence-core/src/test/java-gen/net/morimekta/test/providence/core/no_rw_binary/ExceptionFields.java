@@ -243,25 +243,26 @@ public class ExceptionFields
             case 6: return true;
             case 7: return true;
             case 8: return true;
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
+            case 9: return mEnumValue != null;
+            case 10: return mCompactValue != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
+            case 1: return (T) (Boolean) mBooleanValue;
+            case 2: return (T) (Byte) mByteValue;
+            case 3: return (T) (Short) mShortValue;
+            case 4: return (T) (Integer) mIntegerValue;
+            case 5: return (T) (Long) mLongValue;
+            case 6: return (T) (Double) mDoubleValue;
+            case 7: return (T) mStringValue;
+            case 8: return (T) mBinaryValue;
+            case 9: return (T) mEnumValue;
+            case 10: return (T) mCompactValue;
             default: return null;
         }
     }
@@ -565,11 +566,13 @@ public class ExceptionFields
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PExceptionDescriptorProvider<ExceptionFields,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PExceptionDescriptor<ExceptionFields,_Field> descriptor() {
         return kDescriptor;
     }

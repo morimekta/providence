@@ -144,23 +144,24 @@ public class Declaration
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDeclEnum();
-            case 2: return hasDeclTypedef();
-            case 3: return hasDeclStruct();
-            case 4: return hasDeclService();
-            case 5: return hasDeclConst();
+            case 1: return tUnionField == _Field.DECL_ENUM;
+            case 2: return tUnionField == _Field.DECL_TYPEDEF;
+            case 3: return tUnionField == _Field.DECL_STRUCT;
+            case 4: return tUnionField == _Field.DECL_SERVICE;
+            case 5: return tUnionField == _Field.DECL_CONST;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDeclEnum();
-            case 2: return getDeclTypedef();
-            case 3: return getDeclStruct();
-            case 4: return getDeclService();
-            case 5: return getDeclConst();
+            case 1: return (T) mDeclEnum;
+            case 2: return (T) mDeclTypedef;
+            case 3: return (T) mDeclStruct;
+            case 4: return (T) mDeclService;
+            case 5: return (T) mDeclConst;
             default: return null;
         }
     }
@@ -437,11 +438,13 @@ public class Declaration
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Declaration,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
         return kDescriptor;
     }

@@ -761,87 +761,88 @@ public class Containers
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasBooleanList();
-            case 2: return hasByteList();
-            case 3: return hasShortList();
-            case 4: return hasIntegerList();
-            case 5: return hasLongList();
-            case 6: return hasDoubleList();
-            case 7: return hasStringList();
-            case 8: return hasBinaryList();
-            case 11: return hasBooleanSet();
-            case 12: return hasByteSet();
-            case 13: return hasShortSet();
-            case 14: return hasIntegerSet();
-            case 15: return hasLongSet();
-            case 16: return hasDoubleSet();
-            case 17: return hasStringSet();
-            case 18: return hasBinarySet();
-            case 21: return hasBooleanMap();
-            case 22: return hasByteMap();
-            case 23: return hasShortMap();
-            case 24: return hasIntegerMap();
-            case 25: return hasLongMap();
-            case 26: return hasDoubleMap();
-            case 27: return hasStringMap();
-            case 28: return hasBinaryMap();
-            case 31: return hasEnumList();
-            case 32: return hasEnumSet();
-            case 33: return hasEnumMap();
-            case 41: return hasMessageList();
-            case 42: return hasMessageSet();
-            case 43: return hasMessageMap();
-            case 44: return hasMessageKeyMap();
-            case 51: return hasRequiredFields();
-            case 52: return hasDefaultFields();
-            case 53: return hasOptionalFields();
-            case 54: return hasUnionFields();
-            case 55: return hasExceptionFields();
-            case 56: return hasDefaultValues();
+            case 1: return mBooleanList != null;
+            case 2: return mByteList != null;
+            case 3: return mShortList != null;
+            case 4: return mIntegerList != null;
+            case 5: return mLongList != null;
+            case 6: return mDoubleList != null;
+            case 7: return mStringList != null;
+            case 8: return mBinaryList != null;
+            case 11: return mBooleanSet != null;
+            case 12: return mByteSet != null;
+            case 13: return mShortSet != null;
+            case 14: return mIntegerSet != null;
+            case 15: return mLongSet != null;
+            case 16: return mDoubleSet != null;
+            case 17: return mStringSet != null;
+            case 18: return mBinarySet != null;
+            case 21: return mBooleanMap != null;
+            case 22: return mByteMap != null;
+            case 23: return mShortMap != null;
+            case 24: return mIntegerMap != null;
+            case 25: return mLongMap != null;
+            case 26: return mDoubleMap != null;
+            case 27: return mStringMap != null;
+            case 28: return mBinaryMap != null;
+            case 31: return mEnumList != null;
+            case 32: return mEnumSet != null;
+            case 33: return mEnumMap != null;
+            case 41: return mMessageList != null;
+            case 42: return mMessageSet != null;
+            case 43: return mMessageMap != null;
+            case 44: return mMessageKeyMap != null;
+            case 51: return mRequiredFields != null;
+            case 52: return mDefaultFields != null;
+            case 53: return mOptionalFields != null;
+            case 54: return mUnionFields != null;
+            case 55: return mExceptionFields != null;
+            case 56: return mDefaultValues != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getBooleanList();
-            case 2: return getByteList();
-            case 3: return getShortList();
-            case 4: return getIntegerList();
-            case 5: return getLongList();
-            case 6: return getDoubleList();
-            case 7: return getStringList();
-            case 8: return getBinaryList();
-            case 11: return getBooleanSet();
-            case 12: return getByteSet();
-            case 13: return getShortSet();
-            case 14: return getIntegerSet();
-            case 15: return getLongSet();
-            case 16: return getDoubleSet();
-            case 17: return getStringSet();
-            case 18: return getBinarySet();
-            case 21: return getBooleanMap();
-            case 22: return getByteMap();
-            case 23: return getShortMap();
-            case 24: return getIntegerMap();
-            case 25: return getLongMap();
-            case 26: return getDoubleMap();
-            case 27: return getStringMap();
-            case 28: return getBinaryMap();
-            case 31: return getEnumList();
-            case 32: return getEnumSet();
-            case 33: return getEnumMap();
-            case 41: return getMessageList();
-            case 42: return getMessageSet();
-            case 43: return getMessageMap();
-            case 44: return getMessageKeyMap();
-            case 51: return getRequiredFields();
-            case 52: return getDefaultFields();
-            case 53: return getOptionalFields();
-            case 54: return getUnionFields();
-            case 55: return getExceptionFields();
-            case 56: return getDefaultValues();
+            case 1: return (T) mBooleanList;
+            case 2: return (T) mByteList;
+            case 3: return (T) mShortList;
+            case 4: return (T) mIntegerList;
+            case 5: return (T) mLongList;
+            case 6: return (T) mDoubleList;
+            case 7: return (T) mStringList;
+            case 8: return (T) mBinaryList;
+            case 11: return (T) mBooleanSet;
+            case 12: return (T) mByteSet;
+            case 13: return (T) mShortSet;
+            case 14: return (T) mIntegerSet;
+            case 15: return (T) mLongSet;
+            case 16: return (T) mDoubleSet;
+            case 17: return (T) mStringSet;
+            case 18: return (T) mBinarySet;
+            case 21: return (T) mBooleanMap;
+            case 22: return (T) mByteMap;
+            case 23: return (T) mShortMap;
+            case 24: return (T) mIntegerMap;
+            case 25: return (T) mLongMap;
+            case 26: return (T) mDoubleMap;
+            case 27: return (T) mStringMap;
+            case 28: return (T) mBinaryMap;
+            case 31: return (T) mEnumList;
+            case 32: return (T) mEnumSet;
+            case 33: return (T) mEnumMap;
+            case 41: return (T) mMessageList;
+            case 42: return (T) mMessageSet;
+            case 43: return (T) mMessageMap;
+            case 44: return (T) mMessageKeyMap;
+            case 51: return (T) mRequiredFields;
+            case 52: return (T) mDefaultFields;
+            case 53: return (T) mOptionalFields;
+            case 54: return (T) mUnionFields;
+            case 55: return (T) mExceptionFields;
+            case 56: return (T) mDefaultValues;
             default: return null;
         }
     }
@@ -2053,11 +2054,13 @@ public class Containers
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Containers,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<Containers,_Field> descriptor() {
         return kDescriptor;
     }

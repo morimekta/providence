@@ -180,31 +180,32 @@ public class FieldType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasDocumentation();
+            case 1: return mDocumentation != null;
             case 2: return true;
-            case 3: return hasRequirement();
+            case 3: return mRequirement != null;
             case 4: return true;
             case 5: return true;
-            case 6: return hasDefaultValue();
-            case 7: return hasAnnotations();
-            case 10: return hasStartLineNo();
-            case 11: return hasStartLinePos();
+            case 6: return mDefaultValue != null;
+            case 7: return mAnnotations != null;
+            case 10: return mStartLineNo != null;
+            case 11: return mStartLinePos != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getDocumentation();
-            case 2: return getId();
-            case 3: return getRequirement();
-            case 4: return getType();
-            case 5: return getName();
-            case 6: return getDefaultValue();
-            case 7: return getAnnotations();
-            case 10: return getStartLineNo();
-            case 11: return getStartLinePos();
+            case 1: return (T) mDocumentation;
+            case 2: return (T) (Integer) mId;
+            case 3: return (T) mRequirement;
+            case 4: return (T) mType;
+            case 5: return (T) mName;
+            case 6: return (T) mDefaultValue;
+            case 7: return (T) mAnnotations;
+            case 10: return (T) mStartLineNo;
+            case 11: return (T) mStartLinePos;
             default: return null;
         }
     }
@@ -577,11 +578,13 @@ public class FieldType
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PStructDescriptorProvider<FieldType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
         return kDescriptor;
     }

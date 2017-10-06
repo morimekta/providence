@@ -307,7 +307,8 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         @Override
-        public Object get(int key) {
+        @SuppressWarnings("unchecked")
+        public <T> T get(int key) {
             switch(key) {
                 default: return null;
             }
@@ -471,11 +472,13 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
         }
 
+        @javax.annotation.Nonnull
         public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_extra_request,_Field> provider() {
             return new _Provider();
         }
 
         @Override
+        @javax.annotation.Nonnull
         public net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> descriptor() {
             return kDescriptor;
         }
@@ -706,15 +709,16 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         @Override
         public boolean has(int key) {
             switch(key) {
-                case 0: return hasSuccess();
+                case 0: return tUnionField == _Field.SUCCESS;
                 default: return false;
             }
         }
 
         @Override
-        public Object get(int key) {
+        @SuppressWarnings("unchecked")
+        public <T> T get(int key) {
             switch(key) {
-                case 0: return getSuccess();
+                case 0: return (T) mSuccess;
                 default: return null;
             }
         }
@@ -921,11 +925,13 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
 
         }
 
+        @javax.annotation.Nonnull
         public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_extra_response,_Field> provider() {
             return new _Provider();
         }
 
         @Override
+        @javax.annotation.Nonnull
         public net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> descriptor() {
             return kDescriptor;
         }

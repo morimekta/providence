@@ -69,17 +69,18 @@ public class PApplicationException
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasMessage();
-            case 2: return hasId();
+            case 1: return mMessage != null;
+            case 2: return mId != null;
             default: return false;
         }
     }
 
     @Override
-    public Object get(int key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
         switch(key) {
-            case 1: return getMessage();
-            case 2: return getId();
+            case 1: return (T) mMessage;
+            case 2: return (T) mId;
             default: return null;
         }
     }
@@ -317,11 +318,13 @@ public class PApplicationException
 
     }
 
+    @javax.annotation.Nonnull
     public static net.morimekta.providence.descriptor.PExceptionDescriptorProvider<PApplicationException,_Field> provider() {
         return new _Provider();
     }
 
     @Override
+    @javax.annotation.Nonnull
     public net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> descriptor() {
         return kDescriptor;
     }
