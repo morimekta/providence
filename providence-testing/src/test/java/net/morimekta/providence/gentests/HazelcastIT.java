@@ -44,8 +44,10 @@ public class HazelcastIT {
     @BeforeClass
     public static void setupClass() {
         if (IGNORE_HAZELCAST) return;
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "off");
 
         Config config1 = new Config();
+        config1.setProperties(System.getProperties());
         config1.setProperty("hazelcast.logging.type", "slf4j");
         Hazelcast_Factory.populateConfig(config1, 1);
         config1.getSerializationConfig().setPortableVersion(1);
