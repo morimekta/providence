@@ -91,8 +91,9 @@ public class CUnion implements PUnion<CUnion,CField> {
     }
 
     @Override
-    public Object get(int key) {
-        return has(key) ? unionValue : null;
+    @SuppressWarnings("unchecked")
+    public <T> T get(int key) {
+        return has(key) ? (T) unionValue : null;
     }
 
     @Nonnull

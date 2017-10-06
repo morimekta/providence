@@ -316,6 +316,8 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         break;
                 }
             } else if (field.getRequirement() != PRequirement.OPTIONAL) {
+                // Should always be set. Meaning has() always has a value,
+                // if one can be obtained.
                 if (field.hasDefaultValue()) {
                     out.put(key, field.getDefaultValue());
                 } else if (field.getDescriptor().getDefaultValue() != null) {

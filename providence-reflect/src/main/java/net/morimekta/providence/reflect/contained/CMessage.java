@@ -21,11 +21,8 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PRequirement;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -48,18 +45,11 @@ public interface CMessage<Message extends PMessage<Message, CField>>
     }
 
     @Override
-    default Object get(int key) {
+    @SuppressWarnings("unchecked")
+    default <T> T get(int key) {
         CField field = descriptor().findFieldById(key);
         if (field != null) {
-            Object value = values().get(key);
-            if (value != null) {
-                return value;
-            } else if (field.hasDefaultValue()) {
-                return field.getDefaultValue();
-            } else if ((field.getDescriptor() instanceof PPrimitive && ((PPrimitive) field.getDescriptor()).isNativePrimitive()) ||
-                       (field.getRequirement() != PRequirement.OPTIONAL)) {
-                return field.getDescriptor().getDefaultValue();
-            }
+            return (T) values().get(key);
         }
         return null;
     }

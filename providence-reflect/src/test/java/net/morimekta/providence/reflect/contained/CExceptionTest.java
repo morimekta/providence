@@ -64,7 +64,7 @@ public class CExceptionTest {
         assertThat(ex.has(5), is(false));
 
         assertThat(ex.get(text), is("text"));
-        assertThat(ex.get(num), is(7));  // default
+        assertThat(ex.get(num), is(nullValue()));  // default
         assertThat(ex.get(5), is(nullValue()));
 
         CException other = new CException.Builder(descriptor).set(text, "diff")

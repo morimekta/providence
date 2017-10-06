@@ -30,12 +30,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class CMessageTest {
@@ -48,14 +50,14 @@ public class CMessageTest {
         registry = new RecursiveTypeRegistry("test");
 
         List<CField> fields = new LinkedList<>();
-        fields.add(new CField(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), null, null));
-        fields.add(new CField(null, 2, PRequirement.OPTIONAL, "field_8", PPrimitive.BYTE.provider(), null, null));
-        fields.add(new CField(null, 65000, PRequirement.OPTIONAL, "field_16", PPrimitive.I16.provider(), null, null));
-        fields.add(new CField(null, 4, PRequirement.OPTIONAL, "field_32", PPrimitive.I32.provider(), null, null));
-        fields.add(new CField(null, 5, PRequirement.OPTIONAL, "field_64", PPrimitive.I64.provider(), null, null));
-        fields.add(new CField(null, 6, PRequirement.OPTIONAL, "field_dbl", PPrimitive.DOUBLE.provider(), null, null));
-        fields.add(new CField(null, 9998, PRequirement.OPTIONAL, "field_str", PPrimitive.STRING.provider(), null, null));
-        fields.add(new CField(null, 9999, PRequirement.OPTIONAL, "field_bin", PPrimitive.BINARY.provider(), null, null));
+        fields.add(new CField(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), () -> false, null));
+        fields.add(new CField(null, 2, PRequirement.OPTIONAL, "field_8", PPrimitive.BYTE.provider(), () -> (byte) 9, null));
+        fields.add(new CField(null, 65000, PRequirement.OPTIONAL, "field_16", PPrimitive.I16.provider(), () -> (short) 98, null));
+        fields.add(new CField(null, 4, PRequirement.OPTIONAL, "field_32", PPrimitive.I32.provider(), () -> 987, null));
+        fields.add(new CField(null, 5, PRequirement.OPTIONAL, "field_64", PPrimitive.I64.provider(), () -> 9876L, null));
+        fields.add(new CField(null, 6, PRequirement.OPTIONAL, "field_dbl", PPrimitive.DOUBLE.provider(), () -> 9.87, null));
+        fields.add(new CField(null, 9998, PRequirement.OPTIONAL, "field_str", PPrimitive.STRING.provider(), () -> "default", null));
+        fields.add(new CField(null, 9999, PRequirement.OPTIONAL, "field_bin", PPrimitive.BINARY.provider(), () -> Binary.fromBase64("AA=="), null));
         fields.add(new CField(null,
                               32000,
                               PRequirement.OPTIONAL,
@@ -86,7 +88,7 @@ public class CMessageTest {
                                   .set(32000, inner)
                                   .build();
 
-        CStruct struct = (CStruct) outer.get(32000);
+        CStruct struct = outer.get(32000);
 
         assertTrue(struct.has(1));
         assertTrue(struct.has(2));
@@ -100,14 +102,14 @@ public class CMessageTest {
 
         assertFalse(struct.has(1234));
 
-        assertEquals(true, struct.get(1));
-        assertEquals((byte) 8, struct.get(2));
-        assertEquals((short) 16, struct.get(65000));
-        assertEquals(32, struct.get(4));
-        assertEquals(Long.MAX_VALUE, struct.get(5));
-        assertEquals(1234567890.09876, struct.get(6));
-        assertEquals("string", struct.get(9998));
-        assertEquals(Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4}), struct.get(9999));
+        assertThat(struct.get(1), is(true));
+        assertThat(struct.get(2), is((byte) 8));
+        assertThat(struct.get(65000), is((short) 16));
+        assertThat(struct.get(4), is(32));
+        assertThat(struct.get(5), is(Long.MAX_VALUE));
+        assertThat(struct.get(6), is(1234567890.09876));
+        assertThat(struct.get(9998), is("string"));
+        assertThat(struct.get(9999), is(Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4})));
 
         assertNull(struct.get(1234));
 
@@ -124,17 +126,16 @@ public class CMessageTest {
 
         assertFalse(outer.has(1234));
 
-        assertEquals(false, outer.get(1));
-        assertEquals((byte) 0, outer.get(2));
-        assertEquals((short) 0, outer.get(65000));
-        assertEquals(0, outer.get(4));
-        assertEquals((long) 0, outer.get(5));
-        assertEquals(0.0d, outer.get(6));
-        assertNull(outer.get(9998));
-        assertNull(outer.get(9999));
-        assertNotNull(outer.get(32000));
-
-        assertNull(outer.get(1234));
+        assertThat(outer.get(1), is(nullValue()));
+        assertThat(outer.get(2), is(nullValue()));
+        assertThat(outer.get(65000), is(nullValue()));
+        assertThat(outer.get(4), is(nullValue()));
+        assertThat(outer.get(5), is(nullValue()));
+        assertThat(outer.get(6), is(nullValue()));
+        assertThat(outer.get(9998), is(nullValue()));
+        assertThat(outer.get(9999), is(nullValue()));
+        assertThat(outer.get(32000), is(inner));
+        assertThat(outer.get(1234), is(nullValue()));
 
         assertNotEquals(struct.toString(), outer.toString());
         assertEquals(struct.toString(), inner.toString());

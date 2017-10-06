@@ -38,6 +38,7 @@ import java.io.IOException;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -86,7 +87,7 @@ public class CMessageBuilderTest {
 
         assertThat(a.get(1), is(false));
         assertThat(a.get(2), is((byte) 55));
-        assertThat(a.get(5), is(0L));
+        assertThat(a.get(5), is(nullValue()));
 
         ba.merge(bb.build());
 
