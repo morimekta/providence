@@ -152,7 +152,8 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         String typeClass = message.getDescriptorClass();
         String providerClass = message.getProviderClass();
 
-        writer.formatln("public static %s<%s,_Field> provider() {", providerClass, message.instanceType())
+        writer.appendln("@" + Nonnull.class.getName())
+              .formatln("public static %s<%s,_Field> provider() {", providerClass, message.instanceType())
               .begin()
               .formatln("return new _Provider();")
               .end()
@@ -160,6 +161,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .newline();
 
         writer.appendln("@Override")
+              .appendln("@" + Nonnull.class.getName())
               .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
               .begin()
               .appendln("return kDescriptor;")
@@ -426,7 +428,8 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
 
     private void appendGetter(JMessage<?> message) {
         writer.appendln("@Override")
-              .appendln("public Object get(int key) {")
+              .appendln("@SuppressWarnings(\"unchecked\")")
+              .appendln("public <T> T get(int key) {")
               .begin()
               .appendln("switch(key) {")
               .begin();
@@ -434,10 +437,19 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         for (JField field : message.numericalOrderFields()) {
             if (field.isVoid()) {
                 // Void fields have no value.
-                writer.formatln("case %d: return %s() ? Boolean.FALSE : null;",
+                writer.formatln("case %d: return %s() ? (T) Boolean.TRUE : null;",
                                 field.id(), field.presence());
+            } else if (field.isPrimitiveJavaValue()) {
+                if (field.alwaysPresent()) {
+                    writer.formatln("case %d: return (T) (%s) %s;",
+                                    field.id(), field.instanceType(), field.member());
+                } else {
+                    writer.formatln("case %d: return (T) %s;",
+                                    field.id(), field.member());
+                }
             } else {
-                writer.formatln("case %d: return %s();", field.id(), field.getter());
+                writer.formatln("case %d: return (T) %s;",
+                                field.id(), field.member());
             }
         }
 
@@ -456,11 +468,18 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("switch(key) {")
               .begin();
 
-        for (JField field : message.numericalOrderFields()) {
-            if (field.alwaysPresent() && !message.isUnion()) {
-                writer.formatln("case %d: return true;", field.id());
-            } else {
-                writer.formatln("case %d: return %s();", field.id(), field.presence());
+        if (message.isUnion()) {
+            for (JField field : message.numericalOrderFields()) {
+                writer.formatln("case %s: return %s == _Field.%s;",
+                                field.id(), UNION_FIELD, field.fieldEnum());
+            }
+        } else {
+            for (JField field : message.numericalOrderFields()) {
+                if (field.alwaysPresent()) {
+                    writer.formatln("case %d: return true;", field.id());
+                } else {
+                    writer.formatln("case %d: return %s != null;", field.id(), field.member());
+                }
             }
         }
 

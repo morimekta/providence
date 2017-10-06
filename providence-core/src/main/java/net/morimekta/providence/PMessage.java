@@ -52,13 +52,13 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      * @param key The key of the field.
      * @return The value of the field.
      */
-    Object get(int key);
+    <T> T get(int key);
 
     /**
      * @param field The field.
      * @return Whether the field is present.
      */
-    default Object get(@Nonnull Field field) {
+    default <T> T get(@Nonnull Field field) {
         return get(field.getId());
     }
 
