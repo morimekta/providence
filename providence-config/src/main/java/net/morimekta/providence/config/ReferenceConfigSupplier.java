@@ -97,11 +97,8 @@ public class ReferenceConfigSupplier<
     }
 
     @SuppressWarnings("unchecked")
-    private <
-            RefMessage extends PMessage<RefMessage, RefField>, RefField extends PField,
-            ParentMessage extends PMessage<ParentMessage, ParentField>, ParentField extends PField>
-    RefMessage getReference(ParentMessage parent) throws ProvidenceConfigException {
-        PMessage current = parent;
+    private RefMessage getReference(ParentMessage parent) throws ProvidenceConfigException {
+        PMessage<?,?> current = parent;
         String[] fieldNames = referencePath.split("[.]");
         for (String name : fieldNames) {
             PField field = current.descriptor().findFieldByName(name);
@@ -111,7 +108,10 @@ public class ReferenceConfigSupplier<
             if (field.getType() != PType.MESSAGE) {
                 throw new ProvidenceConfigException("Field " + name + " in " + current.descriptor().getQualifiedName() + " is not a message, from " + referencePath);
             }
-            current = (PMessage) current.get(field);
+            if (!current.has(field.getId())) {
+                throw new ProvidenceConfigException("Field " + name + " in " + current.descriptor().getQualifiedName() + " is missing, from " + referencePath);
+            }
+            current = current.get(field.getId());
         }
         return (RefMessage) current;
     }
