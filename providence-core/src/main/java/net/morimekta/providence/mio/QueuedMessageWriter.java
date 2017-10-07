@@ -25,6 +25,7 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static java.lang.Thread.sleep;
 
 /**
  * A queued message writer that takes in messages onto a queue, and let
@@ -52,6 +51,7 @@ public class QueuedMessageWriter implements MessageWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueuedMessageWriter.class);
 
     private final Queue<PMessage> messageQueue;
+    private final Queue<PServiceCall> callQueue;
     private final ExecutorService executor;
     private final MessageWriter   writer;
 
@@ -80,6 +80,7 @@ public class QueuedMessageWriter implements MessageWriter {
         this.writer = writer;
         this.executor = executor;
         this.messageQueue = new ConcurrentLinkedQueue<>();
+        this.callQueue = new ConcurrentLinkedQueue<>();
         this.executor.submit(this::writeLoop);
     }
 
@@ -93,7 +94,8 @@ public class QueuedMessageWriter implements MessageWriter {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException {
-        throw new UnsupportedOperationException("Queued message writer does not support service calls.");
+        callQueue.offer(call);
+        return 1;
     }
 
     @Override
@@ -107,17 +109,21 @@ public class QueuedMessageWriter implements MessageWriter {
         if (!executor.isShutdown()) {
             try {
                 executor.shutdown();
-                if (!executor.awaitTermination(100L, TimeUnit.MILLISECONDS)) {
+                if (!executor.awaitTermination(1000L, TimeUnit.MILLISECONDS)) {
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
                 LOGGER.error("Interrupted while stopping writer loop thread", e);
+                throw new RuntimeException(e.getMessage(), e);
             } finally {
                 try {
-                    if (messageQueue.size() > 0) {
-                        while (messageQueue.size() > 0) {
-                            writer.write(messageQueue.poll());
-                        }
+                    while (messageQueue.size() > 0) {
+                        writer.write(messageQueue.poll());
+                        writer.separator();
+                    }
+                    while (callQueue.size() > 0) {
+                        writer.write(callQueue.poll());
+                        writer.separator();
                     }
                 } catch (IOException e) {
                     LOGGER.error("Unable to write messages on close", e);
@@ -135,6 +141,10 @@ public class QueuedMessageWriter implements MessageWriter {
                 try {
                     while (messageQueue.size() > 0) {
                         writer.write(messageQueue.poll());
+                        failDelay = 137L;
+                    }
+                    while (callQueue.size() > 0) {
+                        writer.write(callQueue.poll());
                         failDelay = 137L;
                     }
                     sleep(3L);  // 3ms should be enough to do actual work.
@@ -161,8 +171,13 @@ public class QueuedMessageWriter implements MessageWriter {
                 }
             }
         } catch (InterruptedException ignore) {
-            // thread is interrupted, just stop.
+            // thread is interrupted, just stop. Not tested.
             Thread.currentThread().interrupt();
         }
+    }
+
+    @VisibleForTesting
+    protected void sleep(long ms) throws InterruptedException {
+        Thread.sleep(ms);
     }
 }

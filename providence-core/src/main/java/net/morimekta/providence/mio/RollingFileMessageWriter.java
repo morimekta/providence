@@ -27,98 +27,133 @@ import net.morimekta.providence.serializer.Serializer;
 
 import com.google.common.annotations.Beta;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A simple rolling file message writer in the same manner that logging
- *
- * TODO: change constructor parameters to be a rollingFilePattern and
- * currentFileName instead of the resolution and prefix-suffix pair.
- * But this require that the rollingFilePattern is parsed into something
- * similar to the constructor params.
- *
- * TODO: add option to roll files on file size instead of on time only.
- * This will require to separate the rolling file stuff into a
- * RollingFilePolicy that has the rollingFileName getter, and state
- * do do the correct rolling.
- *
- * TODO: add option to do file cleanup, on age, max size or number of files.
- * Though should probably have to match the rolling policy, or be simply
- * based on it.
+ * often does, e.g. the 'RollingFileAppender' from lockback.
+ * <p>
+ * the message writer MUST be assigned a rolling policy, and MAY be
+ * assigned a cleanup policy. Note that the cleanup policy will only be
+ * triggered when the rolling policy triggers a file update.
+ * <p>
+ * Also note that the RollingFileMessageWriter is NOT thread safe. So
+ * if you need to write to the message writer from multiple threads, you
+ * will either have to synchronize the calls yourself, or use the
+ * {@link QueuedMessageWriter}.
  */
-@Beta
 public class RollingFileMessageWriter implements MessageWriter {
     /**
-     * Create a rolling file message writer using local timezone timestamps for
-     * the files.
+     * Create a rolling file message writer without a cleanup policy.
      *
      * @param directory The directory to place the message files into.
-     * @param resolution The time resolution to roll over files.
      * @param serializer The message serializer to use.
-     * @param filePrefix The file prefix.
-     * @param fileSuffix The file suffix.
+     * @param currentName The name of the current file symbolic link.
+     * @param rollingPolicy The rolling policy.
      */
-    public RollingFileMessageWriter(File directory,
-                                    TimeUnit resolution,
-                                    Serializer serializer,
-                                    String filePrefix,
-                                    String fileSuffix) {
-        this(directory, resolution, serializer, filePrefix, fileSuffix, Clock.systemDefaultZone());
+    public RollingFileMessageWriter(@Nonnull File directory,
+                                    @Nonnull Serializer serializer,
+                                    @Nonnull String currentName,
+                                    @Nonnull RollingPolicy rollingPolicy) {
+        this(directory, serializer, currentName, rollingPolicy, null);
     }
 
     /**
      * Create a rolling file message writer.
      *
      * @param directory The directory to place the message files into.
-     * @param resolution The time resolution to roll over files.
      * @param serializer The message serializer to use.
-     * @param filePrefix The file prefix.
-     * @param fileSuffix The file suffix.
-     * @param clock The clock to use for timestamps.
+     * @param currentName The name of the current file symbolic link.
+     * @param rollingPolicy The rolling policy.
+     * @param cleanupPolicy Optional cleanup policy.
      */
-    public RollingFileMessageWriter(File directory,
-                                    TimeUnit resolution,
-                                    Serializer serializer,
-                                    String filePrefix,
-                                    String fileSuffix,
-                                    Clock clock) {
+    public RollingFileMessageWriter(@Nonnull File directory,
+                                    @Nonnull Serializer serializer,
+                                    @Nonnull String currentName,
+                                    @Nonnull RollingPolicy rollingPolicy,
+                                    @Nullable CleanupPolicy cleanupPolicy) {
         try {
             this.directory = directory.getCanonicalFile().getAbsoluteFile();
-            this.resolution = resolution;
             this.serializer = serializer;
-            this.filePrefix = filePrefix;
-            this.fileSuffix = fileSuffix;
-            this.clock = clock;
+            this.currentName = currentName;
+            this.rollingPolicy = rollingPolicy;
+            this.cleanupPolicy = cleanupPolicy;
+
+            Files.createDirectories(directory.toPath());
         } catch (IOException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Interface for rolling policy implementations.
+     */
+    @FunctionalInterface
+    public interface RollingPolicy {
+        /**
+         * Maybe call the current file updater.
+         * @param onRollFile The current file updater to call if the current file
+         *                   should roll over.
+         * @param initialCall If this is the initial call, and the current
+         *                    file updater should be called regardless.
+         * @throws IOException If the file roll or update check failed.
+         */
+        void maybeUpdateCurrentFile(@Nonnull CurrentFileUpdater onRollFile,
+                                    boolean initialCall) throws IOException;
+    }
+
+    /**
+     * Interface for calling back to the rolling file message writen when a file roll
+     * is supposed to happen.
+     */
+    @FunctionalInterface
+    public interface CurrentFileUpdater {
+        void updateCurrentFile(@Nonnull String newFileName) throws IOException;
+    }
+
+    /**
+     * Interface for cleanup policy implementations.
+     */
+    @FunctionalInterface
+    public interface CleanupPolicy {
+        /**
+         * Get a list of files that needs to be deleted because of the cleanup policy.
+         *
+         * @param candidateFiles List of the files that can be cleaned up. This does NOT
+         *                       include the currently written files (current file and
+         *                       symlink).
+         * @param currentFileName The current file name.
+         * @return List of files that needs to be deleted.
+         */
+        @Nonnull List<String> getFilesToDelete(@Nonnull List<String> candidateFiles,
+                                               @Nonnull String currentFileName);
+    }
+
     @Override
-    public <Message extends PMessage<Message, Field>, Field extends PField>
-    int write(Message message) throws IOException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> int write(Message message)
+            throws IOException {
         FileMessageWriter writer = getWriter();
         int i = writer.write(message);
-        writer.separator();
+        i += writer.separator();
         return i;
     }
 
     @Override
-    public <Message extends PMessage<Message, Field>, Field extends PField>
-    int write(PServiceCall<Message, Field> call) throws IOException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> int write(PServiceCall<Message, Field> call)
+            throws IOException {
         FileMessageWriter writer = getWriter();
         int i = writer.write(call);
-        writer.separator();
+        i += writer.separator();
         return i;
     }
 
@@ -138,47 +173,67 @@ public class RollingFileMessageWriter implements MessageWriter {
         }
     }
 
-    private final Serializer serializer;
-    private final Clock clock;
-    private final File directory;
-    private final TimeUnit resolution;
-    private final String filePrefix;
-    private final String fileSuffix;
+    private final Serializer        serializer;
+    private final File              directory;
+    private final String            currentName;
+    private final RollingPolicy     rollingPolicy;
+    private final CleanupPolicy     cleanupPolicy;
+    private       File              currentFile;
+    private       FileMessageWriter currentWriter;
+    private       boolean           shouldDoCleanup;
 
-    // Last write at the normalized current timestamp.
-    private long              lastWriteTs;
-    private FileMessageWriter currentWriter;
+    private void updateWriter(String rollToFile) throws IOException {
+        if (rollToFile.contains(File.separator)) {
+            throw new IllegalArgumentException("rolling file path " + rollToFile + " is not contained in output directory.");
+        }
 
-    private String fileTimestamp(long ts) {
-        ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), clock.getZone());
-        switch (resolution) {
-            case DAYS: return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(zdt);
-            case HOURS: return DateTimeFormatter.ofPattern("yyyy-MM-dd_HH").format(zdt);
-            case MINUTES: return DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm").format(zdt);
-            default: throw new IllegalStateException("Not a valid log rotation resolution: " + resolution.toString() + ", must be days, hours or minutes.");
+        close();  // close the old writer, it it was opened.
+
+        currentFile = new File(directory, rollToFile);
+        Path link = new File(directory, currentName).toPath();
+
+        currentWriter = new FileMessageWriter(currentFile, serializer, true);
+        currentWriter.getOutputStream();  // triggers creation of the file.
+
+        if (!rollToFile.equals(currentName)) {
+            // This should result in an atomic switch from old to new "current" logfile.
+            Path tmp = Files.createTempFile(directory.toPath(), ".pvd.", ".link");
+            Files.deleteIfExists(tmp);
+            Files.createSymbolicLink(tmp, currentFile.toPath());
+            Files.move(tmp, link, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        if (cleanupPolicy != null) {
+            shouldDoCleanup = true;
         }
     }
 
     private FileMessageWriter getWriter() throws IOException {
-        // This will normalize the timestamp to the first millisecond with the
-        // requested resolution.
-        long ts = resolution.toMillis(resolution.convert(clock.millis(), TimeUnit.MILLISECONDS));
-        if (currentWriter == null || ts != lastWriteTs) {
-            close();  // close the old writer, it it was opened.
+        rollingPolicy.maybeUpdateCurrentFile(this::updateWriter, currentWriter == null);
+        if (currentWriter == null) {
+            updateWriter(currentName);
+        }
+        if (shouldDoCleanup) {
+            shouldDoCleanup = false;
 
-            File file = new File(directory, filePrefix + "-" + fileTimestamp(ts) + fileSuffix);
-            Path link = new File(directory, filePrefix + fileSuffix).toPath();
-
-            currentWriter = new FileMessageWriter(file, serializer, true);
-            currentWriter.getOutputStream();  // triggers creation of the file.
-
-            // This should result in an atomic switch from old to new "current" logfile.
-            Path tmp = Files.createTempFile(directory.toPath(), ".pvd.", ".link");
-            Files.deleteIfExists(tmp);
-            Files.createSymbolicLink(tmp, file.toPath());
-            Files.move(tmp, link, StandardCopyOption.REPLACE_EXISTING);
-
-            lastWriteTs = ts;
+            String[] files = directory.list();
+            if (files != null && files.length > 2) {
+                // More than the currentFile and the symlink.
+                List<String> toDelete = cleanupPolicy.getFilesToDelete(
+                        Arrays.stream(files)
+                              .filter(f -> !f.equals(currentName) && !f.equals(currentFile.getName()))
+                              .collect(Collectors.toList()),
+                        currentFile.getName());
+                toDelete.forEach(del -> {
+                    try {
+                        // Delete if exists, just in case the file was deleted by someone else
+                        // while we figured out.
+                        Files.deleteIfExists(new File(directory, del).toPath());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e.getMessage(), e);
+                    }
+                });
+            }
         }
         return currentWriter;
     }
