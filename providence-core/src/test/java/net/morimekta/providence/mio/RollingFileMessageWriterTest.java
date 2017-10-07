@@ -200,6 +200,11 @@ public class RollingFileMessageWriterTest {
 
     @Test
     public void testSizeBasedRolling() throws IOException {
+        CompactFields cf = new CompactFields(
+                " * the message writer MUST be assigned a rolling policy",
+                1234567890,
+                "Also note that");
+
         RollingFileMessageWriter writer = new RollingFileMessageWriter(tmp.getRoot(),
                                                                        new JsonSerializer().named(),
                                                                        "my-log.txt",
@@ -209,13 +214,9 @@ public class RollingFileMessageWriterTest {
                                                                        new KeepLastNCleanupPolicy(5,
                                                                                                   "my-log-[\\d]{3}.txt"));
 
-        // The CompactFields class should be consistent enough in size to
-        // work as test-type with fixed number of iterations. Of course there
-        // is a possibility of a blue moon large or small streak of messages
-        // failing the test.
-        writer.write(generator.generate(CompactFields.kDescriptor));
+        writer.write(cf);
         for (int i = 0; i < 100; ++i) {
-            writer.write(generator.generate(CompactFields.kDescriptor));
+            writer.write(cf);
         }
 
         String[] files = tmp.getRoot()
@@ -244,9 +245,9 @@ public class RollingFileMessageWriterTest {
                                               new SizeBasedRollingPolicy(tmp.getRoot(), 1000, "my-log-%03d.txt"),
                                               new KeepLastNCleanupPolicy(5, "my-log-[\\d]{3}.txt"));
 
-        writer.write(generator.generate(CompactFields.kDescriptor));
+        writer.write(cf);
         for (int i = 0; i < 30; ++i) {
-            writer.write(generator.generate(CompactFields.kDescriptor));
+            writer.write(cf);
         }
 
         files = tmp.getRoot()
@@ -275,9 +276,9 @@ public class RollingFileMessageWriterTest {
                                               new SizeBasedRollingPolicy(tmp.getRoot(), 1000, "my-log-%03d.txt"),
                                               new KeepLastNCleanupPolicy(5, "my-log-[\\d]{3}.txt"));
 
-        writer.write(generator.generate(CompactFields.kDescriptor));
+        writer.write(cf);
         for (int i = 0; i < 30; ++i) {
-            writer.write(generator.generate(CompactFields.kDescriptor));
+            writer.write(cf);
         }
 
         files = tmp.getRoot()
