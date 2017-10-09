@@ -128,6 +128,7 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
     }
 
     public static void main(String... args) throws InterruptedException, TException, IOException {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "off");
         ArgumentParser parser = new ArgumentParser("it-serialization",
                                                    "SNAPSHOT",
                                                    "Serialization speed Integration test");

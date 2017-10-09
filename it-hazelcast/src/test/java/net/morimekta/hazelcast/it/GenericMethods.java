@@ -34,8 +34,8 @@ import static org.junit.Assert.assertThat;
 public class GenericMethods {
 
     static { // fix logging.
-        final String logging = "hazelcast.logging.type";
-        System.setProperty(logging, "slf4j");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "off");
+        System.setProperty("hazelcast.logging.type", "slf4j");
     }
 
     @Rule
