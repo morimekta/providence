@@ -58,11 +58,13 @@ public class ConvertTest {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Converter - " + version + "\n" +
-                "Usage: pvd [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] type\n" +
+                "Usage: pvd [-hVvSL] [--rc FILE] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvd -I thrift/ -S cal.Calculator\n" +
-                "$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Calculator\n" +
+                "$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Operation\n" +
+                "\n" +
+                "Note that when handling listTypes calls, only 1 call can be converted.\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -72,6 +74,7 @@ public class ConvertTest {
                 " --in (-i) spec     : Input specification (default: binary)\n" +
                 " --out (-o) spec    : Output specification (default: pretty)\n" +
                 " --strict (-S)      : Read incoming messages strictly.\n" +
+                " --list-types (-L)  : List the parsed types based on the input files\n" +
                 " type               : Qualified identifier name from definitions to use for parsing source file.\n" +
                 "\n" +
                 "Available formats are:\n" +
@@ -87,6 +90,58 @@ public class ConvertTest {
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +
                 " - tuple_protocol       : TTupleProtocol\n")));
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testListTypes() {
+        convert.run(
+                "-I", temp.getRoot().getAbsolutePath(),
+                "--list-types",
+                "cont.Containers");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
+                temp.getRoot().toString() + "/cont.thrift:\n" +
+                "  struct    cont.CompactFields\n" +
+                "  struct    cont.OptionalFields\n" +
+                "  struct    cont.RequiredFields\n" +
+                "  struct    cont.DefaultFields\n" +
+                "  union     cont.UnionFields\n" +
+                "  exception cont.ExceptionFields\n" +
+                "  struct    cont.DefaultValues\n" +
+                "  struct    cont.Containers\n" +
+                "  service   cont.Conting\n")));
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testServiceCall() {
+        console.setInput(getResourceAsBytes("/call.json"));
+        convert.run(
+                "--verbose",
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty",
+                "cont.Conting");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
+                "42: reply cont({\n" +
+                "      success = {\n" +
+                "        booleanList = [false, true]\n" +
+                "        defaultValues = {\n" +
+                "          byteValue = 27\n" +
+                "          shortValue = 32275\n" +
+                "          compactValue = {\n" +
+                "            name = \"тuQȳʶ\"\n" +
+                "            id = 798\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    })\n" +
+                "\n")));
         assertEquals(0, exitCode);
     }
 

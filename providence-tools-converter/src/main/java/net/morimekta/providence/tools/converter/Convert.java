@@ -24,6 +24,17 @@ package net.morimekta.providence.tools.converter;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.mio.MessageWriter;
+import net.morimekta.providence.reflect.contained.CExceptionDescriptor;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
+import net.morimekta.providence.reflect.contained.CUnionDescriptor;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
 
@@ -49,7 +60,6 @@ public class Convert {
         try {
             ArgumentParser cli = options.getArgumentParser("pvd", "Providence Converter");
             try {
-
                 cli.parse(args);
                 if (options.showHelp()) {
                     System.out.println(cli.getProgramDescription());
@@ -57,7 +67,9 @@ public class Convert {
                     System.out.println();
                     System.out.println("Example code to run:");
                     System.out.println("$ cat call.json | pvd -I thrift/ -S cal.Calculator");
-                    System.out.println("$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Calculator");
+                    System.out.println("$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Operation");
+                    System.out.println();
+                    System.out.println("Note that when handling listTypes calls, only 1 call can be converted.");
                     System.out.println();
                     cli.printUsage(System.out);
                     System.out.println();
@@ -73,12 +85,44 @@ public class Convert {
 
                 cli.validate();
 
-                AtomicInteger num = new AtomicInteger(0);
-                options.getInput()
-                       .peek(m -> num.incrementAndGet())
-                       .collect(options.getOutput());
-                if (num.get() == 0) {
-                    throw new IOException("No data");
+                if (options.listTypes) {
+                    ProgramRegistry registry = options.getProgramRegistry();
+                    for (ProgramTypeRegistry pr : registry.getLoadedRegistries()) {
+                        CProgram program = pr.getProgram();
+                        System.out.println(program.getProgramFilePath() + ":");
+                        for (PDeclaredDescriptor dd : program.getDeclaredTypes()) {
+                            if (dd instanceof CStructDescriptor) {
+                                System.out.println("  struct    " + dd.getQualifiedName());
+                            } else if (dd instanceof CUnionDescriptor) {
+                                System.out.println("  union     " + dd.getQualifiedName());
+                            } else if (dd instanceof CExceptionDescriptor) {
+                                System.out.println("  exception " + dd.getQualifiedName());
+                            }
+                        }
+                        for (PService s : program.getServices()) {
+                            System.out.println("  service   " + s.getQualifiedName());
+                        }
+                    }
+                    return;
+                }
+
+                if (options.getDefinition() == null || options.listTypes) {
+                    MessageReader in = options.getServiceInput();
+                    MessageWriter out = options.getServiceOutput();
+                    PService service = options.getServiceDefinition();
+
+                    PServiceCall call = in.read(service);
+                    out.write(call);
+                    out.separator();
+                    // TODO: Validate we don't have garbage data after call.
+                } else {
+                    AtomicInteger num = new AtomicInteger(0);
+                    int size = options.getInput()
+                                      .peek(m -> num.incrementAndGet())
+                                      .collect(options.getOutput());
+                    if (num.get() == 0 || size == 0) {
+                        throw new IOException("No data");
+                    }
                 }
                 return;
             } catch (ArgumentException e) {

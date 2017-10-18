@@ -1,0 +1,21 @@
+[
+    "cont",
+    "reply",
+    42,
+    {
+        "0": {
+            "booleanList": [
+                false,
+                true
+            ],
+            "defaultValues": {
+                "byteValue": 27,
+                "shortValue": 32275,
+                "compactValue": [
+                    "тuQȳʶ",
+                    798
+                ]
+            }
+        }
+    }
+]

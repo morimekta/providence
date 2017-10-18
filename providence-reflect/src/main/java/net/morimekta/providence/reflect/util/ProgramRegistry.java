@@ -27,9 +27,12 @@ import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.util.TypeRegistry;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nonnull;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
@@ -41,12 +44,17 @@ public class ProgramRegistry implements TypeRegistry {
     private final Map<String, ProgramTypeRegistry> registryMap;
 
     public ProgramRegistry() {
-        registryMap = new HashMap<>();
+        registryMap = new TreeMap<>();
     }
 
     @Nonnull
     public ProgramTypeRegistry registryForPath(String path) {
         return registryMap.computeIfAbsent(path, p -> new ProgramTypeRegistry(programNameFromPath(path)));
+    }
+
+    @Nonnull
+    public Collection<ProgramTypeRegistry> getLoadedRegistries() {
+        return ImmutableList.copyOf(registryMap.values());
     }
 
     /**
