@@ -62,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,6 +71,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.i32;
 import static net.morimekta.console.util.Parser.oneOf;
@@ -108,7 +110,19 @@ public class RPCOptions extends CommonOptions {
         parser.add(new Option("--read_timeout", "R", "ms", "Request timeout in milliseconds. 0 means infinite.", i32(this::setReadTimeout), "10000"));
         parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.", this::addHeaders, null, true, false, false));
         parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
-        parser.add(new Argument("URL", "The endpoint URI", this::setEndpoint));
+        parser.add(new Argument("URI", "The endpoint URI", this::setEndpoint, null, s -> {
+            try {
+                if (!s.contains("://")) return false;
+
+                URI uri = new URI(s);
+                if (isNullOrEmpty(uri.getAuthority())) {
+                    throw new ArgumentException("Missing authority in URI: '" + s + "'");
+                }
+                return true;
+            } catch (URISyntaxException e) {
+                throw new ArgumentException(e.getMessage());
+            }
+        }, false, true, false));
 
         return parser;
     }

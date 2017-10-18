@@ -56,7 +56,7 @@ public class RPCFlagsTest {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence RPC Tool - " + version + "\n" +
-                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
@@ -76,7 +76,7 @@ public class RPCFlagsTest {
                 " --read_timeout (-R) ms    : Request timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
                 " --header (-H) hdr         : Header to set on the request, K/V separated by ':'.\n" +
                 " --strict (-S)             : Read incoming messages strictly.\n" +
-                " URL                       : The endpoint URI\n" +
+                " URI                       : The endpoint URI\n" +
                 "\n" +
                 "Available formats are:\n" +
                 " - json                 : Readable JSON with numeric field IDs and enums.\n" +
@@ -102,11 +102,10 @@ public class RPCFlagsTest {
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(equalToLines(
                 "Option --service is required\n" +
-                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }
-
 
     @Test
     public void testMissingFlags_noURL() {
@@ -115,8 +114,47 @@ public class RPCFlagsTest {
         assertThat(exitCode, is(1));
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(equalToLines(
-                "Argument URL is required\n" +
-                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Argument URI is required\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
+                "\n" +
+                "Run $ pvdrpc --help # for available options.\n")));
+    }
+
+    @Test
+    public void testMissingFlags_invalidURL() {
+        rpc.run("-s", "test.MyTest", "not-a-url");
+
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
+                "No option found for not-a-url\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
+                "\n" +
+                "Run $ pvdrpc --help # for available options.\n")));
+    }
+
+    @Test
+    public void testMissingFlags_missingSchemaURL() {
+        rpc.run("-s", "test.MyTest", "://boo/");
+
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
+                "Expected scheme name at index 0: ://boo/\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
+                "\n" +
+                "Run $ pvdrpc --help # for available options.\n")));
+    }
+
+    @Test
+    public void testMissingFlags_missingHostnameURL() {
+        rpc.run("-s", "test.MyTest", "http:///");
+
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
+                "Missing authority in URI: 'http:///'\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }
@@ -132,7 +170,7 @@ public class RPCFlagsTest {
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(equalToLines(
                 "No such directory " + dir.getCanonicalFile().getAbsolutePath() + "\n" +
-                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URI\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }
