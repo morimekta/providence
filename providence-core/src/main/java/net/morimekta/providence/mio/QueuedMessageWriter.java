@@ -24,7 +24,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
@@ -46,14 +45,15 @@ import java.util.concurrent.TimeUnit;
  * Note that the writer will continue to accept messages after it has been
  * closed.
  */
-@Beta
 public class QueuedMessageWriter implements MessageWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueuedMessageWriter.class);
+    private static final int    DEFAULT_MAX_QUEUE_LEN = 65536;
 
     private final Queue<PMessage> messageQueue;
     private final Queue<PServiceCall> callQueue;
     private final ExecutorService executor;
     private final MessageWriter   writer;
+    private final int maxQueueLength;
 
     /**
      * Create a queued message writer.
@@ -77,25 +77,54 @@ public class QueuedMessageWriter implements MessageWriter {
      */
     public QueuedMessageWriter(MessageWriter writer,
                                ExecutorService executor) {
+        this(writer, executor, DEFAULT_MAX_QUEUE_LEN);
+    }
+
+    /**
+     * Create a queued message writer using the given executor service.
+     * Note that the executor service will be shut down with the message queue.
+     *
+     * @param writer The message writer to write to.
+     * @param executor The executor service running the write loop thread.
+     * @param maxQueueLength The max queue length. If 0 or less, no limit is enforced.
+     *                       Default is 65536 (64k).
+     */
+    public QueuedMessageWriter(MessageWriter writer,
+                               ExecutorService executor,
+                               int maxQueueLength) {
         this.writer = writer;
         this.executor = executor;
+        this.maxQueueLength = maxQueueLength;
         this.messageQueue = new ConcurrentLinkedQueue<>();
         this.callQueue = new ConcurrentLinkedQueue<>();
         this.executor.submit(this::writeLoop);
     }
 
+    /**
+     * @return The current size of the in-memory queue.
+     */
+    public int size() {
+        return callQueue.size() + messageQueue.size();
+    }
+
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(Message message) throws IOException {
-        messageQueue.offer(message);
-        return 1;
+        if (maxQueueLength <= 0 || size() < maxQueueLength) {
+            messageQueue.offer(message);
+            return 1;
+        }
+        return 0;
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException {
-        callQueue.offer(call);
-        return 1;
+        if (maxQueueLength <= 0 || size() < maxQueueLength) {
+            callQueue.offer(call);
+            return 1;
+        }
+        return 0;
     }
 
     @Override
