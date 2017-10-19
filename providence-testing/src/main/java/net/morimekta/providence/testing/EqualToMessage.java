@@ -32,9 +32,9 @@ import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -78,10 +78,10 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         } else if (actual == null) {
             mismatchDescription.appendText("got null");
         } else {
-            LinkedList<String> mismatches = new LinkedList<>();
+            ArrayList<String> mismatches = new ArrayList<>();
             collectMismatches("", (PMessage) expected, (PMessage) actual, mismatches);
             if (mismatches.size() == 1) {
-                mismatchDescription.appendText(mismatches.getFirst());
+                mismatchDescription.appendText(mismatches.get(0));
             } else {
                 boolean first = true;
                 mismatchDescription.appendText("[");
@@ -107,7 +107,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
     }
 
     private static <T extends PMessage<T, F>, F extends PField>
-    void collectMismatches(String xPath, T expected, T actual, LinkedList<String> mismatches) {
+    void collectMismatches(String xPath, T expected, T actual, ArrayList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
         if (expected.descriptor()
@@ -177,7 +177,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
     private static <K, V> void collectMapMismatches(String xPath,
                                                     Map<K, V> expected,
                                                     Map<K, V> actual,
-                                                    LinkedList<String> mismatches) {
+                                                    ArrayList<String> mismatches) {
         mismatches.addAll(actual.keySet()
                                 .stream()
                                 .filter(key -> !expected.keySet()
@@ -222,7 +222,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
     private static <T> void collectSetMismatches(String xPath,
                                                  Set<T> expected,
                                                  Set<T> actual,
-                                                 LinkedList<String> mismatches) {
+                                                 ArrayList<String> mismatches) {
         // order does NOT matter regardless of type. The only
         // errors are missing and unexpected values. Partial
         // matches are not checked.
@@ -243,11 +243,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
     private static <T> void collectListMismatches(String xPath,
                                                   List<T> expected,
                                                   List<T> actual,
-                                                  LinkedList<String> mismatches) {
+                                                  ArrayList<String> mismatches) {
         Set<T> handledItems = new HashSet<>();
 
         boolean hasReorder = false;
-        LinkedList<String> reordering = new LinkedList<>();
+        ArrayList<String> reordering = new ArrayList<>();
         for (int expectedIndex = 0; expectedIndex < expected.size(); ++expectedIndex) {
             String indexedXPath = String.format("%s[%d]", xPath, expectedIndex);
             T expectedItem = expected.get(expectedIndex);

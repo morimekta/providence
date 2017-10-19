@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -58,7 +58,7 @@ public class TimeBasedCleanupPolicy implements RollingFileMessageWriter.CleanupP
     @Nonnull
     @Override
     public List<String> getFilesToDelete(@Nonnull List<String> candidateFiles, @Nonnull String currentFileName) {
-        List<String> out = new LinkedList<>();
+        List<String> out = new ArrayList<>(candidateFiles.size());
 
         ZonedDateTime removeBefore = ZonedDateTime.ofInstant(Instant.ofEpochMilli(clock.millis()), clock.getZone())
                                                   .minusSeconds(resolution.toSeconds(units));

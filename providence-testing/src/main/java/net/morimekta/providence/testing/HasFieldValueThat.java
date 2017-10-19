@@ -28,7 +28,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -93,7 +93,7 @@ public class HasFieldValueThat<Message extends PMessage<Message, Field>, Field e
                 return;
             }
 
-            List<String> stack = new LinkedList<>();
+            List<String> stack = new ArrayList<>();
             String path = "";
             for (int i = 0; i < this.path.length; ++i) {
                 String fieldName = this.path[i];

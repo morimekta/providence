@@ -11,7 +11,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -48,7 +47,7 @@ public class DirectoryMessageListStoreTest extends TestBase {
         for (int i = 0; i < 100; ++i) {
             UUID uuid = UUID.randomUUID();
             for (int j = 0; j < 10; ++j) {
-                source.computeIfAbsent(uuid, u -> new LinkedList<>())
+                source.computeIfAbsent(uuid, u -> new ArrayList<>(10))
                       .add(generator.generate(OptionalFields.kDescriptor));
             }
         }

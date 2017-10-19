@@ -27,7 +27,7 @@ import net.morimekta.util.Strings;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -88,7 +88,7 @@ public class HasFieldValue<Message extends PMessage<Message, Field>, Field exten
                 return;
             }
 
-            List<String> stack = new LinkedList<>();
+            List<String> stack = new ArrayList<>();
             for (int i = 0; i < path.length; ++i) {
                 stack.add(path[i]);
                 String path = Strings.join(".", stack);

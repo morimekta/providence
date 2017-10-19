@@ -652,7 +652,7 @@ public class CalculateException
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(0)) {
                     missing.add("message");

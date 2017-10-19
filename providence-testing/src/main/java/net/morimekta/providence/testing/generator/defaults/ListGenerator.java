@@ -4,7 +4,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.testing.generator.Generator;
 import net.morimekta.providence.testing.generator.GeneratorContext;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +25,7 @@ public class ListGenerator<Context extends GeneratorContext<Context>>
         Generator generator = ctx.generatorFor(list.itemDescriptor());
 
         // Lists does not necessary allow conflicting items.
-        List<Object> builder = new LinkedList<>();
+        List<Object> builder = new ArrayList<>(num);
         for (int i = 0; i < num; ++i) {
             builder.add(generator.generate(ctx));
         }

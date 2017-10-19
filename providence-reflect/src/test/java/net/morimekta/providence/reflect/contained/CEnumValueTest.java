@@ -21,8 +21,8 @@ package net.morimekta.providence.reflect.contained;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,7 +43,7 @@ public class CEnumValueTest {
 
     @Before
     public void setUp() {
-        List<CEnumValue> values = new LinkedList<>();
+        List<CEnumValue> values = new ArrayList<>();
         type = new CEnumDescriptor("My comment", "package", "MyEnum", null);
 
         values.add(new CEnumValue(null, 1, "ONE", type, null));

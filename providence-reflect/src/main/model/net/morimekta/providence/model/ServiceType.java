@@ -816,9 +816,9 @@ public class ServiceType
             modified.set(3);
 
             if (mMethods == null) {
-                mMethods = new java.util.LinkedList<>();
-            } else if (!(mMethods instanceof java.util.LinkedList)) {
-                mMethods = new java.util.LinkedList<>(mMethods);
+                mMethods = new java.util.ArrayList<>();
+            } else if (!(mMethods instanceof java.util.ArrayList)) {
+                mMethods = new java.util.ArrayList<>(mMethods);
             }
             return mMethods;
         }
@@ -1010,7 +1010,7 @@ public class ServiceType
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(1)) {
                     missing.add("name");

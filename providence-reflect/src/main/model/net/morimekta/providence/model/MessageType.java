@@ -814,9 +814,9 @@ public class MessageType
             modified.set(3);
 
             if (mFields == null) {
-                mFields = new java.util.LinkedList<>();
-            } else if (!(mFields instanceof java.util.LinkedList)) {
-                mFields = new java.util.LinkedList<>(mFields);
+                mFields = new java.util.ArrayList<>();
+            } else if (!(mFields instanceof java.util.ArrayList)) {
+                mFields = new java.util.ArrayList<>(mFields);
             }
             return mFields;
         }
@@ -1008,7 +1008,7 @@ public class MessageType
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(2)) {
                     missing.add("name");

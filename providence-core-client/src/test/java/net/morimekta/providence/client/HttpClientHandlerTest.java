@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static net.morimekta.providence.client.internal.TestNetUtil.factory;
@@ -39,7 +39,6 @@ import static net.morimekta.providence.client.internal.TestNetUtil.getExposedPor
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -61,7 +60,7 @@ public class HttpClientHandlerTest {
     private net.morimekta.test.thrift.client.TestService.Iface impl;
     private Server                                             server;
     private SerializerProvider                                 provider;
-    private LinkedList<String>                                 contentTypes;
+    private ArrayList<String>                                  contentTypes;
     private ServiceCallInstrumentation                         instrumentation;
 
     private GenericUrl endpoint() {
@@ -89,7 +88,7 @@ public class HttpClientHandlerTest {
             }
         }), "/" + NOT_FOUND);
 
-        contentTypes = new LinkedList<>();
+        contentTypes = new ArrayList<>();
 
         server.setHandler(handler);
         server.setRequestLog((request, response) -> contentTypes.addAll(
@@ -140,7 +139,7 @@ public class HttpClientHandlerTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (Failure ex) {
-            assertEquals("failure", ex.getText());
+            assertThat(ex.getText(), is("failure"));
         }
 
         verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));

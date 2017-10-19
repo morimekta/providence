@@ -705,9 +705,9 @@ public class EnumType
             modified.set(2);
 
             if (mValues == null) {
-                mValues = new java.util.LinkedList<>();
-            } else if (!(mValues instanceof java.util.LinkedList)) {
-                mValues = new java.util.LinkedList<>(mValues);
+                mValues = new java.util.ArrayList<>();
+            } else if (!(mValues instanceof java.util.ArrayList)) {
+                mValues = new java.util.ArrayList<>(mValues);
             }
             return mValues;
         }
@@ -893,7 +893,7 @@ public class EnumType
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(1)) {
                     missing.add("name");

@@ -782,9 +782,9 @@ public class ProgramType
             modified.set(2);
 
             if (mIncludes == null) {
-                mIncludes = new java.util.LinkedList<>();
-            } else if (!(mIncludes instanceof java.util.LinkedList)) {
-                mIncludes = new java.util.LinkedList<>(mIncludes);
+                mIncludes = new java.util.ArrayList<>();
+            } else if (!(mIncludes instanceof java.util.ArrayList)) {
+                mIncludes = new java.util.ArrayList<>(mIncludes);
             }
             return mIncludes;
         }
@@ -960,9 +960,9 @@ public class ProgramType
             modified.set(4);
 
             if (mDecl == null) {
-                mDecl = new java.util.LinkedList<>();
-            } else if (!(mDecl instanceof java.util.LinkedList)) {
-                mDecl = new java.util.LinkedList<>(mDecl);
+                mDecl = new java.util.ArrayList<>();
+            } else if (!(mDecl instanceof java.util.ArrayList)) {
+                mDecl = new java.util.ArrayList<>(mDecl);
             }
             return mDecl;
         }
@@ -1073,7 +1073,7 @@ public class ProgramType
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(1)) {
                     missing.add("program_name");

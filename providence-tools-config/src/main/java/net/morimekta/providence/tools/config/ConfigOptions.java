@@ -27,8 +27,6 @@ import net.morimekta.console.args.Option;
 import net.morimekta.console.args.SubCommand;
 import net.morimekta.console.args.SubCommandSet;
 import net.morimekta.console.util.STTY;
-import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
@@ -37,11 +35,8 @@ import net.morimekta.providence.tools.config.cmd.Validate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static net.morimekta.console.util.Parser.dir;
 
@@ -50,7 +45,7 @@ import static net.morimekta.console.util.Parser.dir;
  */
 // @SuppressWarnings("all")
 public class ConfigOptions extends CommonOptions {
-    private List<File> includes = new LinkedList<>();
+    private List<File> includes = new ArrayList<>();
     private Command    command  = null;
     private boolean    strict   = false;
 

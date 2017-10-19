@@ -35,10 +35,10 @@ import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +151,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
 
     @Override
     public void validate() {
-        LinkedList<String> missing = new LinkedList<>();
+        ArrayList<String> missing = new ArrayList<>();
         for (PField field : descriptor().getFields()) {
             if (field.getRequirement() == PRequirement.REQUIRED) {
                 if (!values.containsKey(field.getId())) {
@@ -236,10 +236,10 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         if (field.getType() == PType.LIST) {
             List<Object> list = (List<Object>) values.get(field.getId());
             if (list == null) {
-                list = new LinkedList<>();
+                list = new ArrayList<>();
                 values.put(field.getId(), list);
-            } else if (!(list instanceof LinkedList)) {
-                list = new LinkedList<>(list);
+            } else if (!(list instanceof ArrayList)) {
+                list = new ArrayList<>(list);
                 values.put(field.getId(), list);
             }
             list.add(value);

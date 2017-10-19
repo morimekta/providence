@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -68,7 +68,7 @@ public class GeneratorWatcherTest {
                                 .dumpOnFailure();
         generator.starting(Description.EMPTY);
 
-        LinkedList<CompactFields> list = new LinkedList<>();
+        ArrayList<CompactFields> list = new ArrayList<>(100);
         IntStream.range(0, 100).forEach(i -> list.add(generator.generate(CompactFields.kDescriptor)));
 
         assertThat(list.size(), is(100));

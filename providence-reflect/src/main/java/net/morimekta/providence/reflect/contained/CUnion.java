@@ -36,10 +36,10 @@ import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -264,7 +264,7 @@ public class CUnion implements PUnion<CUnion,CField> {
                     this.currentValue = new LinkedHashSet<>((Collection) value);
                     break;
                 case LIST:
-                    this.currentValue = new LinkedList<>((Collection) value);
+                    this.currentValue = new ArrayList<>((Collection) value);
                     break;
                 case MAP:
                     this.currentValue = new LinkedHashMap<>((Map) value);
@@ -306,7 +306,7 @@ public class CUnion implements PUnion<CUnion,CField> {
                 this.unionField = field;
                 switch (field.getType()) {
                     case LIST: {
-                        this.currentValue = new LinkedList<>();
+                        this.currentValue = new ArrayList<>();
                         break;
                     }
                     case SET: {

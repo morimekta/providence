@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -77,14 +77,14 @@ public class MessageGenerator extends TestWatcher {
         this.globalRandom             = this.random             = new Random();
         this.globalOutputSerializer   = this.outputSerializer   = new PrettySerializer().config();
         this.globalMaxCollectionItems = this.maxCollectionItems = 10;
-        this.globalFactories          = this.factories          = new LinkedList<>();
+        this.globalFactories          = this.factories          = new ArrayList<>();
         this.globalDumpOnFailure      = this.dumpOnFailure      = false;
         this.globalReader             = this.reader             = null;
         this.globalWriter             = this.writer             = null;
         this.globalFillRate           = this.fillRate           = 1.0;
 
         this.defaultFactory = this::getDefaultValueSupplier;
-        this.generated = new LinkedList<>();
+        this.generated = new ArrayList<>();
         this.started = false;
     }
 
@@ -425,7 +425,7 @@ public class MessageGenerator extends TestWatcher {
                 return () -> {
                     int num = nextCollectionSize();
                     // Maps does not necessary allow conflicting keys.
-                    List<Object> builder = new LinkedList<>();
+                    List<Object> builder = new ArrayList<>();
                     for (int i = 0; i < num; ++i) {
                         builder.add(itemSupplier.get());
                     }
@@ -472,14 +472,14 @@ public class MessageGenerator extends TestWatcher {
         fairy = globalFairy;
         writer = globalWriter;
         reader = globalReader;
-        factories = new LinkedList<>(globalFactories);
+        factories = new ArrayList<>(globalFactories);
         dumpOnFailure = globalDumpOnFailure;
         outputSerializer = globalOutputSerializer;
         maxCollectionItems = globalMaxCollectionItems;
         fillRate = globalFillRate;
 
         // Reset content.
-        generated = new LinkedList<>();
+        generated = new ArrayList<>();
         started = true;
     }
 

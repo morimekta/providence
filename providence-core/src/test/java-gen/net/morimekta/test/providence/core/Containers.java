@@ -2941,9 +2941,9 @@ public class Containers
             modified.set(0);
 
             if (mBooleanList == null) {
-                mBooleanList = new java.util.LinkedList<>();
-            } else if (!(mBooleanList instanceof java.util.LinkedList)) {
-                mBooleanList = new java.util.LinkedList<>(mBooleanList);
+                mBooleanList = new java.util.ArrayList<>();
+            } else if (!(mBooleanList instanceof java.util.ArrayList)) {
+                mBooleanList = new java.util.ArrayList<>(mBooleanList);
             }
             return mBooleanList;
         }
@@ -3025,9 +3025,9 @@ public class Containers
             modified.set(1);
 
             if (mByteList == null) {
-                mByteList = new java.util.LinkedList<>();
-            } else if (!(mByteList instanceof java.util.LinkedList)) {
-                mByteList = new java.util.LinkedList<>(mByteList);
+                mByteList = new java.util.ArrayList<>();
+            } else if (!(mByteList instanceof java.util.ArrayList)) {
+                mByteList = new java.util.ArrayList<>(mByteList);
             }
             return mByteList;
         }
@@ -3109,9 +3109,9 @@ public class Containers
             modified.set(2);
 
             if (mShortList == null) {
-                mShortList = new java.util.LinkedList<>();
-            } else if (!(mShortList instanceof java.util.LinkedList)) {
-                mShortList = new java.util.LinkedList<>(mShortList);
+                mShortList = new java.util.ArrayList<>();
+            } else if (!(mShortList instanceof java.util.ArrayList)) {
+                mShortList = new java.util.ArrayList<>(mShortList);
             }
             return mShortList;
         }
@@ -3193,9 +3193,9 @@ public class Containers
             modified.set(3);
 
             if (mIntegerList == null) {
-                mIntegerList = new java.util.LinkedList<>();
-            } else if (!(mIntegerList instanceof java.util.LinkedList)) {
-                mIntegerList = new java.util.LinkedList<>(mIntegerList);
+                mIntegerList = new java.util.ArrayList<>();
+            } else if (!(mIntegerList instanceof java.util.ArrayList)) {
+                mIntegerList = new java.util.ArrayList<>(mIntegerList);
             }
             return mIntegerList;
         }
@@ -3277,9 +3277,9 @@ public class Containers
             modified.set(4);
 
             if (mLongList == null) {
-                mLongList = new java.util.LinkedList<>();
-            } else if (!(mLongList instanceof java.util.LinkedList)) {
-                mLongList = new java.util.LinkedList<>(mLongList);
+                mLongList = new java.util.ArrayList<>();
+            } else if (!(mLongList instanceof java.util.ArrayList)) {
+                mLongList = new java.util.ArrayList<>(mLongList);
             }
             return mLongList;
         }
@@ -3361,9 +3361,9 @@ public class Containers
             modified.set(5);
 
             if (mDoubleList == null) {
-                mDoubleList = new java.util.LinkedList<>();
-            } else if (!(mDoubleList instanceof java.util.LinkedList)) {
-                mDoubleList = new java.util.LinkedList<>(mDoubleList);
+                mDoubleList = new java.util.ArrayList<>();
+            } else if (!(mDoubleList instanceof java.util.ArrayList)) {
+                mDoubleList = new java.util.ArrayList<>(mDoubleList);
             }
             return mDoubleList;
         }
@@ -3445,9 +3445,9 @@ public class Containers
             modified.set(6);
 
             if (mStringList == null) {
-                mStringList = new java.util.LinkedList<>();
-            } else if (!(mStringList instanceof java.util.LinkedList)) {
-                mStringList = new java.util.LinkedList<>(mStringList);
+                mStringList = new java.util.ArrayList<>();
+            } else if (!(mStringList instanceof java.util.ArrayList)) {
+                mStringList = new java.util.ArrayList<>(mStringList);
             }
             return mStringList;
         }
@@ -3529,9 +3529,9 @@ public class Containers
             modified.set(7);
 
             if (mBinaryList == null) {
-                mBinaryList = new java.util.LinkedList<>();
-            } else if (!(mBinaryList instanceof java.util.LinkedList)) {
-                mBinaryList = new java.util.LinkedList<>(mBinaryList);
+                mBinaryList = new java.util.ArrayList<>();
+            } else if (!(mBinaryList instanceof java.util.ArrayList)) {
+                mBinaryList = new java.util.ArrayList<>(mBinaryList);
             }
             return mBinaryList;
         }
@@ -4941,9 +4941,9 @@ public class Containers
             modified.set(24);
 
             if (mEnumList == null) {
-                mEnumList = new java.util.LinkedList<>();
-            } else if (!(mEnumList instanceof java.util.LinkedList)) {
-                mEnumList = new java.util.LinkedList<>(mEnumList);
+                mEnumList = new java.util.ArrayList<>();
+            } else if (!(mEnumList instanceof java.util.ArrayList)) {
+                mEnumList = new java.util.ArrayList<>(mEnumList);
             }
             return mEnumList;
         }
@@ -5191,9 +5191,9 @@ public class Containers
             modified.set(27);
 
             if (mMessageList == null) {
-                mMessageList = new java.util.LinkedList<>();
-            } else if (!(mMessageList instanceof java.util.LinkedList)) {
-                mMessageList = new java.util.LinkedList<>(mMessageList);
+                mMessageList = new java.util.ArrayList<>();
+            } else if (!(mMessageList instanceof java.util.ArrayList)) {
+                mMessageList = new java.util.ArrayList<>(mMessageList);
             }
             return mMessageList;
         }
@@ -6103,9 +6103,9 @@ public class Containers
             modified.set(38);
 
             if (mListMapNumbers == null) {
-                mListMapNumbers = new java.util.LinkedList<>();
-            } else if (!(mListMapNumbers instanceof java.util.LinkedList)) {
-                mListMapNumbers = new java.util.LinkedList<>(mListMapNumbers);
+                mListMapNumbers = new java.util.ArrayList<>();
+            } else if (!(mListMapNumbers instanceof java.util.ArrayList)) {
+                mListMapNumbers = new java.util.ArrayList<>(mListMapNumbers);
             }
             return mListMapNumbers;
         }
@@ -6271,9 +6271,9 @@ public class Containers
             modified.set(40);
 
             if (mListListNumbers == null) {
-                mListListNumbers = new java.util.LinkedList<>();
-            } else if (!(mListListNumbers instanceof java.util.LinkedList)) {
-                mListListNumbers = new java.util.LinkedList<>(mListListNumbers);
+                mListListNumbers = new java.util.ArrayList<>();
+            } else if (!(mListListNumbers instanceof java.util.ArrayList)) {
+                mListListNumbers = new java.util.ArrayList<>(mListListNumbers);
             }
             return mListListNumbers;
         }

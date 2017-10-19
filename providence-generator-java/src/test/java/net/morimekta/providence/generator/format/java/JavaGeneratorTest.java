@@ -6,8 +6,6 @@ import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ProgramParser;
-import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 
 import com.google.common.collect.ImmutableList;
@@ -18,7 +16,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 
@@ -34,7 +32,7 @@ public class JavaGeneratorTest {
     private GeneratorOptions     generatorOptions;
     private FileManager          fileManager;
     private ProgramRegistry      programRegistry;
-    private LinkedList<CProgram> programs;
+    private ArrayList<CProgram> programs;
     private TypeLoader           typeLoader;
 
     @Before
@@ -48,7 +46,7 @@ public class JavaGeneratorTest {
         fileManager = new FileManager(out);
         typeLoader = new TypeLoader(ImmutableList.of());
         programRegistry = typeLoader.getProgramRegistry();
-        programs = new LinkedList<>();
+        programs = new ArrayList<>();
     }
 
     private void defaultSources() throws IOException {

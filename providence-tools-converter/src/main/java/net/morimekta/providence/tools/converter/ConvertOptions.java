@@ -53,7 +53,7 @@ import net.morimekta.util.Strings;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,7 +69,7 @@ import static net.morimekta.console.util.Parser.dir;
  */
 @SuppressWarnings("all")
 public class ConvertOptions extends CommonOptions {
-    protected List<File>    includes  = new LinkedList<>();
+    protected List<File>    includes  = new ArrayList<>();
     protected ConvertStream in        = new ConvertStream(Format.json, null);
     protected ConvertStream out       = new ConvertStream(Format.pretty, null);
     protected boolean       strict    = false;

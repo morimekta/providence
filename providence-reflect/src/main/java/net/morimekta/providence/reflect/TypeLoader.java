@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -171,7 +171,7 @@ public class TypeLoader {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
         ProgramType doc = parser.parse(in, file, includes);
 
-        LinkedList<File> queue = new LinkedList<>();
+        ArrayList<File> queue = new ArrayList<>();
         if (doc.hasIncludes()) {
             for (String include : doc.getIncludes()) {
                 File location = new File(file.getParent(), include).getCanonicalFile();

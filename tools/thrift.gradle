@@ -41,8 +41,8 @@ class GenerateStaticThrift {
     }
 
     static getThriftDirs() {
-        def candidates = new LinkedList()
-        def result = new LinkedList()
+        def candidates = new ArrayList()
+        def result = new ArrayList()
 
         Collections.addAll(candidates, new File('.').listFiles())
         candidates.removeIf(not(GenerateStaticThrift.&isModuleDirectory))

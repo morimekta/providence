@@ -16,7 +16,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -97,7 +97,7 @@ public class GeneratorWatcher<
         this.globalWriter           = this.writer           = null;
         this.globalBase             = this.base             = base;
 
-        this.generated              = new LinkedList<>();
+        this.generated              = new ArrayList<>();
         this.started                = false;
     }
 
@@ -415,7 +415,7 @@ public class GeneratorWatcher<
         base = globalBase.deepCopy();
 
         // Reset content.
-        generated = new LinkedList<>();
+        generated = new ArrayList<>();
         started = true;
     }
 

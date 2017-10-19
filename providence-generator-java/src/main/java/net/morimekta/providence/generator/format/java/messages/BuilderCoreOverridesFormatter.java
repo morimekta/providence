@@ -33,7 +33,7 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 
@@ -399,8 +399,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 writer.appendln("if (!valid()) {")
                       .begin()
                       .formatln("%s<String> missing = new %s<>();",
-                                LinkedList.class.getName(),
-                                LinkedList.class.getName())
+                                ArrayList.class.getName(),
+                                ArrayList.class.getName())
                       .newline();
 
                 message.declaredOrderFields()

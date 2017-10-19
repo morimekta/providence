@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -49,7 +49,7 @@ public class CMessageTest {
     public void setUp() {
         registry = new RecursiveTypeRegistry("test");
 
-        List<CField> fields = new LinkedList<>();
+        List<CField> fields = new ArrayList<>();
         fields.add(new CField(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), () -> false, null));
         fields.add(new CField(null, 2, PRequirement.OPTIONAL, "field_8", PPrimitive.BYTE.provider(), () -> (byte) 9, null));
         fields.add(new CField(null, 65000, PRequirement.OPTIONAL, "field_16", PPrimitive.I16.provider(), () -> (short) 98, null));

@@ -8,7 +8,7 @@ import net.morimekta.providence.descriptor.PField;
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.time.Clock;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends PField> implements ConfigSupplier<M,F> {
     private final AtomicReference<M>       instance;
-    private final LinkedList<WeakReference<ConfigListener<M,F>>> listeners;
+    private final ArrayList<WeakReference<ConfigListener<M,F>>> listeners;
     private final Clock clock;
     private final AtomicLong lastUpdateTimestamp;
 
@@ -40,7 +40,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
      */
     protected UpdatingConfigSupplier(Clock clock) {
         this.instance = new AtomicReference<>();
-        this.listeners = new LinkedList<>();
+        this.listeners = new ArrayList<>();
         this.clock = clock;
         this.lastUpdateTimestamp = new AtomicLong(0L);
     }
@@ -85,7 +85,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
      * @param config The new config instance.
      */
     protected final void set(M config) {
-        LinkedList<WeakReference<ConfigListener<M,F>>> iterateOver;
+        ArrayList<WeakReference<ConfigListener<M,F>>> iterateOver;
         synchronized (this) {
             if (instance.get() != null && instance.get().equals(config)) {
                 return;
@@ -94,7 +94,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
             instance.set(config);
             lastUpdateTimestamp.set(clock.millis());
             listeners.removeIf(Objects::isNull);
-            iterateOver = new LinkedList<>(listeners);
+            iterateOver = new ArrayList<>(listeners);
         }
         iterateOver.forEach(ref -> {
             ConfigListener<M,F> listener = ref.get();

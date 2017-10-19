@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -146,7 +146,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
                         } catch (ExecutionException e) {
                             // Best effort, as we could not read the message.
                             // At least it was present.
-                            out.put(key, new LinkedList<>());
+                            out.put(key, new ArrayList<>());
                         } finally {
                             file.delete();
                         }

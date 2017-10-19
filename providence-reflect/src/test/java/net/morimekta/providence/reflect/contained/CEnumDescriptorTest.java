@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -40,7 +40,7 @@ public class CEnumDescriptorTest {
 
     @Before
     public void setUp() {
-        List<CEnumValue> values = new LinkedList<>();
+        List<CEnumValue> values = new ArrayList<>();
         type = new CEnumDescriptor("My comment", "package", "MyEnum", ImmutableMap.of(
                 ThriftAnnotation.DEPRECATED.tag, ""
         ));

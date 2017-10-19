@@ -109,7 +109,7 @@ class MyStruct {
      */
     public static class _Builder {
         private int myField;
-        private LinkedList<String> otherField;
+        private ArrayList<String> otherField;
 
         public _Builder setMyField(int value) {
             this.myField = value;

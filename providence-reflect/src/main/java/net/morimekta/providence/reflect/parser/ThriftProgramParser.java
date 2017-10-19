@@ -44,10 +44,10 @@ import net.morimekta.util.io.IOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -122,11 +122,11 @@ public class ThriftProgramParser implements ProgramParser {
         }
         program.setProgramName(programName);
 
-        List<String> include_files = new LinkedList<>();
+        List<String> include_files = new ArrayList<>();
         Set<String> includedPrograms = new HashSet<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
 
-        List<Declaration> declarations = new LinkedList<>();
+        List<Declaration> declarations = new ArrayList<>();
 
         ThriftTokenizer tokenizer = new ThriftTokenizer(in);
 

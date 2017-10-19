@@ -525,9 +525,9 @@ public class Operation
             modified.set(1);
 
             if (mOperands == null) {
-                mOperands = new java.util.LinkedList<>();
-            } else if (!(mOperands instanceof java.util.LinkedList)) {
-                mOperands = new java.util.LinkedList<>(mOperands);
+                mOperands = new java.util.ArrayList<>();
+            } else if (!(mOperands instanceof java.util.ArrayList)) {
+                mOperands = new java.util.ArrayList<>(mOperands);
             }
             return mOperands;
         }

@@ -45,9 +45,9 @@ import net.morimekta.util.json.JsonTokenizer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -252,7 +252,7 @@ public class ConstParser {
             }
             case LIST: {
                 PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
-                LinkedList<Object> list = new LinkedList<>();
+                ArrayList<Object> list = new ArrayList<>();
 
                 if (!token.isSymbol(Token.kListStart)) {
                     throw tokenizer.failure(token, "Expected list start, found " + token.asString());

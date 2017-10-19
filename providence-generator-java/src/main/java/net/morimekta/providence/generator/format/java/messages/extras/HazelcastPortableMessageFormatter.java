@@ -39,7 +39,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -81,7 +80,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
         if (message.hasAnnotation(ThriftAnnotation.JAVA_HAZELCAST_CLASS_ID)) {
             return ImmutableList.of(Portable.class.getName());
         } else {
-            return new LinkedList<>();
+            return new ArrayList<>();
         }
     }
 

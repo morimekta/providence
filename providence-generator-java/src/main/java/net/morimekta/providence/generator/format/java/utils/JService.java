@@ -27,7 +27,7 @@ import net.morimekta.providence.reflect.contained.CServiceMethod;
 import net.morimekta.providence.util.ThriftAnnotation;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,11 +54,11 @@ public class JService {
     public JServiceMethod[] methods() {
         CService top = service;
 
-        List<CServiceMethod> methods = new LinkedList<>();
+        List<CServiceMethod> methods = new ArrayList<>();
         while (top != null) {
             // Always keep 'parent' methods on the top.
             methods.addAll(0, top.getMethods());
-            top = (CService) top.getExtendsService();
+            top = top.getExtendsService();
         }
 
         CServiceMethod[] ma = methods.toArray(new CServiceMethod[methods.size()]);
@@ -75,7 +75,7 @@ public class JService {
      * @return The method array.
      */
     public JServiceMethod[] declaredMethods() {
-        List<CServiceMethod> methods = new LinkedList<>(service.getMethods());
+        List<CServiceMethod> methods = new ArrayList<>(service.getMethods());
 
         CServiceMethod[] ma = methods.toArray(new CServiceMethod[methods.size()]);
         JServiceMethod[] ret = new JServiceMethod[ma.length];

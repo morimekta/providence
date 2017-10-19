@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,7 +96,7 @@ public class ProvidenceConfigParser {
                                    .getCanonicalFile();
 
             String filePath = configFile.toString();
-            List<String> stackList = new LinkedList<>();
+            List<String> stackList = new ArrayList<>();
             Collections.addAll(stackList, includeStack);
 
             if (Arrays.binarySearch(includeStack, filePath) >= 0) {

@@ -49,8 +49,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
@@ -283,7 +283,7 @@ public class ProvidenceTest {
     @Test
     public void testMutableContainer() {
         Containers._Builder containers = Containers.builder()
-                                          .setByteList(new LinkedList<>())
+                                          .setByteList(new ArrayList<>())
                                           .setShortSet(ImmutableSet.of(
                                                   (short) 1,
                                                   (short) -1,

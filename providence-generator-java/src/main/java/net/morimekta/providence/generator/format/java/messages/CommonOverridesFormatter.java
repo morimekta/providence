@@ -31,7 +31,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
 
     @Override
     public Collection<String> getExtraImplements(JMessage<?> message) throws GeneratorException {
-        LinkedList<String> impl = new LinkedList<>();
+        ArrayList<String> impl = new ArrayList<>();
 
         impl.add(Comparable.class.getSimpleName() + "<" + message.instanceType() + ">");
         if (!message.isException()) {

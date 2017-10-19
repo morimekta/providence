@@ -23,8 +23,8 @@ package net.morimekta.providence.generator.format.java.shared;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  * Base interface for formatting a providence message class.
@@ -33,7 +33,7 @@ public interface MessageMemberFormatter {
     default void appendClassAnnotations(JMessage<?> message) throws GeneratorException {}
 
     default Collection<String> getExtraImplements(JMessage<?> message) throws GeneratorException {
-        return new LinkedList<>();
+        return new ArrayList<>();
     }
 
     default void appendConstants(JMessage<?> message) throws GeneratorException {}

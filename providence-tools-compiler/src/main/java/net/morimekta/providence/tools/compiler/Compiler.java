@@ -33,7 +33,7 @@ import net.morimekta.providence.tools.common.options.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -108,7 +108,7 @@ public class Compiler {
 
             TypeLoader loader = new TypeLoader(includes, parser);
 
-            List<CProgram> docs = new LinkedList<>();
+            List<CProgram> docs = new ArrayList<>();
             for (File f : input) {
                 docs.add(loader.load(f).getProgram());
             }

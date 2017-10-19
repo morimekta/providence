@@ -979,9 +979,9 @@ public class FunctionType
             modified.set(4);
 
             if (mParams == null) {
-                mParams = new java.util.LinkedList<>();
-            } else if (!(mParams instanceof java.util.LinkedList)) {
-                mParams = new java.util.LinkedList<>(mParams);
+                mParams = new java.util.ArrayList<>();
+            } else if (!(mParams instanceof java.util.ArrayList)) {
+                mParams = new java.util.ArrayList<>(mParams);
             }
             return mParams;
         }
@@ -1063,9 +1063,9 @@ public class FunctionType
             modified.set(5);
 
             if (mExceptions == null) {
-                mExceptions = new java.util.LinkedList<>();
-            } else if (!(mExceptions instanceof java.util.LinkedList)) {
-                mExceptions = new java.util.LinkedList<>(mExceptions);
+                mExceptions = new java.util.ArrayList<>();
+            } else if (!(mExceptions instanceof java.util.ArrayList)) {
+                mExceptions = new java.util.ArrayList<>(mExceptions);
             }
             return mExceptions;
         }
@@ -1270,7 +1270,7 @@ public class FunctionType
         @Override
         public void validate() {
             if (!valid()) {
-                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+                java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(3)) {
                     missing.add("name");

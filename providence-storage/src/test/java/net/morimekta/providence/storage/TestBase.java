@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Rule;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -165,7 +165,7 @@ public class TestBase {
         assertThat(opts, is(list1));
 
         for (int i = 0; i < 100; ++i) {
-            List<OptionalFields> list = new LinkedList<>();
+            List<OptionalFields> list = new ArrayList<>();
             for (int j = 0; j < 10; ++j) {
                 list.add(generator.generate(OptionalFields.kDescriptor));
             }
@@ -229,7 +229,7 @@ public class TestBase {
         assertThat(otherBuilder.get(0).build(), Matchers.is(equalToMessage(builder.build())));
 
         String uuid2 = UUID.randomUUID().toString();
-        List<OptionalFields> expectedEmpty = new LinkedList<>();
+        List<OptionalFields> expectedEmpty = new ArrayList<>();
         storage.put(uuid2, expectedEmpty);
 
         List<OptionalFields> actualEmpty = storage.get(uuid2);

@@ -45,7 +45,7 @@ as part of this, as the way the stack traces are handled quickly deteriorates th
 results for reading providence, though not affecting the others much.
 
 ```bash
-java -jar /home/morimekta/src/providence/it-serialization/target/it-serialization.jar --runs 50 --generate 1000
+java -jar it-serialization/target/it-serialization.jar --runs 50 --generate 1000
 ```
 
 #### Many containers:

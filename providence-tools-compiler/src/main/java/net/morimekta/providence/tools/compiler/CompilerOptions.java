@@ -44,7 +44,7 @@ import net.morimekta.providence.tools.compiler.options.HelpSpec;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.morimekta.console.util.Parser.dir;
@@ -59,10 +59,10 @@ public class CompilerOptions {
     private final STTY tty;
 
     protected File          out              = new File(".");
-    protected List<File>    includes         = new LinkedList<>();
+    protected List<File>    includes         = new ArrayList<>();
     protected HelpSpec      help             = null;
     protected GeneratorSpec gen              = null;
-    protected List<File>    files            = new LinkedList<>();
+    protected List<File>    files            = new ArrayList<>();
     protected boolean       version          = false;
     protected boolean       verbose          = false;
     protected boolean       requireEnumValue = false;

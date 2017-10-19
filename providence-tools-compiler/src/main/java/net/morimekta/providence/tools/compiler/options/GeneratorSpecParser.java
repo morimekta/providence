@@ -23,14 +23,14 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.util.Parser;
 import net.morimekta.providence.generator.Language;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 
 public class GeneratorSpecParser implements Parser<GeneratorSpec> {
     @Override
     public GeneratorSpec parse(String spec) {
         Language generator = null;
-        LinkedList<String> options = new LinkedList<>();
+        ArrayList<String> options = new ArrayList<>();
 
         String[] gen = spec.split("[:]", 2);
         if (gen.length > 2) {

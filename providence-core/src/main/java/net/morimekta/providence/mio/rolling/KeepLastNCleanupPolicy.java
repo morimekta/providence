@@ -3,7 +3,7 @@ package net.morimekta.providence.mio.rolling;
 import net.morimekta.providence.mio.RollingFileMessageWriter;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class KeepLastNCleanupPolicy implements RollingFileMessageWriter.CleanupP
     @SuppressWarnings("unchecked")
     public List<String> getFilesToDelete(@Nonnull List<String> candidateFiles,
                                          @Nonnull String currentFileName) {
-        List<String> out = new LinkedList<>();
+        List<String> out = new ArrayList<>();
         List<String> candidatesBeforeFiles = candidateFiles
                 .stream()
                 .filter(f -> filePattern.matcher(f).matches())

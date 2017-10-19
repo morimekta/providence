@@ -39,9 +39,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,7 +119,7 @@ public class JHelper {
                 }
             }
             case LIST:
-                return LinkedList.class.getName();
+                return ArrayList.class.getName();
             case ENUM:
             case MESSAGE:
                 PDeclaredDescriptor<?> dt = (PDeclaredDescriptor<?>) field.getDescriptor();

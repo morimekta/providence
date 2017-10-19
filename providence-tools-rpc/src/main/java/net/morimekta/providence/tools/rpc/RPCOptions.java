@@ -63,8 +63,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,12 +84,12 @@ public class RPCOptions extends CommonOptions {
     protected ConvertStream in = new ConvertStream(Format.json, null);
     protected ConvertStream out = new ConvertStream(Format.pretty_json, null);
     protected boolean strict = false;
-    protected List<File> includes = new LinkedList<>();
+    protected List<File> includes = new ArrayList<>();
     protected String service = "";
     protected Format format = Format.binary;
     protected int connect_timeout = 10000;
     protected int read_timeout = 10000;
-    protected List<String> headers = new LinkedList<>();
+    protected List<String> headers = new ArrayList<>();
     protected String endpoint = "";
 
     public RPCOptions(STTY tty) {

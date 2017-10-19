@@ -38,11 +38,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -238,7 +238,7 @@ public class JField {
     public String builderMutableType() throws GeneratorException  {
         switch (field.getType()) {
             case LIST:
-                return LinkedList.class.getName().replace('$', '.');
+                return ArrayList.class.getName();
             case MAP:
                 switch (containerType()) {
                     case DEFAULT: return HashMap.class.getName();

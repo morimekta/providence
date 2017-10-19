@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -115,7 +115,7 @@ public class ProgramConverter {
                                                                program.getProgramName(),
                                                                enumType.getName(),
                                                                enumType.getAnnotations());
-                    List<CEnumValue> values = new LinkedList<>();
+                    List<CEnumValue> values = new ArrayList<>();
                     for (EnumValue value : enumType.getValues()) {
                         int v = value.hasId() ? value.getId() : nextValue;
                         nextValue = v + 1;
@@ -129,7 +129,7 @@ public class ProgramConverter {
                 case DECL_STRUCT: {
                     MessageType messageType = decl.getDeclStruct();
 
-                    List<CField> fields = new LinkedList<>();
+                    List<CField> fields = new ArrayList<>();
                     if (messageType.hasFields()) {
                         fields.addAll(messageType.getFields()
                                                 .stream()
@@ -188,7 +188,7 @@ public class ProgramConverter {
                     ImmutableList.Builder<CServiceMethod> methodBuilder = ImmutableList.builder();
                     if (serviceType.hasMethods()) {
                         for (FunctionType sm : serviceType.getMethods()) {
-                            List<CField> rqFields = new LinkedList<>();
+                            List<CField> rqFields = new ArrayList<>();
                             if (sm.numParams() > 0) {
                                 for (FieldType field : sm.getParams()) {
                                     rqFields.add(makeField(registry, program.getProgramName(), field, MessageVariant.STRUCT));
@@ -203,7 +203,7 @@ public class ProgramConverter {
 
                             CUnionDescriptor response = null;
                             if (!sm.isOneWay()) {
-                                List<CField> rsFields = new LinkedList<>();
+                                List<CField> rsFields = new ArrayList<>();
                                 CField success;
                                 if (sm.getReturnType() != null) {
                                     PDescriptorProvider type = registry.getProvider(sm.getReturnType(),

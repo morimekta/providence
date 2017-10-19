@@ -66,9 +66,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -273,7 +273,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value);
         TypeLoader loader = new TypeLoader(includes, parser);
 
-        LinkedList<CProgram> documents = new LinkedList<>();
+        ArrayList<CProgram> documents = new ArrayList<>();
 
         if (print_debug) {
             inputFiles.stream()

@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -30,7 +29,7 @@ public class InMemoryMessageListStoreTest extends TestBase {
         MessageListStore<UUID, OptionalFields, OptionalFields._Field> store = new InMemoryMessageListStore<>();
 
         for (int i = 0; i < 100; ++i) {
-            List<OptionalFields> list = new LinkedList<>();
+            List<OptionalFields> list = new ArrayList<>();
             for (int j = 0; j < 10; ++j) {
                 list.add(generator.generate(OptionalFields.kDescriptor));
             }
