@@ -39,6 +39,7 @@ import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -101,7 +102,7 @@ public class JavaGenerator extends Generator {
 
         if (program.getConstants().size() > 0) {
             String file = helper.getConstantsClassName(program) + ".java";
-            OutputStream out = getFileManager().create(path, file);
+            OutputStream out = new BufferedOutputStream(getFileManager().create(path, file));
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
@@ -123,7 +124,7 @@ public class JavaGenerator extends Generator {
                    .stream().anyMatch(t -> t.getName().equals("FACTORY_ID"))) {
 
             String file = helper.getHazelcastFactoryClassName(program) + ".java";
-            OutputStream out = getFileManager().create(path, file);
+            OutputStream out = new BufferedOutputStream(getFileManager().create(path, file));
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
@@ -142,7 +143,7 @@ public class JavaGenerator extends Generator {
 
         for (PDeclaredDescriptor<?> type : program.getDeclaredTypes()) {
             String file = JUtils.getClassName(type) + ".java";
-            OutputStream out = getFileManager().create(path, file);
+            OutputStream out = new BufferedOutputStream(getFileManager().create(path, file));
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
@@ -171,7 +172,7 @@ public class JavaGenerator extends Generator {
 
         for (CService service : program.getServices()) {
             String file = JUtils.getClassName(service) + ".java";
-            OutputStream out = getFileManager().create(path, file);
+            OutputStream out = new BufferedOutputStream(getFileManager().create(path, file));
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 appendFileHeader(writer, program);
