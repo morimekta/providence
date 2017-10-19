@@ -29,18 +29,24 @@ import net.morimekta.providence.reflect.util.ProgramConverter;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 
+import com.google.common.collect.ImmutableList;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import static net.morimekta.providence.reflect.util.ReflectionUtils.longestCommonPrefixPath;
 import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
+import static net.morimekta.providence.reflect.util.ReflectionUtils.stripCommonPrefix;
 
 /**
  * @author Stein Eldar Johnsen
@@ -111,6 +117,7 @@ public class TypeLoader {
         return loadedDocuments.values();
     }
 
+
     /**
      * Load a thrift definition from file including all it's dependencies.
      *
@@ -119,16 +126,42 @@ public class TypeLoader {
      * @throws IOException If the file could not be read or parsed.
      */
     public ProgramTypeRegistry load(File file) throws IOException {
+        return loadInternal(file, new ArrayList<>());
+    }
+
+    private ProgramTypeRegistry loadInternal(File file, List<String> loadStack) throws IOException {
+        loadStack = new ArrayList<>(loadStack);
+
         file = file.getCanonicalFile();
         if (!file.exists()) {
-            throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
+            throw new IllegalArgumentException("No such file " + file);
         }
         if (!file.isFile()) {
             throw new IllegalArgumentException(
-                    "Unable to load thrift program: " + file.getCanonicalPath() + " is not a file.");
+                    "Unable to load thrift program: " + file + " is not a file.");
         }
         file = file.getAbsoluteFile();
         String path = file.getPath();
+        if (loadStack.contains(path)) {
+            // circular includes.
+
+            // Only show the circular includes, not the path to get there.
+            while (!loadStack.get(0).equals(path)) {
+                loadStack.remove(0);
+            }
+            loadStack.add(path);
+
+            String prefix = longestCommonPrefixPath(loadStack);
+            if (prefix.length() > 0) {
+                loadStack = stripCommonPrefix(loadStack);
+
+                throw new IllegalArgumentException(
+                        "Circular includes detected: " + prefix + "... " + String.join(" -> ", loadStack));
+            }
+            throw new IllegalArgumentException(
+                    "Circular includes detected: " + String.join(" -> ", loadStack));
+        }
+        loadStack.add(path);
 
         ProgramTypeRegistry registry = this.programRegistry.registryForPath(path);
         if (programRegistry.containsProgramPath(path)) {
@@ -167,7 +200,8 @@ public class TypeLoader {
 
         loadedDocuments.put(path, doc);
         for (File include : queue) {
-            registry.registerInclude(programNameFromPath(include.getPath()), load(include));
+            registry.registerInclude(programNameFromPath(include.getPath()),
+                                     loadInternal(include, ImmutableList.copyOf(loadStack)));
         }
 
         // Now everything it depends on is loaded.

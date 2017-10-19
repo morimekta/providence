@@ -20,8 +20,13 @@
  */
 package net.morimekta.providence.reflect.util;
 
+import com.google.common.base.Strings;
+
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Simple utility for type checking and matching.
@@ -57,5 +62,29 @@ public class ReflectionUtils {
             filePath = filePath.substring(0, filePath.length() - 4);
         }
         return filePath.replaceAll("[-.]", "_");
+    }
+
+    @Nonnull
+    public static String longestCommonPrefixPath(Collection<String> paths) {
+        if (paths.size() == 0) throw new IllegalArgumentException("Empty paths");
+        String prefix = paths.iterator().next();
+        for (String s : paths) {
+            prefix = Strings.commonPrefix(s, prefix);
+        }
+        if (prefix.contains("/")) {
+            return prefix.replaceAll("/[^/]*$", "/");
+        }
+        return "";
+    }
+
+    @Nonnull
+    public static List<String> stripCommonPrefix(List<String> paths) {
+        String prefix = longestCommonPrefixPath(paths);
+        if (prefix.length() > 0) {
+            return paths.stream()
+                        .map(s -> s.substring(prefix.length()))
+                        .collect(Collectors.toList());
+        }
+        return paths;
     }
 }
