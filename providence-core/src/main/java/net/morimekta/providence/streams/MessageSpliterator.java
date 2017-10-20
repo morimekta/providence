@@ -24,7 +24,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.util.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -147,14 +146,6 @@ public class MessageSpliterator<Message extends PMessage<Message, Field>, Field 
 
     private Message read() {
         try {
-            if (num > 0) {
-                if (!serializer.binaryProtocol()) {
-                    if (!IOUtils.skipUntil(in, MessageStreams.READABLE_ENTRY_SEP)) {
-                        // no next entry found.
-                        return close(null);
-                    }
-                }
-            }
             // Try to check if there is a byte available. Since the
             // available() method ony checks for available non-blocking
             // reads, we need to actually try to read a byte.

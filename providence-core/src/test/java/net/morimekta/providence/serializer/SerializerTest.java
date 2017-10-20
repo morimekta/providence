@@ -27,9 +27,9 @@ import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.EqualToMessage;
 import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.CompactFields;
@@ -344,7 +344,6 @@ public class SerializerTest {
         testSerializer(new PrettySerializer(true).string());
         testSerializer(new PrettySerializer(true).config());
         testOutput(new PrettySerializer(true), "/compat/pretty.cfg");
-
     }
 
     @Test

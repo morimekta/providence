@@ -20,19 +20,17 @@
  */
 package net.morimekta.providence.serializer.pretty;
 
-import net.morimekta.util.Slice;
+import net.morimekta.util.CharSlice;
 import net.morimekta.util.Strings;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * Pretty token.
  */
-public class Token extends Slice {
+public class Token extends CharSlice {
     // Various symbols.
     public static final char kGenericStart  = '<';
     public static final char kGenericEnd    = '>';
@@ -69,7 +67,7 @@ public class Token extends Slice {
     private final int lineNo;
     private final int linePos;
 
-    public Token(byte[] fb, int off, int len, int lineNo, int linePos) {
+    public Token(char[] fb, int off, int len, int lineNo, int linePos) {
         super(fb, off, len);
         this.lineNo = lineNo;
         this.linePos = linePos;
@@ -137,7 +135,7 @@ public class Token extends Slice {
     }
 
     public boolean strEquals(String str) {
-        return super.strEquals(str.getBytes(UTF_8));
+        return super.strEquals(str.toCharArray());
     }
 
     /**

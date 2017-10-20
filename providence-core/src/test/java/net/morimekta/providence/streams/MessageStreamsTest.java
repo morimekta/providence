@@ -233,7 +233,6 @@ public class MessageStreamsTest {
 
         CompactFields cf = CompactFields.builder().build();
         // -- read
-        doReturn(false).when(in).markSupported();
         doReturn(cf).when(serializer).deserialize(in, CompactFields.kDescriptor);
 
         assertThat(spliterator.tryAdvance(consumer), is(true));
@@ -246,8 +245,7 @@ public class MessageStreamsTest {
         doReturn(-1).when(in).read();
 
         assertThat(spliterator.tryAdvance(consumer), is(false));
-        verify(in).read();
-        verify(in).close();
+        verify(in).markSupported();
         verifyNoMoreInteractions(in);
         verifyZeroInteractions(consumer);
 

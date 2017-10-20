@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -87,6 +86,6 @@ public class TokenTest {
     }
 
     private Token token(String str) {
-        return new Token(str.getBytes(UTF_8), 0, str.length(), 1, 1);
+        return new Token(str.toCharArray(), 0, str.length(), 1, 1);
     }
 }

@@ -230,13 +230,13 @@ public class JsonSerializerTest {
                    "Unable to parse Base64 data: \"g./ar,bl'e\"");
 
         assertFail(calc, lenient, "{}",
-                   "Expected service call start (one of ['[']): but found '{'");
+                   "Expected service call start ('['): but found '{'");
         assertFail(calc, lenient, "[123]",
                    "Expected method name (string literal): but found '123'");
         assertFail(calc, lenient, "[\"iamalive\", 77]",
                    "Service call type 77 is not valid");
         assertFail(calc, lenient, "[\"iamalive\", 1, -55]",
-                   "Expected entry sep (one of [',']): but found ']'");
+                   "Expected entry sep (','): but found ']'");
         assertFail(calc, lenient, "[\"iamalive\", 2, -55, {\"0\": 6}]",
                    "No response type for calculator.Calculator.iamalive()");
         assertFail(calc, lenient, "[\"iamalive\", \"boo\", -55, {\"0\": 6}]",
@@ -249,7 +249,7 @@ public class JsonSerializerTest {
                    "Not a void token value: '3'");
 
         assertFail(opt, compact, "{\"binaryValue\",\"AAss\"}",
-                   "Expected field KV sep (one of [':']): but found ','");
+                   "Expected field KV sep (':'): but found ','");
         assertFail(opt, compact, "{\"enumValue\":false}",
                    "false is not a enum value type");
         assertFail(Containers.kDescriptor, compact, "{\"enumMap\":[]}",

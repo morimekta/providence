@@ -6,6 +6,7 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
 import net.morimekta.console.terminal.Progress;
+import net.morimekta.console.terminal.ProgressManager;
 import net.morimekta.console.terminal.Terminal;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
@@ -16,13 +17,10 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TFieldIdEnum;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,9 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
     }
 
     public boolean filterFormats(Format format) {
-        return options.format.get() == null || format.equals(options.format.get());
+        return options.format.get() == null ||
+               format.equals(options.format.get()) ||
+               format == Format.binary;
     }
 
     public void run() throws IOException, TException, InterruptedException {
@@ -71,41 +71,43 @@ public class TestRunner<PM extends PMessage<PM, PF>, PF extends PField,
                                                .collect(Collectors.toList());
 
         final int runs = options.runs.get();
-        final int iterations_per_run = 40;
+        final int iterations_per_run = 50;
+        final int total = formats.size() * iterations_per_run;
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-        try (Terminal terminal = new Terminal()) {
-            Progress progress = options.no_progress.get() ?
-                                null :
-                                new Progress(terminal, Progress.Spinner.ASCII, "test<" + descriptor.getQualifiedName()  + ">", formats.size() * runs * iterations_per_run);
-            AtomicBoolean stop = new AtomicBoolean();
+        if (options.no_progress.get()) {
+            for (int i = 0; i < runs; ++i) {
+                Collections.shuffle(formats);
+                for (int j = 0; j < iterations_per_run; ++j) {
+                    for (FormatStatistics test : formats) {
+                        runner.run(test);
+                    }
+                }
+            }
+        } else {
+            try (Terminal terminal = new Terminal()) {
+                ProgressManager progress = new ProgressManager(terminal, Progress.Spinner.ASCII, 5);
+                for (int i = 0; i < runs; ++i) {
+                    String name = String.format("test<%s>/%02d", descriptor.getQualifiedName(), i + 1);
+                    ArrayList<FormatStatistics> tmp = new ArrayList<>(formats);
+                    Collections.shuffle(tmp);
 
-            terminal.executeAbortable(executor, () -> {
-                int k = 1;
-                try {
-                    for (int i = 0; i < runs; ++i) {
-                        Collections.shuffle(formats);
-                        for (FormatStatistics test : formats) {
+                    progress.addTask(name, total, (completable, task) -> {
+                        try {
+                            int k = 1;
                             for (int j = 0; j < iterations_per_run; ++j) {
-                                if (stop.get()) return;
-                                runner.run(test);
-                                if (progress != null) {
-                                    progress.accept(k++);
+                                for (FormatStatistics test : tmp) {
+                                    runner.run(test);
+                                    task.accept(k++);
                                 }
                             }
-                            System.gc();
+                            completable.complete(k);
+                        } catch (IOException | TException e) {
+                            completable.completeExceptionally(e);
                         }
-                    }
-                } catch (IOException | TException e) {
-                    throw new RuntimeException(e);
+                    });
                 }
-            });
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        if (executor.isShutdown()) {
-            System.exit(1);
+                progress.waitAbortable();
+            }
         }
 
         System.out.println();

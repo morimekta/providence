@@ -41,12 +41,12 @@ public enum Format implements Comparable<Format> {
     // Thrift formats.
     binary_protocol(new TBinaryProtocolSerializer(true),
                     null),
-    json_protocol(new TJsonProtocolSerializer(true),
-                  TJSONProtocol::new),
+    /* json_protocol(new TJsonProtocolSerializer(true),
+                  TJSONProtocol::new), /* */
     compact_protocol(new TCompactProtocolSerializer(true),
-                     TCompactProtocol::new),
+                     TCompactProtocol::new), /* */
     tuple_protocol(new TTupleProtocolSerializer(true),
-                   TTupleProtocol::new),
+                   TTupleProtocol::new), /* */
     ;
 
     public final Serializer serializer;

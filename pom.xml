@@ -114,7 +114,7 @@
         <commons.lang3.version>3.6</commons.lang3.version>
         <commons.math3.version>3.6.1</commons.math3.version>
 
-        <morimekta_utils.version>2.1.3</morimekta_utils.version>
+        <morimekta_utils.version>2.2.1</morimekta_utils.version>
 
         <!-- Controlling the providence-maven-plugin -->
         <providence.gen.generated_annotation_version>false</providence.gen.generated_annotation_version>

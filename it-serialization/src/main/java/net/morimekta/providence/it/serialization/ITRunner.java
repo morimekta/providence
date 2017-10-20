@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Created by morimekta on 17.06.17.
  */
@@ -63,13 +65,16 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
     private void runProvidence(FormatStatistics statistics) throws IOException {
         Serializer serializer = statistics.format.serializer;
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024 * 1024);
 
         long totalTime = 0;
         for (PM pvd : pvdList) {
             long start = System.nanoTime();
 
             serializer.serialize(baos, pvd);
+            if (!serializer.binaryProtocol()) {
+                baos.write('\n');
+            }
 
             long end = System.nanoTime();
             long time = end - start;
@@ -109,7 +114,7 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
     private void runThrift(FormatStatistics statistics) throws TException {
         TProtocolFactory factory = statistics.format.protocolFactory;
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024 * 1024);
         TTransport transport = new TIOStreamTransport(baos);
 
         long totalTime = 0;
@@ -125,8 +130,6 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
             totalTime += time;
 
             statistics.TwriteStat.addValue(time);
-
-            baos.write(statistics.format.serializer.binaryProtocol() ? Char.FS : '\n');
         }
 
         statistics.TtotalWriteStat.addValue(totalTime);
@@ -147,17 +150,13 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
             totalTime += time;
 
             statistics.TreadStat.addValue(time);
-
-            if (bais.read() != (statistics.format.serializer.binaryProtocol() ? Char.FS : '\n')) {
-                throw new AssertionError("Bad serialized data.");
-            }
         }
 
         statistics.TtotalReadStat.addValue(totalTime);
     }
 
     private void runJackson(FormatStatistics statistics) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(16 * 1024 * 1024);
 
         long totalTime = 0;
 
@@ -166,6 +165,7 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
             long start = System.nanoTime();
 
             MAPPER.writerFor(pvd.getClass()).writeValue(baos, pvd);
+            baos.write('\n');
 
             long end = System.nanoTime();
             long time = end - start;
@@ -173,7 +173,6 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
 
             statistics.JwriteStat.addValue(time);
 
-            baos.write('\n');
             instance = pvd;
         }
 
@@ -189,10 +188,11 @@ public class ITRunner<PM extends PMessage<PM, PF>, PF extends PField,
 
         while (bais.available() > 0) {
             String tmp = IOUtils.readString(bais, '\n');
+            ByteArrayInputStream tb = new ByteArrayInputStream(tmp.getBytes(UTF_8));
 
             long start = System.nanoTime();
 
-            PM pvd = reader.readValue(tmp);
+            PM pvd = reader.readValue(tb);
 
             long end = System.nanoTime();
             long time = end - start;

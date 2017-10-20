@@ -124,9 +124,7 @@ public class MessageStreams {
     }
 
     /**
-     * Read a input stream containing entries of a given type. Tries to detect the
-     * entry format of the file based on file magic. If not detected will try
-     * to use the default binary serializer format.
+     * Read a input stream containing entries of a given type.
      *
      * @param in         The input stream to read.
      * @param serializer The serializer to use.

@@ -1,6 +1,5 @@
 package net.morimekta.providence.it.serialization;
 
-import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 
 import java.io.File;

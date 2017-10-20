@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.serializer.pretty;
 
-import net.morimekta.util.Slice;
+import net.morimekta.util.CharSlice;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
@@ -30,21 +30,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Simple tokenizer for the pretty serializer that strips away comments based
  * on the "#" (shell) comment character. Each comment lasts until the next
  * newline.
  */
 public class Tokenizer extends InputStream {
+
     @FunctionalInterface
     public interface TokenValidator {
         boolean validate(Token token);
     }
 
-    private final byte[] buffer;
+    private final char[] buffer;
     protected     int    readOffset;
     protected     int    lineNo;
     protected     int    linePos;
+
     private       Token  nextToken;
 
     public Tokenizer(InputStream in, boolean enclosedContent) throws IOException {
@@ -87,11 +91,19 @@ public class Tokenizer extends InputStream {
                     }
                 }
             }
+
+            // then read until end of the line.
+            while ((r = in.read()) >= 0) {
+                tmp.write(r);
+                if (r == '\n') {
+                    break;
+                }
+            }
         } else {
             IOUtils.copy(in, tmp);
         }
 
-        this.buffer = tmp.toByteArray();
+        this.buffer = new String(tmp.toByteArray(), UTF_8).toCharArray();
         this.readOffset = -1;
 
         this.lineNo = 1;
@@ -559,7 +571,7 @@ public class Tokenizer extends InputStream {
         int r;
         while ((r = read()) != -1) {
             if (r == end) {
-                return new Slice(buffer, startOffset, readOffset - startOffset).asString();
+                return new CharSlice(buffer, startOffset, readOffset - startOffset).asString();
             } else if (r == ' ' || r == '\t' || r == '\n' || r == '\r') {
                 throw failure(startLineNo, startLinePos, linePos - startLinePos + 1, "Illegal char '%s' in binary", escapeChar(r));
             }
