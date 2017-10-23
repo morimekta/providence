@@ -163,7 +163,7 @@ public class JsonSerializer extends Serializer {
     public <T extends PMessage<T, TF>, TF extends PField> T deserialize(
             @Nonnull InputStream input, @Nonnull PMessageDescriptor<T, TF> type) throws IOException {
         try {
-            JsonTokenizer tokenizer = new JsonTokenizer(input);
+            JsonTokenizer tokenizer = new JsonTokenizer(input, prettyPrint ? PRETTY_READ_BUFFER_SIZE : DEFAULT_READ_BUFFER_SIZE);
             if (!tokenizer.hasNext()) {
                 throw new SerializerException("Empty json body");
             }
@@ -178,7 +178,7 @@ public class JsonSerializer extends Serializer {
     public <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> deserialize(@Nonnull InputStream input, @Nonnull
             PService service)
             throws IOException {
-        JsonTokenizer tokenizer = new JsonTokenizer(input);
+        JsonTokenizer tokenizer = new JsonTokenizer(input, prettyPrint ? PRETTY_READ_BUFFER_SIZE : DEFAULT_READ_BUFFER_SIZE);
         return parseServiceCall(tokenizer, service);
     }
 
@@ -208,6 +208,9 @@ public class JsonSerializer extends Serializer {
         // print field or enums as field name and enum name.
         NAME
     }
+
+    private static final int PRETTY_READ_BUFFER_SIZE  = 1 << 10;  //  1024 chars.
+    private static final int DEFAULT_READ_BUFFER_SIZE = 1 << 15;  // 32768 chars --> 64kb
 
     private final boolean readStrict;
     private final IdType  fieldIdType;
