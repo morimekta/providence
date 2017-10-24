@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -37,7 +38,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * on the "#" (shell) comment character. Each comment lasts until the next
  * newline.
  */
-public class Tokenizer extends InputStream {
+public class Tokenizer extends Reader {
 
     @FunctionalInterface
     public interface TokenValidator {
@@ -124,6 +125,16 @@ public class Tokenizer extends InputStream {
             ++linePos;
         }
         return ret > 0 ? ret : 0x100 + ret;
+    }
+
+    @Override
+    public int read(char[] chars, int i, int i1) throws IOException {
+        return 0;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // ignore.
     }
 
     /**
@@ -540,7 +551,11 @@ public class Tokenizer extends InputStream {
         try {
             int line = theLine;
             while (--line > 0) {
-                if (!IOUtils.skipUntil(this, (byte) '\n')) {
+                int c;
+                while ((c = this.read()) >= 0) {
+                    if (c == '\n') break;
+                }
+                if (c < 0) {
                     throw new IOException("No such line " + theLine);
                 }
             }

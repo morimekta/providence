@@ -300,7 +300,8 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private String parseDocBlock(ThriftTokenizer tokenizer) throws IOException {
-        String block = IOUtils.readString(tokenizer, ThriftTokenizer.kBlockCommentEnd).trim();
+        String block = IOUtils.readString(tokenizer, ThriftTokenizer.kBlockCommentEnd)
+                              .trim();
         String[] lines = block.split("\\r?\\n");
         StringBuilder builder = new StringBuilder();
 

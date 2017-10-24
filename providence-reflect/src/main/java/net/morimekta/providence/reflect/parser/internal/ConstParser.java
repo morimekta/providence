@@ -51,7 +51,6 @@ import java.util.HashSet;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.morimekta.util.io.IOUtils.skipUntil;
 
 /**
  * Parsing thrift constants from string to actual value. This uses a JSON like
@@ -143,10 +142,21 @@ public class ConstParser {
                                                 t.strEquals(ThriftTokenizer.kBlockCommentStart) ||
                                                 t.strEquals(ThriftTokenizer.kLineCommentStart));
             if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
-                skipUntil(tokenizer, (byte) '\n');
+                int c;
+                while ((c = tokenizer.read()) >= 0) {
+                    if (c == '\n') break;
+                }
                 continue;
             } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
-                skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                int c;
+                while ((c = tokenizer.read()) >= 0) {
+                    if (c == '*') {
+                        c = tokenizer.read();
+                        if (c == '/') {
+                            break;
+                        }
+                    }
+                }
                 continue;
             }
             Field field = type.findFieldByName(token.decodeLiteral(true));
@@ -267,10 +277,21 @@ public class ConstParser {
                 while (true) {
                     token = tokenizer.expect("list item value");
                     if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
-                        skipUntil(tokenizer, (byte) '\n');
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '\n') break;
+                        }
                         continue;
                     } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
-                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '*') {
+                                c = tokenizer.read();
+                                if (c == '/') {
+                                    break;
+                                }
+                            }
+                        }
                         continue;
                     }
                     list.add(parseTypedValue(token, tokenizer, itemType, false));
@@ -305,10 +326,21 @@ public class ConstParser {
                 while (true) {
                     token = tokenizer.expect("set item value");
                     if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
-                        skipUntil(tokenizer, (byte) '\n');
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '\n') break;
+                        }
                         continue;
                     } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
-                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '*') {
+                                c = tokenizer.read();
+                                if (c == '/') {
+                                    break;
+                                }
+                            }
+                        }
                         continue;
                     }
                     set.add(parseTypedValue(token, tokenizer, itemType, false));
@@ -344,10 +376,21 @@ public class ConstParser {
                 while (true) {
                     token = tokenizer.expect("map key");
                     if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
-                        skipUntil(tokenizer, (byte) '\n');
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '\n') break;
+                        }
                         continue;
                     } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
-                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        int c;
+                        while ((c = tokenizer.read()) >= 0) {
+                            if (c == '*') {
+                                c = tokenizer.read();
+                                if (c == '/') {
+                                    break;
+                                }
+                            }
+                        }
                         continue;
                     }
 
