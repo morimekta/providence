@@ -25,10 +25,13 @@ import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.Tokenizer;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import javax.annotation.Nonnull;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * Specialization of the 'pretty' tokenizer to make it handle some
@@ -60,28 +63,50 @@ public class ThriftTokenizer extends Tokenizer {
     public static final String kBlockCommentEnd   = "*/";
 
     public ThriftTokenizer(InputStream in) throws IOException {
-        super(in, false);
+        this(new Utf8StreamReader(in));
     }
 
-    protected Token nextSymbol(int lastByte) throws TokenizerException {
-        if (lastByte == '/') {
-            int startOffset = readOffset;
-            int startLineNo = lineNo;
+    public ThriftTokenizer(Reader reader) throws IOException {
+        super(reader, Tokenizer.DEFAULT_BUFFER_SIZE, true);
+    }
+
+    @Nonnull
+    protected Token nextSymbol() throws IOException {
+        if (lastChar == '/') {
+            int startOffset = bufferOffset;
             int startLinePos = linePos;
 
-            int next = read();
-            if (next < 0) {
-                throw failure(startLineNo, startLinePos, 1,
+            if (!readNextChar()) {
+                throw failure(lineNo, startLinePos, 1,
                               "Expected java-style comment, got end of file");
             }
-            if (next == '/' || next == '*') {
+            if (lastChar == '/' || lastChar == '*') {
+                lastChar = 0;
                 return token(startOffset, 2, startLinePos);
             }
-            throw failure(startLineNo, startLinePos, 2,
+            throw failure(lineNo, startLinePos, 2,
                           "Expected java-style comment, got '%s' after '/'",
-                          Strings.escape((char) next));
+                          Strings.escape((char) lastChar));
         }
-        return super.nextSymbol(lastByte);
+        return super.nextSymbol();
+    }
+
+    public String readUntil(String term) throws IOException {
+        CharArrayWriter baos = new CharArrayWriter();
+        char last = term.charAt(term.length() - 1);
+
+        while(readNextChar()) {
+            baos.write(lastChar);
+            if (lastChar == last && baos.size() >= term.length()) {
+                String tmp = baos.toString();
+                if (tmp.substring(tmp.length() - term.length()).equals(term)) {
+                    lastChar = 0;
+                    return tmp.substring(0, tmp.length() - term.length());
+                }
+            }
+        }
+
+        throw failure("");
     }
 
     @Nonnull

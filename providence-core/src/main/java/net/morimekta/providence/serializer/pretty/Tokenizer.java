@@ -20,201 +20,152 @@
  */
 package net.morimekta.providence.serializer.pretty;
 
-import net.morimekta.util.CharSlice;
 import net.morimekta.util.Strings;
-import net.morimekta.util.io.IOUtils;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayOutputStream;
+import javax.annotation.Nullable;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UncheckedIOException;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Simple tokenizer for the pretty serializer that strips away comments based
  * on the "#" (shell) comment character. Each comment lasts until the next
  * newline.
  */
-public class Tokenizer extends Reader {
-
+public class Tokenizer extends LineBufferedReader {
     @FunctionalInterface
     public interface TokenValidator {
         boolean validate(Token token);
     }
 
-    private final char[] buffer;
-    protected     int    readOffset;
-    protected     int    lineNo;
-    protected     int    linePos;
+    public static final int     DEFAULT_BUFFER_SIZE = 1 << 11; // 2048 chars --> 4kb
 
-    private       Token  nextToken;
+    private Token unreadToken;
 
-    public Tokenizer(InputStream in, boolean enclosedContent) throws IOException {
-        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-        if (enclosedContent) {
-            int stack = 0;
-            char literal = '\0';
-            boolean escaped = false;
-            boolean comment = false;
-
-            int r;
-            while ((r = in.read()) >= 0) {
-                tmp.write(r);
-                if (comment) {
-                    if (r == '\n' || r == '\r') {
-                        comment = false;
-                    }
-                } else {
-                    if (literal != '\0') {
-                        if (escaped) {
-                            escaped = false;
-                        } else if (r == literal) {
-                            literal = '\0';
-                            escaped = false;
-                        } else if (r == '\\') {
-                            escaped = true;
-                        }
-                    } else if (r == ' ' || r == '\t' || r == '\r' || r == '\n') {
-                        // just continue.
-                    } else if (r == '\"' || r == '\'') {
-                        literal = (char) r;
-                    } else if (r == '#') {
-                        comment = true;
-                    } else if (r == '}') {
-                        if (--stack <= 0) {
-                            break;
-                        }
-                    } else if (r == '{') {
-                        ++stack;
-                    }
-                }
-            }
-
-            // then read until end of the line.
-            while ((r = in.read()) >= 0) {
-                tmp.write(r);
-                if (r == '\n') {
-                    break;
-                }
-            }
-        } else {
-            IOUtils.copy(in, tmp);
-        }
-
-        this.buffer = new String(tmp.toByteArray(), UTF_8).toCharArray();
-        this.readOffset = -1;
-
-        this.lineNo = 1;
-        this.linePos = 0;
-    }
-
-    @Override
-    public int read() {
-        if (++readOffset >= buffer.length) {
-            readOffset = buffer.length;
-            return -1;
-        }
-        int ret = buffer[readOffset];
-        if (ret == '\n') {
-            ++lineNo;
-            linePos = 0;
-        } else {
-            ++linePos;
-        }
-        return ret > 0 ? ret : 0x100 + ret;
-    }
-
-    @Override
-    public int read(char[] chars, int i, int i1) throws IOException {
-        return 0;
-    }
-
-    @Override
-    public void close() throws IOException {
-        // ignore.
+    /**
+     * Create a JSON tokenizer that reads from the input steam. It will only
+     * read as far as requested, and no bytes further. It has no checking of
+     * whether the document follows the JSON standard, but will only accept
+     * JSON formatted tokens.
+     *
+     * Note that the content is assumed to be separated with newlines, which
+     * means that if multiple JSON contents are read from the same stream, they
+     * MUST have a separating newline. A single JSON object may still have
+     * newlines in it's stream.
+     *
+     * @param in Input stream to parse from.
+     */
+    public Tokenizer(InputStream in) {
+        this(in, DEFAULT_BUFFER_SIZE);
     }
 
     /**
-     * "Unread" the last read byte. Note that line-pos is not usable
-     * immediately after reading, until reading again.
+     * Create a JSON tokenizer that reads from the input steam. It will only
+     * read as far as requested, and no bytes further. It has no checking of
+     * whether the document follows the JSON standard, but will only accept
+     * JSON formatted tokens.
+     *
+     * Note that the content is assumed to be separated with newlines, which
+     * means that if multiple JSON contents are read from the same stream, they
+     * MUST have a separating newline. A single JSON object may still have
+     * newlines in it's stream.
+     *
+     * @param in Input stream to parse from.
+     * @param bufferSize The size of the char buffer. Default is 2048 chars
+     *                   (4096 bytes).
      */
-    private void unread() {
-        if (readOffset == buffer.length) {
-            --readOffset;
-            return;
-        }
+    public Tokenizer(InputStream in, int bufferSize) {
+        this(new Utf8StreamReader(in), bufferSize, false);
+    }
 
-        if (buffer[readOffset--] == '\n') {
-            --lineNo;
-        } else {
-            --linePos;
+    /**
+     * Create a tokenizer that will read everything from the input stream and
+     * handle it as a single multi-line buffer.
+     *
+     * @param in Reader of content to parse.
+     * @param bufferSize The size of the char buffer. Default is 2048 chars
+     *                   (4096 bytes).
+     * @param preLoadAll Load all content up front. Handy for config and thrift
+     *                   program files.
+     */
+    public Tokenizer(Reader in, int bufferSize, boolean preLoadAll) {
+        super(in, bufferSize, preLoadAll);
+        // If the line is longer than 16k, it will not be used in error messages.
+        this.unreadToken = null;
+    }
+
+    /**
+     * Expect a new JSON token on the stream.
+     *
+     * @param expected Message to add to exception if there are no more JSON
+     *                tokens on the stream.
+     * @return The next token.
+     * @throws IOException If unable to read from stream.
+     */
+    @Nonnull
+    public Token expect(@Nonnull String expected) throws IOException {
+        if (!hasNext()) {
+            throw failure("Expected %s: Got end of file", expected);
         }
+        Token tmp = unreadToken;
+        unreadToken = null;
+        return tmp;
     }
 
     /**
      * Expect at a valid token containing anything.
      *
      * @param expected The expectation description.
+     * @param validator Validator callback.
      * @return The token.
      * @throws IOException If failed to read a token.
      */
-    public Token expect(@Nonnull String expected) throws IOException {
+    public Token expect(@Nonnull String expected, @Nonnull TokenValidator validator) throws IOException {
         if (!hasNext()) {
             throw failure("Expected %s, got end of file", expected);
-        }
-        Token next = nextToken;
-        nextToken = null;
-        return next;
-    }
-
-    public Token expect(@Nonnull String expected,
-                        @Nonnull TokenValidator validator) throws IOException {
-        if (!hasNext()) {
-            throw failure("Expected %s, got end of file", expected);
-        } else if (validator.validate(nextToken)) {
-            Token next = nextToken;
-            nextToken = null;
+        } else if (validator.validate(unreadToken)) {
+            Token next = unreadToken;
+            unreadToken = null;
             return next;
         }
-        throw failure(nextToken,
-                      "Expected %s, but got '%s'",
-                      expected,
-                      Strings.escape(nextToken.asString()));
+        throw failure(unreadToken, "Expected %s, but got '%s'", expected, Strings.escape(unreadToken.asString()));
     }
 
-    public Token peek(@Nonnull String expected) throws IOException {
-        if (!hasNext()) {
-            throw failure("Expected %s, got end of file", expected);
-        }
-        return nextToken;
-    }
-
-    public Token peek() throws IOException {
-        hasNext();
-        return nextToken;
-    }
-
+    /**
+     * @param expected Message to add to exception if there are no more JSON
+     *                 tokens on the stream.
+     * @param symbols List of symbol characters to expect.
+     * @return The symbol that was encountered.
+     * @throws IOException If unable to read from stream.
+     */
     public char expectSymbol(@Nonnull String expected, char... symbols) throws IOException {
+        if (symbols.length == 0) {
+            throw new IllegalArgumentException("No symbols to match.");
+        }
         if (!hasNext()) {
-            throw failure("Expected %s, one of ['%s'], got end of file",
-                                         expected,
-                                         Strings.joinP("', '", symbols));
+            if (symbols.length == 1) {
+                throw failure("Expected %s ('%c'), Got end of file", expected, symbols[0]);
+            }
+            throw failure("Expected %s (one of ['%s']): Got end of file", expected, Strings.joinP("', '", symbols));
         } else {
             for (char symbol : symbols) {
-                if (nextToken.isSymbol(symbol)) {
-                    nextToken = null;
+                if (unreadToken.isSymbol(symbol)) {
+                    unreadToken = null;
                     return symbol;
                 }
             }
 
-            throw failure(nextToken,
-                          "Expected %s, one of ['%s'], but found '%s'",
+            if (symbols.length == 1) {
+                throw failure(getLineNo(), getLinePos(), 1, "Expected %s ('%c'): but found '%s'", expected, symbols[0], unreadToken.asString());
+            }
+
+            throw failure(getLineNo(), getLinePos(), 1, "Expected %s (one of ['%s']): but found '%s'",
                           expected,
                           Strings.joinP("', '", symbols),
-                          Strings.escape(nextToken.asString()));
+                          unreadToken.asString());
         }
     }
 
@@ -232,341 +183,19 @@ public class Tokenizer extends Reader {
         return expect(message, Token::isStringLiteral);
     }
 
-    public boolean hasNext() throws IOException {
-        if (nextToken == null) {
-            nextToken = nextInternal();
-        }
-        return nextToken != null;
-    }
-
-    public Token next() throws IOException {
-        if (nextToken != null) {
-            Token tmp = nextToken;
-            nextToken = null;
-            return tmp;
-        }
-
-        return nextInternal();
-    }
-
-    private Token nextStringLiteral(int startQuote) throws TokenizerException {
-        int startOffset = readOffset;
-        int startLinePos = linePos;
-        int startLineNo = lineNo;
-        boolean escaped = false;
-        while (true) {
-            int r = read();
-            if (r < 0x20 || r == 0x7F) {
-                int length = readOffset - startOffset;
-                if (r == -1) {
-                    throw failure(startLineNo, startLinePos, length,
-                                  "Unexpected end of stream in literal");
-                } else if (r == '\n' || r == '\r') {
-                    throw failure(startLineNo, startLinePos, length - 1,
-                                  "Unexpected line break in literal");
-                } else {
-                    throw failure(startLineNo, startLinePos, length + 1,
-                                  "Unescaped non-printable char in literal: '%s'",
-                                  escapeChar(r));
-                }
-            }
-
-            if (escaped) {
-                escaped = false;
-            } else if (r == Token.kLiteralEscape) {
-                escaped = true;
-            } else if (startQuote == r) {
-                break;
-            }
-            // else just include into string token.
-        }
-        return token(startOffset, readOffset - startOffset + 1, startLinePos);
-    }
-
-    private Token nextInternal() throws IOException {
-        int r;
-        while ((r = read()) != -1) {
-            if (r != ' ' && r != '\t' && r != '\r' && r != '\n') {
-                if (r == Token.kShellComment) {
-                    while ((r = read()) != -1) {
-                        if (r == '\n' || r == '\r') {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if (r < 0) {
-            return null;
-        }
-
-        // Known symbols.
-        if (Token.kSymbols.indexOf(r) >= 0) {
-            return nextSymbol(r);
-        }
-
-        // String literals.
-        if (r == Token.kLiteralQuote || r == Token.kLiteralDoubleQuote) {
-            return nextStringLiteral(r);
-        }
-
-        // Number.
-        if (r == '.' || r == '-' || (r >= '0' && r <= '9')) {
-            return nextNumber(r);
-        }
-
-        // Identifier / qualified identifier / type name token.
-        if (r == '_' || (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')) {
-            return nextIdentifier();
-        }
-
-        throw failure(lineNo, linePos, 1, "Unknown token initiator '%c'", r);
-    }
-
-    protected Token nextSymbol(int lastByte) throws TokenizerException {
-        return token(readOffset, 1, linePos);
-    }
-
-    private Token nextNumber(int lastByte) throws TokenizerException {
-        // NOTE: This code is pretty messy because it is a full state-engine
-        // to ensure that the parsed number follows the JSON number syntax.
-        // Alternatives are:
-        //
-        // dec = -?0
-        // dec = -?.0
-        // dec = -?0.0
-        // sci = (dec)[eE][+-]?[0-9]+
-        // hex = 0x[0-9a-fA-F]+
-        //
-        // Octal and hexadecimal numbers are not supported.
-        //
-        // It is programmed as a state-engine to be very efficient, but
-        // correctly detect valid JSON (and what is invalid if not).
-
-        int startLinePos = linePos;
-        int startLineNo = lineNo;
-        int startOffset = readOffset;
-        int len = 0;
-
-        if (lastByte == '-') {
-            lastByte = read();
-            ++len;
-            if (lastByte < 0) {
-                throw failure(startLineNo, startLinePos, len,
-                              "Unexpected end of stream after negative indicator");
-            }
-            if (!(lastByte == '.' || (lastByte >= '0' && lastByte <= '9'))) {
-                throw failure(startLineNo, startLinePos, len,
-                              "No decimal after negative indicator");
-            }
-        } else if (lastByte == '0') {
-            lastByte = read();
-            ++len;
-            if (lastByte == 'x') {
-                ++len;
-                // hexadecimal.
-                while ((lastByte = read()) != -1) {
-                    if ((lastByte >= '0' && lastByte <= '9') || (lastByte >= 'a' && lastByte <= 'f') ||
-                        (lastByte >= 'A' && lastByte <= 'F')) {
-                        ++len;
-                        continue;
-                    }
-                    // we read a char that's *not* part of the
-                    break;
-                }
-
-                return validateAfterNumber(lastByte, startOffset, startLinePos, len);
-            } else if ('0' <= lastByte && lastByte <= '7') {
-                ++len;
-                // Octals have 0 in front, and then more digits.
-                while ((lastByte = read()) != -1) {
-                    if ((lastByte < '0' || lastByte > '7')) {
-                        ++len;
-                        break;
-                    }
-                }
-
-                return validateAfterNumber(lastByte, startOffset, startLinePos, len);
-            }
-
-        }
-
-        // decimal part.
-        while (lastByte >= '0' && lastByte <= '9') {
-            ++len;
-            // numbers are terminated by first non-numeric character.
-            lastByte = read();
-            if (lastByte < 0) {
-                break;
-            }
-        }
-        // fraction part.
-        if (lastByte == '.') {
-            ++len;
-            // numbers are terminated by first non-numeric character.
-            lastByte = read();
-            if (lastByte >= 0) {
-                while (lastByte >= '0' && lastByte <= '9') {
-                    ++len;
-                    // numbers are terminated by first non-numeric character.
-                    lastByte = read();
-                    if (lastByte < 0) {
-                        break;
-                    }
-                }
-            }
-        }
-        // exponent part.
-        if (lastByte == 'e' || lastByte == 'E') {
-            ++len;
-            // numbers are terminated by first non-numeric character.
-            lastByte = read();
-            if (lastByte >= 0) {
-                // The exponent can be explicitly prefixed with both '+'
-                // and '-'.
-                if (lastByte == '-' || lastByte == '+') {
-                    ++len;
-                    // numbers are terminated by first non-numeric character.
-                    lastByte = read();
-                }
-
-                if (lastByte < '0' || '9' < lastByte) {
-                    throw failure(startLineNo, startLinePos, len + 1, "Missing exponent value");
-                }
-
-                while (lastByte >= '0' && lastByte <= '9') {
-                    ++len;
-                    // numbers are terminated by first non-numeric character.
-                    lastByte = read();
-                    if (lastByte < 0) {
-                        break;
-                    }
-                }
-            } else {
-                throw failure(startLineNo, startLinePos, len,
-                              "Unexpected end of stream after exponent indicator");
-            }
-        }
-
-        return validateAfterNumber(lastByte, startOffset, startLinePos, len);
-    }
-
-    private Token validateAfterNumber(int lastByte, int startOffset, int startLinePos, int len)
-            throws TokenizerException {
-        // A number must be terminated correctly: End of stream, space, newline
-        // or a symbol that may be after a value: ':', ',' ';' '}' ')' ']', '#'.
-        if (lastByte < 0 || lastByte == ' ' || lastByte == '\t' || lastByte == '\n' || lastByte == '\r' ||
-            lastByte == Token.kKeyValueSep ||
-            lastByte == Token.kMessageEnd || lastByte == Token.kListEnd || lastByte == Token.kParamsEnd ||
-            lastByte == Token.kLineSep1 || lastByte == Token.kLineSep2 || lastByte == Token.kShellComment) {
-            if (Token.kSymbols.indexOf(lastByte) >= 0) {
-                unread();
-            }
-            return token(startOffset, len, startLinePos);
-        } else {
-            // This is safe since line breaks are valid.
-            ++len;
-            Token token = token(startOffset, len, startLinePos);
-            throw failure(token,
-                          "Invalid termination of number: '%s'",
-                          Strings.escape(token.asString()));
-        }
-
-    }
-
-    private Token nextIdentifier() throws TokenizerException {
-        int startOffset = readOffset;
-        int startLinePos = linePos;
-        int startLineNo = lineNo;
-
-        int len = 1, r;
-        boolean dot = false;
-        while ((r = read()) != -1) {
-            if (r == '.') {
-                ++len;
-                if (dot) {
-                    throw failure(startLineNo, startLinePos, len,
-                                  "Identifier with double '.'");
-                }
-                dot = true;
-                continue;
-            } else if (dot) {
-                if (!(r == '_' ||
-                      (r >= 'a' && r <= 'z') ||
-                      (r >= 'A' && r <= 'Z'))) {
-                    if (r >= '0' && r <= '9') {
-                        throw failure(startLineNo, startLinePos, len + 1,
-                                     "Identifier part starting with digit '" + ((char) r) + "'");
-                    } else {
-                        throw failure(startLineNo, startLinePos, len,
-                                      "Identifier with trailing '.'");
-                    }
-                }
-                ++len;
-                dot = false;
-                continue;
-            } else if (r == '_' ||
-                       (r >= '0' && r <= '9') ||
-                       (r >= 'a' && r <= 'z') ||
-                       (r >= 'A' && r <= 'Z')) {
-                ++len;
-                continue;
-            }
-
-            unread();
-            break;
-        }
-
-        if (r == -1 || r == ' ' || r == '\t' || r == '\n' || r == '\r' || Token.kSymbols.indexOf(r) >= 0) {
-            return token(startOffset, len, startLinePos);
-        } else {
-            throw failure(startLineNo, startLinePos, len,
-                          "Wrongly terminated identifier: '%s'", escapeChar(r));
-        }
-    }
-
     /**
-     * Get the full non-delimited line content of the 1-indexed line.
+     * Whether there is another token on the stream. This will read up until
+     * it finds a JSON token, or until the stream ends.
      *
-     * @param theLine The nine number.
-     * @return The line string content.
+     * @return True if (and only if) there is at least one more token on the
+     *         stream.
+     * @throws IOException If unable to read from stream.
      */
-    @Nonnull
-    public String getLine(final int theLine) {
-        if (theLine < 1) {
-            throw new IllegalArgumentException(theLine + " is not a valid line number. Must be 1 .. N");
+    public boolean hasNext() throws IOException {
+        if (unreadToken == null) {
+            unreadToken = next();
         }
-        int originalReadOffset = readOffset;
-        int originalLineNo = lineNo;
-        int originalLinePos = linePos;
-
-        // reset read position.
-        readOffset = -1;
-        lineNo = 1;
-        linePos = 0;
-
-        try {
-            int line = theLine;
-            while (--line > 0) {
-                int c;
-                while ((c = this.read()) >= 0) {
-                    if (c == '\n') break;
-                }
-                if (c < 0) {
-                    throw new IOException("No such line " + theLine);
-                }
-            }
-            return IOUtils.readString(this, "\n");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e.getMessage(), e);
-        } finally {
-            readOffset = originalReadOffset;
-            lineNo = originalLineNo;
-            linePos = originalLinePos;
-        }
+        return unreadToken != null;
     }
 
     /**
@@ -579,21 +208,348 @@ public class Tokenizer extends Reader {
      * @throws TokenizerException On illegal content.
      */
     public String readBinary(char end) throws IOException {
-        int startOffset = readOffset + 1;
+        int startOffset = bufferOffset;
         int startLinePos = linePos;
-        int startLineNo = lineNo;
+        CharArrayWriter baos = new CharArrayWriter();
+        while (readNextChar()) {
+            if (lastChar == end) {
+                lastChar = 0;
+                return baos.toString();
+            } else if (lastChar == ' ' || lastChar == '\t' || lastChar == '\r' || lastChar == '\n') {
+                throw failure(getLineNo(), startLinePos, startOffset, "Illegal char '%s' in binary", Strings.escape((char) lastChar));
+            }
+            baos.write(lastChar);
+        }
+        throw failure("Unexpected end of file in binary");
+    }
 
-        int r;
-        while ((r = read()) != -1) {
-            if (r == end) {
-                return new CharSlice(buffer, startOffset, readOffset - startOffset).asString();
-            } else if (r == ' ' || r == '\t' || r == '\n' || r == '\r') {
-                throw failure(startLineNo, startLinePos, linePos - startLinePos + 1, "Illegal char '%s' in binary", escapeChar(r));
+    /**
+     * Return the next token or throw an exception. Though it does not consume
+     * that token.
+     *
+     * @return The next token.
+     * @throws IOException If unable to read from stream.
+     */
+    public Token peek() throws IOException {
+        hasNext();
+        return unreadToken;
+    }
+
+    /**
+     * Return the next token or throw an exception. Though it does not consume
+     * that token.
+     *
+     * @param message Message to add to exception if there are no more JSON
+     *                tokens on the stream.
+     * @return The next token.
+     * @throws IOException If unable to read from stream.
+     */
+    @Nonnull
+    public Token peek(String message) throws IOException {
+        if (!hasNext()) {
+            throw failure(lineNo, linePos + 1, 0, "Expected %s: Got end of file", message);
+        }
+        return unreadToken;
+    }
+
+    /**
+     * Returns the next token on the stream, or null if there are no more JSON
+     * tokens on the stream.
+     * @return The next token, or null.
+     * @throws IOException If unable to read from stream.
+     */
+    @Nullable
+    public Token next() throws IOException {
+        if (unreadToken != null) {
+            Token tmp = unreadToken;
+            unreadToken = null;
+            return tmp;
+        }
+
+        while (lastChar >= 0) {
+            if (lastChar == 0) {
+                if (!readNextChar()) {
+                    break;
+                }
+            }
+            if (lastChar == Token.kNewLine ||
+                lastChar == Token.kCarriageReturn ||
+                lastChar == Token.kSpace ||
+                lastChar == Token.kTab) {
+                lastChar = 0;
+                continue;
+            }
+
+            if (lastChar == Token.kShellComment) {
+                getRestOfLine();
+                continue;
+            }
+
+            if (lastChar == Token.kLiteralDoubleQuote || lastChar == Token.kLiteralQuote) {
+                return nextStringLiteral((char) lastChar);
+            } else if (lastChar == '.' || lastChar == '-' || (lastChar >= '0' && lastChar <= '9')) {
+                return nextNumber();
+            } else if ('_' == lastChar ||
+                       ('a' <= lastChar && lastChar <= 'z') ||
+                       ('A' <= lastChar && lastChar <= 'Z')) {
+                return nextToken();
+            } else if (lastChar < 0x20 || lastChar >= 0x7F) {
+                // non-ASCII UTF-8 characters are only allowed inside JSON string literals.
+                throw failure(lineNo, linePos, 1, "Unknown token initiator '%s'", Strings.escape((char) lastChar));
+            } else {
+                return nextSymbol();
             }
         }
 
-        // throw in with the old start.
-        throw failure(startLineNo, startLinePos, linePos - startLinePos + 1, "unexpected end of stream in binary");
+        return null;
+    }
+
+    // --- INTERNAL ---
+
+    @Nonnull
+    protected Token nextSymbol() throws IOException {
+        lastChar = 0;
+        return new Token(buffer, bufferOffset, 1, lineNo, linePos);
+    }
+
+    @Nonnull
+    private Token nextToken() throws IOException {
+        maybeConsolidateBuffer();
+
+        int startPos = linePos;
+        int startOffset = bufferOffset;
+        int startLine = lineNo;
+        int len = 0;
+
+        int lastLast = 0;
+        while (lastChar == '_' || lastChar == '.' ||
+               (lastChar >= '0' && lastChar <= '9') ||
+               (lastChar >= 'a' && lastChar <= 'z') ||
+               (lastChar >= 'A' && lastChar <= 'Z')) {
+            if (lastChar == '.' && lastLast == '.') {
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Identifier with double '.'");
+            } else if (lastLast == '.' &&
+                       ('0' <= lastChar && lastChar <= '9')) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Identifier part starting with digit '%c'", lastChar);
+            }
+            lastLast = lastChar;
+            ++len;
+            if (!readNextChar()) {
+                break;
+            }
+        }
+
+        if (lastLast == '.') {
+            throw failure(lineNo, startPos, bufferOffset - startOffset,
+                          "Identifier with trailing '.'");
+        }
+
+        return new Token(buffer, startOffset, len, startLine, startPos);
+    }
+
+    @Nonnull
+    private Token nextNumber() throws IOException {
+        maybeConsolidateBuffer();
+        // NOTE: This code is pretty messy because it is a full state-engine
+        // to ensure that the parsed number follows the JSON number syntax.
+        // Alternatives are:
+        //
+        // dec = -?0
+        // dec = -?.0
+        // dec = -?0.0
+        // sci = (dec)[eE][+-]?[0-9]+
+        // hex = 0x[0-9a-fA-F]+
+        // oct = 0[0-7]+
+        //
+        // It is programmed as a state-engine to be very efficient, but
+        // correctly detect valid JSON (and what is invalid if not).
+
+        int startPos = linePos;
+        int startOffset = bufferOffset;
+        // number (any type).
+        int len = 0;
+
+        if (lastChar == '-') {
+            // only base 10 decimals can be negative.
+            ++len;
+            if (!readNextChar()) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset,
+                              "Negative indicator without number");
+            }
+
+            if (!(lastChar == '.' || (lastChar >= '0' && lastChar <= '9'))) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset,
+                              "No decimal after negative indicator");
+            }
+        } else if (lastChar == '0') {
+            if (readNextChar()) {
+                ++len;
+                if (lastChar == 'x') {
+                    ++len;
+                    if (!readNextChar()) {
+                        throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                                      "No decimal after hex indicator");
+                    }
+                    // hexadecimal.
+                    do {
+                        if (!((lastChar >= '0' && lastChar <= '9') || (lastChar >= 'a' && lastChar <= 'f') ||
+                              (lastChar >= 'A' && lastChar <= 'F'))) {
+                            // we read a char that's *not* part of the hex number.
+                            break;
+                        }
+                        ++len;
+                    } while (readNextChar());
+
+                    return validateAfterNumber(startOffset, startPos, len);
+                } else if ('0' <= lastChar && lastChar <= '7') {
+                    ++len;
+                    // Octals have 0 in front, and then more digits.
+                    while (readNextChar()) {
+                        if (lastChar < '0' || lastChar > '7') {
+                            break;
+                        }
+                        ++len;
+                    }
+                    return validateAfterNumber(startOffset, startPos, len);
+                }
+            } else {
+                // just '0'
+                return validateAfterNumber(startOffset, startPos, 1);
+            }
+        }
+
+        // decimal part.
+        while (lastChar >= '0' && lastChar <= '9') {
+            ++len;
+            // numbers are terminated by first non-numeric character.
+            if (!readNextChar()) {
+                break;
+            }
+        }
+        // fraction part.
+        if (lastChar == '.') {
+            ++len;
+            // numbers are terminated by first non-numeric character.
+            if (readNextChar()) {
+                while (lastChar >= '0' && lastChar <= '9') {
+                    ++len;
+                    // numbers are terminated by first non-numeric character.
+                    if (!readNextChar()) {
+                        break;
+                    }
+                }
+            }
+        }
+        // exponent part.
+        if (lastChar == 'e' || lastChar == 'E') {
+            ++len;
+            // numbers are terminated by first non-numeric character.
+            if (!readNextChar()) {
+                String tmp = new String(buffer, startOffset, len);
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Badly terminated number exponent: '%s'", tmp);
+            }
+
+            // The exponent can be explicitly prefixed with both '+'
+            // and '-'.
+            if (lastChar == '-' || lastChar == '+') {
+                ++len;
+                // numbers are terminated by first non-numeric character.
+                if (!readNextChar()) {
+                    String tmp = new String(buffer, startOffset, len);
+                    throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                                  "Badly terminated number exponent: '%s'", tmp);
+                }
+            }
+
+            if (lastChar >= '0' && lastChar <= '9') {
+                while (lastChar >= '0' && lastChar <= '9') {
+                    ++len;
+                    // numbers are terminated by first non-numeric character.
+                    if (!readNextChar()) {
+                        break;
+                    }
+                }
+            } else if (lastChar > 0) {
+                String tmp = new String(buffer, startOffset, len + 1);
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Badly terminated number exponent: '%s'", tmp);
+            } else {
+                String tmp = new String(buffer, startOffset, len + 1);
+                throw failure(lineNo, startPos, bufferOffset - startOffset,
+                              "Badly terminated number exponent: '%s'", tmp);
+            }
+        }
+
+        return validateAfterNumber(startOffset, startPos, len);
+    }
+
+    private Token validateAfterNumber(int startOffset, int startLinePos, int len)
+            throws TokenizerException {
+        // A number must be terminated correctly: End of stream, space or a
+        // symbol that may be after a value: ',' '}' ']'.
+        if (lastChar == '_' ||
+            (lastChar >= 'a' && lastChar <= 'z') ||
+            (lastChar >= 'A' && lastChar <= 'Z')) {
+            String tmp = new String(buffer, startOffset, len + 1);
+            throw failure(lineNo, startLinePos, bufferOffset - startOffset + 1,
+                          "Invalid termination of number: '%s'", tmp);
+        } else {
+            return new Token(buffer, startOffset, len, lineNo, startLinePos);
+        }
+    }
+
+    @Nonnull
+    private Token nextStringLiteral(char quote) throws IOException {
+        maybeConsolidateBuffer();
+
+        // string literals may be longer than 128 bytes. We may need to build it.
+        StringBuilder consolidatedString = null;
+
+        int startPos = linePos;
+        int startOffset = bufferOffset;
+
+        boolean esc = false;
+        for (; ; ) {
+            if (!preLoaded && bufferOffset >= (bufferLimit - 1)) {
+                if (consolidatedString == null) {
+                    consolidatedString = new StringBuilder();
+                }
+                consolidatedString.append(buffer, startOffset, bufferOffset - startOffset + 1);
+                startOffset = 0;
+            }
+
+            if (!readNextChar()) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Unexpected end of stream in string literal");
+            }
+
+            if (esc) {
+                esc = false;
+            } else if (lastChar == Token.kLiteralEscape) {
+                esc = true;
+            } else if (lastChar == quote) {
+                break;
+            } else if (lastChar == Token.kNewLine) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset,
+                              "Unexpected newline in string literal");
+            } else if (lastChar < 0x20 || lastChar == 0x7f ||
+                       (lastChar > 0x7f && !Strings.isConsolePrintable(lastChar))) {
+                throw failure(lineNo, startPos, bufferOffset - startOffset + 1,
+                              "Unescaped non-printable char in literal: '%s'", Strings.escape((char) lastChar));
+            }
+        }
+
+        lastChar = 0;
+        if (consolidatedString != null) {
+            consolidatedString.append(buffer, 0, bufferOffset + 1);
+            String result = consolidatedString.toString();
+            return new Token(result.toCharArray(), 0, result.length(), lineNo, startPos);
+        } else {
+            return new Token(buffer, startOffset, bufferOffset - startOffset + 1, lineNo, startPos);
+        }
     }
 
     @Nonnull
@@ -612,7 +568,7 @@ public class Tokenizer extends Reader {
                                          Object... params) {
         return failure(format, params).setLineNo(startLineNo)
                                       .setLinePos(startLinePos)
-                                      .setLine(getLine(startLineNo))
+                                      .setLine(getLine())
                                       .setLength(length);
     }
 
@@ -639,9 +595,5 @@ public class Tokenizer extends Reader {
     @Nonnull
     public Token token(int off, int len, int lineNo, int linePos) {
         return new Token(buffer, off, len, lineNo, linePos);
-    }
-
-    private static String escapeChar(int c) {
-        return Strings.escape(new String(new char[]{(char) c}));
     }
 }

@@ -359,7 +359,7 @@ public class ProvidenceConfigParserTest {
                            "include \"a.cfg\" as a\n" +
                            "include \"a.cfg\" as a\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected line break in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected newline in string literal\n" +
                            "def { s = \"\n" +
                            "----------^",
                            "def { s = \"\n\"}");
@@ -367,7 +367,7 @@ public class ProvidenceConfigParserTest {
                            "def { s = \"\t\"}\n" +
                            "----------^^",
                            "def { s = \"\t\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected end of stream in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected end of stream in string literal\n" +
                            "def { s = \"a\n" +
                            "----------^^",
                            "def { s = \"a");

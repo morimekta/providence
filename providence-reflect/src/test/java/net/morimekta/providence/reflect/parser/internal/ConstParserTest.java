@@ -391,7 +391,7 @@ public class ConstParserTest {
                       "............ = { \"foo\": \"bar\" }\n" +
                       "-----------------^^^^^");
         assertFailure("providence", "bool", "\"foo\"",
-                      "Error on line 4, pos 5: Not boolean value for bool: \"foo\"\n" +
+                      "Error on line 4, pos 5: Not boolean value: \"foo\"\n" +
                       ". = \"foo\"\n" +
                       "----^^^^^");
     }

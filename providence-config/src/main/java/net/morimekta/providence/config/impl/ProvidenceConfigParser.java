@@ -18,6 +18,7 @@ import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Pair;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -28,12 +29,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,7 +141,7 @@ public class ProvidenceConfigParser {
         Tokenizer tokenizer;
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             // Non-enclosed content, meaning we should read the whole file immediately.
-            tokenizer = new Tokenizer(in, false);
+            tokenizer = new Tokenizer(new Utf8StreamReader(in), Tokenizer.DEFAULT_BUFFER_SIZE, true);
         }
 
         ProvidenceConfigContext context = new ProvidenceConfigContext();
@@ -156,12 +157,12 @@ public class ProvidenceConfigParser {
 
             if (lastStage == Stage.MESSAGE) {
                 throw new TokenizerException(token, "Unexpected token '" + token.asString() + "', expected end of file.")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             } else if (INCLUDE.equals(token.asString())) {
                 // if include && stage == INCLUDES --> INCLUDES
                 if (lastStage != Stage.INCLUDES) {
                     throw new TokenizerException(token, "Include added after defines or message. Only one def block allowed.")
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 token = tokenizer.expectLiteral("file to be included");
                 String includedFilePath = token.decodeLiteral(strict);
@@ -179,22 +180,22 @@ public class ProvidenceConfigParser {
                     }
                 } catch (FileNotFoundException e) {
                     throw new TokenizerException(token, "Included file \"%s\" not found.", includedFilePath)
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 token = tokenizer.expectIdentifier("the token 'as'");
                 if (!AS.equals(token.asString())) {
                     throw new TokenizerException(token, "Expected token 'as' after included file \"%s\".", includedFilePath)
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 token = tokenizer.expectIdentifier("Include alias");
                 String alias = token.asString();
                 if (RESERVED_WORDS.contains(alias)) {
                     throw new TokenizerException(token, "Alias \"%s\" is a reserved word.", alias)
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 if (context.containsReference(alias)) {
                     throw new TokenizerException(token, "Alias \"%s\" is already used.", alias)
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 context.setInclude(alias, included);
             } else if (DEF.equals(token.asString())) {
@@ -214,7 +215,7 @@ public class ProvidenceConfigParser {
                     //   even in non-strict mode.
                     if (strict || stack.length == 1) {
                         throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
-                                tokenizer.getLine(token.getLineNo()));
+                                tokenizer.getLine());
                     }
                     return null;
                 }
@@ -223,7 +224,7 @@ public class ProvidenceConfigParser {
                 throw new TokenizerException(token,
                                              "Unexpected token '" + token.asString() +
                                              "'. Expected include, defines or message type")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             }
 
             token = tokenizer.peek();
@@ -248,7 +249,7 @@ public class ProvidenceConfigParser {
             while (!token.isSymbol(Token.kMessageEnd)) {
                 if (!token.isIdentifier()) {
                     throw new TokenizerException(token, "Token '%s' is not valid reference name.", token.asString()).setLine(
-                            tokenizer.getLine(token.getLineNo()));
+                            tokenizer.getLine());
                 }
                 String name = context.initReference(token, tokenizer);
                 tokenizer.expectSymbol("def value sep", Token.kFieldValueSep);
@@ -257,7 +258,7 @@ public class ProvidenceConfigParser {
             }
         } else {
             throw new TokenizerException(token, "Unexpected token after def: '%s'", token.asString()).setLine(
-                    tokenizer.getLine(token.getLineNo()));
+                    tokenizer.getLine());
         }
     }
 
@@ -297,7 +298,7 @@ public class ProvidenceConfigParser {
                 PEnumValue val = ed.findByName(id.substring(l + 1));
                 if (val == null && strict) {
                     throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 // Note that unknown enum value results in null. Therefore we don't catch null values here.
                 return val;
@@ -305,13 +306,13 @@ public class ProvidenceConfigParser {
                 // No such declared type.
                 if (strict) {
                     throw new TokenizerException(token, "Unknown enum identifier: %s", id.substring(0, l))
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 consumeValue(context, tokenizer, token);
             } catch (ClassCastException e) {
                 // Not an enum.
                 throw new TokenizerException(token, "Identifier " + id + " does not reference an enum, from " + token.asString())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             }
         } else if (token.isQualifiedIdentifier()) {
             // Message type.
@@ -328,7 +329,7 @@ public class ProvidenceConfigParser {
                 // - strict mode: all types must be known.
                 if (strict) {
                     throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
-                            tokenizer.getLine(token.getLineNo()));
+                            tokenizer.getLine());
                 }
                 consumeValue(context, tokenizer, token);
                 return null;
@@ -339,7 +340,7 @@ public class ProvidenceConfigParser {
                 PMessage inheritsFrom = resolve(context, token, tokenizer, descriptor);
                 if (inheritsFrom == null) {
                     throw new TokenizerException(token, "Inheriting from null reference: %s", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
 
                 builder.merge(inheritsFrom);
@@ -349,7 +350,7 @@ public class ProvidenceConfigParser {
             return parseMessage(tokenizer, context, builder);
         } else {
             throw new TokenizerException(token, "Invalid define value " + token.asString())
-                    .setLine(tokenizer.getLine(token.getLineNo()));
+                    .setLine(tokenizer.getLine());
         }
 
         return null;
@@ -367,7 +368,7 @@ public class ProvidenceConfigParser {
 
             if (parent != null) {
                 throw new TokenizerException(token, "Config in '" + file.getName() + "' has both defined parent and inherits from")
-                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setLine(tokenizer.getLine())
                         .setFile(file.getName());
             }
 
@@ -376,15 +377,15 @@ public class ProvidenceConfigParser {
                     builder.merge(resolveRequired(context, token, tokenizer, builder.descriptor()));
                 } catch (ClassCastException e) {
                     throw new TokenizerException(token, "Config type mismatch, expected  ")
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 } catch (ProvidenceConfigException e) {
                     throw new TokenizerException(token, e.getMessage())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
                 throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected reference identifier")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             }
         } else if (parent != null) {
             builder.merge(parent);
@@ -398,13 +399,14 @@ public class ProvidenceConfigParser {
             // ignore undefined.
             return;
         } else if (token.isReferenceIdentifier()) {
-            if (!tokenizer.peek().isSymbol(Token.kMessageStart)) {
+            if (!tokenizer.peek("message start").isSymbol(Token.kMessageStart)) {
                 // just a reference.
                 return;
             }
             // reference + message.
             token = tokenizer.next();
         }
+
         if (token.isSymbol(Token.kMessageStart)) {
             // message or map.
             token = tokenizer.expect("map or message first entry");
@@ -414,7 +416,7 @@ public class ProvidenceConfigParser {
                 while (!token.isSymbol(Token.kMessageEnd)) {
                     if (token.isIdentifier() || token.isReferenceIdentifier()) {
                         throw new TokenizerException(token, "Invalid map key: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     consumeValue(context, tokenizer, token);
                     tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
@@ -431,7 +433,7 @@ public class ProvidenceConfigParser {
                 while (!token.isSymbol(Token.kMessageEnd)) {
                     if (!token.isIdentifier()) {
                         throw new TokenizerException(token, "Invalid field name: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     if (tokenizer.peek().isSymbol(DEFINE_REFERENCE)) {
                         tokenizer.next();
@@ -469,7 +471,7 @@ public class ProvidenceConfigParser {
                      token.isStringLiteral() ||  // string literal
                      token.isIdentifier())) {  // enum value reference.
             throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
-                    .setLine(tokenizer.getLine(token.getLineNo()));
+                    .setLine(tokenizer.getLine());
         }
     }
 
@@ -484,14 +486,14 @@ public class ProvidenceConfigParser {
         while (!token.isSymbol(Token.kMessageEnd)) {
             if (!token.isIdentifier()) {
                 throw new TokenizerException(token, "Invalid field name: " + token.asString())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             }
 
             F field = descriptor.findFieldByName(token.asString());
             if (field == null) {
                 if (strict) {
                     throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 } else {
                     token = tokenizer.expect("field value sep, message start or reference start");
                     if (token.isSymbol(DEFINE_REFERENCE)) {
@@ -505,7 +507,7 @@ public class ProvidenceConfigParser {
                         token = tokenizer.expect("value declaration");
                     } else if (!token.isSymbol(Token.kMessageStart)) {
                         throw new TokenizerException(token, "Expected field-value separator or inherited message")
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     // Non-strict will just consume unknown fields, this way
                     // we can be forward-compatible when reading config.
@@ -551,15 +553,15 @@ public class ProvidenceConfigParser {
                             } else {
                                 if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
                                     throw new TokenizerException(token, "Inherit from unknown reference %s", token.asString())
-                                            .setLine(tokenizer.getLine(token.getLineNo()));
+                                            .setLine(tokenizer.getLine());
                                 } else if (strict) {
                                     throw new TokenizerException(token, "Unknown reference %s", token.asString())
-                                            .setLine(tokenizer.getLine(token.getLineNo()));
+                                            .setLine(tokenizer.getLine());
                                 }
                             }
                         } catch (ProvidenceConfigException e) {
                             throw new TokenizerException(token, "Unknown inherited reference '%s'", token.asString())
-                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                                    .setLine(tokenizer.getLine());
                         }
 
                         token = tokenizer.expect("after message reference");
@@ -572,7 +574,7 @@ public class ProvidenceConfigParser {
                     } else if (!token.isSymbol(Token.kMessageStart)) {
                         throw new TokenizerException(token,
                                                      "Unexpected token " + token.asString() +
-                                                     ", expected message start").setLine(tokenizer.getLine(token.getLineNo()));
+                                                     ", expected message start").setLine(tokenizer.getLine());
                     }
                 } else {
                     // extend in-line.
@@ -602,7 +604,7 @@ public class ProvidenceConfigParser {
                             baseValue = resolve(context, token, tokenizer, field.getDescriptor());
                         } catch (ProvidenceConfigException e) {
                             throw new TokenizerException(token, e.getMessage())
-                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                                    .setLine(tokenizer.getLine());
                         }
 
                         token = tokenizer.expect("map start or next field");
@@ -619,7 +621,7 @@ public class ProvidenceConfigParser {
 
                 if (!token.isSymbol(Token.kMessageStart)) {
                     throw new TokenizerException(token, "Expected map start, but got '%s'", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 Map map =  parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue);
                 builder.set(field.getId(), context.setReference(reference, map));
@@ -761,7 +763,7 @@ public class ProvidenceConfigParser {
                         throw new TokenizerException(next, "No such enum value %s for %s.",
                                                      next.asString(),
                                                      ed.getQualifiedName())
-                                .setLine(tokenizer.getLine(next.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     return value;
                 }
@@ -780,7 +782,7 @@ public class ProvidenceConfigParser {
                             resolved = resolve(context, next, tokenizer, descriptor);
                         } catch (ClassCastException e) {
                             throw new TokenizerException(next, "Reference %s is not a map field ", next.asString())
-                                    .setLine(tokenizer.getLine(next.getLineNo()));
+                                    .setLine(tokenizer.getLine());
                         }
                         return resolved;
                     } else if (next.isSymbol(Token.kMessageStart)) {
@@ -835,19 +837,18 @@ public class ProvidenceConfigParser {
                     break;
                 }
                 default: {
-                    throw new TokenizerException(next, descriptor.getType() + " not supported!").setLine(tokenizer.getLine(
-                            next.getLineNo()));
+                    throw new TokenizerException(next, descriptor.getType() + " not supported!").setLine(tokenizer.getLine());
                 }
             }
         } catch (ProvidenceConfigException e) {
             throw new TokenizerException(next, e.getMessage())
-                    .setLine(tokenizer.getLine(next.getLineNo()));
+                    .setLine(tokenizer.getLine());
         }
 
         throw new TokenizerException(next, "Unhandled value \"%s\" for type %s",
                                      next.asString(),
                                      descriptor.getType())
-                .setLine(tokenizer.getLine(next.getLineNo()));
+                .setLine(tokenizer.getLine());
     }
 
     private Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
@@ -967,7 +968,7 @@ public class ProvidenceConfigParser {
                 return ProvidenceConfigUtil.getInMessage((PMessage) value, subKey, null);
             } catch (ProvidenceConfigException e) {
                 throw new TokenizerException(token, e.getMessage())
-                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setLine(tokenizer.getLine())
                         .initCause(e);
             }
         }

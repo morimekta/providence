@@ -194,6 +194,7 @@ public class SerializerTest {
             } catch (TokenizerException e) {
                 System.err.println(new String(baos.toByteArray(), UTF_8));
                 System.err.println(e.asString());
+                e.printStackTrace();
                 fail("oops");
                 return;
             }

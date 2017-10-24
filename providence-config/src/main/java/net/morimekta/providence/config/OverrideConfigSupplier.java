@@ -39,9 +39,8 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.Map;
 import java.util.Properties;
@@ -184,9 +183,8 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             }
 
             try {
-                Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(override.getValue()
-                                                                                     .getBytes(StandardCharsets.UTF_8)),
-                                                    true);
+                CharArrayReader reader = new CharArrayReader(override.getValue().toCharArray());
+                Tokenizer tokenizer = new Tokenizer(reader, Tokenizer.DEFAULT_BUFFER_SIZE, true);
                 if (UNDEFINED.equals(override.getValue())) {
                     containedBuilder.clear(field.getId());
                 } else if (field.getType() == PType.STRING) {
@@ -273,7 +271,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                         return Boolean.FALSE;
                 }
                 throw new TokenizerException(token, "Invalid boolean value " + token.asString())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
 
             }
             case BYTE: {
@@ -281,12 +279,12 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     long val = token.parseInteger();
                     if (val > Byte.MAX_VALUE || val < Byte.MIN_VALUE) {
                         throw new TokenizerException(token, "Byte value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     return (byte) val;
                 } else {
                     throw new TokenizerException(token, "Invalid byte value: " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case I16: {
@@ -294,12 +292,12 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     long val = token.parseInteger();
                     if (val > Short.MAX_VALUE || val < Short.MIN_VALUE) {
                         throw new TokenizerException(token, "Short value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     return (short) val;
                 } else {
                     throw new TokenizerException(token, "Invalid i16 value: " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case I32: {
@@ -307,12 +305,12 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     long val = token.parseInteger();
                     if (val > Integer.MAX_VALUE || val < Integer.MIN_VALUE) {
                         throw new TokenizerException(token, "Integer value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                     }
                     return (int) val;
                 } else {
                     throw new TokenizerException(token, "Invalid i32 value: " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case I64: {
@@ -320,7 +318,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     return token.parseInteger();
                 } else {
                     throw new TokenizerException(token, "Invalid i64 value: " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case DOUBLE: {
@@ -328,13 +326,13 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     return token.parseDouble();
                 } catch (NumberFormatException nfe) {
                     throw new TokenizerException(token, "Invalid double value: " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case STRING: {
                 if (!token.isStringLiteral()) {
                     throw new TokenizerException(token, "Expected string literal, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 return token.decodeLiteral(strict);
             }
@@ -360,7 +358,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     }
                     default:
                         throw new TokenizerException(token, "Unrecognized binary format " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
+                                .setLine(tokenizer.getLine());
                 }
             }
             case ENUM: {
@@ -368,19 +366,19 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                 b.setByName(token.asString());
                 if (strict && !b.valid()) {
                     throw new TokenizerException(token, "No such " + descriptor.getQualifiedName() + " value " + token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 return b.build();
             }
             case MESSAGE: {
                 // TODO: Parse messages?
                 throw new TokenizerException(token, "Message overrides not allowed")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                        .setLine(tokenizer.getLine());
             }
             case MAP: {
                 if (!token.isSymbol(Token.kMessageStart)) {
                     throw new TokenizerException(token, "Expected map start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 @SuppressWarnings("unchecked")
                 PMap<Object, Object> pMap = (PMap) descriptor;
@@ -405,7 +403,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             case LIST: {
                 if (!token.isSymbol(Token.kListStart)) {
                     throw new TokenizerException(token, "Expected list start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 @SuppressWarnings("unchecked")
                 PList<Object> pList = (PList) descriptor;
@@ -427,7 +425,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             case SET: {
                 if (!token.isSymbol(Token.kListStart)) {
                     throw new TokenizerException(token, "Expected set start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
                 @SuppressWarnings("unchecked")
                 PSet<Object> pList = (PSet) descriptor;

@@ -38,7 +38,7 @@ class ProvidenceConfigContext {
     String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
         String reference = token.asString();
         if (ProvidenceConfigParser.RESERVED_WORDS.contains(reference)) {
-            throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine(token.getLineNo()));
+            throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine());
         }
 
         TokenizerException ex = referenceExceptions.get(reference);
@@ -48,24 +48,24 @@ class ProvidenceConfigContext {
                                              "Trying to reassign reference '%s', original at line %d",
                                              reference,
                                              ex.getLineNo())
-                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setLine(tokenizer.getLine())
                         .initCause(ex);
             }
             throw new TokenizerException(token,
                                          "Trying to reassign reference '%s' while calculating it's value, original at line %d",
                                          reference,
                                          ex.getLineNo())
-                    .setLine(tokenizer.getLine(token.getLineNo()))
+                    .setLine(tokenizer.getLine())
                     .initCause(ex);
         } else if (includeAliases.contains(reference)) {
             throw new TokenizerException(token,
                                          "Trying to reassign include alias '%s' to reference.",
                                          reference)
-                    .setLine(tokenizer.getLine(token.getLineNo()));
+                    .setLine(tokenizer.getLine());
         }
 
         referenceExceptions.put(reference, new TokenizerException(token, "Original reference")
-                .setLine(tokenizer.getLine(token.getLineNo())));
+                .setLine(tokenizer.getLine()));
         return reference;
     }
 
@@ -87,9 +87,9 @@ class ProvidenceConfigContext {
         TokenizerException ex = referenceExceptions.get(reference);
         if (ex != null) {
             throw new TokenizerException(token, "Trying to reference '%s' while it's being defined, original at line %d",
-                                         reference, ex.getLineNo()).setLine(tokenizer.getLine(token.getLineNo()));
+                                         reference, ex.getLineNo()).setLine(tokenizer.getLine());
         }
         throw new TokenizerException(token, "No such reference '%s'", reference)
-                .setLine(tokenizer.getLine(token.getLineNo()));
+                .setLine(tokenizer.getLine());
     }
 }

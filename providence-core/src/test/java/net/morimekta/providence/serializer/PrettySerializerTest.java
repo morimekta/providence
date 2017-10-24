@@ -18,6 +18,7 @@
  */
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.calculator.Operation;
@@ -127,6 +128,9 @@ public class PrettySerializerTest {
 
         try {
             serializer.deserialize(in, Containers.kDescriptor);
+        } catch (TokenizerException e) {
+            e.printStackTrace();
+            fail(e.asString());
         } catch (IOException e) {
             e.printStackTrace();
             fail(e.getMessage());

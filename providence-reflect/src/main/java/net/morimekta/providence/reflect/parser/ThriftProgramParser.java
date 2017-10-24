@@ -39,7 +39,6 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Strings;
-import net.morimekta.util.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -238,9 +237,11 @@ public class ThriftProgramParser implements ProgramParser {
         tokenizer.expectSymbol("const value separator", Token.kFieldValueSep);
 
         Token value = parseValue(tokenizer);
-        Token sep = tokenizer.peek();
-        if (sep != null && (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2))) {
-            tokenizer.next();
+        if (tokenizer.hasNext()) {
+            Token sep = tokenizer.peek("");
+            if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
+                tokenizer.next();
+            }
         }
 
         return ConstType.builder()
@@ -292,7 +293,7 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private String parseDocLine(ThriftTokenizer tokenizer, String comment) throws IOException {
-        String line = IOUtils.readString(tokenizer, "\n").trim();
+        String line = tokenizer.readUntil("\n").trim();
         if (comment != null) {
             return comment + "\n" + line;
         }
@@ -300,15 +301,13 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private String parseDocBlock(ThriftTokenizer tokenizer) throws IOException {
-        String block = IOUtils.readString(tokenizer, ThriftTokenizer.kBlockCommentEnd)
+        String block = tokenizer.readUntil(ThriftTokenizer.kBlockCommentEnd)
                               .trim();
         String[] lines = block.split("\\r?\\n");
         StringBuilder builder = new StringBuilder();
 
-        Pattern re = RE_BLOCK_LINE;
         for (String line : lines) {
-            builder.append(re.matcher(line)
-                             .replaceFirst(""));
+            builder.append(RE_BLOCK_LINE.matcher(line).replaceFirst(""));
             builder.append('\n');
         }
         return builder.toString()
@@ -502,8 +501,8 @@ public class ThriftProgramParser implements ProgramParser {
             }
         }  // for each method-line
 
-        Token token = tokenizer.peek();
-        if (token != null) {
+        if (tokenizer.hasNext()) {
+            Token token = tokenizer.peek("optional annotations");
             if (token.isSymbol(Token.kParamsStart)) {
                 // Method Annotations.
                 tokenizer.next();
@@ -659,10 +658,12 @@ public class ThriftProgramParser implements ProgramParser {
             }
         } // if has values.
 
-        Token token = tokenizer.peek();
-        if (token != null && token.isSymbol(Token.kParamsStart)) {
-            tokenizer.next();
-            enum_type.setAnnotations(parseAnnotations(tokenizer, "enum type"));
+        if (tokenizer.hasNext()) {
+            Token token = tokenizer.peek("optional annotations");
+            if (token.isSymbol(Token.kParamsStart)) {
+                tokenizer.next();
+                enum_type.setAnnotations(parseAnnotations(tokenizer, "enum type"));
+            }
         }
 
         return enum_type.build();
@@ -795,10 +796,12 @@ public class ThriftProgramParser implements ProgramParser {
             }
         }
 
-        Token token = tokenizer.peek();
-        if (token != null && token.isSymbol(Token.kParamsStart)) {
-            tokenizer.next();
-            struct.setAnnotations(parseAnnotations(tokenizer, "message"));
+        if (tokenizer.hasNext()) {
+            Token token = tokenizer.peek("optional annotations");
+            if (token.isSymbol(Token.kParamsStart)) {
+                tokenizer.next();
+                struct.setAnnotations(parseAnnotations(tokenizer, "message"));
+            }
         }
 
         return struct.build();

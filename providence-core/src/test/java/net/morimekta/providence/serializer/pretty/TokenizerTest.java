@@ -31,15 +31,15 @@ public class TokenizerTest {
     @Test
     public void testFailures() throws IOException {
         assertFail_anything("",
-                            "Error: Expected anything, got end of file");
+                            "Error: Expected anything: Got end of file");
 
         // --- literals
         assertFail_anything("\n\n\"\\\"",
-                            "Error on line 3, pos 1: Unexpected end of stream in literal\n" +
+                            "Error on line 3, pos 1: Unexpected end of stream in string literal\n" +
                             "\"\\\"\n" +
                             "^^^");
         assertFail_anything("\n\n  \"\n\"",
-                            "Error on line 3, pos 3: Unexpected line break in literal\n" +
+                            "Error on line 3, pos 3: Unexpected newline in string literal\n" +
                             "  \"\n" +
                             "--^");
         assertFail_anything("\n\n  \"\003\"",
@@ -61,15 +61,15 @@ public class TokenizerTest {
                             "-:\n" +
                             "^");
         assertFail_anything("-",
-                            "Error on line 1, pos 1: Unexpected end of stream after negative indicator\n" +
+                            "Error on line 1, pos 1: Negative indicator without number\n" +
                             "-\n" +
                             "^");
         assertFail_anything(".5e:",
-                            "Error on line 1, pos 1: Missing exponent value\n" +
+                            "Error on line 1, pos 1: Badly terminated number exponent: '.5e:'\n" +
                             ".5e:\n" +
                             "^^^^");
         assertFail_anything("\n  .5e",
-                            "Error on line 2, pos 3: Unexpected end of stream after exponent indicator\n" +
+                            "Error on line 2, pos 3: Badly terminated number exponent: '.5e'\n" +
                             "  .5e\n" +
                             "--^^^");
 
@@ -86,17 +86,6 @@ public class TokenizerTest {
                             "Error on line 1, pos 1: Identifier part starting with digit '7'\n" +
                             "e.7:\n" +
                             "^^^");
-        assertFail_anything("e-",
-                            "Error on line 1, pos 1: Wrongly terminated identifier: '-'\n" +
-                            "e-\n" +
-                            "^");
-
-        // --- nothing at all
-
-        assertFail_anything("\\4",
-                            "Error on line 1, pos 1: Unknown token initiator '\\'\n" +
-                            "\\4\n" +
-                            "^");
     }
 
     @Test
@@ -133,28 +122,28 @@ public class TokenizerTest {
             tokenizer("").expectSymbol("id", '&', '%');
             fail();
         } catch (TokenizerException e) {
-            assertThat(e.getMessage(), is("Expected id, one of ['&', '%'], got end of file"));
+            assertThat(e.getMessage(), is("Expected id (one of ['&', '%']): Got end of file"));
         }
 
         try {
             tokenizer("123").expectSymbol("id", '&', '%');
             fail();
         } catch (TokenizerException e) {
-            assertThat(e.getMessage(), is("Expected id, one of ['&', '%'], but found '123'"));
+            assertThat(e.getMessage(), is("Expected id (one of ['&', '%']): but found '123'"));
         }
 
         try {
             tokenizer("").peek("id");
             fail();
         } catch (TokenizerException e) {
-            assertThat(e.getMessage(), is("Expected id, got end of file"));
+            assertThat(e.getMessage(), is("Expected id: Got end of file"));
         }
 
     }
 
     private void assertGood(String text, String... tokens) throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-        Tokenizer tokenizer = new Tokenizer(in, true);
+        Tokenizer tokenizer = new Tokenizer(in);
 
         for (String token : tokens) {
             assertThat(tokenizer.expect("anything").asString(), is(token));
@@ -163,12 +152,12 @@ public class TokenizerTest {
 
     private Tokenizer tokenizer(String text) throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-        return new Tokenizer(in, false);
+        return new Tokenizer(in);
     }
 
     private void assertFail_anything(String text, String out) throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-        Tokenizer tokenizer = new Tokenizer(in, true);
+        Tokenizer tokenizer = new Tokenizer(in);
         try {
             tokenizer.expect("anything");
             fail("no exception");

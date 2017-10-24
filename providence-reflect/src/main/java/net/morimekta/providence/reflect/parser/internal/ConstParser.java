@@ -38,6 +38,7 @@ import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.Utf8StreamReader;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonToken;
 import net.morimekta.util.json.JsonTokenizer;
@@ -45,6 +46,7 @@ import net.morimekta.util.json.JsonTokenizer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,31 +85,39 @@ public class ConstParser {
     }
 
     /**
-     *
-     *
      * @param inputStream Input stream to parse.
      * @param type The constant type descriptor.
      * @return The parsed constant value.
      * @throws ParseException If not able to parse the constant.
      */
     public Object parse(InputStream inputStream, PDescriptor type) throws ParseException {
+        return parse(new Utf8StreamReader(inputStream), type);
+    }
+
+    /**
+     * @param reader Input stream to parse.
+     * @param type The constant type descriptor.
+     * @return The parsed constant value.
+     * @throws ParseException If not able to parse the constant.
+     */
+    public Object parse(Reader reader, PDescriptor type) throws ParseException {
         try {
-            ThriftTokenizer tokenizer = new ThriftTokenizer(inputStream);
+            ThriftTokenizer tokenizer = new ThriftTokenizer(reader);
             return parseTypedValue(tokenizer.expect("const value"), tokenizer, type, true);
         } catch (ParseException e) {
             // The line is probably not representative of the "original".
-            if (startLinePos > 0 && e.getLineNo() == 1) {
-                e.setLinePos(e.getLinePos() + startLinePos - 1);
-                if (startLinePos > 3) {
-                    e.setLine(Strings.times(".", startLinePos - 4) +
-                              " = " +
-                              e.getLine());
-                } else {
-                    e.setLine(Strings.times(" ", startLinePos - 1) +
-                              e.getLine());
-                }
-            }
             if (startLineNo > 0) {
+                if (e.getLineNo() == 1) {
+                    e.setLinePos(e.getLinePos() + startLinePos - 1);
+                    if (startLinePos > 3) {
+                        e.setLine(Strings.times(".", startLinePos - 4) +
+                                  " = " +
+                                  e.getLine());
+                    } else {
+                        e.setLine(Strings.times(" ", startLinePos - 1) +
+                                  e.getLine());
+                    }
+                }
                 e.setLineNo(e.getLineNo() + startLineNo - 1);
             }
             throw e;
@@ -190,7 +200,7 @@ public class ConstParser {
                 } else if (token.isInteger()) {
                     return token.parseInteger() != 0L;
                 }
-                throw tokenizer.failure(token, "Not boolean value for bool: " + token.asString());
+                throw tokenizer.failure(token, "Not boolean value: " + token.asString());
             case BYTE:
                 if (token.isInteger()) {
                     return (byte) token.parseInteger();
@@ -485,7 +495,7 @@ public class ConstParser {
                             .setLength(token.length())
                             .setLineNo(token.getLineNo())
                             .setLinePos(token.getLinePos())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                            .setLine(tokenizer.getLine());
                 }
             }
             case STRING:

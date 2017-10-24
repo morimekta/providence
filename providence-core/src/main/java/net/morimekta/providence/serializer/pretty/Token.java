@@ -52,6 +52,11 @@ public class Token extends CharSlice {
     public static final char kLiteralDoubleQuote = '\"';
     public static final char kShellComment       = '#';
 
+    public static final char kNewLine       = '\n';
+    public static final char kCarriageReturn       = '\r';
+    public static final char kSpace       = ' ';
+    public static final char kTab       = '\t';
+
     public static final String B64 = "b64";
     public static final String HEX = "hex";
 
