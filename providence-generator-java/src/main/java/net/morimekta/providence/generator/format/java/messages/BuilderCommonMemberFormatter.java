@@ -38,6 +38,7 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Objects;
 
+import static net.morimekta.providence.PType.MESSAGE;
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.util.Strings.camelCase;
 
@@ -86,7 +87,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 continue;
             }
             writer.formatln("private %s %s;", field.fieldType(), field.member());
-            if (field.type() == PType.MESSAGE) {
+            if (field.type() == MESSAGE) {
                 writer.formatln("private %s._Builder %s_builder;", field.builderFieldType(), field.member());
             }
         }
@@ -179,7 +180,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
                 writer.append(" &&")
                       .appendln("       ");
-                if (field.type() == PType.MESSAGE) {
+                if (field.type() == MESSAGE) {
                     writer.format("%s.equals(%s(), other.%s())",
                                   Objects.class.getName(),
                                   field.getter(),
@@ -215,7 +216,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                .stream()
                .filter(field -> !field.isVoid())
                .forEach(field -> {
-                   if (field.type() == PType.MESSAGE) {
+                   if (field.type() == MESSAGE) {
                        writer.append(",");
                        writer.formatln("_Field.%s, %s()", field.fieldEnum(), field.getter());
                    } else {
@@ -321,6 +322,35 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .newline();
     }
 
+    private void appendSetterBuilderOverload(JField field) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        if (field.hasComment()) {
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Sets the value of " + field.name() + ".");
+        }
+        comment.newline();
+        if (!field.isVoid()) {
+            comment.param_("builder", "builder for the new value");
+        }
+        comment.return_("The builder");
+        if (JAnnotation.isDeprecated(field)) {
+            String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+            if (reason != null && reason.trim().length() > 0) {
+                comment.deprecated_(reason);
+            }
+        }
+        comment.finish();
+        if (JAnnotation.isDeprecated(field)) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
+        writer.appendln(JAnnotation.NON_NULL);
+        writer.formatln("public _Builder %s(%s builder) {", field.setter(), field.builderMutableType());
+        writer.formatln("  return %s(builder.build());", field.setter());
+        writer.formatln("}");
+        writer.newline();
+    }
+
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
@@ -394,6 +424,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .end()
               .appendln('}')
               .newline();
+
+        if (field.type() == MESSAGE) {
+            appendSetterBuilderOverload(field);
+        }
     }
 
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
@@ -576,7 +610,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 writer.formatln("%s = %s;", field.member(), field.kDefault());
             } else {
                 writer.formatln("%s = null;", field.member());
-                if (field.type() == PType.MESSAGE) {
+                if (field.type() == MESSAGE) {
                     writer.formatln("%s_builder = null;", field.member());
                 }
             }
