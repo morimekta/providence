@@ -60,12 +60,12 @@ public class CServiceTest {
 
         ProgramType program = parser.parse(new FileInputStream(numeric),
                                            numeric, ImmutableList.of(tmp.getRoot()));
-        registry.putProgram(numeric.getPath(), converter.convert(numeric.getPath(), program));
+        registry.putProgram(numeric.getCanonicalPath(), converter.convert(numeric.getCanonicalPath(), program));
         program = parser.parse(new FileInputStream(calculator),
                                calculator, ImmutableList.of(tmp.getRoot()));
-        registry.putProgram(calculator.getPath(), converter.convert(calculator.getPath(), program));
+        registry.putProgram(calculator.getCanonicalPath(), converter.convert(calculator.getCanonicalPath(), program));
 
-        this.registry = registry.registryForPath(calculator.getCanonicalFile().getAbsolutePath());
+        this.registry = registry.registryForPath(calculator.getCanonicalPath());
     }
 
     @Test

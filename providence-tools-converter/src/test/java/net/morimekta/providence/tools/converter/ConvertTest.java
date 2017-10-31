@@ -94,7 +94,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testListTypes() {
+    public void testListTypes() throws IOException {
         convert.run(
                 "-I", temp.getRoot().getAbsolutePath(),
                 "--list-types",
@@ -102,7 +102,7 @@ public class ConvertTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
-                temp.getRoot().toString() + "/cont.thrift:\n" +
+                temp.getRoot().getCanonicalPath() + "/cont.thrift:\n" +
                 "  struct    cont.CompactFields\n" +
                 "  struct    cont.OptionalFields\n" +
                 "  struct    cont.RequiredFields\n" +

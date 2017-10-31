@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
@@ -132,7 +133,7 @@ public class HttpClientHandlerNetworkTest {
         } catch (SocketException ex) {
             // TODO: This should be a HttpResponseException
             assertThat(ex.getMessage(), anyOf(
-                    is("Broken pipe (Write failed)"),
+                    containsString("Broken pipe"),
                     is("Connection reset"),
                     is("Software caused connection abort: socket write error")));
         }

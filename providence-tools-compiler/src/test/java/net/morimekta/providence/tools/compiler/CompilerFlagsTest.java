@@ -115,9 +115,9 @@ public class CompilerFlagsTest {
     @Test
     public void testIncludeNotADirectory() throws IOException {
         sut.run("-I",
-                thriftFile.getAbsolutePath(),
+                thriftFile.getCanonicalPath(),
                 "-g", "java",
-                thriftFile.getAbsolutePath());
+                thriftFile.getCanonicalPath());
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
