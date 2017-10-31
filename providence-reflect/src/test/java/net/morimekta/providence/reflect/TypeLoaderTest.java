@@ -74,7 +74,8 @@ public class TypeLoaderTest {
             loader.load(folder);
             fail("no exception");
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Unable to load thrift program: " + folder.toString() + " is not a file."));
+            assertThat(e.getMessage(),
+                       is("Unable to load thrift program: " + folder.getCanonicalFile() + " is not a file."));
         }
 
         File noFile = new File(temp.getRoot(), "boo");
@@ -82,7 +83,8 @@ public class TypeLoaderTest {
             loader.load(noFile);
             fail("no exception");
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Unable to load thrift program: " + noFile.toString() + " is not a file."));
+            assertThat(e.getMessage(),
+                       is("Unable to load thrift program: " + noFile.getCanonicalFile() + " is not a file."));
         }
 
         try {

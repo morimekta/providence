@@ -38,6 +38,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -240,6 +241,12 @@ public class ProvidenceConfigTest {
         File tmp = temp.newFile();
         writeContentTo(getResourceAsString("/net/morimekta/providence/config/files/stage_db2.cfg"), tmp);
         Files.move(tmp.toPath(), stageDb.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+
+        if (FileSystems.getDefault().newWatchService().getClass().getName().equals("sun.nio.fs.PollingWatchService")) {
+            // HACK: PollingWatchService uses file modification time to trigger events.  Artificially advancing the
+            // modification time seems to successfully trigger events in this case.
+            stageDb.setLastModified(System.currentTimeMillis() + 120*1000);
+        }
 
         await().atMost(Duration.TEN_SECONDS).untilTrue(watcherCalled);
 
