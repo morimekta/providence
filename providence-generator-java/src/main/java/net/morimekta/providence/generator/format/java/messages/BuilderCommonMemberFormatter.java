@@ -346,7 +346,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
         writer.appendln(JAnnotation.NON_NULL);
         writer.formatln("public _Builder %s(%s builder) {", field.setter(), field.builderMutableType());
-        writer.formatln("  return %s(builder.build());", field.setter());
+        writer.formatln("  return %s(builder == null ? null : builder.build());", field.setter());
         writer.formatln("}");
         writer.newline();
     }

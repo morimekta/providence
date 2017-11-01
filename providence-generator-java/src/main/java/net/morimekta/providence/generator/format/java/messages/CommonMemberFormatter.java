@@ -360,7 +360,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                         camelCase("with", field.name()),
                         field.builderMutableType())
               .begin()
-              .formatln("return %s(value.build());", camelCase("with", field.name()))
+              .formatln("return %s(value == null ? null : value.build());", camelCase("with", field.name()))
               .end()
               .appendln('}')
               .newline();

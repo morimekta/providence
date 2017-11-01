@@ -546,6 +546,17 @@ public class ContainerService {
             }
 
             /**
+             * Sets the value of c.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setC(net.morimekta.test.providence.reflect.Containers._Builder builder) {
+              return setC(builder == null ? null : builder.build());
+            }
+
+            /**
              * Checks for presence of the c field.
              *
              * @return True if c has been set.
@@ -761,8 +772,24 @@ public class ContainerService {
          * @param value The union value
          * @return The created union.
          */
+        public static _load_response withSuccess(net.morimekta.test.providence.reflect.CompactFields._Builder value) {
+            return withSuccess(value == null ? null : value.build());
+        }
+
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
         public static _load_response withEf(net.morimekta.test.providence.reflect.ExceptionFields value) {
             return new _Builder().setEf(value).build();
+        }
+
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
+        public static _load_response withEf(net.morimekta.test.providence.reflect.ExceptionFields._Builder value) {
+            return withEf(value == null ? null : value.build());
         }
 
         private _load_response(_Builder builder) {
@@ -1173,6 +1200,17 @@ public class ContainerService {
             }
 
             /**
+             * Sets the value of success.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setSuccess(net.morimekta.test.providence.reflect.CompactFields._Builder builder) {
+              return setSuccess(builder == null ? null : builder.build());
+            }
+
+            /**
              * Checks for presence of the success field.
              *
              * @return True if success has been set.
@@ -1250,6 +1288,17 @@ public class ContainerService {
                 mEf = value;
                 mEf_builder = null;
                 return this;
+            }
+
+            /**
+             * Sets the value of ef.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setEf(net.morimekta.test.providence.reflect.ExceptionFields._Builder builder) {
+              return setEf(builder == null ? null : builder.build());
             }
 
             /**

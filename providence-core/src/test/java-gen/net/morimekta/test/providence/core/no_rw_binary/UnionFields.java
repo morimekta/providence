@@ -114,6 +114,14 @@ public class UnionFields
         return new _Builder().setCompactValue(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
+    public static UnionFields withCompactValue(net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder value) {
+        return withCompactValue(value == null ? null : value.build());
+    }
+
     private UnionFields(_Builder builder) {
         tUnionField = builder.tUnionField;
 
@@ -1159,6 +1167,17 @@ public class UnionFields
             mCompactValue = value;
             mCompactValue_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of compactValue.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setCompactValue(net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder builder) {
+          return setCompactValue(builder == null ? null : builder.build());
         }
 
         /**

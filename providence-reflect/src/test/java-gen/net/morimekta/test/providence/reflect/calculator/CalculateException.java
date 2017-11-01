@@ -490,6 +490,17 @@ public class CalculateException
         }
 
         /**
+         * Sets the value of operation.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setOperation(net.morimekta.test.providence.reflect.calculator.Operation._Builder builder) {
+          return setOperation(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the operation field.
          *
          * @return True if operation has been set.
