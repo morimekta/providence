@@ -338,6 +338,26 @@ public class ProvidenceTest {
     }
 
     @Test
+    public void testUnionConstructorOverload() {
+        assertThat(UnionFields.withCompactValue((CompactFields._Builder) null),
+                   is(UnionFields.withCompactValue((CompactFields) null)));
+        assertThat(UnionFields.withCompactValue(CompactFields.builder()),
+                   is(UnionFields.withCompactValue(CompactFields.builder().build())));
+        assertThat(UnionFields.withCompactValue(CompactFields.builder().setName("a").setId(4)),
+                   is(UnionFields.withCompactValue(new CompactFields("a", 4, null))));
+    }
+
+    @Test
+    public void testMessageSetterOverload() {
+        assertThat(OptionalFields.builder().setCompactValue((CompactFields._Builder) null).build(),
+                   is(OptionalFields.builder().setCompactValue((CompactFields) null).build()));
+
+        CompactFields._Builder cf = CompactFields.builder().setName("a").setId(4);
+        assertThat(OptionalFields.builder().setCompactValue(cf).build(),
+                   is(OptionalFields.builder().setCompactValue(cf.build()).build()));
+    }
+
+    @Test
     public void testSerializable() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
