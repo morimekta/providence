@@ -151,7 +151,7 @@ public class ProvidenceServlet extends HttpServlet {
             }
 
             Serializer responseSerializer = requestSerializer;
-            String acceptHeader = resp.getHeader("Accept");
+            String acceptHeader = req.getHeader("Accept");
             if (acceptHeader != null) {
                 String[] entries = acceptHeader.split("[,]");
                 for (String entry : entries) {
