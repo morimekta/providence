@@ -5466,6 +5466,17 @@ public class Containers
         }
 
         /**
+         * Sets the value of requiredFields.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setRequiredFields(net.morimekta.test.providence.core.RequiredFields._Builder builder) {
+          return setRequiredFields(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the requiredFields field.
          *
          * @return True if requiredFields has been set.
@@ -5546,6 +5557,17 @@ public class Containers
             mDefaultFields = value;
             mDefaultFields_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of defaultFields.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDefaultFields(net.morimekta.test.providence.core.DefaultFields._Builder builder) {
+          return setDefaultFields(builder == null ? null : builder.build());
         }
 
         /**
@@ -5632,6 +5654,17 @@ public class Containers
         }
 
         /**
+         * Sets the value of optionalFields.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setOptionalFields(net.morimekta.test.providence.core.OptionalFields._Builder builder) {
+          return setOptionalFields(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the optionalFields field.
          *
          * @return True if optionalFields has been set.
@@ -5712,6 +5745,17 @@ public class Containers
             mUnionFields = value;
             mUnionFields_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of unionFields.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setUnionFields(net.morimekta.test.providence.core.UnionFields._Builder builder) {
+          return setUnionFields(builder == null ? null : builder.build());
         }
 
         /**
@@ -5798,6 +5842,17 @@ public class Containers
         }
 
         /**
+         * Sets the value of exceptionFields.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setExceptionFields(net.morimekta.test.providence.core.ExceptionFields._Builder builder) {
+          return setExceptionFields(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the exceptionFields field.
          *
          * @return True if exceptionFields has been set.
@@ -5878,6 +5933,17 @@ public class Containers
             mDefaultValues = value;
             mDefaultValues_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of defaultValues.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDefaultValues(net.morimekta.test.providence.core.DefaultValues._Builder builder) {
+          return setDefaultValues(builder == null ? null : builder.build());
         }
 
         /**

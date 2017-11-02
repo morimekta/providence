@@ -1232,6 +1232,17 @@ public class DefaultFields
         }
 
         /**
+         * Sets the value of compactValue.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setCompactValue(net.morimekta.test.providence.reflect.CompactFields._Builder builder) {
+          return setCompactValue(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the compactValue field.
          *
          * @return True if compactValue has been set.

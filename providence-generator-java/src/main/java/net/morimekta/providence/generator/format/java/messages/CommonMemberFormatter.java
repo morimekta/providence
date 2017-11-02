@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java.messages;
 
+import net.morimekta.providence.PType;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaOptions;
@@ -346,6 +347,25 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
               .newline();
     }
 
+    private void appendCreateConstructorBuilderOverload(JMessage<?> message, JField field) {
+        BlockCommentBuilder block = new BlockCommentBuilder(writer);
+        if (field.hasComment()) {
+            block.comment(field.comment());
+        }
+        block.param_("value", "The union value")
+             .return_("The created union.")
+             .finish();
+        writer.formatln("public static %s %s(%s value) {",
+                        message.instanceType(),
+                        camelCase("with", field.name()),
+                        field.builderMutableType())
+              .begin()
+              .formatln("return %s(value == null ? null : value.build());", camelCase("with", field.name()))
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
     private void appendCreateConstructor(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
             for (JField field : message.declaredOrderFields()) {
@@ -377,6 +397,10 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                           .end()
                           .appendln('}')
                           .newline();
+
+                    if (field.type() == PType.MESSAGE) {
+                        appendCreateConstructorBuilderOverload(message, field);
+                    }
                 }
             }
         } else {

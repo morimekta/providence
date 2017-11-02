@@ -612,6 +612,17 @@ public class Calculator {
             }
 
             /**
+             * Sets the value of op.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setOp(net.morimekta.test.providence.core.calculator.Operation._Builder builder) {
+              return setOp(builder == null ? null : builder.build());
+            }
+
+            /**
              * Checks for presence of the op field.
              *
              * @return True if op has been set.
@@ -827,8 +838,24 @@ public class Calculator {
          * @param value The union value
          * @return The created union.
          */
+        public static _calculate_response withSuccess(net.morimekta.test.providence.core.calculator.Operand._Builder value) {
+            return withSuccess(value == null ? null : value.build());
+        }
+
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
         public static _calculate_response withCe(net.morimekta.test.providence.core.calculator.CalculateException value) {
             return new _Builder().setCe(value).build();
+        }
+
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
+        public static _calculate_response withCe(net.morimekta.test.providence.core.calculator.CalculateException._Builder value) {
+            return withCe(value == null ? null : value.build());
         }
 
         private _calculate_response(_Builder builder) {
@@ -1239,6 +1266,17 @@ public class Calculator {
             }
 
             /**
+             * Sets the value of success.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setSuccess(net.morimekta.test.providence.core.calculator.Operand._Builder builder) {
+              return setSuccess(builder == null ? null : builder.build());
+            }
+
+            /**
              * Checks for presence of the success field.
              *
              * @return True if success has been set.
@@ -1316,6 +1354,17 @@ public class Calculator {
                 mCe = value;
                 mCe_builder = null;
                 return this;
+            }
+
+            /**
+             * Sets the value of ce.
+             *
+             * @param builder builder for the new value
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setCe(net.morimekta.test.providence.core.calculator.CalculateException._Builder builder) {
+              return setCe(builder == null ? null : builder.build());
             }
 
             /**

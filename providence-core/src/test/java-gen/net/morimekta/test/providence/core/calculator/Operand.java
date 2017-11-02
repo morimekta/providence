@@ -35,6 +35,14 @@ public class Operand
      * @param value The union value
      * @return The created union.
      */
+    public static Operand withOperation(net.morimekta.test.providence.core.calculator.Operation._Builder value) {
+        return withOperation(value == null ? null : value.build());
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Operand withNumber(double value) {
         return new _Builder().setNumber(value).build();
     }
@@ -45,6 +53,14 @@ public class Operand
      */
     public static Operand withImaginary(net.morimekta.test.providence.core.number.Imaginary value) {
         return new _Builder().setImaginary(value).build();
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
+    public static Operand withImaginary(net.morimekta.test.providence.core.number.Imaginary._Builder value) {
+        return withImaginary(value == null ? null : value.build());
     }
 
     private Operand(_Builder builder) {
@@ -493,6 +509,17 @@ public class Operand
         }
 
         /**
+         * Sets the value of operation.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setOperation(net.morimekta.test.providence.core.calculator.Operation._Builder builder) {
+          return setOperation(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the operation field.
          *
          * @return True if operation has been set.
@@ -615,6 +642,17 @@ public class Operand
             mImaginary = value;
             mImaginary_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of imaginary.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setImaginary(net.morimekta.test.providence.core.number.Imaginary._Builder builder) {
+          return setImaginary(builder == null ? null : builder.build());
         }
 
         /**
