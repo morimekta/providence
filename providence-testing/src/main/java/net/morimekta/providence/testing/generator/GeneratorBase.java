@@ -46,6 +46,8 @@ import java.util.function.Consumer;
 public abstract class GeneratorBase<
         Base extends GeneratorBase<Base, Context>,
         Context extends GeneratorContext<Context>> {
+    private static final Fairy DEFAULT_FAIRY = Fairy.create(Locale.ENGLISH);
+
     private final Map<PMessageDescriptor, MessageGenerator> defaultMessageGenerators;
     private final Map<PEnumDescriptor, Generator>           defaultEnumGenerators;
     private final EnumMap<PType, Generator<Context, ?>> primitiveCache;
@@ -59,7 +61,7 @@ public abstract class GeneratorBase<
      * Default generator context.
      */
     public GeneratorBase() {
-        this(Fairy.create(Locale.ENGLISH), new Random());
+        this(DEFAULT_FAIRY, new Random());
     }
 
     /**

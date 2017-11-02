@@ -9,6 +9,7 @@ import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 
 import com.google.common.collect.ImmutableList;
+import io.codearte.jfairy.Fairy;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TFieldIdEnum;
@@ -38,17 +39,17 @@ public class ITGenerator<PM extends PMessage<PM, PF>, PF extends PField,
     private final ImmutableList.Builder<TM> thrListBuilder;
     private final SimpleGeneratorWatcher    generator;
 
-    private static final Locale[]   LOCALES = new Locale[]{
-            Locale.ENGLISH,
-            Locale.FRENCH,
-            Locale.GERMAN,
-            Locale.ITALIAN,
-            Locale.SIMPLIFIED_CHINESE,
-            new Locale("es"),
-            new Locale("pl"),
-            new Locale("sv"),
+    private static final Fairy[]    LOCAL_FAIRIES = new Fairy[]{
+            Fairy.create(Locale.ENGLISH),
+            Fairy.create(Locale.FRENCH),
+            Fairy.create(Locale.GERMAN),
+            Fairy.create(Locale.ITALIAN),
+            Fairy.create(Locale.SIMPLIFIED_CHINESE),
+            Fairy.create(new Locale("es")),
+            Fairy.create(new Locale("pl")),
+            Fairy.create(new Locale("sv")),
     };
-    private static final Serializer BINARY  = new BinarySerializer(true);
+    private static final Serializer BINARY        = new BinarySerializer(true);
 
     public ITGenerator(PMessageDescriptor<PM, PF> descriptor,
                        Supplier<TM> supplier,
@@ -62,8 +63,8 @@ public class ITGenerator<PM extends PMessage<PM, PF>, PF extends PField,
 
     public void generate(final int n) throws IOException, TException {
         for (int i = 0; i < n; ++i) {
-            Locale locale = LOCALES[new Random().nextInt(LOCALES.length)];
-            generator.setLocale(locale);
+            Fairy fairy = LOCAL_FAIRIES[new Random().nextInt(LOCAL_FAIRIES.length)];
+            generator.setFairy(fairy);
 
             PM providence = generator.generate(descriptor);
             TM thrift = convert(providence);

@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -63,6 +65,8 @@ public class GeneratorWatcher<
         Base extends GeneratorBase<Base, Context>,
         Context extends GeneratorContext<Context>>
         extends TestWatcher {
+    private static final Map<Locale, Fairy> singletonFairyCache = new ConcurrentHashMap<>();
+
     /**
      * Create a default message generator watcher.
      *
@@ -264,7 +268,7 @@ public class GeneratorWatcher<
      * Set the locale to generate values for. Applies to default string
      * values. Known good locales are:
      * <ul>
-     *     <li>Engligh (US)
+     *     <li>English (US)
      *     <li>German  (DE)
      *     <li>French  (FR)
      *     <li>Italian (IT)
@@ -278,7 +282,12 @@ public class GeneratorWatcher<
      * @return The message generator.
      */
     public GeneratorWatcher<Base, Context> setLocale(Locale locale) {
-        return setFairy(Fairy.create(locale));
+        Fairy fairy = singletonFairyCache.get(locale);
+        if (fairy == null) {
+            fairy = Fairy.create(locale);
+            singletonFairyCache.put(locale, fairy);
+        }
+        return setFairy(fairy);
     }
 
     /**

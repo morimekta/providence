@@ -12,7 +12,6 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.mio.IOMessageReader;
 import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
@@ -26,11 +25,9 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -61,6 +58,8 @@ import static org.junit.Assert.assertNotNull;
  * }</pre>
  */
 public class MessageGenerator extends TestWatcher {
+    private static final Fairy DEFAULT_FAIRY = Fairy.create(Locale.ENGLISH);
+
     /**
      * Factory for value suppliers. The generator can hold any number of value supplier
      */
@@ -73,7 +72,7 @@ public class MessageGenerator extends TestWatcher {
      * Make a simple default message generator.
      */
     public MessageGenerator() {
-        this.globalFairy              = this.fairy              = Fairy.create(Locale.ENGLISH);
+        this.globalFairy              = this.fairy              = DEFAULT_FAIRY;
         this.globalRandom             = this.random             = new Random();
         this.globalOutputSerializer   = this.outputSerializer   = new PrettySerializer().config();
         this.globalMaxCollectionItems = this.maxCollectionItems = 10;
@@ -129,7 +128,7 @@ public class MessageGenerator extends TestWatcher {
      * @throws IOException If writing the messages failed.
      */
     @SuppressWarnings("unchecked")
-    public void dumpGeneratedMessages() throws IOException {
+    private void dumpGeneratedMessages() throws IOException {
         MessageWriter writer = this.writer;
         if (writer == null) {
             writer = new IOMessageWriter(System.err, outputSerializer);
@@ -142,80 +141,6 @@ public class MessageGenerator extends TestWatcher {
     }
 
     // --- generator setup ---:
-
-    /**
-     * Set the random generator being used.
-     *
-     * @param random The random generator.
-     * @return The message generator.
-     */
-    public MessageGenerator setRandom(Random random) {
-        if (started) {
-            this.random = random;
-        } else {
-            this.globalRandom = random;
-            this.random = random;
-        }
-        return this;
-    }
-
-    /**
-     * Set the feiry data generator being used.
-     *
-     * @param fairy The fairy data generator.
-     * @return The message generator.
-     */
-    public MessageGenerator setFairy(Fairy fairy) {
-        if (started) {
-            this.fairy = fairy;
-        } else {
-            this.globalFairy = fairy;
-            this.fairy = fairy;
-        }
-        return this;
-    }
-
-    /**
-     * Set the locale to generate values for. Applies to default string
-     * values. Known good locales are:
-     * <ul>
-     *     <li>Engligh (US)
-     *     <li>German  (DE)
-     *     <li>French  (FR)
-     *     <li>Italian (IT)
-     *     <li>Spanish (ES)
-     *     <li>Polish  (PL)
-     *     <li>Swedish (SV)
-     *     <li>Chinese (ZH)
-     * </ul>
-     *
-     * @param locale The locale to set.
-     * @return The message generator.
-     */
-    public MessageGenerator setLocale(Locale locale) {
-        this.fairy = Fairy.create(locale);
-        if (!started) {
-            this.globalFairy = this.fairy;
-        }
-        return this;
-    }
-
-    /**
-     * Set the field fill rate in the range &lt;0.0 .. 1.0].
-     *
-     * @param fillRate The new full rate.
-     * @return The message generator.
-     */
-    public MessageGenerator setFillRate(double fillRate) {
-        assert fillRate > 0.0 && fillRate <= 1.0 : "Fill rate outside the range < 0.0 .. 1.0 ]: " + fillRate;
-        if (started) {
-            this.fillRate = fillRate;
-        } else {
-            this.globalFillRate = fillRate;
-            this.fillRate = fillRate;
-        }
-        return this;
-    }
 
     /**
      * Add a value supplier factory to the generator.
@@ -233,149 +158,13 @@ public class MessageGenerator extends TestWatcher {
     }
 
     /**
-     * Add value supplier factories to the generator.
-     *
-     * @param factories The factories.
-     * @return The message generator.
-     */
-    public MessageGenerator addFactories(ValueSupplierFactory... factories) {
-        if (started) {
-            Collections.addAll(this.factories, factories);
-        } else {
-            Collections.addAll(this.globalFactories, factories);
-        }
-        return this;
-    }
-
-    /**
-     * Add a collection of value supplier factories to the generator.
-     *
-     * @param factories The factory.
-     * @return The message generator.
-     */
-    public MessageGenerator addFactories(Collection<ValueSupplierFactory> factories) {
-        if (started) {
-            this.factories.addAll(factories);
-        } else {
-            this.globalFactories.addAll(factories);
-        }
-        return this;
-    }
-
-    /**
-     * Set the message writer in case of failure.
-     *
-     * @param writer The message writer.
-     * @return The message generator.
-     */
-    public MessageGenerator setMessageWriter(MessageWriter writer) {
-        if (started) {
-            this.writer = writer;
-        } else {
-            this.globalWriter = writer;
-            this.writer = writer;
-        }
-        return this;
-    }
-
-    /**
-     * Set the message reader for the generator.
-     *
-     * @param reader The message reader. All messages will be read from this
-     * @return The message generator.
-     */
-    public MessageGenerator setMessageReader(MessageReader reader) {
-        if (started) {
-            this.reader = reader;
-        } else {
-            assert globalReader == null : "Generator already contains reader for messages.";
-            this.globalReader = reader;
-            this.reader = reader;
-        }
-        return this;
-    }
-
-    /**
-     * Read messages from the given resource (pretty formatted).
-     *
-     * @param resource The resource path.
-     * @return The message generator.
-     */
-    public MessageGenerator setResourceReader(String resource) {
-        return setResourceReader(resource, new PrettySerializer());
-    }
-
-    /**
-     * Read messages from the given resource.
-     *
-     * @param resource The resource path.
-     * @param serializer Serializer to use for reading resource.
-     * @return The message generator.
-     */
-    public MessageGenerator setResourceReader(String resource,
-                                              Serializer serializer) {
-        return setMessageReader(new IOMessageReader(
-                getClass().getResourceAsStream(resource),
-                serializer));
-    }
-
-    /**
-     * Set default serializer to standard output. If test case not started and a
-     * writer is already set, this method fails. Not that this will remove any
-     * previously set message writer.
-     *
-     * @param defaultSerializer The new default serializer.
-     * @return The message generator.
-     */
-    public MessageGenerator setOutputSerializer(Serializer defaultSerializer) {
-        if (started) {
-            this.writer = null;
-            this.outputSerializer = defaultSerializer;
-        } else {
-            assert globalWriter == null : "Generator already has a writer.";
-            this.outputSerializer = defaultSerializer;
-            this.globalOutputSerializer = defaultSerializer;
-        }
-        return this;
-    }
-
-    /**
-     * Set the max collection items for default generated collections.
-     *
-     * @param max The max number of items.
-     * @return The message generator.
-     */
-    public MessageGenerator setMaxCollectionItems(int max) {
-        if (!started) {
-            this.maxCollectionItems = max;
-        } else {
-            this.globalMaxCollectionItems = max;
-            this.maxCollectionItems = max;
-        }
-        return this;
-    }
-
-    /**
-     * Dump all generated messages on failure for this test only.
-     */
-    public MessageGenerator dumpOnFailure() {
-        if (started) {
-            this.dumpOnFailure = true;
-        } else {
-            this.globalDumpOnFailure = true;
-            this.dumpOnFailure = true;
-        }
-        return this;
-    }
-
-    /**
      * Get the default value supplier for the given descriptor.
      *
      * @param descriptor The descriptor to make a supplier for.
      * @return The value supplier.
      */
     @SuppressWarnings("unchecked")
-    public Supplier<Object> getValueSupplier(PDescriptor descriptor) {
+    private Supplier<Object> getValueSupplier(PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case BOOL:
                 return random::nextBoolean;
