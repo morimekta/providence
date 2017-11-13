@@ -159,6 +159,10 @@ public class ProvidenceServlet extends HttpServlet {
                     if (entry.isEmpty()) {
                         continue;
                     }
+                    if ("*/*".equals(entry)) {
+                        // Then responding same as request is good.
+                        break;
+                    }
 
                     try {
                         MediaType mediaType = MediaType.parse(entry);
