@@ -1,6 +1,9 @@
-namespace java net.morimekta.test.json
+namespace java net.morimekta.test.json.test
+
+include "included.thrift"
 
 struct Test {
-    required i32 test;
-    optional i32 another;
+    1: required i32 test;
+    15: optional i32 another;
+    2: included.Included included;
 }

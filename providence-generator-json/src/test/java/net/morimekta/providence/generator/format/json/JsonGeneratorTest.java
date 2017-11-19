@@ -48,6 +48,7 @@ public class JsonGeneratorTest {
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
         ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/test.thrift", tmp.getRoot());
+        ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/included.thrift", tmp.getRoot());
         File file = new File(tmp.getRoot(), "test.thrift");
 
         generator.generate(typeLoader.load(file).getProgram());
@@ -57,8 +58,11 @@ public class JsonGeneratorTest {
 
         assertEquals("{\n" +
                      "    \"program_name\": \"test\",\n" +
+                     "    \"includes\": [\n" +
+                     "        \"included.json\"\n" +
+                     "    ],\n" +
                      "    \"namespaces\": {\n" +
-                     "        \"java\": \"net.morimekta.test.json\"\n" +
+                     "        \"java\": \"net.morimekta.test.json.test\"\n" +
                      "    },\n" +
                      "    \"decl\": [\n" +
                      "        {\n" +
@@ -66,16 +70,21 @@ public class JsonGeneratorTest {
                      "                \"name\": \"Test\",\n" +
                      "                \"fields\": [\n" +
                      "                    {\n" +
-                     "                        \"id\": -1,\n" +
+                     "                        \"id\": 1,\n" +
                      "                        \"requirement\": \"REQUIRED\",\n" +
                      "                        \"type\": \"i32\",\n" +
                      "                        \"name\": \"test\"\n" +
                      "                    },\n" +
                      "                    {\n" +
-                     "                        \"id\": -2,\n" +
+                     "                        \"id\": 15,\n" +
                      "                        \"requirement\": \"OPTIONAL\",\n" +
                      "                        \"type\": \"i32\",\n" +
                      "                        \"name\": \"another\"\n" +
+                     "                    },\n" +
+                     "                    {\n" +
+                     "                        \"id\": 2,\n" +
+                     "                        \"type\": \"included.Included\",\n" +
+                     "                        \"name\": \"included\"\n" +
                      "                    }\n" +
                      "                ]\n" +
                      "            }\n" +

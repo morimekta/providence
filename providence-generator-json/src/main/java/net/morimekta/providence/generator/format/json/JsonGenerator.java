@@ -31,6 +31,7 @@ import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.stream.Collectors;
 
 /**
  * Generate a simple JSON model of the program structure.
@@ -50,6 +51,15 @@ public class JsonGenerator extends Generator {
         for (ProgramType doc : typeLoader.loadedPrograms()) {
             if (doc.getProgramName()
                    .equals(document.getProgramName())) {
+                if (doc.hasIncludes()) {
+                    doc = doc.mutate()
+                             .setIncludes(doc.getIncludes()
+                                             .stream()
+                                             .map(path -> path.replaceAll("(\\.thrift)$", ".json"))
+                                             .collect(Collectors.toList()))
+                             .build();
+                }
+
                 OutputStream out = getFileManager().create(null, doc.getProgramName() + ".json");
                 try {
                     serializer.serialize(out, doc);
