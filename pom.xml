@@ -192,6 +192,11 @@
             </dependency>
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-generator-js</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-tools-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -983,6 +988,7 @@
                 <module>providence-generator</module>
                 <module>providence-generator-java</module>
                 <module>providence-generator-json</module>
+                <module>providence-generator-js</module>
                 <module>providence-maven-plugin</module>
 
                 <!-- Utility Modules -->
