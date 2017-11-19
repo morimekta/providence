@@ -199,7 +199,7 @@ public class NonblockingSocketServer implements AutoCloseable {
     private final ServerSocket           serverSocket;
     private final ExecutorService        receiverExecutor;
     private final ExecutorService        workerExecutor;
-    private final int maxFrameSizeInBytes;
+    private final int                    maxFrameSizeInBytes;
 
     private NonblockingSocketServer(Builder builder) {
         try {
@@ -344,7 +344,12 @@ public class NonblockingSocketServer implements AutoCloseable {
         }
 
         try {
-            context.channel.read(context.readBuffer);
+            if (context.channel.read(context.readBuffer) < 0) {
+                LOGGER.warn("Closed connection while reading frame");
+                context.close();
+                key.cancel();
+                return;
+            }
         } catch (IOException e) {
             LOGGER.warn("Exception reading frame: {}", e.getMessage(), e);
             context.close();
@@ -392,7 +397,6 @@ public class NonblockingSocketServer implements AutoCloseable {
             double duration = ((double) System.nanoTime() - startTime) / NS_IN_MILLIS;
             instrumentation.onTransportException(e, duration, null, null);
         }
-        selector.wakeup();
     }
 
     @SuppressWarnings("unchecked")
@@ -457,7 +461,7 @@ public class NonblockingSocketServer implements AutoCloseable {
             this.currentFrameSize = 0;
             this.sizeBuffer = ByteBuffer.allocate(4);
             this.readBuffer = ByteBuffer.allocateDirect(maxFrameSizeInBytes);
-            this.out = new FramedBufferOutputStream(channel);
+            this.out = new FramedBufferOutputStream(channel, maxFrameSizeInBytes);
             this.writeQueue = new ConcurrentLinkedQueue<>();
         }
 

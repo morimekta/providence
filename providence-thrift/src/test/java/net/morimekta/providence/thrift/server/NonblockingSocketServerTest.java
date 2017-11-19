@@ -1,7 +1,9 @@
 package net.morimekta.providence.thrift.server;
 
 import net.morimekta.providence.PServiceCall;
-import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.thrift.map.NotFound;
 import net.morimekta.test.providence.thrift.map.RemoteMap;
@@ -10,8 +12,9 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.protocol.TJSONProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TSocket;
@@ -22,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +34,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static net.morimekta.providence.thrift.util.TestUtil.findFreePort;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -45,11 +52,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class NonblockingSocketServerTest {
-    private Map<String,String>         remoteMap;
+    private Map<String, String>        remoteMap;
     private ServiceCallInstrumentation instrumentation;
     private NonblockingSocketServer    server;
+    private ExecutorService            executor;
     private int                        port;
-    private ExecutorService executor;
+
+    private static int remoteSleep = 5;
+    // private static Serializer serializer = new TJsonProtocolSerializer();
+    // private static TProtocolFactory factory = new TJSONProtocol.Factory();
+    private static Serializer serializer = new BinarySerializer();
+    private static TProtocolFactory factory = new TBinaryProtocol.Factory();
 
     @Before
     public void setUp() {
@@ -60,7 +73,7 @@ public class NonblockingSocketServerTest {
             @Override
             public boolean put(String pKey, String pValue) throws IOException {
                 try {
-                    Thread.sleep(10L);
+                    Thread.sleep(remoteSleep);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -70,7 +83,7 @@ public class NonblockingSocketServerTest {
             @Override
             public Map<String, String> putAll(Map<String, String> pSource) throws IOException {
                 try {
-                    Thread.sleep(10L);
+                    Thread.sleep(remoteSleep);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -87,7 +100,7 @@ public class NonblockingSocketServerTest {
             @Override
             public String get(String pKey) throws IOException, NotFound {
                 try {
-                    Thread.sleep(10L);
+                    Thread.sleep(remoteSleep);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -101,7 +114,7 @@ public class NonblockingSocketServerTest {
             @Override
             public Map<String, String> getAll(Set<String> pKeys) throws IOException {
                 try {
-                    Thread.sleep(10L);
+                    Thread.sleep(remoteSleep);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -117,7 +130,10 @@ public class NonblockingSocketServerTest {
         };
         instrumentation = mock(ServiceCallInstrumentation.class);
         server = NonblockingSocketServer.builder(new RemoteMap.Processor(remoteImpl))
-                                        .withSerializer(new TJsonProtocolSerializer(true))
+                                        .withSerializer(serializer)
+                                        .withWorkerThreads(2)
+                                        .withPort(findFreePort())
+                                        .withBindAddress(new InetSocketAddress("127.0.0.1", findFreePort()))
                                         .withInstrumentation(instrumentation)
                                         .start();
         port = server.getPort();
@@ -136,7 +152,7 @@ public class NonblockingSocketServerTest {
              TFramedTransport transport = new TFramedTransport(socket)) {
             socket.open();
 
-            TProtocol protocol = new TJSONProtocol(transport);
+            TProtocol protocol = factory.getProtocol(transport);
             net.morimekta.test.thrift.thrift.map.RemoteMap.Client client = new net.morimekta.test.thrift.thrift.map.RemoteMap.Client(protocol);
 
             client.put("a", "b");
@@ -156,8 +172,6 @@ public class NonblockingSocketServerTest {
                     "b", "")));
         }
 
-        Thread.sleep(100);
-
         reset(instrumentation);
         remoteMap.clear();
 
@@ -165,7 +179,7 @@ public class NonblockingSocketServerTest {
              TFramedTransport transport = new TFramedTransport(socket)) {
             socket.open();
 
-            TProtocol protocol = new TJSONProtocol(transport);
+            TProtocol protocol = factory.getProtocol(transport);
             net.morimekta.test.thrift.thrift.map.RemoteMap.Client client = new net.morimekta.test.thrift.thrift.map.RemoteMap.Client(protocol);
 
             client.put("a", "b123");
@@ -191,6 +205,7 @@ public class NonblockingSocketServerTest {
             throws IOException, TException, ExecutionException, InterruptedException, TimeoutException {
         CompletableFuture<Boolean> a = new CompletableFuture<>();
         CompletableFuture<Boolean> b = new CompletableFuture<>();
+        TAsyncClientManager manager = new TAsyncClientManager();
 
         try (TNonblockingSocket socket_a = new TNonblockingSocket("localhost", port);
              TNonblockingSocket socket_b = new TNonblockingSocket("localhost", port)) {
@@ -200,8 +215,8 @@ public class NonblockingSocketServerTest {
             socket_b.finishConnect();
 
             net.morimekta.test.thrift.thrift.map.RemoteMap.AsyncClient client_a = new net.morimekta.test.thrift.thrift.map.RemoteMap.AsyncClient(
-                    new TJSONProtocol.Factory(),
-                    new TAsyncClientManager(),
+                    factory,
+                    manager,
                     socket_a);
 
             client_a.put("a", "bb", new AsyncMethodCallback<Boolean>() {
@@ -221,8 +236,8 @@ public class NonblockingSocketServerTest {
             // execution).
             net.morimekta.test.thrift.thrift.map.RemoteMap.AsyncClient client_b =
                     new net.morimekta.test.thrift.thrift.map.RemoteMap.AsyncClient(
-                            new TJSONProtocol.Factory(),
-                            new TAsyncClientManager(),
+                            factory,
+                            manager,
                             socket_b);
             client_b.put("b", "aaa", new AsyncMethodCallback<Boolean>() {
                 @Override
@@ -243,5 +258,42 @@ public class NonblockingSocketServerTest {
             assertThat(remoteMap, is(ImmutableMap.of("a", "bb",
                                                      "b", "aaa")));
         }
+    }
+
+    @Test
+    public void testWithProvidenceClient() throws ExecutionException, InterruptedException, TimeoutException {
+        RemoteMap.Client client = new RemoteMap.Client(new NonblockingSocketClientHandler(serializer,
+                                                                                          new InetSocketAddress("localhost", port)));
+
+        Future<Boolean> a = executor.submit(() -> client.put("a", "1234"));
+        Thread.sleep(3);
+        Future<Boolean> b = executor.submit(() -> client.put("b", "2345"));
+        Thread.sleep(3);
+        Future<Boolean> c = executor.submit(() -> client.put("c", "3456"));
+        Future<String> f = executor.submit(() -> client.get("f"));
+        Thread.sleep(3);
+        Future<Boolean> d = executor.submit(() -> client.put("d", "4567"));
+        Thread.sleep(3);
+        Future<Boolean> e = executor.submit(() -> client.put("e", "5678"));
+
+        assertThat(a.get(200, TimeUnit.MILLISECONDS), is(false));
+        assertThat(b.get(200, TimeUnit.MILLISECONDS), is(false));
+        assertThat(c.get(200, TimeUnit.MILLISECONDS), is(false));
+        assertThat(d.get(200, TimeUnit.MILLISECONDS), is(false));
+        assertThat(e.get(200, TimeUnit.MILLISECONDS), is(false));
+        try {
+            f.get(100, TimeUnit.MILLISECONDS);
+            fail("no exception");
+        } catch (ExecutionException ee) {
+            assertThat(ee.getCause(), is(instanceOf(NotFound.class)));
+        }
+
+        assertThat(remoteMap, is(ImmutableMap.of(
+                "a", "1234",
+                "b", "2345",
+                "c", "3456",
+                "d", "4567",
+                "e", "5678"
+        )));
     }
 }

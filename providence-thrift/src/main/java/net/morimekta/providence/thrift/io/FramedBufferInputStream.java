@@ -65,6 +65,7 @@ public class FramedBufferInputStream extends InputStream {
                 return -1;
             }
         }
+        if (buffer.remaining() < 1) return -1;
         return intValue(buffer.get());
     }
 
