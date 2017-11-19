@@ -231,7 +231,7 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
     }
 
     private void handleReadResponses(SocketChannel channel, PService service) {
-        while (this.channel == channel && channel.isConnected()) {
+        while (this.channel == channel && channel.isOpen()) {
             FramedBufferInputStream in = new FramedBufferInputStream(channel);
             try {
                 in.nextFrame();
@@ -244,13 +244,18 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
 
                 CompletableFuture<PServiceCall> future = responseFutures.get(reply.getSequence());
                 if (future == null) {
-                    LOGGER.error("No future for sequence ID " + reply.getSequence());
+                    // The item response timed out.
+                    LOGGER.debug("No future for sequence ID " + reply.getSequence());
                     continue;
                 }
 
                 responseFutures.remove(reply.getSequence());
                 future.complete(reply);
             } catch (Exception e) {
+                if (!channel.isOpen()) {
+                    // If the channel is closed. Should not trigger on disconnected.
+                    break;
+                }
                 LOGGER.error("Exception in channel response reading", e);
             }
         }

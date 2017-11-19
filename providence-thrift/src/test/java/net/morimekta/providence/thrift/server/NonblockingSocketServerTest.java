@@ -261,39 +261,35 @@ public class NonblockingSocketServerTest {
     }
 
     @Test
-    public void testWithProvidenceClient() throws ExecutionException, InterruptedException, TimeoutException {
-        RemoteMap.Client client = new RemoteMap.Client(new NonblockingSocketClientHandler(serializer,
-                                                                                          new InetSocketAddress("localhost", port)));
+    public void testWithProvidenceClient() throws IOException, ExecutionException, InterruptedException, TimeoutException {
+        try (NonblockingSocketClientHandler handler = new NonblockingSocketClientHandler(
+                serializer, new InetSocketAddress("localhost", port))) {
+            RemoteMap.Client client = new RemoteMap.Client(handler);
 
-        Future<Boolean> a = executor.submit(() -> client.put("a", "1234"));
-        Thread.sleep(3);
-        Future<Boolean> b = executor.submit(() -> client.put("b", "2345"));
-        Thread.sleep(3);
-        Future<Boolean> c = executor.submit(() -> client.put("c", "3456"));
-        Future<String> f = executor.submit(() -> client.get("f"));
-        Thread.sleep(3);
-        Future<Boolean> d = executor.submit(() -> client.put("d", "4567"));
-        Thread.sleep(3);
-        Future<Boolean> e = executor.submit(() -> client.put("e", "5678"));
+            Future<Boolean> a = executor.submit(() -> client.put("a", "1234"));
+            Thread.sleep(3);
+            Future<Boolean> b = executor.submit(() -> client.put("b", "2345"));
+            Thread.sleep(3);
+            Future<Boolean> c = executor.submit(() -> client.put("c", "3456"));
+            Future<String> f = executor.submit(() -> client.get("f"));
+            Thread.sleep(3);
+            Future<Boolean> d = executor.submit(() -> client.put("d", "4567"));
+            Thread.sleep(3);
+            Future<Boolean> e = executor.submit(() -> client.put("e", "5678"));
 
-        assertThat(a.get(200, TimeUnit.MILLISECONDS), is(false));
-        assertThat(b.get(200, TimeUnit.MILLISECONDS), is(false));
-        assertThat(c.get(200, TimeUnit.MILLISECONDS), is(false));
-        assertThat(d.get(200, TimeUnit.MILLISECONDS), is(false));
-        assertThat(e.get(200, TimeUnit.MILLISECONDS), is(false));
-        try {
-            f.get(100, TimeUnit.MILLISECONDS);
-            fail("no exception");
-        } catch (ExecutionException ee) {
-            assertThat(ee.getCause(), is(instanceOf(NotFound.class)));
+            assertThat(a.get(200, TimeUnit.MILLISECONDS), is(false));
+            assertThat(b.get(200, TimeUnit.MILLISECONDS), is(false));
+            assertThat(c.get(200, TimeUnit.MILLISECONDS), is(false));
+            assertThat(d.get(200, TimeUnit.MILLISECONDS), is(false));
+            assertThat(e.get(200, TimeUnit.MILLISECONDS), is(false));
+            try {
+                f.get(100, TimeUnit.MILLISECONDS);
+                fail("no exception");
+            } catch (ExecutionException ee) {
+                assertThat(ee.getCause(), is(instanceOf(NotFound.class)));
+            }
+
+            assertThat(remoteMap, is(ImmutableMap.of("a", "1234", "b", "2345", "c", "3456", "d", "4567", "e", "5678")));
         }
-
-        assertThat(remoteMap, is(ImmutableMap.of(
-                "a", "1234",
-                "b", "2345",
-                "c", "3456",
-                "d", "4567",
-                "e", "5678"
-        )));
     }
 }
