@@ -108,6 +108,11 @@ public class CUnion implements PUnion<CUnion,CField> {
         return CStruct.asString(this);
     }
 
+    @Override
+    public String toString() {
+        return descriptor.getQualifiedName() + asString();
+    }
+
     @Nonnull
     @Override
     public CUnionDescriptor descriptor() {
@@ -189,8 +194,8 @@ public class CUnion implements PUnion<CUnion,CField> {
         @Nonnull
         @Override
         @SuppressWarnings("unchecked")
-        public Builder merge(CUnion from) {
-            if (unionField == null || unionField != from.unionField()) {
+        public Builder merge(@Nonnull CUnion from) {
+            if (unionField == null || unionField != from.unionField) {
                 set(from.unionField.getId(), from.get(from.unionField.getId()));
             } else {
                 int key = unionField.getId();
@@ -202,16 +207,16 @@ public class CUnion implements PUnion<CUnion,CField> {
                         } else {
                             src = ((PMessage) currentValue).mutate();
                         }
-                        PMessage toMerge = (PMessage) from.get(key);
+                        PMessage toMerge = from.get(key);
 
                         currentValue = src.merge(toMerge);
                         break;
                     }
                     case SET:
-                        ((Set<Object>) currentValue).addAll((Collection<Object>) from.get(key));
+                        ((Set<Object>) currentValue).addAll(from.get(key));
                         break;
                     case MAP:
-                        ((Map<Object, Object>) currentValue).putAll((Map<Object, Object>) from.get(key));
+                        ((Map<Object, Object>) currentValue).putAll(from.get(key));
                         break;
                     default:
                         set(key, from.get(key));

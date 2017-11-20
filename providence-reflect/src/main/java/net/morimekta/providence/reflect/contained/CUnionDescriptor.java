@@ -132,6 +132,12 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         return null;
     }
 
+    @Nonnull
+    @Override
+    public CUnion.Builder builder() {
+        return (CUnion.Builder) super.builder();
+    }
+
     private static class _Factory implements Supplier<PMessageBuilder<CUnion,CField>> {
         private CUnionDescriptor mType;
 
