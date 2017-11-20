@@ -26,7 +26,6 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.json.JsonCompactible;
-import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
@@ -41,8 +40,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class CStruct implements CMessage<CStruct>, JsonCompactible {
     private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer().compact();
 
-    Map<Integer,Object> values;
-    CStructDescriptor   descriptor;
+    private Map<Integer,Object> values;
+    private CStructDescriptor   descriptor;
 
     private CStruct(Builder builder) {
         descriptor = builder.descriptor;
@@ -55,8 +54,8 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
 
     @Override
     public boolean jsonCompact() {
-        PMessageDescriptor<CStruct, CField> descriptor = descriptor();
-        if (!((JsonCompactibleDescriptor) descriptor).isJsonCompactible()) {
+        CStructDescriptor descriptor = descriptor();
+        if (!descriptor.isJsonCompactible()) {
             return false;
         }
         boolean missing = false;
@@ -177,9 +176,7 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
      */
     @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> int compare(T o1, T o2) {
-        if (o1 == null || o2 == null) {
-            return Boolean.compare(o1 != null, o2 != null);
-        } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
+        if (o1 instanceof PMessage && o2 instanceof PMessage) {
             return compareMessages((PMessage) o1, (PMessage) o2);
         }
         return o1.compareTo(o2);
@@ -199,9 +196,8 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
             c = Boolean.compare(m1.has(field.getId()), m2.has(field.getId()));
             if (c != 0) {
                 return c;
-            }
-            if (m1.has(field.getId())) {
-                c = compare((Comparable) m1.get(field.getId()), (Comparable) m2.get(field.getId()));
+            } else if (m1.has(field.getId()) && m2.has(field.getId())) {
+                c = compare(m1.get(field.getId()), m2.get(field.getId()));
                 if (c != 0) {
                     return c;
                 }
