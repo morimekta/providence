@@ -18,8 +18,6 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TSocket;
-import org.awaitility.Awaitility;
-import org.awaitility.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -251,10 +249,8 @@ public class NonblockingSocketServerTest {
                 }
             });
 
-            Awaitility.waitAtMost(Duration.ONE_SECOND).until(() -> remoteMap.size() == 2);
-
-            assertThat(a.get(1000, TimeUnit.MILLISECONDS), is(Boolean.FALSE));
-            assertThat(b.get(1000, TimeUnit.MILLISECONDS), is(Boolean.FALSE));
+            assertThat(a.get(1, TimeUnit.SECONDS), is(Boolean.FALSE));
+            assertThat(b.get(1, TimeUnit.SECONDS), is(Boolean.FALSE));
             assertThat(remoteMap, is(ImmutableMap.of("a", "bb",
                                                      "b", "aaa")));
         }
@@ -277,13 +273,13 @@ public class NonblockingSocketServerTest {
             Thread.sleep(3);
             Future<Boolean> e = executor.submit(() -> client.put("e", "5678"));
 
-            assertThat(a.get(200, TimeUnit.MILLISECONDS), is(false));
-            assertThat(b.get(200, TimeUnit.MILLISECONDS), is(false));
-            assertThat(c.get(200, TimeUnit.MILLISECONDS), is(false));
-            assertThat(d.get(200, TimeUnit.MILLISECONDS), is(false));
-            assertThat(e.get(200, TimeUnit.MILLISECONDS), is(false));
+            assertThat(a.get(1, TimeUnit.SECONDS), is(false));
+            assertThat(b.get(1, TimeUnit.SECONDS), is(false));
+            assertThat(c.get(1, TimeUnit.SECONDS), is(false));
+            assertThat(d.get(1, TimeUnit.SECONDS), is(false));
+            assertThat(e.get(1, TimeUnit.SECONDS), is(false));
             try {
-                f.get(100, TimeUnit.MILLISECONDS);
+                f.get(1, TimeUnit.SECONDS);
                 fail("no exception");
             } catch (ExecutionException ee) {
                 assertThat(ee.getCause(), is(instanceOf(NotFound.class)));
