@@ -3,6 +3,7 @@ package net.morimekta.providence.thrift.client;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.test.providence.thrift.service.Failure;
 import net.morimekta.test.providence.thrift.service.MyService;
 import net.morimekta.test.providence.thrift.service.MyService2;
@@ -14,6 +15,7 @@ import net.morimekta.test.thrift.thrift.service.MyService.Processor;
 import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TNonblockingServerTransport;
@@ -60,24 +62,26 @@ public class NonblockingSocketClientHandlerTest {
     private static Iface              impl;
     private static TNonblockingServer server;
     private static InetSocketAddress  address;
-    private static BinarySerializer   serializer;
+    private static Serializer         serializer;
+    private static TProtocolFactory   factory;
 
     @BeforeClass
     public static void setUpServer() throws Exception {
         setDefaultPollDelay(10, TimeUnit.MILLISECONDS);
 
+        serializer = new TBinaryProtocolSerializer();
+        factory = new TBinaryProtocol.Factory();
         port = findFreePort();
         impl = Mockito.mock(Iface.class);
 
         TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
         server = new TNonblockingServer(
                 new TNonblockingServer.Args(transport)
-                        .protocolFactory(new TBinaryProtocol.Factory())
+                        .protocolFactory(factory)
                         .processor(new Processor<>(impl)));
 
         executor = Executors.newSingleThreadExecutor();
         executor.submit(server::serve);
-        serializer = new BinarySerializer();
         address = new InetSocketAddress("localhost", port);
     }
 

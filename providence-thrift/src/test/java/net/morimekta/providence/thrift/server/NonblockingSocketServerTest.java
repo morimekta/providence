@@ -1,8 +1,8 @@
 package net.morimekta.providence.thrift.server;
 
 import net.morimekta.providence.PServiceCall;
-import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.thrift.map.NotFound;
@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TFramedTransport;
@@ -57,10 +57,10 @@ public class NonblockingSocketServerTest {
     private int                        port;
 
     private static int remoteSleep = 5;
-    // private static Serializer serializer = new TJsonProtocolSerializer();
-    // private static TProtocolFactory factory = new TJSONProtocol.Factory();
-    private static Serializer serializer = new BinarySerializer();
-    private static TProtocolFactory factory = new TBinaryProtocol.Factory();
+    private static Serializer serializer = new TJsonProtocolSerializer();
+    private static TProtocolFactory factory = new TJSONProtocol.Factory();
+    //private static Serializer serializer = new BinarySerializer();
+    //private static TProtocolFactory factory = new TBinaryProtocol.Factory();
 
     @Before
     public void setUp() {

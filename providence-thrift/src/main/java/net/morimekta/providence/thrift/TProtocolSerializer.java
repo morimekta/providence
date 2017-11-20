@@ -170,7 +170,8 @@ class TProtocolSerializer extends Serializer {
 
             type = PServiceCallType.findById(tm.type);
             if (type == null) {
-                throw new SerializerException("Unknown call type for id " + tm.type);
+                throw new SerializerException("Unknown call type for id " + tm.type)
+                        .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             } else if (type == PServiceCallType.EXCEPTION) {
                 PApplicationException exception = readMessage(protocol, PApplicationException.kDescriptor);
                 return new PServiceCall(tm.name, type, tm.seqid, exception);
@@ -178,7 +179,8 @@ class TProtocolSerializer extends Serializer {
 
             PServiceMethod method = service.getMethod(tm.name);
             if (method == null) {
-                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName());
+                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName())
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
             @SuppressWarnings("unchecked")
@@ -201,6 +203,11 @@ class TProtocolSerializer extends Serializer {
                     .setCallType(type)
                     .setSequenceNo(tm != null ? tm.seqid : 0)
                     .setMethodName(tm != null ? tm.name : null);
+        } catch (SerializerException e) {
+            e.setMethodName(tm.name)
+             .setSequenceNo(tm.seqid)
+             .setCallType(type);
+            throw e;
         }
     }
 
