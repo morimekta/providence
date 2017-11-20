@@ -23,6 +23,7 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.PMessageBuilder;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -92,9 +93,7 @@ public class CException extends Exception implements CMessage<CException> {
 
             try {
                 StackTraceElement[] stackTrace = e.getStackTrace();
-                StackTraceElement[] subTrace = new StackTraceElement[stackTrace.length - 1];
-                System.arraycopy(stackTrace, 1, subTrace, 0, subTrace.length);
-                e.setStackTrace(subTrace);
+                e.setStackTrace(Arrays.copyOfRange(stackTrace, 1, stackTrace.length));
             } catch (Throwable ignored) {
             }
 
