@@ -3,6 +3,7 @@ package net.morimekta.providence.config;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 /**
@@ -20,14 +21,14 @@ public interface ConfigSupplier<M extends PMessage<M,F>, F extends PField> exten
      *
      * @param listener The config change listener to be added.
      */
-    void addListener(ConfigListener<M, F> listener);
+    void addListener(@Nonnull ConfigListener<M, F> listener);
 
     /**
      * Remove a config change listener.
      *
      * @param listener The config change listener to be removed.
      */
-    void removeListener(ConfigListener<M,F> listener);
+    void removeListener(@Nonnull ConfigListener<M,F> listener);
 
     /**
      * Get a simple descriptive name for this config supplier.
@@ -43,9 +44,12 @@ public interface ConfigSupplier<M extends PMessage<M,F>, F extends PField> exten
      */
     long configTimestamp();
 
+    /**
+     * Get a snapshot of the current config.
+     *
+     * @return Non-modifiable supplier of current config containing a snapshot.
+     */
     default ConfigSupplier<M,F> snapshot() {
-        synchronized (this) {
-            return new FixedConfigSupplier<>(get(), configTimestamp());
-        }
+        return new FixedConfigSupplier<>(this);
     }
 }

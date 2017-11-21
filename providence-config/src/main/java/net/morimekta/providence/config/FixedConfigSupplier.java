@@ -54,11 +54,11 @@ public class FixedConfigSupplier<M extends PMessage<M,F>, F extends PField> impl
     }
 
     @Override
-    public final void addListener(ConfigListener<M, F> listener) {
+    public final void addListener(@Nonnull ConfigListener<M, F> listener) {
     }
 
     @Override
-    public final void removeListener(ConfigListener<M,F> listener) {
+    public final void removeListener(@Nonnull ConfigListener<M,F> listener) {
     }
 
     @Override

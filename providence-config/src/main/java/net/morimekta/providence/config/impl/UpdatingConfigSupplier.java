@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.time.Clock;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,10 +20,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * did change.
  */
 public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends PField> implements ConfigSupplier<M,F> {
-    private final AtomicReference<M>       instance;
-    private final ArrayList<WeakReference<ConfigListener<M,F>>> listeners;
-    private final Clock clock;
-    private final AtomicLong lastUpdateTimestamp;
+    private final AtomicReference<M>                             instance;
+    private final ArrayList<WeakReference<ConfigListener<M, F>>> listeners;
+    private final Clock                                          clock;
+    private final AtomicLong                                     lastUpdateTimestamp;
 
     /**
      * Initialize supplier with empty config.
@@ -38,7 +37,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
      *
      * @param clock The clock to use in timing config loads.
      */
-    protected UpdatingConfigSupplier(Clock clock) {
+    protected UpdatingConfigSupplier(@Nonnull Clock clock) {
         this.instance = new AtomicReference<>();
         this.listeners = new ArrayList<>();
         this.clock = clock;
@@ -58,7 +57,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
     }
 
     @Override
-    public void addListener(ConfigListener<M, F> listener) {
+    public void addListener(@Nonnull ConfigListener<M, F> listener) {
         synchronized (this) {
             listeners.removeIf(ref -> ref.get() == listener || ref.get() == null);
             listeners.add(new WeakReference<>(listener));
@@ -66,7 +65,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
     }
 
     @Override
-    public void removeListener(ConfigListener<M,F> listener) {
+    public void removeListener(@Nonnull ConfigListener<M,F> listener) {
         synchronized (this) {
             listeners.removeIf(ref -> ref.get() == null || ref.get() == listener);
         }
@@ -93,7 +92,7 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
 
             instance.set(config);
             lastUpdateTimestamp.set(clock.millis());
-            listeners.removeIf(Objects::isNull);
+            listeners.removeIf(ref -> ref.get() == null);
             iterateOver = new ArrayList<>(listeners);
         }
         iterateOver.forEach(ref -> {
