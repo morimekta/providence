@@ -90,6 +90,8 @@ public class ConstParserTest {
                    is(Value.FOURTH));
         assertThat(parse("test", "providence.Value", "providence.Value.FOURTH"),
                    is(Value.FOURTH));
+        assertThat(parse("test", "providence.Value", "5"),
+                   is(Value.FOURTH));
     }
 
     @Test
@@ -162,6 +164,157 @@ public class ConstParserTest {
                                 .setDoubleList(ImmutableList.of(0.0, 0.1, 4.2e-4))
                                 .setStringList(ImmutableList.of())
                                 .build()));
+
+        try {
+            parse("providence", "list<i8>", "nope");
+            fail("no exception");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 8, pos 4: Expected list start, found nope\n" +
+                    " = nope\n" +
+                    "---^^^^"));
+        }
+    }
+
+    @Test
+    public void testSets() throws IOException {
+        try {
+            parse("providence", "set<i64>",
+                  "{}");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 8, pos 2: Expected list start, found {\n" +
+                    " {}\n" +
+                    "-^"));
+        }
+
+        assertThat(parse("providence", "set<bool>",
+                         "[ 0, true ]"),
+                   is(ImmutableSet.of(false, true)));
+        assertThat(parse("providence", "set<i8>",
+                         "[ 2, Value.FIFTH ]"),
+                   is(ImmutableSet.of((byte) 2, (byte) 8)));
+        assertThat(parse("providence", "set<i16>",
+                         "[ 2, Value.FIFTH ]"),
+                   is(ImmutableSet.of((short) 2, (short) 8)));
+        assertThat(parse("providence", "set<i32>",
+                         "[ 2, Value.FIFTH ]"),
+                   is(ImmutableSet.of(2, 8)));
+        assertThat(parse("providence", "set<i64>",
+                         "[ 2,\n" +
+                         " // or \n" +
+                         " Value.FIFTH ]"),
+                   is(ImmutableSet.of( 2L, 8L)));
+        assertThat(parse("providence", "set<double>",
+                         "[ /** nooo */ 2.2 ]"),
+                   is(ImmutableSet.of(2.2)));
+    }
+
+    @Test
+    public void testMaps() throws IOException {
+        try {
+            parse("providence", "map<i64,i64>",
+                  "[]");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 12, pos 2: Expected map start, found [\n" +
+                    " []\n" +
+                    "-^"));
+        }
+
+        assertThat(parse("providence", "map<bool,bool>",
+                         "{" +
+                         "  0: 1," +
+                         "  true: false}"),
+                   is(ImmutableMap.of(false, true, true, false)));
+        assertThat(parse("providence", "map<i8,i8>",
+                         "{" +
+                         "  1: 2," +
+                         "  \"124\": 125," +
+                         "  Value.SECOND: Value.THIRD," +
+                         "}"),
+                   is(ImmutableMap.of((byte)1, (byte)2,
+                                      (byte)2, (byte)3,
+                                      (byte)124, (byte)125)));
+        assertThat(parse("providence", "map<i16,i16>",
+                         "{" +
+                         "  1: 2," +
+                         "  \"124\": 125," +
+                         "  Value.SECOND: Value.THIRD," +
+                         "}"),
+                   is(ImmutableMap.of((short)1, (short)2,
+                                      (short)2, (short)3,
+                                      (short)124, (short)125)));
+        assertThat(parse("providence", "map<i32,i32>",
+                         "{" +
+                         "  1: 2," +
+                         "  \"124\": 125," +
+                         "  Value.SECOND: Value.THIRD," +
+                         "}"),
+                   is(ImmutableMap.of(1, 2,
+                                      2, 3,
+                                      124, 125)));
+        assertThat(parse("providence", "map<i64,i64>",
+                         "{" +
+                         "  1: 2," +
+                         "  // 1: 2,\n" +
+                         "  \"124\": 125," +
+                         "  /* 1: 2, */" +
+                         "  Value.SECOND: Value.THIRD," +
+                         "}"),
+                   is(ImmutableMap.of(1L, 2L,
+                                      2L, 3L,
+                                      124L, 125L)));
+        try {
+            parse("providence", "map<i64,i64>",
+                  "{ Foo.SECOND: Value.THIRD }");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 12, pos 29: No type named Foo.\n" +
+                    "....................... = { Foo.SECOND: Value.THIRD }\n" +
+                    "----------------------------^^^^^^^^^^"));
+        }
+
+        try {
+            parse("providence", "map<i64,i64>",
+                  "{ OptionalFields.SECOND: Value.THIRD }");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 12, pos 40: OptionalFields is not an enum.\n" +
+                    ".................................. = { OptionalFields.SECOND: Value.THIRD }\n" +
+                    "---------------------------------------^^^^^^^^^^^^^^^^^^^^^"));
+        }
+
+        assertThat(parse("providence", "map<double,double>",
+                         "{" +
+                         "  1.1: 2.2e+4," +
+                         "}"),
+                   is(ImmutableMap.of(1.1, 22000.0)));
+        try {
+            parse("providence", "map<double,double>",
+                  "{" +
+                  "  \"boo\": 2.2e+4," +
+                  "}");
+            fail("no exception");
+        } catch (ParseException e) {
+            assertThat(e.asString(), is(
+                    "Error on line 18, pos 21: Unable to parse double value\n" +
+                    ".............. = {  \"boo\": 2.2e+4,}\n" +
+                    "--------------------^^^^^"));
+        }
+
+        assertThat(parse("providence", "map<string,string>",
+                         "{" +
+                         "  \"a\": \"b\"," +
+                         "}"),
+                   is(ImmutableMap.of("a", "b")));
+
+        assertThat(parse("providence", "map<binary,binary>",
+                         "{" +
+                         "  \"AAg\": \"AAg\"," +
+                         "}"),
+                   is(ImmutableMap.of(Binary.fromBase64("AAg="),
+                                      Binary.fromBase64("AAg="))));
     }
 
     @Test
@@ -200,6 +353,22 @@ public class ConstParserTest {
     }
 
     @Test
+    public void testMessages() throws IOException {
+        assertThat(parse("providence", "OptionalFields",
+                         "{\n" +
+                         "}\n"),
+                   is(OptionalFields.builder()
+                                    .build()));
+        assertThat(parse("providence", "OptionalFields",
+                         "\n    null\n"),
+                   is(nullValue()));
+        assertFailure("providence", "OptionalFields", "[]",
+                      "Error on line 14, pos 2: Not a valid message start.\n" +
+                      " []\n" +
+                      "-^");
+    }
+
+    @Test
     public void testFailures() throws IOException {
         assertFailure("test", "string", "44",
                       "Error on line 6, pos 2: Not a valid string value.\n" +
@@ -209,10 +378,22 @@ public class ConstParserTest {
                       "Error on line 3, pos 4: \"44\" is not a valid i32 value.\n" +
                       " = \"44\"\n" +
                       "---^^^^");
-        assertFailure("providence", "Value", "13",
-                      "Error on line 5, pos 2: No such providence.Value enum value.\n" +
-                      " 13\n" +
-                      "-^^");
+        assertFailure("providence", "double", "\"44\"",
+                      "Error on line 6, pos 4: \"44\" is not a valid double value.\n" +
+                      " = \"44\"\n" +
+                      "---^^^^");
+        assertFailure("providence", "binary", "0x44",
+                      "Error on line 6, pos 4: Not a valid binary value.\n" +
+                      " = 0x44\n" +
+                      "---^^^^");
+        assertFailure("providence", "OptionalFields", "{ \"foo\": \"bar\" }",
+                      "Error on line 14, pos 18: No such field in providence.OptionalFields: foo\n" +
+                      "............ = { \"foo\": \"bar\" }\n" +
+                      "-----------------^^^^^");
+        assertFailure("providence", "bool", "\"foo\"",
+                      "Error on line 4, pos 5: Not boolean value for bool: \"foo\"\n" +
+                      ". = \"foo\"\n" +
+                      "----^^^^^");
     }
 
     private Object parse(String context, String type, String text) throws IOException {

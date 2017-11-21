@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Parsing thrift constants from string to actual value. This uses a JSON like
@@ -161,7 +160,7 @@ public class ConstParser {
             }
             Field field = type.findFieldByName(token.decodeLiteral(true));
             if (field == null) {
-                throw tokenizer.failure(token, "Not a valid field name: " + token.decodeLiteral(true));
+                throw tokenizer.failure(token, "No such field in " + type.getQualifiedName() + ": " + token.decodeLiteral(true));
             }
             tokenizer.expectSymbol("message key-value sep", Token.kKeyValueSep);
 
@@ -242,12 +241,17 @@ public class ConstParser {
                     name = name.substring(valueType.getQualifiedName()
                                                    .length() + 1);
                 }
-                Object ev = eb.setByName(name).build();
+                Object ev;
+                if (Strings.isInteger(name)) {
+                    ev = eb.setById(Integer.parseInt(name)).build();
+                } else {
+                    ev = eb.setByName(name).build();
+                }
                 if (ev == null) {
                     if (allowNull && token.asString().equals(NULL)) {
                         return null;
                     }
-                    throw tokenizer.failure(token, "No such " + valueType.getQualifiedName() + " enum value.");
+                    throw tokenizer.failure(token, "No such " + valueType.getQualifiedName() + " enum value \"" + name);
                 }
                 return ev;
             }
@@ -476,8 +480,12 @@ public class ConstParser {
                     JsonTokenizer tokener = new JsonTokenizer(bais);
                     JsonToken jt = tokener.expect("parsing double value");
                     return jt.doubleValue();
-                } catch (IOException | JsonException e) {
-                    throw new ParseException(e, "Unable to parse double value");
+                } catch (NumberFormatException | IOException | JsonException e) {
+                    throw new ParseException(e, "Unable to parse double value")
+                            .setLength(token.length())
+                            .setLineNo(token.getLineNo())
+                            .setLinePos(token.getLinePos())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case STRING:
@@ -504,17 +512,21 @@ public class ConstParser {
             throw tokenizer.failure(token, identifier + " is not a valid " + expectedType + " value.");
         }
 
-        @SuppressWarnings("unchecked")
-        PDeclaredDescriptor descriptor = registry.getDeclaredType(typeName, programContext);
-        if (descriptor != null && descriptor instanceof PEnumDescriptor) {
-            PEnumDescriptor desc = (PEnumDescriptor) descriptor;
-            PEnumValue value = desc.findByName(valueName);
-            if (value != null) {
-                return value.asInteger();
+        try {
+            @SuppressWarnings("unchecked")
+            PDeclaredDescriptor descriptor = registry.getDeclaredType(typeName, programContext);
+            if (descriptor instanceof PEnumDescriptor) {
+                PEnumDescriptor desc = (PEnumDescriptor) descriptor;
+                PEnumValue value = desc.findByName(valueName);
+                if (value != null) {
+                    return value.asInteger();
+                }
             }
-        }
 
-        throw tokenizer.failure(token, identifier + " is not a valid " + expectedType + " value.");
+            throw tokenizer.failure(token, typeName + " is not an enum.");
+        } catch (IllegalArgumentException e) {
+            throw tokenizer.failure(token, "No type named " + typeName + ".");
+        }
     }
 
     /**
