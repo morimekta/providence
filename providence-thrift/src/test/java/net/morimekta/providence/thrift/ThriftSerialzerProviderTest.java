@@ -49,7 +49,7 @@ public class ThriftSerialzerProviderTest {
             new ThriftSerializerProvider().getSerializer("text/plain");
             fail("No exception on no serializer");
         } catch (Exception e) {
-            assertThat(e.getMessage(), is("No such serializer for media type text/plain"));
+            assertThat(e.getMessage(), is("No serializer for media type 'text/plain'"));
         }
     }
 }

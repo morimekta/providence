@@ -78,12 +78,11 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
                               Type genericType,
                               Annotation[] annotations,
                               MediaType mediaType) {
-        if (type == null || getDescriptor(type) == null) {
+        if (type == null || getDescriptor(type) == null || MediaType.WILDCARD_TYPE.equals(mediaType)) {
             return false;
         }
-        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
         try {
-            provider.getSerializer(contentType);
+            provider.getSerializer(mediaType.toString());
             return true;
         } catch (Exception e) {
             return false;
@@ -97,11 +96,9 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
                              MediaType mediaType,
                              MultivaluedMap<String, String> httpHeaders,
                              InputStream entityStream) throws IOException, WebApplicationException {
-        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
-
         try {
             PMessageDescriptor<?, ?> descriptor = getDescriptorOrFail(type);
-            return provider.getSerializer(contentType)
+            return provider.getSerializer(mediaType.toString())
                            .deserialize(entityStream, descriptor);
         } catch (SerializerException e) {
             throw new ProcessingException("Unable to deserialize entity", e);

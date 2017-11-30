@@ -5,6 +5,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.jackson.ProvidenceModule;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.providence.thrift.Containers;
@@ -33,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +47,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TProtocolSerializerTest {
     private static ArrayList<Containers> containers;
+    private static TBinaryProtocolSerializer serializer;
 
     @Before
     public void setUp() throws SerializerException, IOException {
@@ -55,9 +56,11 @@ public class TProtocolSerializerTest {
             if (containers == null) {
                 containers = arrayListFromJsonResource("/providence/test.json", Containers.kDescriptor);
             }
+            serializer = new TBinaryProtocolSerializer();
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <Providence extends PMessage<Providence, ProvidenceField>,
             ProvidenceField extends PField,
             Thrift extends TBase<Thrift, ThriftField>,
@@ -66,9 +69,7 @@ public class TProtocolSerializerTest {
                                                                     Thrift thrift) {
         if (providence.descriptor()
                       .getVariant() == PMessageVariant.UNION) {
-            @SuppressWarnings("unchecked")
             TUnion<?, ThriftField> t_union = (TUnion) thrift;
-            @SuppressWarnings("unchecked")
             PUnion<?, ProvidenceField> p_union = (PUnion) providence;
 
             ThriftField t_field = t_union.getSetField();
@@ -91,20 +92,20 @@ public class TProtocolSerializerTest {
                                              (TBase) thrift.getFieldValue(thriftField));
                             break;
                         case ENUM: {
-                            PEnumValue<?> pe = (PEnumValue) providence.get(field.getId());
+                            PEnumValue<?> pe = providence.get(field.getId());
                             TEnum te = (TEnum) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath, pe.asInteger(), te.getValue());
                             break;
                         }
                         case BINARY: {
-                            Binary pBin = (Binary) providence.get(field.getId());
+                            Binary pBin = providence.get(field.getId());
                             byte[] tBytes = (byte[]) thrift.getFieldValue(thriftField);
                             Binary tBin = Binary.wrap(tBytes);
                             assertEquals(fieldPath, pBin, tBin);
                             break;
                         }
                         case MAP: {
-                            Map pm = (Map) providence.get(field.getId());
+                            Map pm = providence.get(field.getId());
                             Map tm = (Map) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath + " size", pm.size(), tm.size());
 
@@ -112,7 +113,7 @@ public class TProtocolSerializerTest {
                             break;
                         }
                         case SET: {
-                            Set ps = (Set) providence.get(field.getId());
+                            Set ps = providence.get(field.getId());
                             Set ts = (Set) thrift.getFieldValue(thriftField);
                             assertEquals(fieldPath + " size", ps.size(), ts.size());
 
@@ -120,7 +121,7 @@ public class TProtocolSerializerTest {
                             break;
                         }
                         case LIST: {
-                            List pl = (List) providence.get(field.getId());
+                            List pl = providence.get(field.getId());
                             List tl = (List) thrift.getFieldValue(thriftField);
 
                             assertEquals(fieldPath + " size", pl.size(), tl.size());
@@ -133,7 +134,9 @@ public class TProtocolSerializerTest {
 
                                 if (pi instanceof PMessage) {
                                     assertConsistent(itemPath, (PMessage) pi, (TBase) ti);
-                                } else if (pi instanceof Collection) {
+                                } else if (pi instanceof Set) {
+                                    // TODO: Compare actual content.
+                                } else if (pi instanceof List) {
                                     // TODO: Compare actual content.
                                 } else if (pi instanceof Map) {
                                     // TODO: Compare actual content.
@@ -244,6 +247,7 @@ public class TProtocolSerializerTest {
     public void testTSimpleJsonProtocol() throws IOException, TException {
         // testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
         ObjectMapper mapper = new ObjectMapper();
+        ProvidenceModule.register(mapper);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new TSimpleJsonProtocolSerializer().serialize(baos, containers.get(0));

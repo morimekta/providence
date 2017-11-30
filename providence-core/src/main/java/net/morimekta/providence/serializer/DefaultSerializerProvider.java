@@ -63,6 +63,7 @@ public class DefaultSerializerProvider extends BaseSerializerProvider {
 
         register(new BinarySerializer(strict), BinarySerializer.MEDIA_TYPE, BinarySerializer.ALT_MEDIA_TYPE);
         register(new FastBinarySerializer(strict), FastBinarySerializer.MEDIA_TYPE);
-        register(new JsonSerializer(strict), JsonSerializer.MEDIA_TYPE, JsonSerializer.JSON_MEDIA_TYPE);
+        register(new JsonSerializer(strict).named(), JsonSerializer.JSON_MEDIA_TYPE);
+        register(new JsonSerializer(strict), JsonSerializer.MEDIA_TYPE);
     }
 }

@@ -48,12 +48,11 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        if (!PMessage.class.isAssignableFrom(type)) {
+        if (!PMessage.class.isAssignableFrom(type) || MediaType.WILDCARD_TYPE.equals(mediaType)) {
             return false;
         }
-        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
         try {
-            provider.getSerializer(contentType);
+            provider.getSerializer(mediaType.toString());
             return true;
         } catch (Exception e) {
             return false;
@@ -75,10 +74,8 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
-        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
-
         try {
-            provider.getSerializer(contentType)
+            provider.getSerializer(mediaType.toString())
                     .serialize(entityStream, entity);
         } catch (NotSupportedException e) {
             throw new ProcessingException("Unknown media type: " + mediaType, e);

@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.serializer;
 
+import com.google.common.net.MediaType;
+
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,8 @@ import java.util.Map;
  * Default serializer provider for core serializers.
  */
 public abstract class BaseSerializerProvider implements SerializerProvider {
+    private static final String ANY_MEDIA_TYPE = MediaType.ANY_TYPE.toString();
+
     private final Map<String, Serializer> serializerMap;
     private final String                  defaultMediaType;
 
@@ -44,9 +48,19 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
     @Override
     @Nonnull
     public Serializer getSerializer(String mediaType) {
-        Serializer serializer = serializerMap.get(mediaType);
+        mediaType = MediaType.parse(mediaType)
+                             .withoutParameters()
+                             .toString();
+
+        Serializer serializer;
+        if (ANY_MEDIA_TYPE.equals(mediaType)) {
+            serializer = serializerMap.get(defaultMediaType);
+        } else {
+            serializer = serializerMap.get(mediaType);
+        }
+
         if (serializer == null) {
-            throw new IllegalArgumentException("No such serializer for media type " + mediaType);
+            throw new IllegalArgumentException("No serializer for media type '" + mediaType + "'");
         }
         return serializer;
     }

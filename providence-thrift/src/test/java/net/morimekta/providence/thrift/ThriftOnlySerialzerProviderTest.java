@@ -39,7 +39,7 @@ public class ThriftOnlySerialzerProviderTest {
             new ThriftOnlySerializerProvider().getSerializer(JsonSerializer.MEDIA_TYPE);
             fail("No exception on no serializer");
         } catch (Exception e) {
-            assertThat(e.getMessage(), is("No such serializer for media type " + JsonSerializer.MEDIA_TYPE));
+            assertThat(e.getMessage(), is("No serializer for media type '" + JsonSerializer.MEDIA_TYPE + "'"));
         }
     }
 }

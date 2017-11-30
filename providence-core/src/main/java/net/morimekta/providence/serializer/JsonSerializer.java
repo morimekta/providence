@@ -190,6 +190,10 @@ public class JsonSerializer extends Serializer {
     @Nonnull
     @Override
     public String mediaType() {
+        // Pretend "application/json" as media type if named fields are used.
+        if (fieldIdType == IdType.NAME) {
+            return JSON_MEDIA_TYPE;
+        }
         return MEDIA_TYPE;
     }
 
