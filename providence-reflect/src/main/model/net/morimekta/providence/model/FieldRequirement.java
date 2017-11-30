@@ -96,7 +96,7 @@ public enum FieldRequirement
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<FieldRequirement> {
-        FieldRequirement mValue;
+        private FieldRequirement mValue;
 
         @Override
         @javax.annotation.Nonnull

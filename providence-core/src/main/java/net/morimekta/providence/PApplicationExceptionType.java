@@ -161,7 +161,7 @@ public enum PApplicationExceptionType
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<PApplicationExceptionType> {
-        PApplicationExceptionType mValue;
+        private PApplicationExceptionType mValue;
 
         @Override
         @javax.annotation.Nonnull

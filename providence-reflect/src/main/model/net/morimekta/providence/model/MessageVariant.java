@@ -101,7 +101,7 @@ public enum MessageVariant
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<MessageVariant> {
-        MessageVariant mValue;
+        private MessageVariant mValue;
 
         @Override
         @javax.annotation.Nonnull

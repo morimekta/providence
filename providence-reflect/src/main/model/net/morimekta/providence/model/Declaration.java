@@ -38,8 +38,24 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
+    public static Declaration withDeclEnum(net.morimekta.providence.model.EnumType._Builder value) {
+        return withDeclEnum(value == null ? null : value.build());
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclTypedef(net.morimekta.providence.model.TypedefType value) {
         return new _Builder().setDeclTypedef(value).build();
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
+    public static Declaration withDeclTypedef(net.morimekta.providence.model.TypedefType._Builder value) {
+        return withDeclTypedef(value == null ? null : value.build());
     }
 
     /**
@@ -54,6 +70,14 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
+    public static Declaration withDeclStruct(net.morimekta.providence.model.MessageType._Builder value) {
+        return withDeclStruct(value == null ? null : value.build());
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclService(net.morimekta.providence.model.ServiceType value) {
         return new _Builder().setDeclService(value).build();
     }
@@ -62,8 +86,24 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
+    public static Declaration withDeclService(net.morimekta.providence.model.ServiceType._Builder value) {
+        return withDeclService(value == null ? null : value.build());
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclConst(net.morimekta.providence.model.ConstType value) {
         return new _Builder().setDeclConst(value).build();
+    }
+
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
+    public static Declaration withDeclConst(net.morimekta.providence.model.ConstType._Builder value) {
+        return withDeclConst(value == null ? null : value.build());
     }
 
     private Declaration(_Builder builder) {
@@ -612,6 +652,17 @@ public class Declaration
         }
 
         /**
+         * Sets the value of decl_enum.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDeclEnum(net.morimekta.providence.model.EnumType._Builder builder) {
+          return setDeclEnum(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the decl_enum field.
          *
          * @return True if decl_enum has been set.
@@ -689,6 +740,17 @@ public class Declaration
             mDeclTypedef = value;
             mDeclTypedef_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of decl_typedef.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType._Builder builder) {
+          return setDeclTypedef(builder == null ? null : builder.build());
         }
 
         /**
@@ -772,6 +834,17 @@ public class Declaration
         }
 
         /**
+         * Sets the value of decl_struct.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDeclStruct(net.morimekta.providence.model.MessageType._Builder builder) {
+          return setDeclStruct(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the decl_struct field.
          *
          * @return True if decl_struct has been set.
@@ -852,6 +925,17 @@ public class Declaration
         }
 
         /**
+         * Sets the value of decl_service.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDeclService(net.morimekta.providence.model.ServiceType._Builder builder) {
+          return setDeclService(builder == null ? null : builder.build());
+        }
+
+        /**
          * Checks for presence of the decl_service field.
          *
          * @return True if decl_service has been set.
@@ -929,6 +1013,17 @@ public class Declaration
             mDeclConst = value;
             mDeclConst_builder = null;
             return this;
+        }
+
+        /**
+         * Sets the value of decl_const.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setDeclConst(net.morimekta.providence.model.ConstType._Builder builder) {
+          return setDeclConst(builder == null ? null : builder.build());
         }
 
         /**

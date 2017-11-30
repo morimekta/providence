@@ -118,7 +118,7 @@ public enum PServiceCallType
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<PServiceCallType> {
-        PServiceCallType mValue;
+        private PServiceCallType mValue;
 
         @Override
         @javax.annotation.Nonnull

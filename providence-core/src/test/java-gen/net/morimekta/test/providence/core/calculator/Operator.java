@@ -99,7 +99,7 @@ public enum Operator
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<Operator> {
-        Operator mValue;
+        private Operator mValue;
 
         @Override
         @javax.annotation.Nonnull

@@ -147,7 +147,7 @@ public enum Value
     }
 
     public static class _Builder extends net.morimekta.providence.PEnumBuilder<Value> {
-        Value mValue;
+        private Value mValue;
 
         @Override
         @javax.annotation.Nonnull

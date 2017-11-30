@@ -161,7 +161,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
                         PEnumBuilder.class.getName(),
                         simpleClass)
               .begin()
-              .formatln("%s mValue;", simpleClass)
+              .formatln("private %s mValue;", simpleClass)
               .newline();
 
         writer.appendln("@Override")
