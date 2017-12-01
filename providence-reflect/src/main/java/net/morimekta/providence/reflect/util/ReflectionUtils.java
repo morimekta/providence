@@ -87,4 +87,6 @@ public class ReflectionUtils {
         }
         return paths;
     }
+
+    private ReflectionUtils() {}
 }

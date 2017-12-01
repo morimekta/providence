@@ -38,20 +38,37 @@ import java.util.function.Function;
 import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
 
 /**
- * Program scope type registry.
+ * The program registry is a wrapper around a set of type
+ * registries for each of a set of different files. The individual
+ * registries are identified by the <code>path</code> to the
+ * thrift file that was parsed.
  */
 public class ProgramRegistry implements TypeRegistry {
     private final Map<String, ProgramTypeRegistry> registryMap;
 
+    /**
+     * Create an empty program registry.
+     */
     public ProgramRegistry() {
         registryMap = new TreeMap<>();
     }
 
+    /**
+     * Get a program type registry for the file at given path. If the
+     * registry is not created yet, it will be created.
+     *
+     * @param path The thrift file path.
+     * @return The associated program type registry.
+     */
     @Nonnull
     public ProgramTypeRegistry registryForPath(String path) {
         return registryMap.computeIfAbsent(path, p -> new ProgramTypeRegistry(programNameFromPath(path)));
     }
 
+    /**
+     * @return A list of all created registries. Does not care if the
+     *         registry has been initialized / filled yet.
+     */
     @Nonnull
     public Collection<ProgramTypeRegistry> getLoadedRegistries() {
         return ImmutableList.copyOf(registryMap.values());
@@ -64,9 +81,15 @@ public class ProgramRegistry implements TypeRegistry {
      * @return The contained document, or null if not found.
      */
     public boolean containsProgramPath(String path) {
-        return registryForPath(path).getProgram() != null;
+        return registryMap.containsKey(path) && registryMap.get(path).getProgram() != null;
     }
 
+    /**
+     * Put the given program into the registry at the given path.
+     *
+     * @param path The thrift file path.
+     * @param program The contained program.
+     */
     public void putProgram(String path, CProgram program) {
         registryForPath(path).setProgram(program);
     }
