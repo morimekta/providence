@@ -38,6 +38,7 @@ import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.File;
@@ -49,9 +50,10 @@ import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Base class for formatting a complete .js (.es6, .ts etc) file. The
- * basic paradigm is that each file contains code matching a whole
- * thrift program.
+ * Formatter for a single '.js' file. Supports inclusion variants
+ * for simple (no libraries), Google closure and node.js. Otherwise
+ * the generated code should be totally platform independent and not
+ * requiring much of a browse to be compatible.
  */
 public class JSProgramFormatter extends ProgramFormatter {
     private final AtomicInteger tmp;
@@ -362,14 +364,14 @@ public class JSProgramFormatter extends ProgramFormatter {
 
                 // compact / array parsing.
                 // set fields in a switch in reverse order.
-                // switch (opt_json.size()) {
+                // switch (opt_json.length) {
                 //    case 4: this._v4 = ...(opt_json[3]);
                 //    case 3: this._v3 = ...(opt_json[2]);
                 //    case 2: this._v2 = ...(opt_json[1]);
                 //    case 1: this._v1 = ...(opt_json[0]);
                 // }
 
-                writer.appendln("switch(opt_json.size()) {")
+                writer.appendln("switch(opt_json.length) {")
                       .begin();
 
                 boolean isRequired = false;
@@ -391,7 +393,7 @@ public class JSProgramFormatter extends ProgramFormatter {
 
                 writer.appendln("    break;")
                       .appendln("default:")
-                      .appendln("    throw 'Wrong number of compact fields: ' + opt_json.size();")
+                      .appendln("    throw 'Wrong number of compact fields: ' + opt_json.length;")
                       .end()
                       .appendln("}");
 
@@ -453,8 +455,9 @@ public class JSProgramFormatter extends ProgramFormatter {
         comment.return_(JSUtils.getFieldType(field), "The field value")
                .finish();
 
-        writer.formatln("%s.%s.prototype.get%s = function() {",
-                        descriptor.getProgramName(), JSUtils.getClassName(descriptor), JSUtils.camelCase(field.getName()))
+        writer.formatln("%s.%s.prototype.%s = function() {",
+                        descriptor.getProgramName(), JSUtils.getClassName(descriptor),
+                        Strings.camelCase("get", field.getName()))
               .formatln("    return this._%s;", field.getName())
               .appendln("};")
               .newline();
@@ -463,8 +466,8 @@ public class JSProgramFormatter extends ProgramFormatter {
         comment.param_("value", JSUtils.getFieldType(field), "The new field value")
                .finish();
 
-        writer.formatln("%s.%s.prototype.set%s = function(value) {",
-                        descriptor.getProgramName(), JSUtils.getClassName(descriptor), JSUtils.camelCase(field.getName()))
+        writer.formatln("%s.%s.prototype.%s = function(value) {",
+                        descriptor.getProgramName(), JSUtils.getClassName(descriptor), Strings.camelCase("set", field.getName()))
               .begin()
               // If value is neither null nor undefined, it should be OK.
               .appendln("if (value !== null && value !== undefined) {")

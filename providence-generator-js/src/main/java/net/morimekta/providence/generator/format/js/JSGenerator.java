@@ -39,8 +39,10 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
+ * Generate JS message models for providence.
+ *
+ * Supports the providence styled JSON (both named and compact) as data
+ * format.
  */
 public class JSGenerator extends Generator {
     private final List<ProgramFormatter> formatters;

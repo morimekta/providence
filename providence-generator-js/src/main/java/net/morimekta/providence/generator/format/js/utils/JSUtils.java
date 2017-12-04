@@ -38,8 +38,7 @@ import javax.annotation.Nonnull;
 import java.io.File;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * General utilities for js generator.
  */
 public class JSUtils {
     public static String getClassName(@Nonnull CMessageDescriptor descriptor) {
@@ -47,7 +46,7 @@ public class JSUtils {
     }
 
     public static String getClassName(@Nonnull PDeclaredDescriptor type) {
-        return camelCase(type.getName());
+        return Strings.camelCase("", type.getName());
     }
 
     public static String getFieldOptionality(@Nonnull CField field) {
@@ -110,17 +109,6 @@ public class JSUtils {
             return document.getProgramName();
         }
         return Strings.join(File.separator, (Object[]) javaPackage.split("[.]"));
-    }
-
-    /**
-     * Format a prefixed name as camelCase. The prefix is kept verbatim, while
-     * tha name is split on '_' chars, and joined with each part capitalized.
-     *
-     * @param name   The name to camel-case.
-     * @return theCamelCasedName
-     */
-    public static String camelCase(String name) {
-        return Strings.camelCase("", name);
     }
 
     public static String enumConst(PEnumValue value) {

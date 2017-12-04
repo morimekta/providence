@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Build const values in javascript.
+ */
 public class JSConstFormatter {
     private final IndentedPrintWriter writer;
     private final JsonWriter json;

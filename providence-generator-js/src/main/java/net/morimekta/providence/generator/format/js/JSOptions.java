@@ -21,7 +21,7 @@
 package net.morimekta.providence.generator.format.js;
 
 /**
- * Options class for java 2 generator.
+ * Options class for js generator.
  */
 public class JSOptions {
     public boolean type_script = false;
