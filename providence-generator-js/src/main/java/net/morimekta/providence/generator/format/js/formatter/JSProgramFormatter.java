@@ -355,7 +355,7 @@ public class JSProgramFormatter extends ProgramFormatter {
 
         } else {
             if (JSUtils.jsonCompactible(descriptor)) {
-                writer.appendln("if ('array' == typeof(opt_json)) {")
+                writer.appendln("if (Array.isArray(opt_json)) {")
                       .begin();
 
                 ArrayList<CField> fields = new ArrayList<>();
@@ -547,8 +547,12 @@ public class JSProgramFormatter extends ProgramFormatter {
             writer.appendln("if (this.compact()) {")
                   .begin()
                   .appendln("var obj = [];");
+            ArrayList<CField> fields = new ArrayList<>();
+            Collections.addAll(fields, descriptor.getFields());
+            fields.sort(Comparator.comparing(CField::getId));
 
-            for (CField field : descriptor.getFields()) {
+
+            for (CField field : fields) {
                 if (!JSUtils.alwaysPresent(field)) {
                     writer.formatln("if (this._%s === null) {", field.getName())
                           .appendln("    return obj;")
@@ -556,7 +560,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 }
 
                 formatJsonFromValue(writer, field.getDescriptor(),
-                                    "obj['" + (field.getId() - 1) + "']",
+                                    "obj[obj.length]",
                                     "this._" + field.getName(),
                                     null);
             }
@@ -635,7 +639,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 writer.formatln("%s = true;", target);
                 break;
             case BOOL:
-                writer.formatln("%s = !!%s;", target, source);
+                writer.formatln("%s = ('string' == typeof(%s) ? 'true' == %s : !!%s);", target, source, source, source);
                 break;
             case BYTE:
             case I16:
@@ -669,16 +673,18 @@ public class JSProgramFormatter extends ProgramFormatter {
             case LIST:
             case SET: {
                 PContainer list = (PContainer) descriptor;
-                String tmpItem = tmpVar("i");
+                String tmpIter = tmpVar("i");
+                String tmpItem = tmpVar("v");
                 String tmpArray = tmpVar("a");
                 writer.formatln("var %s = [];", tmpArray)
-                      .formatln("for (var %s in %s) {", tmpItem, source)
-                      .begin();
+                      .formatln("for (var %s = 0; %s < %s.length; %s++) {", tmpIter, tmpIter, source, tmpIter)
+                      .begin()
+                      .formatln("var %s = %s[%s];", tmpItem, source, tmpIter);
 
                 // hard value coercion.
                 formatValueFromJson(writer, list.itemDescriptor(), tmpItem, tmpItem);
 
-                writer.formatln("%s.add(%s);", tmpArray, tmpItem)
+                writer.formatln("%s.push(%s);", tmpArray, tmpItem)
                       .end()
                       .appendln("}")
                       .formatln("%s = %s;", target, tmpArray);
@@ -690,7 +696,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 String tmpKey = tmpVar("k");
                 String tmpItem = tmpVar("v");
 
-                writer.formatln("var %s = new Map();", tmpMap)
+                writer.formatln("var %s = {};", tmpMap)
                       .formatln("for (var %s in %s) {", tmpKey, source)
                       .begin()
                       .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
@@ -700,14 +706,14 @@ public class JSProgramFormatter extends ProgramFormatter {
                 if (map.keyDescriptor().getType() == PType.MESSAGE) {
                     PMessageDescriptor md = (PMessageDescriptor) map.keyDescriptor();
                     // reformat as id (not named).
-                    writer.formatln("%s = new %s.%s(%s).toJsonString();",
+                    writer.formatln("%s = new %s.%s(%s).toJsonString(opt_named);",
                                     tmpKey, md.getProgramName(), JSUtils.getClassName(md), tmpKey);
                 } else {
                     formatValueFromJson(writer, map.keyDescriptor(), tmpKey, tmpKey);
                 }
                 formatValueFromJson(writer, map.itemDescriptor(), tmpItem, tmpItem);
 
-                writer.formatln("%s.set(%s, %s);", tmpMap, tmpKey, tmpItem)
+                writer.formatln("%s[%s] = %s;", tmpMap, tmpKey, tmpItem)
                       .end()
                       .appendln("}")
                       .end()
@@ -773,8 +779,11 @@ public class JSProgramFormatter extends ProgramFormatter {
             String tmpMap = tmpVar("m");
             // ...
             writer.formatln("var %s = {};", tmpMap)
-                  .formatln("%s.forEach(function(%s, %s) {", source, tmpKey, tmpValue)
-                  .begin();
+                  .formatln("for (var %s in %s) {", tmpKey, source)
+                  .begin()
+                  .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
+                  .begin()
+                  .formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
 
             if (map.keyDescriptor().getType() == PType.MESSAGE && named != Boolean.FALSE) {
                 PMessageDescriptor md = (PMessageDescriptor) map.keyDescriptor();
@@ -787,7 +796,9 @@ public class JSProgramFormatter extends ProgramFormatter {
 
             writer.formatln("%s[String(%s)] = %s;", tmpMap, tmpKey, tmpValue)
                   .end()
-                  .appendln("});")
+                  .appendln("}")
+                  .end()
+                  .appendln("}")
                   .formatln("%s = %s;", target, tmpMap);
             return;
         }

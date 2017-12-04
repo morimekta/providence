@@ -1,5 +1,8 @@
 package net.morimekta.providence.generator.format.js;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
@@ -8,6 +11,14 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.testing.ProvidenceMatchers;
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
+import net.morimekta.test.providence.testing.CompactFields;
+import net.morimekta.test.providence.testing.Containers;
+import net.morimekta.test.providence.testing.OptionalFields;
+import net.morimekta.test.providence.testing.RequiredFields;
+import net.morimekta.test.providence.testing.number.Imaginary;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -18,12 +29,16 @@ import org.junit.rules.TemporaryFolder;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,6 +53,9 @@ public class JSGeneratorTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
+    @Rule
+    public SimpleGeneratorWatcher generator = SimpleGeneratorWatcher.create();
+
     private GeneratorOptions    generatorOptions;
     private FileManager         fileManager;
     private ProgramRegistry     programRegistry;
@@ -47,6 +65,7 @@ public class JSGeneratorTest {
 
     @Before
     public void setUp() throws IOException {
+        // tmp.create();
         out = tmp.newFolder("out");
 
         generatorOptions = new GeneratorOptions();
@@ -57,6 +76,13 @@ public class JSGeneratorTest {
         typeLoader = new TypeLoader(ImmutableList.of());
         programRegistry = typeLoader.getProgramRegistry();
         programs = new ArrayList<>();
+
+        generator.setRandom(new Random() {
+            @Override
+            public long nextLong() {
+                return super.nextInt();
+            }
+        });
     }
 
     @Test
@@ -104,11 +130,31 @@ public class JSGeneratorTest {
         assertWorkingJavascript(engine);
     }
 
-    private void assertWorkingJavascript(ScriptEngine engine) throws ScriptException {
-        // TODO: Test way more...
-        engine.eval("var i = new number.Imaginary('{\"1\":0.123,\"2\":-12}');");
-        assertThat(engine.eval("i.toJsonString(true);"), is("{\"v\":0.123,\"i\":-12}"));
-        assertThat(engine.eval("i.toJsonString();"), is("{\"1\":0.123,\"2\":-12}"));
+    private void assertWorkingJavascript(ScriptEngine engine) throws ScriptException, IOException {
+        assertRoundTrip(engine, Imaginary.kDescriptor);
+        assertRoundTrip(engine, CompactFields.kDescriptor);
+        assertRoundTrip(engine, OptionalFields.kDescriptor);
+        assertRoundTrip(engine, RequiredFields.kDescriptor);
+        assertRoundTrip(engine, Containers.kDescriptor);
+        // TODO: There seems to be a named vs non-named bug when serializing... Unknown where.
+    }
+
+    private <M extends PMessage<M,F>, F extends PField> void assertRoundTrip(ScriptEngine engine, PMessageDescriptor<M,F> descriptor)
+            throws IOException, ScriptException {
+        M expected = generator.generate(descriptor);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new JsonSerializer().named().serialize(out, expected);
+
+        String inputJson = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        Object o = engine.eval("new " + descriptor.getQualifiedName() + "('" +
+                               inputJson + "').toJsonString(true);");
+        String outputJson = String.valueOf(o);
+        M actual = new JsonSerializer().deserialize(new ByteArrayInputStream(outputJson.getBytes(StandardCharsets.UTF_8)), descriptor);
+
+        // System.err.println("in:  " + inputJson);
+        // System.err.println("out: " + outputJson);
+
+        assertThat(actual, is(ProvidenceMatchers.equalToMessage(expected)));
     }
 
     private void generateSources(JSOptions options, String... sources) throws IOException {
