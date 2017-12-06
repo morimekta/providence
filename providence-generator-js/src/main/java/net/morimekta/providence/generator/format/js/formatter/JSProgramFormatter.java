@@ -84,6 +84,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                     .comment(program.getDocumentation())
                     .finish();
         }
+        writer.appendln("'use strict';");
 
         if (options.node_js) {
             Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
@@ -296,7 +297,7 @@ public class JSProgramFormatter extends ProgramFormatter {
             } else {
                 writer.formatln("this._%s = ", field.getName());
 
-                new JSConstFormatter(writer).format(JSUtils.defaultValue(field));
+                new JSConstFormatter(writer, options).format(JSUtils.defaultValue(field));
 
                 writer.append(";");
             }
@@ -493,7 +494,7 @@ public class JSProgramFormatter extends ProgramFormatter {
 
         if (JSUtils.alwaysPresent(field)) {
             writer.formatln("this._%s = ", field.getName());
-            new JSConstFormatter(writer).format(JSUtils.defaultValue(field));
+            new JSConstFormatter(writer, options).format(JSUtils.defaultValue(field));
             writer.append(";");
         } else {
             writer.formatln("this._%s = null;", field.getName());
@@ -696,8 +697,13 @@ public class JSProgramFormatter extends ProgramFormatter {
                 String tmpKey = tmpVar("k");
                 String tmpItem = tmpVar("v");
 
-                writer.formatln("var %s = {};", tmpMap)
-                      .formatln("for (var %s in %s) {", tmpKey, source)
+                if (options.es6) {
+                    writer.formatln("var %s = new Map();", tmpMap);
+                } else {
+                    writer.formatln("var %s = {};", tmpMap);
+                }
+
+                writer.formatln("for (var %s in %s) {", tmpKey, source)
                       .begin()
                       .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
                       .begin()
@@ -713,8 +719,12 @@ public class JSProgramFormatter extends ProgramFormatter {
                 }
                 formatValueFromJson(writer, map.itemDescriptor(), tmpItem, tmpItem);
 
-                writer.formatln("%s[%s] = %s;", tmpMap, tmpKey, tmpItem)
-                      .end()
+                if (options.es6) {
+                    writer.formatln("%s.set(%s, %s);", tmpMap, tmpKey, tmpItem);
+                } else {
+                    writer.formatln("%s[%s] = %s;", tmpMap, tmpKey, tmpItem);
+                }
+                writer.end()
                       .appendln("}")
                       .end()
                       .appendln("}")
@@ -778,12 +788,17 @@ public class JSProgramFormatter extends ProgramFormatter {
             String tmpValue = tmpVar("v");
             String tmpMap = tmpVar("m");
             // ...
-            writer.formatln("var %s = {};", tmpMap)
-                  .formatln("for (var %s in %s) {", tmpKey, source)
-                  .begin()
-                  .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
-                  .begin()
-                  .formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
+            writer.formatln("var %s = {};", tmpMap);
+            if (options.es6) {
+                writer.formatln("%s.forEach(function(%s,%s) {", source, tmpValue, tmpKey)
+                      .begin();
+            } else {
+                writer.formatln("for (var %s in %s) {", tmpKey, source)
+                      .begin()
+                      .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
+                      .begin()
+                      .formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
+            }
 
             if (map.keyDescriptor().getType() == PType.MESSAGE && named != Boolean.FALSE) {
                 PMessageDescriptor md = (PMessageDescriptor) map.keyDescriptor();
@@ -794,12 +809,18 @@ public class JSProgramFormatter extends ProgramFormatter {
             }
             formatJsonFromValue(writer, map.itemDescriptor(), tmpValue, tmpValue, named);
 
-            writer.formatln("%s[String(%s)] = %s;", tmpMap, tmpKey, tmpValue)
-                  .end()
-                  .appendln("}")
-                  .end()
-                  .appendln("}")
-                  .formatln("%s = %s;", target, tmpMap);
+            writer.formatln("%s[String(%s)] = %s;", tmpMap, tmpKey, tmpValue);
+
+            if (options.es6) {
+                writer.end()
+                      .appendln("});");
+            } else {
+                writer.end()
+                      .appendln("}")
+                      .end()
+                      .appendln("}");
+            }
+            writer.formatln("%s = %s;", target, tmpMap);
             return;
         }
         if (!source.equals(target)) {
@@ -816,7 +837,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         comment.const_(JSUtils.getDescriptorType(constant.getDescriptor()))
                .finish();
         writer.formatln("%s.%s = ", program.getProgramName(), constant.getName());
-        new JSConstFormatter(writer).format(constant.getDefaultValue());
+        new JSConstFormatter(writer, options).format(constant.getDefaultValue());
         writer.append(";")
               .newline();
     }

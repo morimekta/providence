@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.js.utils;
 
 import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -84,7 +85,15 @@ public class JSUtils {
                 return "Array<" + getDescriptorType(container.itemDescriptor()) + ">";
             case MAP:
                 PMap map = (PMap) descriptor;
-                return "Map<" + getDescriptorType(map.keyDescriptor()) + "," + getDescriptorType(map.itemDescriptor()) + ">";
+                String keyDesc = getDescriptorType(map.keyDescriptor());
+                if (map.keyDescriptor().getType() == PType.MESSAGE) {
+                    // TODO: Make better workaround!
+                    // Messages use the compact JSON string version for the key.
+                    // es6 does not support objects as keys, as all object instances
+                    // ar non-equal.
+                    keyDesc = "string";
+                }
+                return "Map<" + keyDesc + "," + getDescriptorType(map.itemDescriptor()) + ">";
             default:
                 throw new IllegalArgumentException("Unhandled type: " + descriptor.getType());
         }

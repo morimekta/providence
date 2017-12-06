@@ -24,28 +24,38 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.generator.format.js.JSOptions;
+import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonWriter;
 import net.morimekta.util.json.PrettyJsonWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Build const values in javascript.
  */
 public class JSConstFormatter {
-    private final IndentedPrintWriter writer;
-    private final JsonWriter json;
+    private static final JsonSerializer SERIALIZER = new JsonSerializer();
 
-    public JSConstFormatter(IndentedPrintWriter writer) {
+    private final IndentedPrintWriter writer;
+    private final JSOptions options;
+
+    private JsonWriter json;
+
+    public JSConstFormatter(IndentedPrintWriter writer, JSOptions options) {
+        this.options = options;
         this.writer = writer;
         this.json = new PrettyJsonWriter(writer);
     }
@@ -83,17 +93,59 @@ public class JSConstFormatter {
 
             json.endArray();
         } else if (value instanceof Map){
-            json.object();
+            if (options.es6) {
+                writer.formatln("new Map()")
+                      .begin("         ");
 
-            ((Map<?,?>) value).forEach((key, item) -> {
-                formatKey(json, key);
-                format(item);
-            });
+                AtomicBoolean first = new AtomicBoolean(true);
+                ((Map<?, ?>) value).forEach((key, item) -> {
+                    if (first.get()) {
+                        first.set(false);
+                    } else {
+                        writer.appendln();
+                    }
 
-            json.endObject();
+                    writer.append(".set(");
+
+                    if (key instanceof PMessage) {
+                        format(json((PMessage) key));
+                    } else {
+                        format(key);
+                    }
+                    json = new JsonWriter(writer);
+                    writer.append(", ");
+
+                    format(item);
+                    json = new JsonWriter(writer);
+
+                    writer.append(")");
+                });
+
+                writer.end();
+            } else {
+                json.object();
+
+                ((Map<?, ?>) value).forEach((key, item) -> {
+                    formatKey(json, key);
+                    format(item);
+                });
+
+                json.endObject();
+            }
         } else {
             formatValue(json, value);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private String json(PMessage message) {
+        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+        try {
+            SERIALIZER.serialize(tmp, message);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
+        }
+        return new String(tmp.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private void formatValue(JsonWriter json, Object value) {
@@ -171,6 +223,8 @@ public class JSConstFormatter {
             json.key((String) value);
         } else if (value instanceof Binary) {
             json.key((Binary) value);
+        } else if (value instanceof PMessage) {
+            json.key(json((PMessage) value));
         } else {
             throw new IllegalArgumentException("Not supported in JS");
         }

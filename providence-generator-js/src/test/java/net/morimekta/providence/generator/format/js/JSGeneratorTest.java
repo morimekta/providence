@@ -29,6 +29,7 @@ import org.junit.rules.TemporaryFolder;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,11 +45,6 @@ import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Note: This test mainly just runs the same test generation that is also
- * done in /providence-testing. Testing of the output is done there, this
- * just assures no exception is thrown, and generates correct coverage.
- */
 public class JSGeneratorTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
@@ -62,6 +58,8 @@ public class JSGeneratorTest {
     private ArrayList<CProgram> programs;
     private TypeLoader          typeLoader;
     private File                out;
+    private ScriptEngine        engine;
+    private JSOptions           options;
 
     @Before
     public void setUp() throws IOException {
@@ -70,7 +68,7 @@ public class JSGeneratorTest {
 
         generatorOptions = new GeneratorOptions();
         generatorOptions.program_version = "0.1-SNAPSHOT";
-        generatorOptions.generator_program_name = "providence-generator-java/test";
+        generatorOptions.generator_program_name = "providence-generator-js/test";
 
         fileManager = new FileManager(out);
         typeLoader = new TypeLoader(ImmutableList.of());
@@ -83,63 +81,68 @@ public class JSGeneratorTest {
                 return super.nextInt();
             }
         });
+
+        ScriptEngineManager manager = new ScriptEngineManager();
+        engine = manager.getEngineByName("JavaScript");
+        options = new JSOptions();
     }
 
     @Test
-    public void testGenerate_defaults() throws GeneratorException, IOException, ScriptException {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
+    public void testGenerate_es51() throws GeneratorException, IOException, ScriptException {
+        options.es6 = false;
+        generateAndLoadSources();
+        assertWorkingJavascript();
+    }
 
-        JSOptions options = new JSOptions();
-        generateAndLoadSources(options, engine);
-        assertWorkingJavascript(engine);
+    @Test
+    public void testGenerate_es6() throws GeneratorException, IOException, ScriptException {
+        load("/js/es6-shim.js");
+
+        options.es6 = true;
+        generateAndLoadSources();
+        assertWorkingJavascript();
     }
 
     @Test
     public void testGenerate_closure() throws GeneratorException, IOException, ScriptException {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
-        load(engine, "/js/closure.js");
+        load("/js/es6-shim.js");
+        load("/js/closure.js");
 
-        JSOptions options = new JSOptions();
         options.closure = true;
-        generateAndLoadSources(options, engine);
-        assertWorkingJavascript(engine);
+        generateAndLoadSources();
+        assertWorkingJavascript();
     }
 
     @Test
     public void testGenerate_node_js() throws GeneratorException, IOException, ScriptException {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
+        load("/js/es6-shim.js");
+        load("/js/node.js");
 
-        load(engine, "/js/node.js");
-
-        JSOptions options = new JSOptions();
         options.node_js = true;
-        generateSources(options, "/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
-        loadModule(engine, "pvd.testing.number",     new File(out, "pvd/testing/number.js"));
-        loadModule(engine, "pvd.testing.calculator", new File(out, "pvd/testing/calculator.js"));
-        loadModule(engine, "pvd.testing.providence", new File(out, "pvd/testing/providence.js"));
-        loadModule(engine, "pvd.testing.service",    new File(out, "pvd/testing/service.js"));
+        generateSources("/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
+        loadModule("pvd.testing.number",     new File(out, "pvd/testing/number.js"));
+        loadModule("pvd.testing.calculator", new File(out, "pvd/testing/calculator.js"));
+        loadModule("pvd.testing.providence", new File(out, "pvd/testing/providence.js"));
+        loadModule("pvd.testing.service",    new File(out, "pvd/testing/service.js"));
 
         engine.eval("var number     = node.registry['pvd.testing.number'];");
         engine.eval("var calculator = node.registry['pvd.testing.calculator'];");
         engine.eval("var providence = node.registry['pvd.testing.providence'];");
         engine.eval("var service    = node.registry['pvd.testing.service'];");
 
-        assertWorkingJavascript(engine);
+        assertWorkingJavascript();
     }
 
-    private void assertWorkingJavascript(ScriptEngine engine) throws ScriptException, IOException {
-        assertRoundTrip(engine, Imaginary.kDescriptor);
-        assertRoundTrip(engine, CompactFields.kDescriptor);
-        assertRoundTrip(engine, OptionalFields.kDescriptor);
-        assertRoundTrip(engine, RequiredFields.kDescriptor);
-        assertRoundTrip(engine, Containers.kDescriptor);
+    private void assertWorkingJavascript() throws ScriptException, IOException {
+        assertRoundTrip(Imaginary.kDescriptor);
+        assertRoundTrip(CompactFields.kDescriptor);
+        assertRoundTrip(OptionalFields.kDescriptor);
+        assertRoundTrip(RequiredFields.kDescriptor);
+        assertRoundTrip(Containers.kDescriptor);
         // TODO: There seems to be a named vs non-named bug when serializing... Unknown where.
     }
 
-    private <M extends PMessage<M,F>, F extends PField> void assertRoundTrip(ScriptEngine engine, PMessageDescriptor<M,F> descriptor)
+    private <M extends PMessage<M,F>, F extends PField> void assertRoundTrip(PMessageDescriptor<M,F> descriptor)
             throws IOException, ScriptException {
         M expected = generator.generate(descriptor);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -157,7 +160,7 @@ public class JSGeneratorTest {
         assertThat(actual, is(ProvidenceMatchers.equalToMessage(expected)));
     }
 
-    private void generateSources(JSOptions options, String... sources) throws IOException {
+    private void generateSources(String... sources) throws IOException {
         File src = tmp.newFolder("src");
         for (String res : ImmutableList.copyOf(sources)) {
             File f = copyResourceTo(res, src).getAbsoluteFile()
@@ -177,12 +180,12 @@ public class JSGeneratorTest {
         }
     }
 
-    private void generateAndLoadSources(JSOptions options, ScriptEngine engine) throws IOException, ScriptException {
-        generateSources(options, "/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
-        load(engine, new File(out, "pvd/testing/number.js"));
-        load(engine, new File(out, "pvd/testing/calculator.js"));
-        load(engine, new File(out, "pvd/testing/providence.js"));
-        load(engine, new File(out, "pvd/testing/service.js"));
+    private void generateAndLoadSources() throws IOException, ScriptException {
+        generateSources("/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
+        load(new File(out, "pvd/testing/number.js"));
+        load(new File(out, "pvd/testing/calculator.js"));
+        load(new File(out, "pvd/testing/providence.js"));
+        load(new File(out, "pvd/testing/service.js"));
 
         engine.eval("var number     = pvd.testing.number;");
         engine.eval("var calculator = pvd.testing.calculator;");
@@ -190,8 +193,8 @@ public class JSGeneratorTest {
         engine.eval("var service    = pvd.testing.service;");
     }
 
-    private void loadModule(ScriptEngine engine, String module, File file) throws ScriptException, IOException {
-        try (Reader reader = new InputStreamReader(new FileInputStream(file));
+    private void loadModule(String module, File file) throws ScriptException, IOException {
+        try (Reader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)));
              WrappedReader wrapped = new WrappedReader("node.module('" + module + "', function(exports, require, module, __filename, __dirname) {\n",
                                                        reader,
                                                        "\n});")) {
@@ -200,14 +203,14 @@ public class JSGeneratorTest {
         }
     }
 
-    private void load(ScriptEngine engine, String resource) throws IOException, ScriptException {
-        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(resource))) {
+    private void load(String resource) throws IOException, ScriptException {
+        try (Reader reader = new InputStreamReader(new BufferedInputStream(getClass().getResourceAsStream(resource)))) {
             engine.eval(reader);
         }
     }
 
-    private void load(ScriptEngine engine, File file) throws IOException, ScriptException {
-        try (Reader reader = new InputStreamReader(new FileInputStream(file))) {
+    private void load(File file) throws IOException, ScriptException {
+        try (Reader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
             engine.eval(reader);
         }
     }
