@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.generator;
+package net.morimekta.providence.tools.compiler;
 
 /**
  * Which providence generator to use.
@@ -26,6 +26,7 @@ package net.morimekta.providence.generator;
 public enum Language {
     java("Main java (1.8+) code generator."),
     json("Generates JSON specification files."),
+    js("Generated JavaScript (es5.1 or es6)."),
     ;
 
     public final String desc;

@@ -31,6 +31,8 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
+import net.morimekta.providence.generator.format.js.JSGenerator;
+import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -153,8 +155,9 @@ public class CompilerOptions {
         generatorOptions.generator_program_name = "pvdc";
         generatorOptions.program_version = Utils.getVersionString();
         switch (gen.generator) {
-            case json:
+            case json: {
                 return new JsonGenerator(getFileManager(), loader);
+            }
             case java: {
                 JavaOptions options = new JavaOptions();
                 for (String opt : gen.options) {
@@ -185,6 +188,36 @@ public class CompilerOptions {
                                          loader.getProgramRegistry().registryForPath(programPath),
                                          generatorOptions,
                                          options);
+            }
+            // TODO: Apparently this line (below) breaks 'mvn clean package -Pcli'...
+            case js: {
+                JSOptions options = new JSOptions();
+                for (String opt : gen.options) {
+                    switch (opt) {
+                        case "es51":
+                            options.es51 = true;
+                            break;
+                        case "ts":
+                            options.type_script = true;
+                            break;
+                        case "closure":
+                            options.closure = true;
+                            break;
+                        case "node.js":
+                            options.node_js = true;
+                            break;
+                        default:
+                            throw new ArgumentException("No such option for js generator: " + opt);
+                    }
+                }
+                if (gen.options.contains("closure") && gen.options.contains("node.js")) {
+                    throw new ArgumentException("Generator options 'closure' and 'node.js' are mutually exclusive.");
+                }
+
+                return new JSGenerator(getFileManager(),
+                                       loader.getProgramRegistry().registryForPath(programPath),
+                                       generatorOptions,
+                                       options);
             }
             default:
                 throw new ArgumentException("Unknown language %s.", gen.generator.name());

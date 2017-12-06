@@ -42,6 +42,10 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-generator-js</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-common</artifactId>
         </dependency>
 

@@ -24,7 +24,6 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.Language;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
@@ -64,6 +63,7 @@ public class Compiler {
                     System.out.format("%s : %s%n",
                                       options.help.generator.name(),
                                       options.help.generator.desc);
+                    System.out.println();
                     System.out.println("Available options");
                     System.out.println();
                     switch (options.help.generator) {
@@ -78,6 +78,12 @@ public class Compiler {
                                                "                         annotation for each generated class. [Default on]");
                             System.out.println(" - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
                                                "                         effect on unions.");
+                            break;
+                        case js:
+                            System.out.println(" - es51                : Generate for ECMA Script 5.1 (no maps, promises).");
+                            System.out.println(" - ts                  : Generate definition files for typescript.");
+                            System.out.println(" - closure             : Generate google closure dependencies (goog.require and goog.provide).");
+                            System.out.println(" - node_js             : Generate node.js module wrapper.");
                             break;
                         default:
                             System.out.println("No options available for " + options.help.generator + ".");

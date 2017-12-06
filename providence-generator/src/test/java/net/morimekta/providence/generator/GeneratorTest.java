@@ -35,12 +35,6 @@ public class GeneratorTest {
         assertThat(ex.getCause(), is(sameInstance(e)));
     }
 
-    @Test
-    public void testLanguage() {
-        assertThat(Language.java.desc, is("Main java (1.8+) code generator."));
-        assertThat(Language.json.desc, is("Generates JSON specification files."));
-    }
-
     private static class TestGenerator extends Generator {
         public TestGenerator(FileManager manager) {
             super(manager);

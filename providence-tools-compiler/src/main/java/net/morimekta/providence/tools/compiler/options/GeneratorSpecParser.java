@@ -21,7 +21,7 @@ package net.morimekta.providence.tools.compiler.options;/*
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.util.Parser;
-import net.morimekta.providence.generator.Language;
+import net.morimekta.providence.tools.compiler.Language;
 
 import java.util.ArrayList;
 import java.util.Collections;

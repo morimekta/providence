@@ -3,7 +3,7 @@ package net.morimekta.providence.tools.compiler.options;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentList;
 import net.morimekta.console.args.BaseOption;
-import net.morimekta.providence.generator.Language;
+import net.morimekta.providence.tools.compiler.Language;
 
 import java.util.function.Consumer;
 

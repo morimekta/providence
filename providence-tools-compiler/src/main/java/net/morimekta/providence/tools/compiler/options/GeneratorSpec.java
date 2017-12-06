@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.compiler.options;
 
-import net.morimekta.providence.generator.Language;
+import net.morimekta.providence.tools.compiler.Language;
 
 import java.util.Collection;
 

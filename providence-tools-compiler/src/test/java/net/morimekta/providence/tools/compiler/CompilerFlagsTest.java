@@ -71,7 +71,8 @@ public class CompilerFlagsTest {
                      "\n" +
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
-                     " - json       : Generates JSON specification files.\n")));
+                     " - json       : Generates JSON specification files.\n" +
+                     " - js         : Generated JavaScript (es5.1 or es6).\n")));
         assertThat(exitCode, is(0));
     }
 
@@ -83,7 +84,10 @@ public class CompilerFlagsTest {
         assertThat(console.output(),
                    is(equalToLines("Providence compiler - " + version + "\n" +
                                    "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
-                                   "java : Main java (1.8+) code generator.\n" + "Available options\n" + "\n" +
+                                   "java : Main java (1.8+) code generator.\n" +
+                                   "\n" +
+                                   "Available options\n" +
+                                   "\n" +
                                    " - android             : Add android parcelable interface to model classes.\n" +
                                    " - jackson             : Add jackson 2 annotations to model classes.\n" +
                                    " - no_rw_binary        : Skip adding the binary RW methods to generated code. [Default on]\n" +
@@ -93,6 +97,26 @@ public class CompilerFlagsTest {
                                    "                         annotation for each generated class. [Default on]\n" +
                                    " - public_constructors : Generate public constructors for all structs and exceptions. Have no\n" +
                                    "                         effect on unions.\n")));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testHelp_js() {
+        sut.run("--help", "js");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(),
+                   is(equalToLines("Providence compiler - " + version + "\n" +
+                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                                   "\n" +
+                                   "js : Generated JavaScript (es5.1 or es6).\n" +
+                                   "\n" +
+                                   "Available options\n" +
+                                   "\n" +
+                                   " - es51                : Generate for ECMA Script 5.1 (no maps, promises).\n" +
+                                   " - ts                  : Generate definition files for typescript.\n" +
+                                   " - closure             : Generate google closure dependencies (goog.require and goog.provide).\n" +
+                                   " - node_js             : Generate node.js module wrapper.\n")));
         assertThat(exitCode, is(0));
     }
 
