@@ -86,7 +86,6 @@ public class JSProgramFormatter extends ProgramFormatter {
                     .comment(program.getDocumentation())
                     .finish();
         }
-        writer.appendln("'use strict';");
 
         if (options.node_js) {
             Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
@@ -137,6 +136,7 @@ public class JSProgramFormatter extends ProgramFormatter {
             // Start enclosure.
             writer.newline()
                   .appendln("(function(){")
+                  .appendln("'use strict';")
                   .newline();
 
             boolean inc = false;
