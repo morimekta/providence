@@ -54,9 +54,6 @@ public class JSGenerator extends Generator {
 
         ImmutableList.Builder<ProgramFormatter> builder = ImmutableList.builder();
         builder.add(new JSProgramFormatter(jsOptions, registry));
-        if (jsOptions.type_script) {
-            // builder.add(new TSProgramFormatter(jsOptions));
-        }
         this.formatters = builder.build();
         this.generatorOptions = generatorOptions;
     }

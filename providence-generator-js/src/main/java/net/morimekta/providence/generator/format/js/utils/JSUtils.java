@@ -89,7 +89,7 @@ public class JSUtils {
                 if (map.keyDescriptor().getType() == PType.MESSAGE) {
                     // TODO: Make better workaround!
                     // Messages use the compact JSON string version for the key.
-                    // es6 does not support objects as keys, as all object instances
+                    // es51 does not support objects as keys, as all object instances
                     // ar non-equal.
                     keyDesc = "string";
                 }

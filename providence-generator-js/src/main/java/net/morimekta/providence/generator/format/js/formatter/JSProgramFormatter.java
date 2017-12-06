@@ -31,6 +31,7 @@ import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.generator.format.js.utils.ClosureDocBuilder;
 import net.morimekta.providence.generator.format.js.utils.JSConstFormatter;
 import net.morimekta.providence.generator.format.js.utils.JSUtils;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumValue;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * Formatter for a single '.js' file. Supports inclusion variants
@@ -159,15 +161,10 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
     protected void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
-        if (options.closure) {
-            ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-            if (descriptor.getDocumentation() != null) {
-                comment.comment(descriptor.getDocumentation())
-                       .newline();
-            }
-            comment.enum_("number")
-                   .finish();
-        }
+        maybeComment(writer, descriptor, comment -> {
+            comment.enum_("number");
+        });
+
         writer.formatln("%s.%s = {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
               .begin();
 
@@ -179,15 +176,10 @@ public class JSProgramFormatter extends ProgramFormatter {
                 writer.append(",");
             }
 
-            if (options.closure) {
-                ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-                if (value.getDocumentation() != null) {
-                    comment.comment(value.getDocumentation())
-                           .newline();
-                }
-                comment.const_("number")
-                       .finish();
-            }
+            maybeComment(writer, value, comment -> {
+                comment.const_("number");
+            });
+
             writer.formatln("%s: %d", JSUtils.enumConst(value), value.asInteger());
         }
 
@@ -195,14 +187,16 @@ public class JSProgramFormatter extends ProgramFormatter {
               .formatln("};")
               .newline();
 
+        ClosureDocBuilder comment = new ClosureDocBuilder(writer);
+        comment.comment("Get the value of the enum, given value or name");
         if (options.closure) {
-            ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-            comment.param_("id", "number|string", "Identification for enum value")
+            comment.newline()
+                   .param_("id", "number|string", "Identification for enum value")
                    .param_("opt_keepNumeric", "boolean=", "Optional arg to keep numeric values even if invalid.")
                    .return_(descriptor.getProgramName() + "." + JSUtils.getClassName(descriptor) + "?",
-                            "The enum value if valid.")
-                   .finish();
+                            "The enum value if valid.");
         }
+        comment.finish();
         writer.formatln("%s.%s.valueOf = function(id, opt_keepNumeric) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
               .begin()
               .appendln("switch(id) {")
@@ -219,7 +213,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
 
         writer.appendln("default:")
-              .appendln("    if (!!opt_keepNumeric && 'number' == typeof(id)) {")
+              .appendln("    if (opt_keepNumeric && 'number' == typeof(id)) {")
               .appendln("        return id;")
               .appendln("    }")
               .appendln("    return null;");
@@ -230,14 +224,16 @@ public class JSProgramFormatter extends ProgramFormatter {
               .appendln("};")
               .newline();
 
+        comment = new ClosureDocBuilder(writer);
+        comment.comment("Get the string name of the enum value.");
         if (options.closure) {
-            ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-            comment.param_("value", descriptor.getProgramName() + "." + JSUtils.getClassName(descriptor),
+            comment.newline()
+                   .param_("value", descriptor.getProgramName() + "." + JSUtils.getClassName(descriptor),
                            "The enum value")
-                   .return_("string?",
-                            "The enum name.")
-                   .finish();
+                   .return_("string?", "The enum name.");
         }
+        comment.finish();
+
         writer.formatln("%s.%s.nameOf = function(value) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
               .begin()
               .appendln("switch(value) {")
@@ -270,27 +266,30 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
     private void formatMessageConstructor(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
-        ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-        if (descriptor.getDocumentation() != null) {
-            comment.comment(descriptor.getDocumentation())
-                   .newline();
-        }
-        if (JSUtils.jsonCompactible(descriptor)) {
-            comment.param_("opt_json", "Object|Array|string=", "Optional json object, array or serialized string.");
-        } else {
-            comment.param_("opt_json", "Object|string=", "Optional json object or serialized string.");
-        }
-        comment.constructor_()
-               .finish();
+        maybeComment(writer, descriptor, comment -> {
+            if (JSUtils.jsonCompactible(descriptor)) {
+                comment.param_("opt_json",
+                               "Object|Array|string=",
+                               "Optional json object, array or serialized string.");
+            } else {
+                comment.param_("opt_json",
+                               "Object|string=",
+                               "Optional json object or serialized string.");
+            }
+            comment.constructor_();
+
+        });
 
         writer.formatln("%s.%s = function(opt_json) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
               .begin();
 
         for (CField field : descriptor.getFields()) {
-            comment = new ClosureDocBuilder(writer);
-            comment.type_(JSUtils.getFieldType(field))
-                   .private_()
-                   .finish();
+            if (options.closure) {
+                ClosureDocBuilder comment = new ClosureDocBuilder(writer);
+                comment.type_(JSUtils.getFieldType(field))
+                       .private_()
+                       .finish();
+            }
 
             if (!JSUtils.alwaysPresent(field)) {
                 writer.formatln("this._%s = null;", field.getName());
@@ -448,13 +447,9 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
     private void formatMessageFieldMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor, CField field) {
-        ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-        if (field.getDocumentation() != null) {
-            comment.comment(field.getDocumentation())
-                   .newline();
-        }
-        comment.return_(JSUtils.getFieldType(field), "The field value")
-               .finish();
+        maybeComment(writer, field, comment -> {
+            comment.return_(JSUtils.getFieldType(field), "The field value");
+        });
 
         writer.formatln("%s.%s.prototype.%s = function() {",
                         descriptor.getProgramName(), JSUtils.getClassName(descriptor),
@@ -463,9 +458,9 @@ public class JSProgramFormatter extends ProgramFormatter {
               .appendln("};")
               .newline();
 
-        comment = new ClosureDocBuilder(writer);
-        comment.param_("value", JSUtils.getFieldType(field), "The new field value")
-               .finish();
+        maybeComment(writer, field, comment -> {
+            comment.param_("value", JSUtils.getFieldType(field), "The new field value");
+        });
 
         writer.formatln("%s.%s.prototype.%s = function(value) {",
                         descriptor.getProgramName(), JSUtils.getClassName(descriptor), Strings.camelCase("set", field.getName()))
@@ -511,8 +506,12 @@ public class JSProgramFormatter extends ProgramFormatter {
     private void formatMessageMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
         if (JSUtils.jsonCompactible(descriptor)) {
             ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-            comment.return_("boolean", "If the instance can be serialized as compact")
-                   .finish();
+            comment.comment("Check if the instance can be serialized as compact");
+            if (options.closure) {
+                comment.newline()
+                       .return_("boolean", "If compact");
+            }
+            comment.finish();
 
             writer.formatln("%s.%s.prototype.compact = function() {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
                   .begin()
@@ -534,10 +533,12 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
 
         ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-        comment.comment("Make a JSON compatible object representation of the message.")
-               .newline()
-               .param_("opt_named", "boolean=", "Optional use named json.")
-               .finish();
+        comment.comment("Make a JSON compatible object representation of the message.");
+        if (options.closure) {
+            comment.newline()
+                   .param_("opt_named", "boolean=", "Optional use named json.");
+        }
+        comment.finish();
 
         writer.formatln("%s.%s.prototype.toJson = function(opt_named) {",
                         descriptor.getProgramName(), JSUtils.getClassName(descriptor))
@@ -572,7 +573,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
 
         writer.appendln("var obj = {};")
-              .appendln("if (!!opt_named) {")
+              .appendln("if (opt_named) {")
               .begin();
 
         for (CField field : descriptor.getFields()) {
@@ -629,6 +630,22 @@ public class JSProgramFormatter extends ProgramFormatter {
               .appendln("    return JSON.stringify(this.toJson(opt_named));")
               .appendln("};")
               .newline();
+    }
+
+    private void maybeComment(IndentedPrintWriter writer, CAnnotatedDescriptor descriptor, Consumer<ClosureDocBuilder> closure) {
+        if (descriptor.getDocumentation() != null || options.closure) {
+            ClosureDocBuilder builder = new ClosureDocBuilder(writer);
+            if (descriptor.getDocumentation() != null) {
+                builder.comment(descriptor.getDocumentation());
+            }
+            if (descriptor.getDocumentation() != null && options.closure) {
+                builder.newline();
+            }
+            if (options.closure) {
+                closure.accept(builder);
+            }
+            builder.finish();
+        }
     }
 
     private void formatValueFromJson(IndentedPrintWriter writer,
@@ -697,7 +714,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 String tmpKey = tmpVar("k");
                 String tmpItem = tmpVar("v");
 
-                if (options.es6) {
+                if (!options.es51) {
                     writer.formatln("var %s = new Map();", tmpMap);
                 } else {
                     writer.formatln("var %s = {};", tmpMap);
@@ -719,7 +736,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 }
                 formatValueFromJson(writer, map.itemDescriptor(), tmpItem, tmpItem);
 
-                if (options.es6) {
+                if (!options.es51) {
                     writer.formatln("%s.set(%s, %s);", tmpMap, tmpKey, tmpItem);
                 } else {
                     writer.formatln("%s[%s] = %s;", tmpMap, tmpKey, tmpItem);
@@ -750,7 +767,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                                 target, ed.getProgramName(), JSUtils.getClassName(ed), source, source);
                 return;
             } else if (named == null) {
-                writer.formatln("%s = !!opt_named && %s.%s.nameOf(%s) || %s;",
+                writer.formatln("%s = opt_named && %s.%s.nameOf(%s) || %s;",
                                 target, ed.getProgramName(), JSUtils.getClassName(ed), source, source);
                 return;
             }
@@ -772,7 +789,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                                     JSUtils.getClassName(ed));
                     return;
                 } else if (named == null) {
-                    writer.formatln("%s = !!opt_named ? %s.map(function(i) {return %s.%s.nameOf(i) || i;}) : %s;",
+                    writer.formatln("%s = opt_named ? %s.map(function(i) {return %s.%s.nameOf(i) || i;}) : %s;",
                                     target,
                                     source,
                                     ed.getProgramName(),
@@ -789,7 +806,7 @@ public class JSProgramFormatter extends ProgramFormatter {
             String tmpMap = tmpVar("m");
             // ...
             writer.formatln("var %s = {};", tmpMap);
-            if (options.es6) {
+            if (!options.es51) {
                 writer.formatln("%s.forEach(function(%s,%s) {", source, tmpValue, tmpKey)
                       .begin();
             } else {
@@ -811,7 +828,7 @@ public class JSProgramFormatter extends ProgramFormatter {
 
             writer.formatln("%s[String(%s)] = %s;", tmpMap, tmpKey, tmpValue);
 
-            if (options.es6) {
+            if (!options.es51) {
                 writer.end()
                       .appendln("});");
             } else {

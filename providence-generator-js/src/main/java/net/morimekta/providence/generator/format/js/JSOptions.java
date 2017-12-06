@@ -27,5 +27,5 @@ public class JSOptions {
     public boolean type_script = false;
     public boolean closure     = false;
     public boolean node_js     = false;
-    public boolean es6         = true;
+    public boolean es51        = false;
 }

@@ -88,17 +88,15 @@ public class JSGeneratorTest {
     }
 
     @Test
-    public void testGenerate_es51() throws GeneratorException, IOException, ScriptException {
-        options.es6 = false;
+    public void testGenerate_es6() throws GeneratorException, IOException, ScriptException {
+        load("/js/es6-shim.js");
         generateAndLoadSources();
         assertWorkingJavascript();
     }
 
     @Test
-    public void testGenerate_es6() throws GeneratorException, IOException, ScriptException {
-        load("/js/es6-shim.js");
-
-        options.es6 = true;
+    public void testGenerate_es51() throws GeneratorException, IOException, ScriptException {
+        options.es51 = true;
         generateAndLoadSources();
         assertWorkingJavascript();
     }

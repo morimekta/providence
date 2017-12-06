@@ -41,7 +41,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Build const values in javascript.
@@ -93,19 +92,13 @@ public class JSConstFormatter {
 
             json.endArray();
         } else if (value instanceof Map){
-            if (options.es6) {
-                writer.formatln("new Map()")
-                      .begin("         ");
+            if (!options.es51) {
+                writer.format("new Map()")
+                      .begin().begin();
 
-                AtomicBoolean first = new AtomicBoolean(true);
                 ((Map<?, ?>) value).forEach((key, item) -> {
-                    if (first.get()) {
-                        first.set(false);
-                    } else {
-                        writer.appendln();
-                    }
-
-                    writer.append(".set(");
+                    writer.appendln(".set(")
+                          .begin().begin();
 
                     if (key instanceof PMessage) {
                         format(json((PMessage) key));
@@ -118,10 +111,11 @@ public class JSConstFormatter {
                     format(item);
                     json = new JsonWriter(writer);
 
-                    writer.append(")");
+                    writer.append(")")
+                          .end().end();
                 });
 
-                writer.end();
+                writer.end().end();
             } else {
                 json.object();
 
