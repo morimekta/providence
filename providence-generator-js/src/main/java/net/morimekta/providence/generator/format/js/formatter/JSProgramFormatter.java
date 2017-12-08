@@ -20,17 +20,20 @@
  */
 package net.morimekta.providence.generator.format.js.formatter;
 
-import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.generator.format.js.utils.ClosureDocBuilder;
+import net.morimekta.providence.generator.format.js.utils.ClosureUtils;
 import net.morimekta.providence.generator.format.js.utils.JSConstFormatter;
 import net.morimekta.providence.generator.format.js.utils.JSUtils;
+import net.morimekta.providence.generator.format.js.utils.TSUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
@@ -59,6 +62,7 @@ import java.util.function.Consumer;
  */
 public class JSProgramFormatter extends ProgramFormatter {
     private final AtomicInteger tmp;
+    private final String        programContext;
 
     public JSProgramFormatter(JSOptions options,
                               ProgramTypeRegistry registry) {
@@ -68,6 +72,7 @@ public class JSProgramFormatter extends ProgramFormatter {
             throw new IllegalArgumentException("Both node.js and google closure used!");
         }
 
+        this.programContext = registry.getProgram().getProgramName();
         this.tmp = new AtomicInteger();
     }
 
@@ -76,6 +81,9 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
     public String getFileName(CProgram program) {
+        if (options.type_script) {
+            return program.getProgramName() + ".ts";
+        }
         return program.getProgramName() + ".js";
     }
 
@@ -87,7 +95,23 @@ public class JSProgramFormatter extends ProgramFormatter {
                     .finish();
         }
 
-        if (options.node_js) {
+        if (options.type_script) {
+            if (program.getIncludedPrograms().size() > 0) {
+                Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
+
+                for (String include : program.getIncludedPrograms()) {
+                    CProgram included = registry.getProgramForName(include);
+                    Path includedPath = Paths.get(File.separator + JSUtils.getPackageClassPath(included), included.getProgramName());
+                    String relative = relativeTo.relativize(includedPath).toString();
+                    if (!relative.startsWith(".")) {
+                        relative = "./" + relative;
+                    }
+
+                    writer.formatln("import * as %s from '%s';", included.getProgramName(), relative);
+                }
+                writer.newline();
+            }
+        } else if (options.node_js) {
             Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
             for (String include : program.getIncludedPrograms()) {
                 CProgram included = registry.getProgramForName(include);
@@ -160,13 +184,26 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
     }
 
-    protected void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
-        maybeComment(writer, descriptor, comment -> {
-            comment.enum_("number");
-        });
+    private String getClassReference(CMessageDescriptor descriptor) {
+        return getClassReference((PDeclaredDescriptor) descriptor);
+    }
 
-        writer.formatln("%s.%s = {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .begin();
+    private String getClassReference(PDeclaredDescriptor declaredDescriptor) {
+        if (options.type_script) {
+            return TSUtils.getTypeReference(programContext, declaredDescriptor);
+        }
+        return JSUtils.getClassReference(declaredDescriptor);
+    }
+
+    protected void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
+        maybeComment(writer, descriptor, comment -> comment.enum_("number"));
+
+        if (options.type_script) {
+            writer.formatln("export enum %s {", JSUtils.getClassName(descriptor));
+        } else {
+            writer.formatln("%s = {", getClassReference(descriptor));
+        }
+        writer.begin();
 
         boolean first = true;
         for (CEnumValue value : descriptor.getValues()) {
@@ -176,16 +213,22 @@ public class JSProgramFormatter extends ProgramFormatter {
                 writer.append(",");
             }
 
-            maybeComment(writer, value, comment -> {
-                comment.const_("number");
-            });
+            maybeComment(writer, value, comment -> comment.const_("number"));
 
-            writer.formatln("%s: %d", JSUtils.enumConst(value), value.asInteger());
+            if (options.type_script) {
+                writer.formatln("%s = %s", JSUtils.enumConst(value), value.asInteger());
+            } else {
+                writer.formatln("%s: %d", JSUtils.enumConst(value), value.asInteger());
+            }
         }
 
-        writer.end()
-              .formatln("};")
-              .newline();
+        writer.end();
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
 
         ClosureDocBuilder comment = new ClosureDocBuilder(writer);
         comment.comment("Get the value of the enum, given value or name");
@@ -193,12 +236,19 @@ public class JSProgramFormatter extends ProgramFormatter {
             comment.newline()
                    .param_("id", "number|string", "Identification for enum value")
                    .param_("opt_keepNumeric", "boolean=", "Optional arg to keep numeric values even if invalid.")
-                   .return_(descriptor.getProgramName() + "." + JSUtils.getClassName(descriptor) + "?",
+                   .return_(ClosureUtils.getTypeString(descriptor, options) + "?",
                             "The enum value if valid.");
         }
         comment.finish();
-        writer.formatln("%s.%s.valueOf = function(id, opt_keepNumeric) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .begin()
+        if (options.type_script) {
+            writer.formatln("export namespace %s {", JSUtils.getClassName(descriptor))
+                  .begin();
+
+            writer.formatln("export function valueOf(id:any, opt_keepNumeric?:boolean):number {");
+        } else {
+            writer.formatln("%s.valueOf = function(id, opt_keepNumeric) {", getClassReference(descriptor));
+        }
+        writer.begin()
               .appendln("switch(id) {")
               .begin();
 
@@ -206,23 +256,26 @@ public class JSProgramFormatter extends ProgramFormatter {
             writer.formatln("case %d:", value.asInteger())
                   .formatln("case '%d':", value.asInteger())
                   .formatln("case '%s':", value.asString())
-                  .formatln("    return %s.%s.%s;",
-                            descriptor.getProgramName(),
-                            JSUtils.getClassName(descriptor),
+                  .formatln("    return %s.%s;",
+                            getClassReference(descriptor),
                             JSUtils.enumConst(value));
         }
 
         writer.appendln("default:")
-              .appendln("    if (opt_keepNumeric && 'number' == typeof(id)) {")
+              .appendln("    if (opt_keepNumeric && 'number' === typeof(id)) {")
               .appendln("        return id;")
               .appendln("    }")
               .appendln("    return null;");
 
         writer.end()
               .appendln("}")
-              .end()
-              .appendln("};")
-              .newline();
+              .end();
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
 
         comment = new ClosureDocBuilder(writer);
         comment.comment("Get the string name of the enum value.");
@@ -234,8 +287,12 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
         comment.finish();
 
-        writer.formatln("%s.%s.nameOf = function(value) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .begin()
+        if (options.type_script) {
+            writer.appendln("export function nameOf(value:any, opt_keepNumeric?:boolean):string {");
+        } else {
+            writer.formatln("%s.%s.nameOf = function(value, opt_keepNumeric) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor));
+        }
+        writer.begin()
               .appendln("switch(value) {")
               .begin();
 
@@ -244,17 +301,50 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .formatln("    return '%s';", value.getName());
         }
 
-        writer.appendln("default:")
-              .appendln("    return null;");
+        writer.appendln("default:");
+        if (options.type_script) {
+            // Typescript enforces string return type here...
+            writer.appendln("    if (!!opt_keepNumeric) return String(value);");
+        } else {
+            writer.appendln("    if (!!opt_keepNumeric) return value;");
+        }
+        writer.appendln("    return null;");
 
         writer.end()
               .appendln("}")
-              .end()
-              .appendln("};")
-              .newline();
+              .end();
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
+
+        if (options.type_script) {
+            writer.end()
+                  .appendln("}");
+        }
     }
 
     protected void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
+        if (options.type_script) {
+            writer.formatln("export class %s {", getClassReference(descriptor))
+                  .begin();
+
+            if (JSUtils.isUnion(descriptor)) {
+                writer.appendln("private _field: string;");
+                writer.appendln("private _value: any;");
+            } else {
+                // CA: declare fields.
+                for (CField field : descriptor.getFields()) {
+                    writer.formatln("private _%s: %s;",
+                                    field.getName(),
+                                    TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+                }
+            }
+            writer.newline();
+        }
+
         // A: constructor
         formatMessageConstructor(writer, descriptor);
         // B: getters, setters
@@ -263,6 +353,11 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
         // C: toJson, toJsonString
         formatMessageMethods(writer, descriptor);
+
+        if (options.type_script) {
+            writer.end()
+                  .appendln("}");
+        }
     }
 
     private void formatMessageConstructor(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
@@ -277,49 +372,66 @@ public class JSProgramFormatter extends ProgramFormatter {
                                "Optional json object or serialized string.");
             }
             comment.constructor_();
-
         });
 
-        writer.formatln("%s.%s = function(opt_json) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .begin();
+        if (options.type_script) {
+            writer.formatln("constructor(opt_json?:any) {");
+        } else {
+            writer.formatln("%s = function(opt_json) {", getClassReference(descriptor));
+        }
+        writer.begin();
 
-        for (CField field : descriptor.getFields()) {
+        if (JSUtils.isUnion(descriptor)) {
             if (options.closure) {
                 ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-                comment.type_(JSUtils.getFieldType(field))
+                comment.type_("boolean")
                        .private_()
                        .finish();
             }
+            writer.formatln("this._field = null;");
+            if (options.closure) {
+                ClosureDocBuilder comment = new ClosureDocBuilder(writer);
+                comment.type_("*")
+                       .private_()
+                       .finish();
+            }
+            writer.formatln("this._value = null;");
+        } else {
+            for (CField field : descriptor.getFields()) {
+                if (options.closure) {
+                    ClosureDocBuilder comment = new ClosureDocBuilder(writer);
+                    comment.type_(ClosureUtils.getFieldType(field, options))
+                           .private_()
+                           .finish();
+                }
 
-            if (!JSUtils.alwaysPresent(field)) {
-                writer.formatln("this._%s = null;", field.getName());
-            } else {
-                writer.formatln("this._%s = ", field.getName());
+                if (!JSUtils.alwaysPresent(field)) {
+                    writer.formatln("this._%s = null;", field.getName());
+                } else {
+                    writer.formatln("this._%s = ", field.getName());
 
-                new JSConstFormatter(writer, options).format(JSUtils.defaultValue(field));
+                    new JSConstFormatter(writer, options, programContext).format(JSUtils.defaultValue(field));
 
-                writer.append(";");
+                    writer.append(";");
+                }
             }
         }
-
-        writer.appendln("if ('string' == typeof(opt_json)) {")
+        writer.newline()
+              .appendln("if ('string' === typeof(opt_json)) {")
               .appendln("    opt_json = JSON.parse(opt_json);")
               .appendln("}");
 
-        if (((PMessageDescriptor) descriptor).getVariant() == PMessageVariant.UNION) {
+        if (JSUtils.isUnion(descriptor)) {
 
             // union parsing.
 
-            writer.appendln("if ('object' == typeof(opt_json)) {")
-                  .begin()
-                  .appendln("var _set = false;");
+            writer.appendln("if ('object' === typeof(opt_json)) {")
+                  .begin();
 
             writer.appendln("for (var key in opt_json) {")
                   .begin()
                   .appendln("if (opt_json.hasOwnProperty(key)) {")
                   .begin()
-                  .appendln("if (_set) throw 'Multiple union fields.';")
-                  .newline()
                   .appendln("switch (key) {")
                   .begin();
 
@@ -330,10 +442,10 @@ public class JSProgramFormatter extends ProgramFormatter {
 
                 formatValueFromJson(writer,
                                     field.getDescriptor(),
-                                    "this._" + field.getName(),
+                                    "this._value",
                                     "opt_json[key]");
 
-                writer.appendln("_set = true;")
+                writer.formatln("this._field = '%s';", field.getName())
                       .formatln("break;")
                       .end();
             }
@@ -441,70 +553,171 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .appendln("}");
         }
 
-        writer.end()
-              .appendln("};")
-              .newline();
+        writer.end();
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
     }
 
     private void formatMessageFieldMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor, CField field) {
-        maybeComment(writer, field, comment -> {
-            comment.return_(JSUtils.getFieldType(field), "The field value");
-        });
+        maybeComment(writer, field, comment -> comment.return_(ClosureUtils.getFieldType(field, options), "The field value"));
+        if (options.type_script) {
+            writer.formatln("%s():%s {",
+                            Strings.camelCase("get", field.getName()),
+                            TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+        } else {
+            writer.formatln("%s.prototype.%s = function() {",
+                            getClassReference(descriptor),
+                            Strings.camelCase("get", field.getName()));
+        }
+        if (JSUtils.isUnion(descriptor)) {
+            writer.formatln("    return '%s' == this._field ? this._value : null;", field.getName());
+        } else if (JSUtils.defaultValue(field) != null && !JSUtils.alwaysPresent(field)) {
+            writer.begin()
+                  .formatln("if (this._%s === null) {", field.getName())
+                  .begin()
+                  .formatln("return ");
 
-        writer.formatln("%s.%s.prototype.%s = function() {",
-                        descriptor.getProgramName(), JSUtils.getClassName(descriptor),
-                        Strings.camelCase("get", field.getName()))
-              .formatln("    return this._%s;", field.getName())
-              .appendln("};")
-              .newline();
+            new JSConstFormatter(writer, options, programContext).format(JSUtils.defaultValue(field));
 
-        maybeComment(writer, field, comment -> {
-            comment.param_("value", JSUtils.getFieldType(field), "The new field value");
-        });
+            writer.append(";")
+                  .end()
+                  .appendln("} else {")
+                  .formatln("    return this._%s;", field.getName())
+                  .appendln("}")
+                  .end();
+        } else {
+            writer.formatln("    return this._%s;", field.getName());
+        }
 
-        writer.formatln("%s.%s.prototype.%s = function(value) {",
-                        descriptor.getProgramName(), JSUtils.getClassName(descriptor), Strings.camelCase("set", field.getName()))
-              .begin()
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
+
+        maybeComment(writer,
+                     field,
+                     comment -> comment.param_("value", ClosureUtils.getFieldType(field, options), "The new field value"));
+
+        if (options.type_script) {
+            writer.formatln("%s(value?:%s):void {",
+                            Strings.camelCase("set", field.getName()),
+                            TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+        } else {
+            writer.formatln("%s.prototype.%s = function(value) {",
+                            getClassReference(descriptor),
+                            Strings.camelCase("set", field.getName()));
+        }
+        writer.begin()
               // If value is neither null nor undefined, it should be OK.
               .appendln("if (value !== null && value !== undefined) {")
               .begin();
 
-        switch (field.getType()) {
-            // Skip value coercing for these field types.
-            case MESSAGE:
-            case ENUM:
-            case LIST:
-            case SET:
-            case MAP:
-                writer.formatln("this._%s = value;", field.getName());
-                break;
-            default:
-                formatValueFromJson(writer, field.getDescriptor(), "this._" + field.getName(), "value");
-                break;
-        }
-
-        writer.end()
-              .appendln("} else {")
-              .begin();
-
-        if (JSUtils.alwaysPresent(field)) {
-            writer.formatln("this._%s = ", field.getName());
-            new JSConstFormatter(writer, options).format(JSUtils.defaultValue(field));
-            writer.append(";");
+        if (JSUtils.isUnion(descriptor)) {
+            if (options.type_script) {
+                writer.appendln("this._value = value;");
+            } else {
+                switch (field.getType()) {
+                    // Skip value coercing for these field types.
+                    case MESSAGE:
+                    case ENUM:
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.appendln("this._value = value;");
+                        break;
+                    default:
+                        formatValueFromJson(writer, field.getDescriptor(), "this._value", "value");
+                        break;
+                }
+            }
+            writer.formatln("this._field = '%s';", field.getName());
         } else {
-            writer.formatln("this._%s = null;", field.getName());
+            if (options.type_script) {
+                writer.formatln("this._%s = value;", field.getName());
+            } else {
+                switch (field.getType()) {
+                    // Skip value coercing for these field types.
+                    case MESSAGE:
+                    case ENUM:
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.formatln("this._%s = value;", field.getName());
+                        break;
+                    default:
+                        formatValueFromJson(writer, field.getDescriptor(), "this._" + field.getName(), "value");
+                        break;
+                }
+            }
         }
 
-        writer.end()
-              .appendln("}")
-              .end()
-              .appendln("};")
-              .newline();
+        if (JSUtils.isUnion(descriptor)) {
+
+            writer.end()
+                  .formatln("} else if (this._field === '%s') {", field.getName())
+                  .appendln("    this._field = null;")
+                  .appendln("    this._value = null;")
+                  .appendln("}")
+                  .end();
+
+        } else {
+            writer.end()
+                  .appendln("} else {")
+                  .begin();
+
+            if (JSUtils.alwaysPresent(field)) {
+                writer.formatln("this._%s = ", field.getName());
+                new JSConstFormatter(writer, options, programContext).format(JSUtils.defaultValue(field));
+                writer.append(";");
+            } else {
+                writer.formatln("this._%s = null;", field.getName());
+            }
+
+            writer.end()
+                  .appendln("}")
+                  .end();
+        }
+
+        if (options.type_script) {
+            writer.appendln("}");
+        } else {
+            writer.appendln("};");
+        }
+        writer.newline();
 
     }
 
     private void formatMessageMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
-        if (JSUtils.jsonCompactible(descriptor)) {
+        if (JSUtils.isUnion(descriptor)) {
+            ClosureDocBuilder comment = new ClosureDocBuilder(writer);
+            comment.comment("Get the current set field on the union.");
+            if (options.closure) {
+                comment.newline()
+                       .return_("string?", "The set field");
+            }
+            comment.finish();
+
+            if (options.type_script) {
+                writer.formatln("unionField(): string {");
+            } else {
+                writer.formatln("%s.prototype.unionField = function() {", getClassReference(descriptor));
+            }
+
+            writer.appendln("    return this._field;");
+
+            if (options.type_script) {
+                writer.formatln("}");
+            } else {
+                writer.formatln("};");
+            }
+            writer.newline();
+        } else if (JSUtils.jsonCompactible(descriptor)) {
             ClosureDocBuilder comment = new ClosureDocBuilder(writer);
             comment.comment("Check if the instance can be serialized as compact");
             if (options.closure) {
@@ -513,8 +726,12 @@ public class JSProgramFormatter extends ProgramFormatter {
             }
             comment.finish();
 
-            writer.formatln("%s.%s.prototype.compact = function() {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-                  .begin()
+            if (options.type_script) {
+                writer.formatln("compact(): boolean {");
+            } else {
+                writer.formatln("%s.prototype.compact = function() {", getClassReference(descriptor));
+            }
+            writer.begin()
                   .appendln("var missing = false;");
 
             for (CField field : descriptor.getFields()) {
@@ -528,8 +745,13 @@ public class JSProgramFormatter extends ProgramFormatter {
             }
 
             writer.appendln("return true;")
-                  .end()
-                  .formatln("};");
+                  .end();
+            if (options.type_script) {
+                writer.formatln("}");
+            } else {
+                writer.formatln("};");
+            }
+            writer.newline();
         }
 
         ClosureDocBuilder comment = new ClosureDocBuilder(writer);
@@ -540,96 +762,158 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
         comment.finish();
 
-        writer.formatln("%s.%s.prototype.toJson = function(opt_named) {",
-                        descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .begin();
+        if (options.type_script) {
+            writer.formatln("toJson(opt_named?:boolean): any {");
+        } else {
+            writer.formatln("%s.prototype.toJson = function(opt_named) {", getClassReference(descriptor));
+        }
+        writer.begin();
 
-        // Check for and maybe make compact.
-        if (JSUtils.jsonCompactible(descriptor)) {
-            writer.appendln("if (this.compact()) {")
-                  .begin()
-                  .appendln("var obj = [];");
-            ArrayList<CField> fields = new ArrayList<>();
-            Collections.addAll(fields, descriptor.getFields());
-            fields.sort(Comparator.comparing(CField::getId));
+        if (JSUtils.isUnion(descriptor)) {
+            if (options.type_script) {
+                writer.appendln("var ret: {[key:string]:any} = {}");
+            } else {
+                writer.appendln("var ret = {}");
+            }
+            writer.appendln("switch (this._field) {")
+                  .begin();
 
+            for (CField field : descriptor.getFields()) {
+                writer.formatln("case '%s':", field.getName())
+                      .begin();
 
-            for (CField field : fields) {
-                if (!JSUtils.alwaysPresent(field)) {
-                    writer.formatln("if (this._%s === null) {", field.getName())
-                          .appendln("    return obj;")
-                          .appendln("}");
+                String coerced = coerceJsonFromValue(field.getDescriptor(), "this._value", null, false);
+                if (coerced == null) {
+                    String tmp = tmpVar("v");
+                    writer.formatln("var %s: any;", tmp);
+                    coerced = tmp;
+                    formatJsonFromValue(writer, field.getDescriptor(), tmp, "this._value", null);
                 }
 
-                formatJsonFromValue(writer, field.getDescriptor(),
-                                    "obj[obj.length]",
-                                    "this._" + field.getName(),
-                                    null);
+                writer.formatln("ret[opt_named ? '%s' : '%s'] = %s;",
+                                field.getName(), field.getId(), coerced)
+                      .appendln("break;")
+                      .end();
             }
 
-            writer.appendln("return obj;")
+            writer.appendln("default:")
+                  .appendln("    break;")
                   .end()
+                  .appendln('}')
+                  .appendln("return ret;");
+        } else {
+            if (JSUtils.jsonCompactible(descriptor)) {
+                // Check for and maybe make compact.
+                writer.appendln("if (this.compact()) {")
+                      .begin();
+                if (options.type_script) {
+                    writer.appendln("var arr: any[] = [];");
+                } else {
+                    writer.appendln("var arr = [];");
+                }
+                ArrayList<CField> fields = new ArrayList<>();
+                Collections.addAll(fields, descriptor.getFields());
+                fields.sort(Comparator.comparing(CField::getId));
+
+                for (CField field : fields) {
+                    if (!JSUtils.alwaysPresent(field)) {
+                        writer.formatln("if (this._%s === null) {", field.getName())
+                              .appendln("    return arr;")
+                              .appendln("}");
+                    }
+
+                    formatJsonFromValue(writer, field.getDescriptor(),
+                                        "arr[arr.length]",
+                                        "this._" + field.getName(),
+                                        null);
+                }
+
+                writer.appendln("return arr;")
+                      .end()
+                      .appendln("}");
+            }
+
+            if (options.type_script) {
+                writer.appendln("var obj : { [key:string]: any } = {};");
+            } else {
+                writer.appendln("var obj = {};");
+            }
+            writer.appendln("if (opt_named) {")
+                  .begin();
+
+            for (CField field : descriptor.getFields()) {
+                if (!JSUtils.alwaysPresent(field)) {
+                    writer.formatln("if (this._%s !== null) {", field.getName())
+                          .begin();
+                }
+
+                formatJsonFromValue(writer,
+                                    field.getDescriptor(),
+                                    "obj['" + field.getName() + "']",
+                                    "this._" + field.getName(),
+                                    true);
+
+                if (!JSUtils.alwaysPresent(field)) {
+                    writer.end()
+                          .appendln("}");
+                }
+            }
+
+            writer.end()
+                  .appendln("} else {")
+                  .begin();
+
+            for (CField field : descriptor.getFields()) {
+                if (!JSUtils.alwaysPresent(field)) {
+                    writer.formatln("if (this._%s !== null) {", field.getName())
+                          .begin();
+                }
+
+                formatJsonFromValue(writer,
+                                    field.getDescriptor(),
+                                    "obj['" + field.getId() + "']",
+                                    "this._" + field.getName(),
+                                    false);
+
+                if (!JSUtils.alwaysPresent(field)) {
+                    writer.end()
+                          .appendln("}");
+                }
+            }
+
+            writer.end()
+                  .appendln("}")  // end named check
+                  .appendln("return obj;");
+        }
+
+        if (options.type_script) {
+            writer.end()
                   .appendln("}");
+        } else {
+            writer.end()
+                  .appendln("};");
         }
-
-        writer.appendln("var obj = {};")
-              .appendln("if (opt_named) {")
-              .begin();
-
-        for (CField field : descriptor.getFields()) {
-            if (!JSUtils.alwaysPresent(field)) {
-                writer.formatln("if (this._%s !== null) {", field.getName())
-                      .begin();
-            }
-
-            formatJsonFromValue(writer, field.getDescriptor(),
-                                "obj['" + field.getName() + "']",
-                                "this._" + field.getName(),
-                                true);
-
-            if (!JSUtils.alwaysPresent(field)) {
-                writer.end()
-                      .appendln("}");
-            }
-        }
-
-        writer.end()
-              .appendln("} else {")
-              .begin();
-
-        for (CField field : descriptor.getFields()) {
-            if (!JSUtils.alwaysPresent(field)) {
-                writer.formatln("if (this._%s !== null) {", field.getName())
-                      .begin();
-            }
-
-            formatJsonFromValue(writer, field.getDescriptor(),
-                                "obj['" + field.getId() + "']",
-                                "this._" + field.getName(),
-                                false);
-
-            if (!JSUtils.alwaysPresent(field)) {
-                writer.end()
-                      .appendln("}");
-            }
-        }
-
-        writer.end()
-              .appendln("}")  // end named check
-              .appendln("return obj;")
-              .end()
-              .appendln("};")
-              .newline();
+        writer.newline();
 
         comment = new ClosureDocBuilder(writer);
-        comment.comment("Make a JSON string representation of the message.")
-               .newline()
-               .param_("opt_named", "boolean=", "Optional use named json.")
-               .finish();
-        writer.formatln("%s.%s.prototype.toJsonString = function(opt_named) {", descriptor.getProgramName(), JSUtils.getClassName(descriptor))
-              .appendln("    return JSON.stringify(this.toJson(opt_named));")
-              .appendln("};")
-              .newline();
+        comment.comment("Make a JSON string representation of the message.");
+        if (options.closure) {
+            comment.newline()
+                   .param_("opt_named", "boolean=", "Optional use named json.");
+        }
+        comment.finish();
+
+        if (options.type_script) {
+            writer.formatln("toJsonString(opt_named?:boolean):string {")
+                  .appendln("    return JSON.stringify(this.toJson(opt_named));")
+                  .appendln("}")
+                  .newline();
+        } else {
+            writer.formatln("%s.prototype.toJsonString = function(opt_named) {", getClassReference(descriptor))
+                  .appendln("    return JSON.stringify(this.toJson(opt_named));")
+                  .appendln("};")
+                  .newline();
+        }
     }
 
     private void maybeComment(IndentedPrintWriter writer, CAnnotatedDescriptor descriptor, Consumer<ClosureDocBuilder> closure) {
@@ -652,102 +936,80 @@ public class JSProgramFormatter extends ProgramFormatter {
                                      PDescriptor descriptor,
                                      String target,
                                      String source) {
-        switch (descriptor.getType()) {
-            case VOID:
-                writer.formatln("%s = true;", target);
-                break;
-            case BOOL:
-                writer.formatln("%s = ('string' == typeof(%s) ? 'true' == %s : !!%s);", target, source, source, source);
-                break;
-            case BYTE:
-            case I16:
-            case I32:
-            case I64:
-            case DOUBLE:
-                writer.formatln("%s = Number(%s);", target, source);
-                break;
-            case STRING:
-            case BINARY:
-                writer.formatln("%s = String(%s);", target, source);
-                break;
-            case ENUM: {
-                PEnumDescriptor ed = (PEnumDescriptor) descriptor;
-                writer.formatln("%s = %s.%s.valueOf(%s, true);",
-                                target,
-                                descriptor.getProgramName(),
-                                JSUtils.getClassName(ed),
-                                source);
-                break;
+        String coerced = coerceValueFromJson(descriptor, source, false);
+        if (coerced != null) {
+            if (!target.equals(coerced)) {
+                writer.formatln("%s = %s;", target, coerced);
             }
-            case MESSAGE: {
-                PMessageDescriptor md = (PMessageDescriptor) descriptor;
-                writer.formatln("%s = new %s.%s(%s);",
-                                target,
-                                md.getProgramName(),
-                                JSUtils.getClassName(md),
-                                source);
-                break;
+            return;
+        }
+
+        if (descriptor.getType() == PType.SET ||
+            descriptor.getType() == PType.LIST) {
+            PContainer container = (PContainer) descriptor;
+            if (options.type_script) {
+                writer.formatln("%s = %s.map(function(i:any) {", target, source)
+                      .begin();
+            } else {
+                writer.formatln("%s = %s.map(function(i) {", target, source)
+                      .begin();
             }
-            case LIST:
-            case SET: {
-                PContainer list = (PContainer) descriptor;
-                String tmpIter = tmpVar("i");
-                String tmpItem = tmpVar("v");
-                String tmpArray = tmpVar("a");
-                writer.formatln("var %s = [];", tmpArray)
-                      .formatln("for (var %s = 0; %s < %s.length; %s++) {", tmpIter, tmpIter, source, tmpIter)
-                      .begin()
-                      .formatln("var %s = %s[%s];", tmpItem, source, tmpIter);
 
-                // hard value coercion.
-                formatValueFromJson(writer, list.itemDescriptor(), tmpItem, tmpItem);
-
-                writer.formatln("%s.push(%s);", tmpArray, tmpItem)
-                      .end()
-                      .appendln("}")
-                      .formatln("%s = %s;", target, tmpArray);
-                break;
+            coerced = coerceValueFromJson(container.itemDescriptor(), "i", false);
+            if (coerced != null) {
+                writer.formatln("return %s;", coerced);
+            } else {
+                formatValueFromJson(writer, container.itemDescriptor(), "i", "i");
+                writer.formatln("return i;");
             }
-            case MAP: {
-                PMap map = (PMap) descriptor;
-                String tmpMap = tmpVar("m");
-                String tmpKey = tmpVar("k");
-                String tmpItem = tmpVar("v");
 
-                if (!options.es51) {
-                    writer.formatln("var %s = new Map();", tmpMap);
+            writer.end()
+                  .appendln("});");
+        } else if (descriptor.getType() == PType.MAP) {
+            PMap map = (PMap) descriptor;
+            String tmpMap = tmpVar("m");
+            String tmpKey = tmpVar("k");
+            String tmpItem = String.format("%s[%s]", source, tmpKey);
+
+            if (options.useMaps()) {
+                writer.formatln("var %s = new Map();", tmpMap);
+            } else if (options.type_script) {
+                writer.formatln("var %s: {[key:string]:any} = {};", tmpMap);
+            } else {
+                writer.formatln("var %s = {};", tmpMap);
+            }
+
+            writer.formatln("for (var %s in %s) {", tmpKey, source)
+                  .begin()
+                  .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
+                  .begin();
+
+            String coerceKey = coerceValueFromJson(map.keyDescriptor(), tmpKey, true);
+            String coerceValue = coerceValueFromJson(map.itemDescriptor(), tmpItem, false);
+
+            if (coerceValue == null) {
+                tmpItem = tmpVar("v");
+                if (options.type_script) {
+                    writer.formatln("var %s: any = %s[%s];", tmpItem, source, tmpKey);
                 } else {
-                    writer.formatln("var %s = {};", tmpMap);
-                }
-
-                writer.formatln("for (var %s in %s) {", tmpKey, source)
-                      .begin()
-                      .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
-                      .begin()
-                      .formatln("var %s = %s[%s];", tmpItem, source, tmpKey);
-
-                if (map.keyDescriptor().getType() == PType.MESSAGE) {
-                    PMessageDescriptor md = (PMessageDescriptor) map.keyDescriptor();
-                    // reformat as id (not named).
-                    writer.formatln("%s = new %s.%s(%s).toJsonString(opt_named);",
-                                    tmpKey, md.getProgramName(), JSUtils.getClassName(md), tmpKey);
-                } else {
-                    formatValueFromJson(writer, map.keyDescriptor(), tmpKey, tmpKey);
+                    writer.formatln("var %s = %s[%s];", tmpItem, source, tmpKey);
                 }
                 formatValueFromJson(writer, map.itemDescriptor(), tmpItem, tmpItem);
-
-                if (!options.es51) {
-                    writer.formatln("%s.set(%s, %s);", tmpMap, tmpKey, tmpItem);
-                } else {
-                    writer.formatln("%s[%s] = %s;", tmpMap, tmpKey, tmpItem);
-                }
-                writer.end()
-                      .appendln("}")
-                      .end()
-                      .appendln("}")
-                      .formatln("%s = %s;", target, tmpMap);
-                break;
+                coerceValue = tmpItem;
             }
+
+            if (options.useMaps()) {
+                writer.formatln("%s.set(%s, %s);", tmpMap, coerceKey, coerceValue);
+            } else {
+                writer.formatln("%s[%s] = %s;", tmpMap, coerceKey, coerceValue);
+            }
+            writer.end()
+                  .appendln("}")
+                  .end()
+                  .appendln("}")
+                  .formatln("%s = %s;", target, tmpMap);
+        } else {
+            throw new GeneratorException("Unhandled type: " + descriptor.getType());
         }
     }
 
@@ -756,48 +1018,35 @@ public class JSProgramFormatter extends ProgramFormatter {
                                      String target,
                                      String source,
                                      Boolean named) {
-        if (descriptor.getType() == PType.MESSAGE) {
-            writer.formatln("%s = %s.toJson(opt_named);",
-                            target, source);
+        String coerced = coerceJsonFromValue(descriptor, source, named, false);
+        if (coerced != null) {
+            if (!target.equals(coerced)) {
+                writer.formatln("%s = %s;", target, coerced);
+            }
             return;
-        } else if (descriptor.getType() == PType.ENUM) {
-            PEnumDescriptor ed = (PEnumDescriptor) descriptor;
-            if (named == Boolean.TRUE) {
-                writer.formatln("%s = %s.%s.nameOf(%s) || %s;",
-                                target, ed.getProgramName(), JSUtils.getClassName(ed), source, source);
-                return;
-            } else if (named == null) {
-                writer.formatln("%s = opt_named && %s.%s.nameOf(%s) || %s;",
-                                target, ed.getProgramName(), JSUtils.getClassName(ed), source, source);
-                return;
-            }
-        } else if (descriptor.getType() == PType.LIST ||
-                   descriptor.getType() == PType.SET) {
-            PContainer pc = (PContainer) descriptor;
+        }
 
-            if (pc.itemDescriptor().getType() == PType.MESSAGE) {
-                writer.formatln("%s = %s.map(function(i) {return i.toJson(opt_named);});",
-                                target, source);
-                return;
-            } else if (pc.itemDescriptor().getType() == PType.ENUM) {
-                PEnumDescriptor ed = (PEnumDescriptor) pc.itemDescriptor();
-                if (named == Boolean.TRUE) {
-                    writer.formatln("%s = %s.map(function(i) {return %s.%s.nameOf(i) || i;});",
-                                    target,
-                                    source,
-                                    ed.getProgramName(),
-                                    JSUtils.getClassName(ed));
-                    return;
-                } else if (named == null) {
-                    writer.formatln("%s = opt_named ? %s.map(function(i) {return %s.%s.nameOf(i) || i;}) : %s;",
-                                    target,
-                                    source,
-                                    ed.getProgramName(),
-                                    JSUtils.getClassName(ed),
-                                    source);
-                    return;
+        // If it contains a map of any kins, simple coercion does not work.
+        if (descriptor.getType() == PType.LIST ||
+            descriptor.getType() == PType.SET) {
+            PContainer pc = (PContainer) descriptor;
+            writer.formatln("%s = %s.map(function(i) {", target, source)
+                  .begin();
+
+            coerced = coerceJsonFromValue(pc.itemDescriptor(), "i", named, false);
+            if (coerced != null) {
+                writer.formatln("return %s;", coerced);
+            } else {
+                String tmp = tmpVar("i");
+                if (options.type_script) {
+                    writer.formatln("var %s: any;");
+                } else {
+                    writer.formatln("var %s;", tmp);
                 }
+                formatJsonFromValue(writer, pc.itemDescriptor(), tmp, "i", named);
             }
+            writer.end()
+                  .appendln("});");
         } else if (descriptor.getType() == PType.MAP) {
             PMap map = (PMap) descriptor;
 
@@ -805,30 +1054,44 @@ public class JSProgramFormatter extends ProgramFormatter {
             String tmpValue = tmpVar("v");
             String tmpMap = tmpVar("m");
             // ...
-            writer.formatln("var %s = {};", tmpMap);
-            if (!options.es51) {
-                writer.formatln("%s.forEach(function(%s,%s) {", source, tmpValue, tmpKey)
-                      .begin();
+            if (options.type_script) {
+                writer.formatln("var %s: {[key:string]:any} = {};", tmpMap);
             } else {
-                writer.formatln("for (var %s in %s) {", tmpKey, source)
-                      .begin()
+                writer.formatln("var %s = {};", tmpMap);
+            }
+            if (options.useMaps()) {
+                if (options.type_script) {
+                    writer.formatln("%s.forEach(function(%s:any,%s:any) {",
+                                    source, tmpValue, tmpKey)
+                          .begin();
+                } else {
+                    writer.formatln("%s.forEach(function(%s,%s) {",
+                                    source, tmpValue, tmpKey)
+                          .begin();
+                }
+            } else {
+                writer.formatln("for (var %s in %s) {", tmpKey, source);
+                writer.begin()
                       .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
-                      .begin()
-                      .formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
+                      .begin();
+                if (options.type_script) {
+                    writer.formatln("var %s: any = %s[%s]", tmpValue, source, tmpKey);
+                } else {
+                    writer.formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
+                }
             }
 
-            if (map.keyDescriptor().getType() == PType.MESSAGE && named != Boolean.FALSE) {
-                PMessageDescriptor md = (PMessageDescriptor) map.keyDescriptor();
-                writer.formatln("%s = new %s.%s(%s).toJsonString(opt_named);",
-                                tmpKey, md.getProgramName(), JSUtils.getClassName(md), tmpKey);
-            } else {
-                formatJsonFromValue(writer, map.keyDescriptor(), tmpKey, tmpKey, named);
+            String coerceKey = coerceJsonFromValue(map.keyDescriptor(), tmpKey, named, true);
+            String coerceValue = coerceJsonFromValue(map.itemDescriptor(), tmpValue, named, false);
+            if (coerceValue == null) {
+                formatJsonFromValue(writer, map.itemDescriptor(),
+                                    tmpValue, tmpValue, named);
+                coerceValue = tmpValue;
             }
-            formatJsonFromValue(writer, map.itemDescriptor(), tmpValue, tmpValue, named);
 
-            writer.formatln("%s[String(%s)] = %s;", tmpMap, tmpKey, tmpValue);
+            writer.formatln("%s[%s] = %s;", tmpMap, coerceKey, coerceValue);
 
-            if (!options.es51) {
+            if (options.useMaps()) {
                 writer.end()
                       .appendln("});");
             } else {
@@ -838,30 +1101,182 @@ public class JSProgramFormatter extends ProgramFormatter {
                       .appendln("}");
             }
             writer.formatln("%s = %s;", target, tmpMap);
-            return;
-        }
-        if (!source.equals(target)) {
-            writer.formatln("%s = %s;", target, source);
+        } else {
+            throw new GeneratorException("Unhandled type: " + descriptor.getType());
         }
     }
 
-    protected void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
-        ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-        if (constant.getDocumentation() != null) {
-            comment.comment(constant.getDocumentation())
-                   .newline();
+    private String coerceJsonFromValue(PDescriptor descriptor,
+                                       String source,
+                                       Boolean named,
+                                       boolean mapKey) {
+        switch (descriptor.getType()) {
+            case VOID:
+            case BOOL:
+            case BYTE:
+            case I16:
+            case I32:
+            case I64:
+            case DOUBLE:
+                if (mapKey) {
+                    return "String(" + source + ")";
+                }
+            case STRING:
+            case BINARY:
+                return source;
+            case ENUM:
+                if (mapKey) {
+                    if (named == Boolean.TRUE) {
+                        return "String(" + getClassReference((PEnumDescriptor) descriptor) + ".nameOf(" + source +
+                               ", true))";
+                    } else if (named == null) {
+                        return "String(opt_named ? " + getClassReference((PEnumDescriptor) descriptor) + ".nameOf(" +
+                               source + ", true) : " + source + ")";
+                    }
+                } else if (named == Boolean.TRUE) {
+                    return getClassReference((PEnumDescriptor) descriptor) + ".nameOf(" + source + ", true)";
+                } else if (named == null) {
+                    return "opt_named ? " + getClassReference((PEnumDescriptor) descriptor) + ".nameOf(" + source +
+                           ", true) : " + source;
+                }
+                return source;
+            case MESSAGE:
+                if (mapKey) {
+                    if (named == Boolean.TRUE) {
+                        return "new " + getClassReference((PMessageDescriptor) descriptor) + "(" + source + ").toJsonString(true)";
+                    } else if (named == null) {
+                        return String.format("opt_named ? new %s(%s).toJsonString(true) : %s",
+                                             getClassReference((PMessageDescriptor) descriptor),
+                                             source, source);
+                    }
+                    return source;
+                }
+                return source + ".toJson(opt_named)";
+            case LIST:
+            case SET: {
+                PContainer container = (PContainer) descriptor;
+                switch (container.itemDescriptor().getType()) {
+                    case VOID:
+                    case BOOL:
+                    case BYTE:
+                    case I16:
+                    case I32:
+                    case I64:
+                    case DOUBLE:
+                    case STRING:
+                    case BINARY:
+                        return source;
+                    case ENUM:
+                        if (named == Boolean.FALSE) {
+                            // the enum is in fact a number.
+                            return source;
+                        }
+                        break;
+                    case MESSAGE:
+                        break;
+                    case LIST:
+                    case SET:
+                        // If non-coerced value, no change is needed, the whole list can be coerce-pretended.
+                        if ("i".equals(coerceJsonFromValue(container.itemDescriptor(), "i", named, false))) {
+                            return source;
+                        }
+                        break;
+                    case MAP:
+                        break;
+                    default:
+                        throw new GeneratorException("Unhandled list item type for coercion: " + container.itemDescriptor().getType());
+                }
+                break;
+            }
+            case MAP:
+                // maps are too complex to be simply coerced.
+            default:
+                break;
         }
-        comment.const_(JSUtils.getDescriptorType(constant.getDescriptor()))
-               .finish();
-        writer.formatln("%s.%s = ", program.getProgramName(), constant.getName());
-        new JSConstFormatter(writer, options).format(constant.getDefaultValue());
+
+        return null;  // no simple coercion available.
+    }
+
+    private String coerceValueFromJson(PDescriptor descriptor,
+                                       String source,
+                                       boolean mapKey) {
+        switch (descriptor.getType()) {
+            case VOID:
+                // is never key.
+                return "true";
+            case BOOL:
+                if (mapKey) {
+                    if (options.type_script) {
+                        return String.format("('string' === typeof(%s) ? 'true' === %s : !!%s) ? 1 : 0",
+                                             source, source, source);
+                    }
+                    return String.format("'string' === typeof(%s) ? 'true' === %s : !!%s",
+                                             source, source, source);
+                }
+                return "!!" + source;
+            case BYTE:
+            case I16:
+            case I32:
+            case I64:
+            case DOUBLE:
+                return "Number(" + source + ")";
+            case STRING:
+            case BINARY:
+                return "String(" + source + ")";
+            case ENUM:
+                return getClassReference((PEnumDescriptor) descriptor) + ".valueOf(" + source + ", true)";
+            case MESSAGE:
+                if (mapKey) {
+                    return "new " + getClassReference((PMessageDescriptor) descriptor) + "(" + source + ").toJsonString()";
+                }
+
+                return "new " + getClassReference((PMessageDescriptor) descriptor) + "(" + source + ")";
+            case LIST:
+            case SET: {
+                PContainer container = (PContainer) descriptor;
+                switch (container.itemDescriptor().getType()) {
+                    case VOID:
+                    case BOOL:
+                    case BYTE:
+                    case I16:
+                    case I32:
+                    case I64:
+                    case DOUBLE:
+                    case STRING:
+                    case BINARY:
+                        return source;
+                    default:
+                        // Non-trivial list.
+                        break;
+                }
+                break;
+            }
+            case MAP:
+                // All maps are non-trivial.
+                break;
+            default:
+                throw new GeneratorException("Unhandled coerced type: " + descriptor.getType());
+        }
+
+        return null;  // no simple coercion available.
+    }
+
+
+    protected void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
+        maybeComment(writer, constant, comment -> comment.const_(ClosureUtils.getTypeString(constant.getDescriptor(), options)));
+        if (options.type_script) {
+            writer.formatln("export const %s = ", constant.getName());
+        } else {
+            writer.formatln("%s.%s = ", program.getProgramName(), constant.getName());
+        }
+        new JSConstFormatter(writer, options, programContext).format(constant.getDefaultValue());
         writer.append(";")
               .newline();
     }
 
     protected void formatFooter(IndentedPrintWriter writer, CProgram program) {
-        if (!options.node_js) {
-            // node modules already handle the enclosure.
+        if (!options.node_js && !options.type_script) {
+            // node modules and typescript modules already handle the enclosure.
             writer.appendln("})();");
         }
     }

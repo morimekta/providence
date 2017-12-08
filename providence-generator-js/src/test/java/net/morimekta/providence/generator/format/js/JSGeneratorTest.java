@@ -88,15 +88,15 @@ public class JSGeneratorTest {
     }
 
     @Test
-    public void testGenerate_es6() throws GeneratorException, IOException, ScriptException {
-        load("/js/es6-shim.js");
+    public void testGenerate_es51() throws GeneratorException, IOException, ScriptException {
+        options.es51 = true;
         generateAndLoadSources();
         assertWorkingJavascript();
     }
 
     @Test
-    public void testGenerate_es51() throws GeneratorException, IOException, ScriptException {
-        options.es51 = true;
+    public void testGenerate_es6() throws GeneratorException, IOException, ScriptException {
+        load("/js/es6-shim.js");
         generateAndLoadSources();
         assertWorkingJavascript();
     }
@@ -109,6 +109,12 @@ public class JSGeneratorTest {
         options.closure = true;
         generateAndLoadSources();
         assertWorkingJavascript();
+    }
+
+    @Test
+    public void testGenerate_typeScript() throws IOException {
+        options.type_script = true;
+        generateSources("/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
     }
 
     @Test

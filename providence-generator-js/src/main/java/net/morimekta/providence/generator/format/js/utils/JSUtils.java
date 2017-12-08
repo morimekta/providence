@@ -21,12 +21,9 @@
 package net.morimekta.providence.generator.format.js.utils;
 
 import net.morimekta.providence.PEnumValue;
-import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
@@ -42,61 +39,16 @@ import java.io.File;
  * General utilities for js generator.
  */
 public class JSUtils {
-    public static String getClassName(@Nonnull CMessageDescriptor descriptor) {
-        return getClassName((PDeclaredDescriptor) descriptor);
+    public static boolean isUnion(CMessageDescriptor messageDescriptor) {
+        return ((PMessageDescriptor) messageDescriptor).getVariant() == PMessageVariant.UNION;
+    }
+
+    public static String getClassReference(@Nonnull PDeclaredDescriptor descriptor) {
+        return descriptor.getProgramName() + "." + getClassName(descriptor);
     }
 
     public static String getClassName(@Nonnull PDeclaredDescriptor type) {
         return Strings.camelCase("", type.getName());
-    }
-
-    public static String getFieldOptionality(@Nonnull CField field) {
-        if (!alwaysPresent(field)) {
-            return "?";
-        }
-        return "";
-    }
-
-    public static String getFieldType(@Nonnull CField field) {
-        return getDescriptorType(field.getDescriptor()) + getFieldOptionality(field);
-    }
-
-    public static String getDescriptorType(@Nonnull PDescriptor descriptor) {
-        switch (descriptor.getType()) {
-            case VOID:
-            case BOOL:
-                return "boolean";
-            case BYTE:
-            case I16:
-            case I32:
-            case I64:
-            case DOUBLE:
-                return "number";
-            case BINARY:
-            case STRING:
-                return "string";
-            case ENUM:
-                return descriptor.getProgramName() + "." + getClassName((PEnumDescriptor) descriptor);
-            case MESSAGE:
-                return descriptor.getProgramName() + "." + getClassName((PDeclaredDescriptor) descriptor);
-            case LIST:
-            case SET:
-                PContainer container = (PContainer) descriptor;
-                return "Array<" + getDescriptorType(container.itemDescriptor()) + ">";
-            case MAP:
-                PMap map = (PMap) descriptor;
-                String keyDesc = getDescriptorType(map.keyDescriptor());
-                if (map.keyDescriptor().getType() == PType.MESSAGE) {
-                    // TODO: Make better workaround!
-                    // Messages use the compact JSON string version for the key.
-                    // es51 does not support objects as keys, as all object instances
-                    // ar non-equal.
-                    keyDesc = "string";
-                }
-                return "Map<" + keyDesc + "," + getDescriptorType(map.itemDescriptor()) + ">";
-            default:
-                throw new IllegalArgumentException("Unhandled type: " + descriptor.getType());
-        }
     }
 
     public static boolean alwaysPresent(CField field) {

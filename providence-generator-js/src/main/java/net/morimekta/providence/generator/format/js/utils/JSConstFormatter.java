@@ -22,7 +22,6 @@ package net.morimekta.providence.generator.format.js.utils;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.serializer.JsonSerializer;
@@ -50,13 +49,15 @@ public class JSConstFormatter {
 
     private final IndentedPrintWriter writer;
     private final JSOptions options;
+    private final String programContext;
 
     private JsonWriter json;
 
-    public JSConstFormatter(IndentedPrintWriter writer, JSOptions options) {
+    public JSConstFormatter(IndentedPrintWriter writer, JSOptions options, String programContext) {
         this.options = options;
         this.writer = writer;
         this.json = new PrettyJsonWriter(writer);
+        this.programContext = programContext;
     }
 
     public void format(Object value) {
@@ -67,10 +68,10 @@ public class JSConstFormatter {
             try {
                 CharArrayWriter literal = new CharArrayWriter();
                 JsonWriter innerJson = new JsonWriter(new PrintWriter(literal));
-                literal.write(String.format("new %s.%s(",
-                                            message.descriptor()
-                                                   .getProgramName(),
-                                            JSUtils.getClassName(message.descriptor())));
+                literal.write(String.format("new %s(",
+                                            options.type_script ?
+                                            TSUtils.getTypeReference(programContext, message.descriptor()):
+                                            JSUtils.getClassReference(message.descriptor())));
                 formatValue(innerJson, message);
                 innerJson.flush();
                 literal.write(")");
@@ -81,9 +82,10 @@ public class JSConstFormatter {
             }
         } else if (value instanceof PEnumValue) {
             PEnumValue ev = (PEnumValue) value;
-            json.valueLiteral(String.format("%s.%s.%s",
-                                            ev.descriptor().getProgramName(),
-                                            JSUtils.getClassName((PEnumDescriptor) ev.descriptor()),
+            json.valueLiteral(String.format("%s.%s",
+                                            options.type_script ?
+                                            TSUtils.getTypeReference(programContext, ev.descriptor()):
+                                            JSUtils.getClassReference(ev.descriptor()),
                                             JSUtils.enumConst(ev)));
         } else if (value instanceof List || value instanceof Set){
             json.array();
@@ -92,7 +94,7 @@ public class JSConstFormatter {
 
             json.endArray();
         } else if (value instanceof Map){
-            if (!options.es51) {
+            if (options.useMaps()) {
                 writer.format("new Map()")
                       .begin().begin();
 
@@ -157,10 +159,10 @@ public class JSConstFormatter {
             json.value((long) value);
         } else if (value instanceof Double) {
             json.value((double) value);
-        } else if (value instanceof PEnumValue) {
-            json.value(((PEnumValue)value).getId());
         } else if (value instanceof Binary) {
             json.value((Binary)value);
+        } else if (value instanceof PEnumValue) {
+            json.value(((PEnumValue)value).getId());
         } else if (value instanceof PMessage) {
             json.object();
 
@@ -178,7 +180,7 @@ public class JSConstFormatter {
 
             Collection list = (Collection) value;
             for (Object item : list) {
-                format(item);
+                formatValue(json, item);
             }
             json.endArray();
         } else if (value instanceof Map) {
@@ -220,7 +222,7 @@ public class JSConstFormatter {
         } else if (value instanceof PMessage) {
             json.key(json((PMessage) value));
         } else {
-            throw new IllegalArgumentException("Not supported in JS");
+            throw new IllegalArgumentException("Not supported as map key: " + value.getClass().getName());
         }
     }
 }

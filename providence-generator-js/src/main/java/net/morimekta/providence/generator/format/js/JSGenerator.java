@@ -45,8 +45,8 @@ import java.util.List;
  * format.
  */
 public class JSGenerator extends Generator {
-    private final List<ProgramFormatter> formatters;
-    private final GeneratorOptions generatorOptions;
+    private final List<ProgramFormatter> formatter;
+    private final GeneratorOptions       generatorOptions;
 
     public JSGenerator(FileManager manager,
                        ProgramTypeRegistry registry, GeneratorOptions generatorOptions, JSOptions jsOptions) throws GeneratorException {
@@ -54,7 +54,7 @@ public class JSGenerator extends Generator {
 
         ImmutableList.Builder<ProgramFormatter> builder = ImmutableList.builder();
         builder.add(new JSProgramFormatter(jsOptions, registry));
-        this.formatters = builder.build();
+        this.formatter = builder.build();
         this.generatorOptions = generatorOptions;
     }
 
@@ -63,7 +63,7 @@ public class JSGenerator extends Generator {
     public void generate(CProgram program) throws IOException, GeneratorException {
         String path = JSUtils.getPackageClassPath(program);
 
-        for (ProgramFormatter formatter : formatters) {
+        for (ProgramFormatter formatter : formatter) {
             String fileName = formatter.getFileName(program);
             OutputStream out = new BufferedOutputStream(getFileManager().create(path, fileName));
             try {
