@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 

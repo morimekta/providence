@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 
@@ -60,4 +61,8 @@ public interface PEnumValue<T> extends PValue<T>, Stringable, Numeric {
     default int getValue() {
         return asInteger();
     }
+
+    @Nonnull
+    @Override
+    PEnumDescriptor descriptor();
 }
