@@ -699,7 +699,7 @@ public class JSProgramFormatter extends ProgramFormatter {
             comment.comment("Get the current set field on the union.");
             if (options.closure) {
                 comment.newline()
-                       .return_("string?", "The set field");
+                       .return_("string?", "The set field or null if none.");
             }
             comment.finish();
 
@@ -759,6 +759,11 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.closure) {
             comment.newline()
                    .param_("opt_named", "boolean=", "Optional use named json.");
+            if (JSUtils.jsonCompactible(descriptor)) {
+                comment.return_("Object|Array", "Json representation.");
+            } else {
+                comment.return_("Object", "Json representation.");
+            }
         }
         comment.finish();
 
@@ -899,7 +904,8 @@ public class JSProgramFormatter extends ProgramFormatter {
         comment.comment("Make a JSON string representation of the message.");
         if (options.closure) {
             comment.newline()
-                   .param_("opt_named", "boolean=", "Optional use named json.");
+                   .param_("opt_named", "boolean=", "Optional use named json.")
+                   .return_("string", "The stringified json.");
         }
         comment.finish();
 
@@ -911,6 +917,25 @@ public class JSProgramFormatter extends ProgramFormatter {
         } else {
             writer.formatln("%s.prototype.toJsonString = function(opt_named) {", getClassReference(descriptor))
                   .appendln("    return JSON.stringify(this.toJson(opt_named));")
+                  .appendln("};")
+                  .newline();
+        }
+
+        comment = new ClosureDocBuilder(writer);
+        comment.comment("String representation of the message.");
+        if (options.closure) {
+            comment.newline()
+                   .return_("string", "Message as string.");
+        }
+        comment.finish();
+        if (options.type_script) {
+            writer.formatln("toString():string {")
+                  .formatln("    return '%s' + JSON.stringify(this.toJson(true));", JSUtils.getClassName((PMessageDescriptor) descriptor))
+                  .appendln("}")
+                  .newline();
+        } else {
+            writer.formatln("%s.prototype.toString = function() {", getClassReference(descriptor))
+                  .formatln("    return '%s' + JSON.stringify(this.toJson(true));", JSUtils.getClassName((PMessageDescriptor) descriptor))
                   .appendln("};")
                   .newline();
         }
