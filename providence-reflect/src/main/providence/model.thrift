@@ -9,6 +9,7 @@
  *   The first space after '*' on each line is ignored.
  */
 namespace java net.morimekta.providence.model
+namespace js net.morimekta.providence
 
 /**
  * <name> (= <value>)
