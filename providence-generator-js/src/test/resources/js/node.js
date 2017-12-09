@@ -26,11 +26,11 @@ node.require = function(sourceModule, requiredModule) {
     if (!(target in node.registry)) {
         throw 'unknown module: ' + target + ', required from ' + sourceModule;
     }
-    return node.registry['pvd.testing.number'];
+    return node.registry[target];
 };
 
 node.resolve = function(sourceModule, requiredModule) {
-    var source = sourceModule.split('.');
+    var source = sourceModule.split('/');
     source.pop();  // removes the "module itself".
 
     var require = requiredModule.split("/");
@@ -38,7 +38,7 @@ node.resolve = function(sourceModule, requiredModule) {
         throw 'Absolute modules not supported: ' + requiredModule + ' required from ' + sourceModule;
     } else if (require[0] === '.') {
         require.shift();
-    } else {
+    } else if (require[0] === '..') {
         while (require.length > 0 && require[0] === '..') {
             require.shift();  // skip the ".." thing.
             if (source.length == 0) {
@@ -46,12 +46,14 @@ node.resolve = function(sourceModule, requiredModule) {
             }
             source.pop();     // and go one up.
         }
+    } else {
+        source = [];
     }
 
     if (source.length > 0) {
-        return source.join('.') + '.' + require.join('.');
+        return source.join('/') + '/' + require.join('/');
     }
-    return require.join('.');
+    return require.join('/');
 };
 
 node.module = function(moduleName, callback) {

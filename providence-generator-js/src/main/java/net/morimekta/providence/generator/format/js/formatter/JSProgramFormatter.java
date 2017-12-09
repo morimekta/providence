@@ -78,8 +78,10 @@ public class JSProgramFormatter extends ProgramFormatter {
                               ProgramTypeRegistry registry) {
         super(options, registry);
 
-        if (options.node_js && options.closure) {
-            throw new IllegalArgumentException("Both node.js and google closure used!");
+        if ((options.node_js && options.closure) ||
+            (options.node_js && options.type_script) ||
+            (options.closure && options.type_script)) {
+            throw new IllegalArgumentException("More than one of node.js, closure and type_script options used!");
         }
 
         this.programContext = registry.getProgram().getProgramName();
@@ -106,23 +108,32 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
 
         if (options.type_script) {
-            if (program.getIncludedPrograms().size() > 0) {
-                Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
+            Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
 
+            if (JSUtils.hasService(program)) {
+                // TODO: Relativize???
+                writer.formatln("import * as _ from '%s';", "morimekta/providence/service").newline();
+            }
+            if (program.getIncludedPrograms().size() > 0) {
                 for (String include : program.getIncludedPrograms()) {
                     CProgram included = registry.getProgramForName(include);
                     Path includedPath = Paths.get(File.separator + JSUtils.getPackageClassPath(included), included.getProgramName());
-                    String relative = relativeTo.relativize(includedPath).toString();
+                    String relative = String.join("/", relativeTo.relativize(includedPath).toString().split(File.separator));
                     if (!relative.startsWith(".")) {
                         relative = "./" + relative;
                     }
 
-                    writer.formatln("import * as %s from '%s';", included.getProgramName(), relative);
+                    writer.formatln("import * as _%s from '%s';", included.getProgramName(), relative);
                 }
                 writer.newline();
             }
         } else if (options.node_js) {
             Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
+            if (JSUtils.hasService(program)) {
+                // TODO: Relativize???
+                writer.formatln("var _ = require('%s');", "morimekta/providence/service").newline();
+            }
+
             for (String include : program.getIncludedPrograms()) {
                 CProgram included = registry.getProgramForName(include);
 
@@ -132,14 +143,18 @@ public class JSProgramFormatter extends ProgramFormatter {
                     relative = "./" + relative;
                 }
 
-                writer.formatln("var %s = require('%s');", included.getProgramName(), relative);
+                writer.formatln("var _%s = require('%s');", included.getProgramName(), relative);
             }
 
-            writer.formatln("var %s = module.exports = exports = {};", program.getProgramName())
+            writer.formatln("var _%s = module.exports = exports = {};", program.getProgramName())
                   .newline();
         } else {
             if (options.closure) {
                 writer.formatln("goog.provide('%s');", namespace);
+
+                if (JSUtils.hasService(program)) {
+                    writer.formatln("goog.require('%s');", "morimekta.providence.service");
+                }
 
                 for (String include : program.getIncludedPrograms()) {
                     CProgram included = registry.getProgramForName(include);
@@ -173,24 +188,20 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .appendln("'use strict';")
                   .newline();
 
-            boolean inc = false;
             for (String include : program.getIncludedPrograms()) {
                 CProgram included = registry.getProgramForName(include);
                 String includedNs = JSUtils.getPackage(included);
                 if (!includedNs.equals(include)) {
-                    writer.formatln("var %s = %s;", included.getProgramName(), includedNs);
-                    inc = true;
+                    writer.formatln("var _%s = %s;", included.getProgramName(), includedNs);
                 }
             }
 
-            if (!namespace.equals(program.getProgramName())) {
-                writer.formatln("var %s = %s;", program.getProgramName(), namespace);
-                inc = true;
+            if (JSUtils.hasService(program)) {
+                writer.formatln("var _ = %s;", "morimekta.providence.service");
             }
 
-            if (inc) {
-                writer.newline();
-            }
+            writer.formatln("var _%s = %s;", program.getProgramName(), namespace);
+            writer.newline();
         }
     }
 
@@ -198,7 +209,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.type_script && programContext.equals(service.getProgramName())) {
             return Strings.camelCase("", service.getName());
         }
-        return service.getProgramName() + "." + Strings.camelCase("", service.getName());
+        return "_" + service.getProgramName() + "." + Strings.camelCase("", service.getName());
     }
 
     private String getClassReference(CMessageDescriptor descriptor) {
@@ -307,7 +318,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.type_script) {
             writer.appendln("export function nameOf(value:any, opt_keepNumeric?:boolean):string {");
         } else {
-            writer.formatln("%s.%s.nameOf = function(value, opt_keepNumeric) {", descriptor.getProgramName(), getClassName(descriptor));
+            writer.formatln("%s.nameOf = function(value, opt_keepNumeric) {", getClassReference(descriptor));
         }
         writer.begin()
               .appendln("switch(value) {")
@@ -356,7 +367,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                 for (CField field : descriptor.getFields()) {
                     writer.formatln("private _%s: %s;",
                                     field.getName(),
-                                    TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+                                    TSUtils.getTypeString(programContext, field.getDescriptor(), options));
                 }
             }
             writer.newline();
@@ -584,7 +595,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.type_script) {
             writer.formatln("%s():%s {",
                             Strings.camelCase("get", field.getName()),
-                            TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+                            TSUtils.getTypeString(programContext, field.getDescriptor(), options));
         } else {
             writer.formatln("%s.prototype.%s = function() {",
                             getClassReference(descriptor),
@@ -624,7 +635,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.type_script) {
             writer.formatln("%s(value?:%s):void {",
                             Strings.camelCase("set", field.getName()),
-                            TSUtils.getTypeString(descriptor.getProgramName(), field.getDescriptor(), options));
+                            TSUtils.getTypeString(programContext, field.getDescriptor(), options));
         } else {
             writer.formatln("%s.prototype.%s = function(value) {",
                             getClassReference(descriptor),
@@ -1319,7 +1330,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         if (options.type_script) {
             writer.formatln("export const %s = ", constant.getName());
         } else {
-            writer.formatln("%s.%s = ", program.getProgramName(), constant.getName());
+            writer.formatln("_%s.%s = ", program.getProgramName(), constant.getName());
         }
         new JSConstFormatter(writer, options, programContext).format(constant.getDefaultValue());
         writer.append(";")
@@ -1660,16 +1671,16 @@ public class JSProgramFormatter extends ProgramFormatter {
 
             // just assume method and sequence ID is OK.
 
+            writer.appendln("try {")
+                  .begin();
+
             writer.formatln("if (response[1] === '%s' || response[1] === %d) {",
                             PServiceCallType.EXCEPTION.asString(),
                             PServiceCallType.EXCEPTION.asInteger())
-                  // TODO: Handle as actual PApplicationException.
-                  .appendln("    onFailure('Application exception: ' + JSON.stringify(response[3]))")
+                  .appendln("    onFailure(new _.PApplicationException(response[3]))")
                   .appendln("}");
 
-            writer.appendln("try {")
-                  .begin()
-                  .appendln("for (var k in response[3]) {")
+            writer.appendln("for (var k in response[3]) {")
                   .begin()
                   .appendln("if (response[3].hasOwnProperty(k)) {")
                   .begin()
@@ -1717,20 +1728,33 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .appendln("}")  // for k in response
                   .end()
                   .appendln("} catch (ex) {")  // try
-                  .appendln("    onFailure(ex);")
+                  .appendln("    onFailure(new _.PApplicationException({")
+                  .appendln("        'message': String(ex),")
+                  .appendln("        'id': _.PApplicationExceptionType.INTERNAL_ERROR")
+                  .appendln("    }));")
                   .appendln("    return;")
                   .appendln("}")
-                  .appendln("onFailure('Unknown response field: ' + JSON.stringify(response[3]));")
+                  .newline()
+                  .appendln("onFailure(new _.PApplicationException({")
+                  .appendln("    'message': 'Unknown response field: ' + JSON.stringify(response[3]),")
+                  .appendln("    'id': _.PApplicationExceptionType.PROTOCOL_ERROR")
+                  .appendln("}));")
                   .appendln("return;")
                   .end()
                   .appendln("}"); // isArray length 4
 
-            writer.appendln("onFailure('Unknown response: ' + JSON.stringify(response));")
+            writer.appendln("onFailure(new _.PApplicationException({")
+                  .appendln("    'message': 'Unknown response: ' + JSON.stringify(response),")
+                  .appendln("    'id': _.PApplicationExceptionType.PROTOCOL_ERROR")
+                  .appendln("}));")
                   .appendln("return;")
                   .end()
                   .appendln("}");  // status
 
-            writer.appendln("onFailure(xhr.statusText);");
+            writer.appendln("onFailure(new _.PApplicationException({")
+                  .appendln("    'message': 'HTTP ' + xhr.status + ' ' + xhr.statusText,")
+                  .appendln("    'id': _.PApplicationExceptionType.PROTOCOL_ERROR")
+                  .appendln("}));");
 
             writer.end()
                   .appendln("}")  // ready

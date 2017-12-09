@@ -1,13 +1,20 @@
 // Generated with pvdc v0.7.3-SNAPSHOT
 
-var service = module.exports = exports = {};
+var morimekta = morimekta || {};
+morimekta.providence = morimekta.providence || {};
+morimekta.providence.service = morimekta.providence.service || {};
+
+(function(){
+'use strict';
+
+var _service = morimekta.providence.service;
 
 /**
  * The service call type is a base distinction of what the message means, and
  * lets the server or client select the proper message to be serialized or
  * deserialized from the service method descriptor.
  */
-service.PServiceCallType = {
+_service.PServiceCallType = {
     /**
      * The service method request.
      */
@@ -34,24 +41,24 @@ service.PServiceCallType = {
 /**
  * Get the value of the enum, given value or name
  */
-service.PServiceCallType.valueOf = function(id, opt_keepNumeric) {
+_service.PServiceCallType.valueOf = function(id, opt_keepNumeric) {
     switch(id) {
         case 1:
         case '1':
         case 'call':
-            return service.PServiceCallType.CALL;
+            return _service.PServiceCallType.CALL;
         case 2:
         case '2':
         case 'reply':
-            return service.PServiceCallType.REPLY;
+            return _service.PServiceCallType.REPLY;
         case 3:
         case '3':
         case 'exception':
-            return service.PServiceCallType.EXCEPTION;
+            return _service.PServiceCallType.EXCEPTION;
         case 4:
         case '4':
         case 'oneway':
-            return service.PServiceCallType.ONEWAY;
+            return _service.PServiceCallType.ONEWAY;
         default:
             if (opt_keepNumeric && 'number' === typeof(id)) {
                 return id;
@@ -63,7 +70,7 @@ service.PServiceCallType.valueOf = function(id, opt_keepNumeric) {
 /**
  * Get the string name of the enum value.
  */
-service.PServiceCallType.nameOf = function(value, opt_keepNumeric) {
+_service.PServiceCallType.nameOf = function(value, opt_keepNumeric) {
     switch(value) {
         case 1:
             return 'call';
@@ -82,7 +89,7 @@ service.PServiceCallType.nameOf = function(value, opt_keepNumeric) {
 /**
  * General type of exception on the application level.
  */
-service.PApplicationExceptionType = {
+_service.PApplicationExceptionType = {
     /**
      * Unknown or unidentified exception, should usually not be uased.
      */
@@ -140,52 +147,52 @@ service.PApplicationExceptionType = {
 /**
  * Get the value of the enum, given value or name
  */
-service.PApplicationExceptionType.valueOf = function(id, opt_keepNumeric) {
+_service.PApplicationExceptionType.valueOf = function(id, opt_keepNumeric) {
     switch(id) {
         case 0:
         case '0':
         case 'UNKNOWN':
-            return service.PApplicationExceptionType.UNKNOWN;
+            return _service.PApplicationExceptionType.UNKNOWN;
         case 1:
         case '1':
         case 'UNKNOWN_METHOD':
-            return service.PApplicationExceptionType.UNKNOWN_METHOD;
+            return _service.PApplicationExceptionType.UNKNOWN_METHOD;
         case 2:
         case '2':
         case 'INVALID_MESSAGE_TYPE':
-            return service.PApplicationExceptionType.INVALID_MESSAGE_TYPE;
+            return _service.PApplicationExceptionType.INVALID_MESSAGE_TYPE;
         case 3:
         case '3':
         case 'WRONG_METHOD_NAME':
-            return service.PApplicationExceptionType.WRONG_METHOD_NAME;
+            return _service.PApplicationExceptionType.WRONG_METHOD_NAME;
         case 4:
         case '4':
         case 'BAD_SEQUENCE_ID':
-            return service.PApplicationExceptionType.BAD_SEQUENCE_ID;
+            return _service.PApplicationExceptionType.BAD_SEQUENCE_ID;
         case 5:
         case '5':
         case 'MISSING_RESULT':
-            return service.PApplicationExceptionType.MISSING_RESULT;
+            return _service.PApplicationExceptionType.MISSING_RESULT;
         case 6:
         case '6':
         case 'INTERNAL_ERROR':
-            return service.PApplicationExceptionType.INTERNAL_ERROR;
+            return _service.PApplicationExceptionType.INTERNAL_ERROR;
         case 7:
         case '7':
         case 'PROTOCOL_ERROR':
-            return service.PApplicationExceptionType.PROTOCOL_ERROR;
+            return _service.PApplicationExceptionType.PROTOCOL_ERROR;
         case 8:
         case '8':
         case 'INVALID_TRANSFORM':
-            return service.PApplicationExceptionType.INVALID_TRANSFORM;
+            return _service.PApplicationExceptionType.INVALID_TRANSFORM;
         case 9:
         case '9':
         case 'INVALID_PROTOCOL':
-            return service.PApplicationExceptionType.INVALID_PROTOCOL;
+            return _service.PApplicationExceptionType.INVALID_PROTOCOL;
         case 10:
         case '10':
         case 'UNSUPPORTED_CLIENT_TYPE':
-            return service.PApplicationExceptionType.UNSUPPORTED_CLIENT_TYPE;
+            return _service.PApplicationExceptionType.UNSUPPORTED_CLIENT_TYPE;
         default:
             if (opt_keepNumeric && 'number' === typeof(id)) {
                 return id;
@@ -197,7 +204,7 @@ service.PApplicationExceptionType.valueOf = function(id, opt_keepNumeric) {
 /**
  * Get the string name of the enum value.
  */
-service.PApplicationExceptionType.nameOf = function(value, opt_keepNumeric) {
+_service.PApplicationExceptionType.nameOf = function(value, opt_keepNumeric) {
     switch(value) {
         case 0:
             return 'UNKNOWN';
@@ -231,7 +238,7 @@ service.PApplicationExceptionType.nameOf = function(value, opt_keepNumeric) {
  * Base exception thrown on non-declared exceptions on a service call, and
  * other server-side service call issues.
  */
-service.PApplicationException = function(opt_json) {
+_service.PApplicationException = function(opt_json) {
     this._message = null;
     this._id = null;
 
@@ -248,7 +255,7 @@ service.PApplicationException = function(opt_json) {
                         break;
                     case '2':
                     case 'id':
-                        this._id = service.PApplicationExceptionType.valueOf(opt_json[key], true);
+                        this._id = _service.PApplicationExceptionType.valueOf(opt_json[key], true);
                         break;
                     default:
                         break;
@@ -263,7 +270,7 @@ service.PApplicationException = function(opt_json) {
 /**
  * Exception message.
  */
-service.PApplicationException.prototype.getMessage = function() {
+_service.PApplicationException.prototype.getMessage = function() {
     if (this._message === null) {
         return "";
     } else {
@@ -274,7 +281,7 @@ service.PApplicationException.prototype.getMessage = function() {
 /**
  * Exception message.
  */
-service.PApplicationException.prototype.setMessage = function(value) {
+_service.PApplicationException.prototype.setMessage = function(value) {
     if (value !== null && value !== undefined) {
         this._message = String(value);
     } else {
@@ -285,9 +292,9 @@ service.PApplicationException.prototype.setMessage = function(value) {
 /**
  * The application exception type.
  */
-service.PApplicationException.prototype.getId = function() {
+_service.PApplicationException.prototype.getId = function() {
     if (this._id === null) {
-        return service.PApplicationExceptionType.UNKNOWN;
+        return _service.PApplicationExceptionType.UNKNOWN;
     } else {
         return this._id;
     }
@@ -296,7 +303,7 @@ service.PApplicationException.prototype.getId = function() {
 /**
  * The application exception type.
  */
-service.PApplicationException.prototype.setId = function(value) {
+_service.PApplicationException.prototype.setId = function(value) {
     if (value !== null && value !== undefined) {
         this._id = value;
     } else {
@@ -307,14 +314,14 @@ service.PApplicationException.prototype.setId = function(value) {
 /**
  * Make a JSON compatible object representation of the message.
  */
-service.PApplicationException.prototype.toJson = function(opt_named) {
+_service.PApplicationException.prototype.toJson = function(opt_named) {
     var obj = {};
     if (opt_named) {
         if (this._message !== null) {
             obj['message'] = this._message;
         }
         if (this._id !== null) {
-            obj['id'] = service.PApplicationExceptionType.nameOf(this._id, true);
+            obj['id'] = _service.PApplicationExceptionType.nameOf(this._id, true);
         }
     } else {
         if (this._message !== null) {
@@ -330,13 +337,15 @@ service.PApplicationException.prototype.toJson = function(opt_named) {
 /**
  * Make a JSON string representation of the message.
  */
-service.PApplicationException.prototype.toJsonString = function(opt_named) {
+_service.PApplicationException.prototype.toJsonString = function(opt_named) {
     return JSON.stringify(this.toJson(opt_named));
 };
 
 /**
  * String representation of the message.
  */
-service.PApplicationException.prototype.toString = function() {
+_service.PApplicationException.prototype.toString = function() {
     return 'PApplicationException' + JSON.stringify(this.toJson(true));
 };
+
+})();

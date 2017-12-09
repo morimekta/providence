@@ -142,17 +142,17 @@ public class Compiler {
                 if (service) {
                     JSOptions opts = options.makeJsOptions();
                     InputStream source;
-                    File target = new File(options.out, String.join(File.separator, "net", "morimekta", "providence", "service.js"));
+                    File target = new File(options.out, String.join(File.separator, "morimekta", "providence", "service.js"));
                     if (opts.type_script) {
                         // copy ts.
-                        source = getClass().getResourceAsStream("/type_script/net/morimekta/providence/service.ts");
-                        target = new File(options.out, String.join(File.separator, "net", "morimekta", "providence", "service.ts"));
+                        source = getClass().getResourceAsStream("/type_script/morimekta/providence/service.ts");
+                        target = new File(options.out, String.join(File.separator, "morimekta", "providence", "service.ts"));
                     } else if (opts.node_js) {
-                        source = getClass().getResourceAsStream("/node_js/net/morimekta/providence/service.js");
+                        source = getClass().getResourceAsStream("/node_module/morimekta/providence/service.js");
                     } else if (opts.closure) {
-                        source = getClass().getResourceAsStream("/closure/net/morimekta/providence/service.js");
+                        source = getClass().getResourceAsStream("/closure/morimekta/providence/service.js");
                     } else {
-                        source = getClass().getResourceAsStream("/js/net/morimekta/providence/service.js");
+                        source = getClass().getResourceAsStream("/js/morimekta/providence/service.js");
                     }
 
                     target.getParentFile().mkdirs();

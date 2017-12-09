@@ -1,5 +1,5 @@
 namespace java net.morimekta.providence
-namespace js net.morimekta.providence
+namespace js morimekta.providence
 
 /**
  * The service call type is a base distinction of what the message means, and

@@ -40,7 +40,7 @@ public class TSUtils {
         if (programContext.equals(descriptor.getProgramName())) {
             return getClassName(descriptor);
         } else {
-            return descriptor.getProgramName() + "." + getClassName(descriptor);
+            return "_" + descriptor.getProgramName() + "." + getClassName(descriptor);
         }
     }
 

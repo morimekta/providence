@@ -44,7 +44,7 @@ public class JSUtils {
     }
 
     public static String getClassReference(@Nonnull PDeclaredDescriptor descriptor) {
-        return descriptor.getProgramName() + "." + getClassName(descriptor);
+        return "_" + descriptor.getProgramName() + "." + getClassName(descriptor);
     }
 
     public static String getClassName(@Nonnull PDeclaredDescriptor type) {
@@ -90,5 +90,9 @@ public class JSUtils {
             return field.getDefaultValue();
         }
         return field.getDescriptor().getDefaultValue();
+    }
+
+    public static boolean hasService(CProgram program) {
+        return program.getServices().size() > 0;
     }
 }

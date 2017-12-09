@@ -37,7 +37,7 @@ public class ClosureUtils {
                 return "string";
             case ENUM:
             case MESSAGE:
-                return descriptor.getProgramName() + "." + getClassName((PDeclaredDescriptor) descriptor);
+                return "_" + descriptor.getProgramName() + "." + getClassName((PDeclaredDescriptor) descriptor);
             case LIST:
             case SET:
                 PContainer container = (PContainer) descriptor;
