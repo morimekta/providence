@@ -13,6 +13,15 @@
             </gitHub>
         </fluidoSkin>
     </custom>
+    <body>
+        <menu name="Generator Options" inherit="top">
+
+            <item href="options-hazelcast.html" name="Hazelcast Portable" />
+            <item href="options-android.html" name="Android Parcelable" />
+            <item href="options-jackson.html" name="Jackson Annotations" />
+
+        </menu>
+    </body>
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>

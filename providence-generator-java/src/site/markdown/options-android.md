@@ -11,12 +11,12 @@ class MyMessage extends PMessage<MyMessage,MyMessage._Field> implements Parcelab
     public int describeContents() {
         return 0;
     }
-    
+
     @Override
     public void writeToParcel(Parcel parcel) {
         // ...
     }
-    
+
     public static final Parcelable.Creator<MyMessage> CREATOR = new Parcelable.Creator<>() {
         // ...
     };

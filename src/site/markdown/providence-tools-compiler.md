@@ -6,5 +6,6 @@ plugin for non-java projects. It can compile for:
 
 - `java`: Writes the providence java generated code.
 - `json`: Simply writes out the thrift definition as thrift files.
+- `js`: Generates various javascript (es, type script, etc) variants.
 
 See `pvdc --help` for more detailed info about the available options.

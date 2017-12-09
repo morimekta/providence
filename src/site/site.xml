@@ -34,6 +34,7 @@
 
             <item href="providence-generator/index.html"          name="Tools : Generator" />
             <item href="providence-generator-java/index.html"     name="Tools : Generator - Java" />
+            <item href="providence-generator-js/index.html"       name="Tools : Generator - JavaScript" />
             <item href="providence-generator-json/index.html"     name="Tools : Generator - JSON" />
             <item href="providence-maven-plugin/index.html"       name="Tools : Maven Plugin" />
             <item href="providence-gradle-plugin.html"            name="Tools : Gradle Plugin" />
@@ -46,16 +47,6 @@
             <item href="providence-tools-rpc.html"       name="CLI : RPC Tool" />
             <item href="providence-tools-config.html"    name="CLI : Config Helper" />
             <item href="providence-tools-compiler.html"  name="CLI : Compiler" />
-
-        </menu>
-
-        <menu name="Generator Options" inherit="top">
-
-            <item href="options.html" name="Options Overview" />
-
-            <item href="options-hazelcast.html" name="Hazelcast Portable" />
-            <item href="options-android.html" name="Android Parcelable" />
-            <item href="options-jackson.html" name="Jackson Annotations" />
 
         </menu>
 
