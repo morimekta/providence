@@ -51,6 +51,10 @@ public class JSUtils {
         return Strings.camelCase("", type.getName());
     }
 
+    public static String getParamName(CField param) {
+        return Strings.camelCase("p", param.getName());
+    }
+
     public static boolean alwaysPresent(CField field) {
         return field.getRequirement() != PRequirement.OPTIONAL &&
                defaultValue(field) != null;

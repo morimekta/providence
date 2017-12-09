@@ -25,8 +25,6 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 
-import javax.annotation.Nonnull;
-
 /**
  * Builds a proper block javadoc-compatible comment.
  */
@@ -61,12 +59,21 @@ public class ClosureDocBuilder {
     }
 
     public ClosureDocBuilder param_(String name, String type, String comment) {
-        writer.formatln(" @param {%s} %s %s", type, name, html.escape(comment));
+        if (comment == null) {
+            writer.formatln(" @param {%s} %s", type, name);
+        } else {
+            writer.formatln(" @param {%s} %s %s", type, name, html.escape(comment));
+        }
         return this;
     }
 
     public ClosureDocBuilder constructor_() {
         writer.formatln(" @constructor");
+        return this;
+    }
+
+    public ClosureDocBuilder interface_() {
+        writer.appendln(" @interface");
         return this;
     }
 
@@ -86,7 +93,11 @@ public class ClosureDocBuilder {
     }
 
     public ClosureDocBuilder return_(String type, String comment) {
-        writer.formatln(" @return {%s} %s", type, html.escape(comment));
+        if (comment == null) {
+            writer.formatln(" @return {%s}", type);
+        } else {
+            writer.formatln(" @return {%s} %s", type, html.escape(comment).trim());
+        }
         return this;
     }
 
@@ -95,8 +106,17 @@ public class ClosureDocBuilder {
         return this;
     }
 
-    public ClosureDocBuilder deprecated_(@Nonnull String reason) {
-        writer.formatln(" @deprecated %s", html.escape(reason));
+    public ClosureDocBuilder deprecated_(String reason) {
+        if (reason == null) {
+            writer.formatln(" @deprecated");
+        } else {
+            writer.formatln(" @deprecated %s", html.escape(reason).trim());
+        }
+        return this;
+    }
+
+    public ClosureDocBuilder extends_(String ext) {
+        writer.formatln(" @extends {%s}", ext);
         return this;
     }
 

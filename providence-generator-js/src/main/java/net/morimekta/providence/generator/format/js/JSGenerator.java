@@ -31,12 +31,9 @@ import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
-import com.google.common.collect.ImmutableList;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * Generate JS message models for providence.
@@ -45,16 +42,14 @@ import java.util.List;
  * format.
  */
 public class JSGenerator extends Generator {
-    private final List<ProgramFormatter> formatter;
-    private final GeneratorOptions       generatorOptions;
+    private final ProgramFormatter formatter;
+    private final GeneratorOptions generatorOptions;
 
     public JSGenerator(FileManager manager,
                        ProgramTypeRegistry registry, GeneratorOptions generatorOptions, JSOptions jsOptions) throws GeneratorException {
         super(manager);
 
-        ImmutableList.Builder<ProgramFormatter> builder = ImmutableList.builder();
-        builder.add(new JSProgramFormatter(jsOptions, registry));
-        this.formatter = builder.build();
+        this.formatter = new JSProgramFormatter(jsOptions, registry);
         this.generatorOptions = generatorOptions;
     }
 
@@ -63,21 +58,17 @@ public class JSGenerator extends Generator {
     public void generate(CProgram program) throws IOException, GeneratorException {
         String path = JSUtils.getPackageClassPath(program);
 
-        for (ProgramFormatter formatter : formatter) {
-            String fileName = formatter.getFileName(program);
-            OutputStream out = new BufferedOutputStream(getFileManager().create(path, fileName));
-            try {
-                IndentedPrintWriter writer = new IndentedPrintWriter(out);
+        String fileName = formatter.getFileName(program);
+        OutputStream out = new BufferedOutputStream(getFileManager().create(path, fileName));
+        try {
+            IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                writer.format("// Generated with %s %s",
-                              generatorOptions.generator_program_name,
-                              generatorOptions.program_version)
-                      .newline();
+            writer.format("// Generated with %s %s", generatorOptions.generator_program_name, generatorOptions.program_version)
+                  .newline();
 
-                formatter.format(writer, program);
-            } finally {
-                getFileManager().finalize(out);
-            }
+            formatter.format(writer, program);
+        } finally {
+            getFileManager().finalize(out);
         }
     }
 }

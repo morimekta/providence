@@ -28,6 +28,7 @@ import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -60,6 +61,12 @@ public abstract class ProgramFormatter {
         for (CConst constant : program.getConstants()) {
             formatConstant(writer, program, constant);
         }
+        if (!options.es51) {
+            // es5.1 does not support Promises, so no services either.
+            for (CService service : program.getServices()) {
+                formatService(writer, service);
+            }
+        }
 
         formatFooter(writer, program);
     }
@@ -70,5 +77,6 @@ public abstract class ProgramFormatter {
     protected abstract void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor);
     protected abstract void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor);
     protected abstract void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant);
+    protected abstract void formatService(IndentedPrintWriter writer, CService service);
     protected abstract void formatFooter(IndentedPrintWriter writer, CProgram program);
 }
