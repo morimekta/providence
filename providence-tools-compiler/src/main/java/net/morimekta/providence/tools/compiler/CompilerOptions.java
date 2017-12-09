@@ -150,6 +150,65 @@ public class CompilerOptions {
         return new ThriftProgramParser(requireFieldId, requireEnumValue);
     }
 
+    public JavaOptions makeJavaOptions() {
+        JavaOptions options = new JavaOptions();
+        for (String opt : gen.options) {
+            switch (opt) {
+                case "android":
+                    options.android = true;
+                    break;
+                case "jackson":
+                    options.jackson = true;
+                    break;
+                case "no_rw_binary":
+                    options.rw_binary = false;
+                    break;
+                case "hazelcast_portable":
+                    options.hazelcast_portable = true;
+                    break;
+                case "no_generated_annotation_version":
+                    options.generated_annotation_version = false;
+                    break;
+                case "public_constructors":
+                    options.public_constructors = true;
+                    break;
+                default:
+                    throw new ArgumentException("No such option for java generator: " + opt);
+            }
+        }
+        return options;
+    }
+
+    public JSOptions makeJsOptions() {
+        JSOptions options = new JSOptions();
+        for (String opt : gen.options) {
+            switch (opt) {
+                case "es51":
+                    options.es51 = true;
+                    break;
+                case "ts":
+                    options.type_script = true;
+                    break;
+                case "closure":
+                    options.closure = true;
+                    break;
+                case "node.js":
+                    options.node_js = true;
+                    break;
+                case "pvd":
+                    // external to this.
+                    break;
+                default:
+                    throw new ArgumentException("No such option for js generator: " + opt);
+            }
+        }
+        if (gen.options.contains("closure") && gen.options.contains("node.js")) {
+            throw new ArgumentException("Generator options 'closure' and 'node.js' are mutually exclusive.");
+        }
+
+        return options;
+    }
+
     public Generator getGenerator(String programPath, TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
         GeneratorOptions generatorOptions = new GeneratorOptions();
         generatorOptions.generator_program_name = "pvdc";
@@ -159,61 +218,14 @@ public class CompilerOptions {
                 return new JsonGenerator(getFileManager(), loader);
             }
             case java: {
-                JavaOptions options = new JavaOptions();
-                for (String opt : gen.options) {
-                    switch (opt) {
-                        case "android":
-                            options.android = true;
-                            break;
-                        case "jackson":
-                            options.jackson = true;
-                            break;
-                        case "no_rw_binary":
-                            options.rw_binary = false;
-                            break;
-                        case "hazelcast_portable":
-                            options.hazelcast_portable = true;
-                            break;
-                        case "no_generated_annotation_version":
-                            options.generated_annotation_version = false;
-                            break;
-                        case "public_constructors":
-                            options.public_constructors = true;
-                            break;
-                        default:
-                            throw new ArgumentException("No such option for java generator: " + opt);
-                    }
-                }
+                JavaOptions options = makeJavaOptions();
                 return new JavaGenerator(getFileManager(),
                                          loader.getProgramRegistry().registryForPath(programPath),
                                          generatorOptions,
                                          options);
             }
-            // TODO: Apparently this line (below) breaks 'mvn clean package -Pcli'...
             case js: {
-                JSOptions options = new JSOptions();
-                for (String opt : gen.options) {
-                    switch (opt) {
-                        case "es51":
-                            options.es51 = true;
-                            break;
-                        case "ts":
-                            options.type_script = true;
-                            break;
-                        case "closure":
-                            options.closure = true;
-                            break;
-                        case "node.js":
-                            options.node_js = true;
-                            break;
-                        default:
-                            throw new ArgumentException("No such option for js generator: " + opt);
-                    }
-                }
-                if (gen.options.contains("closure") && gen.options.contains("node.js")) {
-                    throw new ArgumentException("Generator options 'closure' and 'node.js' are mutually exclusive.");
-                }
-
+                JSOptions options = makeJsOptions();
                 return new JSGenerator(getFileManager(),
                                        loader.getProgramRegistry().registryForPath(programPath),
                                        generatorOptions,

@@ -24,14 +24,19 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.util.io.IOUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +89,7 @@ public class Compiler {
                             System.out.println(" - ts                  : Generate definition files for typescript.");
                             System.out.println(" - closure             : Generate google closure dependencies (goog.require and goog.provide).");
                             System.out.println(" - node_js             : Generate node.js module wrapper.");
+                            System.out.println(" - pvd                 : Provide core providence models for services if needed.");
                             break;
                         default:
                             System.out.println("No options available for " + options.help.generator + ".");
@@ -122,6 +128,40 @@ public class Compiler {
             for (CProgram doc : docs) {
                 Generator generator = options.getGenerator(doc.getProgramFilePath(), loader);
                 generator.generate(doc);
+            }
+
+            if (options.gen.generator == Language.js &&
+                options.gen.options.contains("pvd")) {
+                boolean service = false;
+                for (CProgram program : docs) {
+                    if (program.getServices().size() > 0) {
+                        service = true;
+                        break;
+                    }
+                }
+                if (service) {
+                    JSOptions opts = options.makeJsOptions();
+                    InputStream source;
+                    File target = new File(options.out, String.join(File.separator, "net", "morimekta", "providence", "service.js"));
+                    if (opts.type_script) {
+                        // copy ts.
+                        source = getClass().getResourceAsStream("/type_script/net/morimekta/providence/service.ts");
+                        target = new File(options.out, String.join(File.separator, "net", "morimekta", "providence", "service.ts"));
+                    } else if (opts.node_js) {
+                        source = getClass().getResourceAsStream("/node_js/net/morimekta/providence/service.js");
+                    } else if (opts.closure) {
+                        source = getClass().getResourceAsStream("/closure/net/morimekta/providence/service.js");
+                    } else {
+                        source = getClass().getResourceAsStream("/js/net/morimekta/providence/service.js");
+                    }
+
+                    target.getParentFile().mkdirs();
+
+                    try (FileOutputStream fos = new FileOutputStream(target);
+                         BufferedOutputStream out = new BufferedOutputStream(fos)) {
+                        IOUtils.copy(source, out);
+                    }
+                }
             }
 
             return;

@@ -116,7 +116,8 @@ public class CompilerFlagsTest {
                                    " - es51                : Generate for ECMA Script 5.1 (no maps, promises).\n" +
                                    " - ts                  : Generate definition files for typescript.\n" +
                                    " - closure             : Generate google closure dependencies (goog.require and goog.provide).\n" +
-                                   " - node_js             : Generate node.js module wrapper.\n")));
+                                   " - node_js             : Generate node.js module wrapper.\n" +
+                                   " - pvd                 : Provide core providence models for services if needed.\n")));
         assertThat(exitCode, is(0));
     }
 

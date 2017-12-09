@@ -25,4 +25,10 @@ test-models: test-compile
 thrift:
 	gradle -b thrift.gradle generateStaticThrift
 
-.PHONY: compile test-compile models test-models
+js:
+	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js         -o providence-generator-js/src/main/resources/js          providence-core/src/main/providence/*
+	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js:node.js -o providence-generator-js/src/main/resources/node_js     providence-core/src/main/providence/*
+	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js:closure -o providence-generator-js/src/main/resources/closure     providence-core/src/main/providence/*
+	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js:ts      -o providence-generator-js/src/main/resources/type_script providence-core/src/main/providence/*
+
+.PHONY: compile test-compile models test-models thrift js
