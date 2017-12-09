@@ -52,14 +52,7 @@ public class JService {
      * @return The method array.
      */
     public JServiceMethod[] methods() {
-        CService top = service;
-
-        List<CServiceMethod> methods = new ArrayList<>();
-        while (top != null) {
-            // Always keep 'parent' methods on the top.
-            methods.addAll(0, top.getMethods());
-            top = top.getExtendsService();
-        }
+        List<CServiceMethod> methods = new ArrayList<>(service.getMethodsIncludingExtended());
 
         CServiceMethod[] ma = methods.toArray(new CServiceMethod[methods.size()]);
         JServiceMethod[] ret = new JServiceMethod[ma.length];

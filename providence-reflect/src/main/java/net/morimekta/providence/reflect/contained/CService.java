@@ -23,11 +23,14 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,6 +76,22 @@ public class CService extends PService implements CAnnotatedDescriptor {
     @Override
     public CService getExtendsService() {
         return (CService) super.getExtendsService();
+    }
+
+    /**
+     * Get all methods including methods declared in extended services.
+     *
+     * @return The list of service methods.
+     */
+    public Collection<CServiceMethod> getMethodsIncludingExtended() {
+        CService extended = getExtendsService();
+        if (extended == null) {
+            return getMethods();
+        }
+        List<CServiceMethod> out = new ArrayList<>();
+        out.addAll(extended.getMethodsIncludingExtended());
+        out.addAll(getMethods());
+        return ImmutableList.copyOf(out);
     }
 
     @Nonnull
