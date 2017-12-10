@@ -10,13 +10,12 @@ import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
 import net.morimekta.test.providence.service.TestService;
+import net.morimekta.util.io.IOUtils;
 
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.transport.THttpClient;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.InputStreamContent;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.eclipse.jetty.server.Server;
@@ -28,25 +27,28 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.morimekta.providence.server.internal.TestNetUtil.factory;
 import static net.morimekta.providence.server.internal.TestNetUtil.getExposedPort;
 import static org.awaitility.Awaitility.waitAtMost;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -148,98 +150,53 @@ public class ProvidenceServletTest {
     }
 
     @Test
-    public void testSimpleRequest_404() throws IOException, Failure, InterruptedException {
-        when(impl.test(any(Request.class))).thenThrow(Failure.builder()
-                                                             .setText("failure")
-                                                             .build());
+    public void testBadRequest() throws IOException, Failure {
+        HttpResponse response;
 
-        GenericUrl url = endpoint();
-        url.setRawPath("/" + ENDPOINT + "/does_not_exists");
+        response = post("text/url-encoded", "method=test");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_BAD_REQUEST));
+        assertThat(response.getStatusMessage(), is("Unknown content-type: text/url-encoded"));
 
-        TestService.Iface client = new TestService.Client(new HttpClientHandler(() -> url, factory(), provider));
+        response = post("application/json", "{\"not\":\"usable\"}");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_OK));
+        assertThat(IOUtils.readString(response.getContent()),
+                   is("[\"\",\"exception\",0,{\"message\":\"Expected service call start ('['): but found '{'\",\"id\":\"PROTOCOL_ERROR\"}]"));
 
-        try {
-            client.test(new Request("request"));
-            fail("No exception");
-        } catch (HttpResponseException ex) {
-            assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
-        }
+        response = post("application/json", "[\"foo\", 1, 1, {}]");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_OK));
+        assertThat(IOUtils.readString(response.getContent()),
+                   is("[\"foo\",\"exception\",1,{\"message\":\"No such method foo on service.TestService\",\"id\":\"UNKNOWN_METHOD\"}]"));
 
-        Thread.sleep(10L);
 
-        verifyZeroInteractions(impl, instrumentation);
+        response = post("application/json", "[\"test\", 2, 2, {}]");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_OK));
+        assertThat(IOUtils.readString(response.getContent()),
+                   is("[\"test\",\"exception\",2,{\"message\":\"Invalid service request call type: REPLY\",\"id\":\"INVALID_MESSAGE_TYPE\"}]"));
+
+        response = post("application/json", "[\"test\", \"blurb\", 3, {}]");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_OK));
+        assertThat(IOUtils.readString(response.getContent()),
+                   is("[\"test\",\"exception\",0,{\"message\":\"Service call type \\\"blurb\\\" is not valid\",\"id\":\"INVALID_MESSAGE_TYPE\"}]"));
+
+        reset(impl);
+        doAnswer(i -> Response.builder().setText("reply").build())
+                .when(impl)
+                .test(any(Request.class));
+
+        // and simple OK, just in case.
+        response = post("application/json", "[\"test\", \"call\", 3, {\"request\":{}}]");
+        assertThat(response.getStatusCode(), is(HttpServletResponse.SC_OK));
+        assertThat(IOUtils.readString(response.getContent()),
+                   is("[\"test\",\"reply\",3,{\"success\":{\"text\":\"reply\"}}]"));
+
     }
 
-    @Test
-    public void testThriftClient_void() throws TException, IOException, Failure {
-        ApacheHttpTransport transport = new ApacheHttpTransport();
-        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
-        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
-        net.morimekta.test.thrift.service.TestService.Iface client =
-                new net.morimekta.test.thrift.service.TestService.Client(protocol);
-
-        AtomicBoolean called = new AtomicBoolean();
-        doAnswer(i -> {
-            called.set(true);
-            return null;
-        }).when(impl).voidMethod(55);
-
-        client.voidMethod(55);
-
-        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
-
-        verify(impl).voidMethod(55);
-        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
-        verifyNoMoreInteractions(impl, instrumentation);
-    }
-
-    @Test
-    public void testThriftClient_oneway() throws TException, IOException, Failure {
-        ApacheHttpTransport transport = new ApacheHttpTransport();
-        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
-        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
-        net.morimekta.test.thrift.service.TestService.Iface client =
-                new net.morimekta.test.thrift.service.TestService.Client(protocol);
-
-        AtomicBoolean called = new AtomicBoolean();
-        doAnswer(i -> {
-            called.set(true);
-            return null;
-        }).when(impl).ping();
-
-        client.ping();
-
-        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
-
-        verify(impl).ping();
-        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
-        verifyNoMoreInteractions(impl, instrumentation);
-    }
-
-    @Test
-    public void testThriftClient_failure() throws TException, IOException, Failure {
-        ApacheHttpTransport transport = new ApacheHttpTransport();
-        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
-        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
-        net.morimekta.test.thrift.service.TestService.Iface client =
-                new net.morimekta.test.thrift.service.TestService.Client(protocol);
-
-        AtomicBoolean called = new AtomicBoolean();
-        doAnswer(i -> {
-            called.set(true);
-            throw new Failure("test");
-        }).when(impl).voidMethod(55);
-
-        try {
-            client.voidMethod(55);
-        } catch (net.morimekta.test.thrift.service.Failure e) {
-            assertEquals("test", e.getText());
-        }
-
-        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
-
-        verify(impl).voidMethod(55);
-        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
-        verifyNoMoreInteractions(impl, instrumentation);
+    public HttpResponse post(String contentType, String content) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+        HttpRequest request = factory().buildPostRequest(endpoint(), new InputStreamContent(contentType, bais))
+                             .setThrowExceptionOnExecuteError(false);
+        request.getHeaders().setContentType(contentType);
+        request.getHeaders().setAccept("*/*");
+        return request.execute();
     }
 }

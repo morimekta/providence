@@ -80,6 +80,18 @@ public class DefaultProcessorHandler implements ProcessorHandler {
             }
         }
 
+        if (call.getType() == PServiceCallType.REPLY || call.getType() == PServiceCallType.EXCEPTION) {
+            try {
+                PApplicationException oe = new PApplicationException("Invalid service request call type: " + call.getType(),
+                                                                     PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                reply = new PServiceCall(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
+                writer.write(reply);
+                return;
+            } catch (Exception e) {
+                throw new IOException("Unable to write error response", e);
+            }
+        }
+
         try {
             reply = processor.handleCall(call);
         } catch (Exception e) {
