@@ -22,9 +22,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
@@ -55,20 +54,20 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class ProvidenceServletTest {
-    private static int                        port;
-    private static TestService.Iface          impl;
-    private static Server                     server;
-    private static SerializerProvider         provider;
-    private static ServiceCallInstrumentation instrumentation;
+    private int                        port;
+    private TestService.Iface          impl;
+    private Server                     server;
+    private SerializerProvider         provider;
+    private ServiceCallInstrumentation instrumentation;
 
     private static final String ENDPOINT = "test";
 
-    private static GenericUrl endpoint() {
+    private GenericUrl endpoint() {
         return new GenericUrl("http://localhost:" + port + "/" + ENDPOINT);
     }
 
-    @BeforeClass
-    public static void setUpServer() throws Exception {
+    @Before
+    public void setUpServer() throws Exception {
         Awaitility.setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
         Log.setLog(new NoLogging());
 
@@ -87,13 +86,8 @@ public class ProvidenceServletTest {
         port = getExposedPort(server);
     }
 
-    @Before
-    public void setUp() throws Exception {
-        reset(impl, instrumentation);
-    }
-
-    @AfterClass
-    public static void tearDownServer() {
+    @After
+    public void tearDownServer() {
         try {
             server.stop();
         } catch (Exception e) {
@@ -110,7 +104,7 @@ public class ProvidenceServletTest {
         });
 
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                ProvidenceServletTest::endpoint, factory(), provider));
+                this::endpoint, factory(), provider));
 
         Response response = client.test(new Request("request"));
 
@@ -132,7 +126,7 @@ public class ProvidenceServletTest {
                    .build();
         });
 
-        TestService.Iface client = new TestService.Client(new HttpClientHandler(ProvidenceServletTest::endpoint,
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(this::endpoint,
                                                                                 factory(),
                                                                                 provider));
 
@@ -191,7 +185,7 @@ public class ProvidenceServletTest {
 
     }
 
-    public HttpResponse post(String contentType, String content) throws IOException {
+    private HttpResponse post(String contentType, String content) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         HttpRequest request = factory().buildPostRequest(endpoint(), new InputStreamContent(contentType, bais))
                              .setThrowExceptionOnExecuteError(false);
