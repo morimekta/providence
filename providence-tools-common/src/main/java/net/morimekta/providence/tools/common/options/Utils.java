@@ -6,7 +6,6 @@ import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
@@ -19,9 +18,14 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collector;
@@ -106,8 +110,7 @@ public class Utils {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, ?, Integer> getOutput(Format defaultFormat,
                                              ConvertStream out,
-                                             boolean strict)
-            throws IOException {
+                                             boolean strict) throws IOException {
         Format fmt = defaultFormat;
         File file = null;
         if (out != null) {
@@ -123,8 +126,16 @@ public class Utils {
                 throw new ArgumentException("%s exists and is not a file.", file.toString());
             }
 
+            if (out.base64) {
+                FileOutputStream fos = new FileOutputStream(file);
+                OutputStream os = Base64.getEncoder().wrap(new BufferedOutputStream(fos));
+                return MessageCollectors.toStream(os, serializer);
+            }
             return MessageCollectors.toFile(file, serializer);
         } else {
+            if (out != null && out.base64) {
+                return MessageCollectors.toStream(Base64.getEncoder().wrap(System.out), serializer);
+            }
             return MessageCollectors.toStream(System.out, serializer);
         }
     }
@@ -133,7 +144,7 @@ public class Utils {
     Stream<Message> getInput(PMessageDescriptor<Message, Field> descriptor,
                              ConvertStream in,
                              Format defaultFormat,
-                             boolean strict) throws ParseException, IOException {
+                             boolean strict) throws IOException {
         Format fmt = defaultFormat;
         File file = null;
         if (in != null) {
@@ -149,12 +160,20 @@ public class Utils {
             }
 
             try {
+                if (in.base64) {
+                    FileInputStream fis = new FileInputStream(file);
+                    InputStream is = Base64.getDecoder().wrap(new BufferedInputStream(fis));
+                    return MessageStreams.stream(is, serializer, descriptor);
+                }
                 return MessageStreams.file(file, serializer, descriptor);
             } catch (IOException e) {
                 throw new ArgumentException("Unable to read file %s", file.toString());
             }
         } else {
-            BufferedInputStream is = new BufferedInputStream(System.in);
+            InputStream is = new BufferedInputStream(System.in);
+            if (in != null && in.base64) {
+                is = Base64.getDecoder().wrap(is);
+            }
             return MessageStreams.stream(is, serializer, descriptor);
         }
     }

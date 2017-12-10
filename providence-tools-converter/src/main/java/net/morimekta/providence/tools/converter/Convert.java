@@ -42,8 +42,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
-
 public class Convert {
     private final ConvertOptions options;
 
@@ -69,7 +67,7 @@ public class Convert {
                     System.out.println("$ cat call.json | pvd -I thrift/ -S cal.Calculator");
                     System.out.println("$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Operation");
                     System.out.println();
-                    System.out.println("Note that when handling listTypes calls, only 1 call can be converted.");
+                    System.out.println("Note that when handling service calls, only 1 call can be converted.");
                     System.out.println();
                     cli.printUsage(System.out);
                     System.out.println();
@@ -78,12 +76,11 @@ public class Convert {
                         System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
                     }
                     return;
-                } else if (options.showVersion()) {
-                    System.out.println("Providence Converter - " + getVersionString());
+                }
+                if (options.showVersion()) {
+                    System.out.println(cli.getProgramDescription());
                     return;
                 }
-
-                cli.validate();
 
                 if (options.listTypes) {
                     ProgramRegistry registry = options.getProgramRegistry();
@@ -105,6 +102,8 @@ public class Convert {
                     }
                     return;
                 }
+
+                cli.validate();
 
                 if (options.getDefinition() == null || options.listTypes) {
                     MessageReader in = options.getServiceInput();
@@ -159,7 +158,6 @@ public class Convert {
                 System.err.println();
                 e.printStackTrace();
             }
-
         }
         exit(1);
     }

@@ -64,7 +64,7 @@ public class ConvertTest {
                 "$ cat call.json | pvd -I thrift/ -S cal.Calculator\n" +
                 "$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Operation\n" +
                 "\n" +
-                "Note that when handling listTypes calls, only 1 call can be converted.\n" +
+                "Note that when handling service calls, only 1 call can be converted.\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +

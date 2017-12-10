@@ -12,12 +12,15 @@ public class ConvertStream {
     public final Format format;
     // If file is set: read / write file, otherwise use std in / out.
     public final File file;
+    // If the content is (or should be) base 64 encoded.
+    public final boolean base64;
 
     private static final String PARENT_PARENT = ".." + File.separator + ".." + File.separator;
 
-    public ConvertStream(Format format, File file) {
+    public ConvertStream(Format format, File file, boolean base64) {
         this.format = format;
         this.file = file;
+        this.base64 = base64;
     }
 
     public String toString() {
@@ -26,6 +29,13 @@ public class ConvertStream {
         if (format != null) {
             hasFormat = true;
             builder.append(format.name());
+        }
+        if (base64) {
+            if (hasFormat) {
+                builder.append(',');
+            }
+            builder.append("base64");
+            hasFormat = true;
         }
         if (file != null) {
             if (hasFormat) {
@@ -46,7 +56,10 @@ public class ConvertStream {
             } else {
                 builder.append(rel);
             }
-        } else if (!hasFormat) {
+            hasFormat = true;
+        }
+
+        if (!hasFormat) {
             builder.append("none");
         }
         return builder.toString();

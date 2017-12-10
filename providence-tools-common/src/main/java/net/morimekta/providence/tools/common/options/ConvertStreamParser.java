@@ -13,6 +13,7 @@ public class ConvertStreamParser implements Parser<ConvertStream> {
     public ConvertStream parse(String next) {
         Format format = Format.json;
         File file = null;
+        boolean base64 = false;
 
         if (next.startsWith("file:")) {
             file = new File(next.substring(5));
@@ -20,15 +21,17 @@ public class ConvertStreamParser implements Parser<ConvertStream> {
         for (String part : next.split("[,]", 2)) {
             if (part.startsWith("file:")) {
                 file = new File(part.substring(5));
+            } else if ("base64".equals(part)) {
+                base64 = true;
             } else {
                 try {
                     format = Format.valueOf(part);
                 } catch (IllegalArgumentException iae) {
-                    throw new ArgumentException("No such format " + part);
+                    throw new ArgumentException("No such format '" + part + "'");
                 }
             }
         }
 
-        return new ConvertStream(format, file);
+        return new ConvertStream(format, file, base64);
     }
 }

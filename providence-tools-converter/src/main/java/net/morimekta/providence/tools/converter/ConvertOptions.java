@@ -70,8 +70,8 @@ import static net.morimekta.console.util.Parser.dir;
 @SuppressWarnings("all")
 public class ConvertOptions extends CommonOptions {
     protected List<File>    includes  = new ArrayList<>();
-    protected ConvertStream in        = new ConvertStream(Format.json, null);
-    protected ConvertStream out       = new ConvertStream(Format.pretty, null);
+    protected ConvertStream in        = new ConvertStream(Format.json, null, false);
+    protected ConvertStream out       = new ConvertStream(Format.pretty, null, false);
     protected boolean       strict    = false;
     protected boolean       listTypes = false;
     protected String        type;

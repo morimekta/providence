@@ -81,8 +81,8 @@ import static net.morimekta.console.util.Parser.oneOf;
  */
 @SuppressWarnings("all")
 public class RPCOptions extends CommonOptions {
-    protected ConvertStream in = new ConvertStream(Format.json, null);
-    protected ConvertStream out = new ConvertStream(Format.pretty_json, null);
+    protected ConvertStream in = new ConvertStream(Format.json, null, false);
+    protected ConvertStream out = new ConvertStream(Format.pretty_json, null, false);
     protected boolean strict = false;
     protected List<File> includes = new ArrayList<>();
     protected String service = "";
@@ -120,7 +120,7 @@ public class RPCOptions extends CommonOptions {
                 }
                 return true;
             } catch (URISyntaxException e) {
-                throw new ArgumentException(e.getMessage());
+                throw new ArgumentException(e, e.getMessage());
             }
         }, false, true, false));
 
