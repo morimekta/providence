@@ -67,7 +67,7 @@ public class HttpClientHandler implements PServiceCallHandler {
      * @param urlSupplier The HTTP url supplier.
      */
     public HttpClientHandler(@Nonnull Supplier<GenericUrl> urlSupplier) {
-        this(urlSupplier, new NetHttpTransport().createRequestFactory(), new DefaultSerializerProvider());
+        this(urlSupplier, new NetHttpTransport().createRequestFactory());
     }
 
     /**

@@ -1,8 +1,14 @@
 package net.morimekta.providence.client;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.client.internal.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
+import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.test.providence.client.Failure;
@@ -32,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.morimekta.providence.client.internal.TestNetUtil.factory;
@@ -44,6 +51,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -55,6 +63,8 @@ import static org.mockito.Mockito.when;
 public class HttpClientHandlerTest {
     private static final String ENDPOINT  = "test";
     private static final String NOT_FOUND = "not_found";
+    private static final String HTML      = "html";
+    private static final String RESPONSE  = "response";
 
     private int                                                port;
     private net.morimekta.test.thrift.client.TestService.Iface impl;
@@ -62,9 +72,19 @@ public class HttpClientHandlerTest {
     private SerializerProvider                                 provider;
     private ArrayList<String>                                  contentTypes;
     private ServiceCallInstrumentation                         instrumentation;
+    private AtomicReference<PServiceCall<?,?>>                 reply;
 
     private GenericUrl endpoint() {
         return new GenericUrl("http://localhost:" + port + "/" + ENDPOINT);
+    }
+    private GenericUrl notfound() {
+        return new GenericUrl("http://localhost:" + port + "/" + NOT_FOUND);
+    }
+    private GenericUrl html() {
+        return new GenericUrl("http://localhost:" + port + "/" + HTML);
+    }
+    private GenericUrl response() {
+        return new GenericUrl("http://localhost:" + port + "/" + RESPONSE);
     }
 
     @Before
@@ -87,8 +107,28 @@ public class HttpClientHandlerTest {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }), "/" + NOT_FOUND);
+        handler.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+                    throws ServletException, IOException {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.setContentType("text/html");
+                resp.getWriter().print("<html></html>");
+            }
+        }), "/" + HTML);
+        handler.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+                    throws ServletException, IOException {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                Serializer serializer = provider.getDefault();
+                resp.setContentType(serializer.mediaType());
+                serializer.serialize(resp.getOutputStream(), reply.get());
+            }
+        }), "/" + RESPONSE);
 
         contentTypes = new ArrayList<>();
+        reply = new AtomicReference<>();
 
         server.setHandler(handler);
         server.setRequestLog((request, response) -> contentTypes.addAll(
@@ -107,6 +147,131 @@ public class HttpClientHandlerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testSimple() throws IOException, TException, Failure {
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint));
+
+        when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
+                .thenReturn(new net.morimekta.test.thrift.client.Response("response"));
+
+        Response response = client.test(new Request("request"));
+
+        verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
+        verifyNoMoreInteractions(impl);
+
+        assertThat(response, is(equalToMessage(new Response("response"))));
+        assertThat(contentTypes, is(equalTo(ImmutableList.of("application/vnd.apache.thrift.binary"))));
+    }
+
+    @Test
+    public void testBadRequest() throws IOException {
+        HttpClientHandler handler = new HttpClientHandler(this::endpoint);
+
+        try {
+            handler.handleCall(new PServiceCall<>("foo",
+                                                  PServiceCallType.EXCEPTION,
+                                                  1,
+                                                  new PApplicationException("", PApplicationExceptionType.INTERNAL_ERROR)),
+                               TestService.kDescriptor);
+            fail("no exception");
+        } catch (PApplicationException e) {
+            assertThat(e.getMessage(), is("Request with invalid call type: EXCEPTION"));
+            assertThat(e.getId(), is(PApplicationExceptionType.INVALID_MESSAGE_TYPE));
+        }
+    }
+
+    private class TestServiceBypass extends TestService {
+        public PMessage<?,?> testResponse(String text) {
+            return TestService._test_response.withSuccess(Response.builder().setText(text));
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testBadResponse() throws IOException, Failure {
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::html));
+        try {
+            client.test(new Request("request"));
+            fail("no exception");
+        } catch (PApplicationException e) {
+            assertThat(e.getMessage(), is("Unknown content-type in response: text/html;charset=utf-8"));
+            assertThat(e.getId(), is(PApplicationExceptionType.INVALID_PROTOCOL));
+        }
+
+        client = new TestService.Client(new HttpClientHandler(
+                this::response));
+
+        reply.set(new PServiceCall("foo", PServiceCallType.REPLY, 1, new TestServiceBypass().testResponse("foo")));
+        try {
+            client.test(new Request("request"));
+            fail("no exception");
+        } catch (SerializerException e) {
+            assertThat(e.getMessage(), is("No such method foo on client.TestService"));
+            assertThat(e.getExceptionType(), is(PApplicationExceptionType.UNKNOWN_METHOD));
+            assertThat(e.getMethodName(), is("foo"));
+            assertThat(e.getSequenceNo(), is(1));
+        }
+
+        reply.set(new PServiceCall("test", PServiceCallType.CALL, 2, new TestServiceBypass().testResponse("foo")));
+        try {
+            client.test(new Request("request"));
+            fail("no exception");
+        } catch (PApplicationException e) {
+            assertThat(e.getMessage(), is("Reply with invalid call type: CALL"));
+            assertThat(e.getId(), is(PApplicationExceptionType.INVALID_MESSAGE_TYPE));
+        }
+
+        reply.set(new PServiceCall("test", PServiceCallType.REPLY, 100, new TestServiceBypass().testResponse("foo")));
+        try {
+            client.test(new Request("request"));
+            fail("no exception");
+        } catch (PApplicationException e) {
+            assertThat(e.getMessage(), is("Reply sequence out of order: call = 2, reply = 100"));
+            assertThat(e.getId(), is(PApplicationExceptionType.BAD_SEQUENCE_ID));
+        }
+
+        reply.set(new PServiceCall("test", PServiceCallType.REPLY, 4, new PApplicationException("foo", PApplicationExceptionType.INTERNAL_ERROR)));
+        try {
+            client.test(new Request("request"));
+            fail("no exception");
+        } catch (SerializerException e) {
+            assertThat(e.getMessage(), is("Wrong type string(11) for client.TestService.test.response.fail, should be struct(12)"));
+            assertThat(e.getExceptionType(), is(PApplicationExceptionType.PROTOCOL_ERROR));
+            assertThat(e.getMethodName(), is("test"));
+            assertThat(e.getSequenceNo(), is(4));
+        }
+    }
+
+    @Test
+    public void testInstrumentationFail() throws IOException, Failure, TException {
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint, factory(), provider, instrumentation));
+        when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
+                .thenReturn(new net.morimekta.test.thrift.client.Response("response"));
+        doThrow(new NullPointerException()).when(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+
+        client.test(Request.builder().build());
+
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+
+        client = new TestService.Client(new HttpClientHandler(
+                this::notfound, factory(), provider, instrumentation));
+        doThrow(new NullPointerException()).when(instrumentation).onTransportException(any(IOException.class),
+                                                                                       anyDouble(),
+                                                                                       any(PServiceCall.class),
+                                                                                       isNull());
+
+        try {
+            client.test(Request.builder().build());
+            fail("no exception");
+        } catch (Exception ignore) {
+        }
+
+        verify(instrumentation).onTransportException(any(IOException.class), anyDouble(), any(PServiceCall.class), isNull());
     }
 
     @Test
@@ -149,10 +314,8 @@ public class HttpClientHandlerTest {
 
     @Test
     public void testSimpleRequest_404_notFound() throws IOException, Failure, TException {
-        GenericUrl url = endpoint();
-        url.setRawPath("/" + NOT_FOUND);
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                () -> url, factory(), provider, instrumentation));
+                this::notfound, factory(), provider, instrumentation));
 
         try {
             client.test(new Request("request"));
