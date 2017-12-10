@@ -1,0 +1,3 @@
+ignore:
+  - "it-*/"
+  - "providence-tools-*/"
