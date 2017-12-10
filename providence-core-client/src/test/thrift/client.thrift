@@ -22,6 +22,8 @@ service TestService extends BaseTestService {
     Response test(1: Request request) throws (1: Failure fail);
 
     double otherTest(1: double p1, 2: double p2);
+
+    oneway void onewayMethod();
 }
 
 service TestService2  {

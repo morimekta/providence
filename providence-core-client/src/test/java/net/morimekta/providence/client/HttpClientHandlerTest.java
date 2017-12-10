@@ -293,6 +293,20 @@ public class HttpClientHandlerTest {
     }
 
     @Test
+    public void testSimpleRequest_oneway() throws IOException, TException, Failure {
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint, factory(), provider, instrumentation));
+
+        client.onewayMethod();
+
+        verify(impl).onewayMethod();
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
+        verifyNoMoreInteractions(impl, instrumentation);
+
+        assertThat(contentTypes, is(equalTo(ImmutableList.of("application/vnd.apache.thrift.binary"))));
+    }
+
+    @Test
     public void testSimpleRequest_exception() throws IOException, Failure, TException {
         TestService.Iface client = new TestService.Client(
                 new HttpClientHandler(this::endpoint, factory(), provider, instrumentation));

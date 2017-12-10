@@ -141,19 +141,19 @@ public class HttpClientHandler implements PServiceCallHandler {
                        .setAccept(requestSerializer.mediaType());
                 HttpResponse response = request.execute();
                 try {
-                    Serializer responseSerializer = requestSerializer;
-                    if (response.getContentType() != null) {
-                        try {
-                            MediaType mediaType = MediaType.parse(response.getContentType());
-                            responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters()
-                                                                                           .toString());
-                        } catch (IllegalArgumentException e) {
-                            throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
-                                                            PApplicationExceptionType.INVALID_PROTOCOL).initCause(e);
-                        }
-                    }
-
                     if (call.getType() == PServiceCallType.CALL) {
+                        Serializer responseSerializer = requestSerializer;
+                        if (response.getContentType() != null) {
+                            try {
+                                MediaType mediaType = MediaType.parse(response.getContentType());
+                                responseSerializer = serializerProvider.getSerializer(mediaType.withoutParameters()
+                                                                                               .toString());
+                            } catch (IllegalArgumentException e) {
+                                throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
+                                                                PApplicationExceptionType.INVALID_PROTOCOL).initCause(e);
+                            }
+                        }
+
                         // non 200 responses should have triggered a HttpResponseException,
                         // so this is safe.
                         reply = responseSerializer.deserialize(response.getContent(), service);
