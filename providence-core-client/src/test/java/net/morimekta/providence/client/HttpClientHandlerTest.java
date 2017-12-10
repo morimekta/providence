@@ -23,6 +23,8 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServlet;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -38,12 +40,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.morimekta.providence.client.internal.TestNetUtil.factory;
 import static net.morimekta.providence.client.internal.TestNetUtil.getExposedPort;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -51,6 +56,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -89,6 +95,7 @@ public class HttpClientHandlerTest {
 
     @Before
     public void setUp() throws Exception {
+        Awaitility.setDefaultPollDelay(50, TimeUnit.MILLISECONDS);
         Log.setLog(new NoLogging());
 
         impl = mock(net.morimekta.test.thrift.client.TestService.Iface.class);
@@ -297,7 +304,16 @@ public class HttpClientHandlerTest {
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 this::endpoint, factory(), provider, instrumentation));
 
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).onewayMethod();
+
         client.onewayMethod();
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
 
         verify(impl).onewayMethod();
         verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
