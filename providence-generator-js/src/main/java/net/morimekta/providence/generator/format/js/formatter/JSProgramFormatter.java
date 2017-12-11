@@ -1599,7 +1599,7 @@ public class JSProgramFormatter extends ProgramFormatter {
 
     private void formatServiceConstructor(IndentedPrintWriter writer) {
         if (options.closure) {
-            new ClosureDocBuilder(writer).type_("boolean")
+            new ClosureDocBuilder(writer).type_("number")
                                          .private_()
                                          .finish();
         }
@@ -1620,7 +1620,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         writer.appendln("this._endpoint = endpoint;");
 
         if (options.closure) {
-            new ClosureDocBuilder(writer).type_("headers")
+            new ClosureDocBuilder(writer).type_("Object")
                                          .private_()
                                          .finish();
         }
