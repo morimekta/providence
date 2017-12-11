@@ -29,9 +29,9 @@ public class JsonGeneratorTest {
     @Rule
     public  TemporaryFolder tmp = new TemporaryFolder();
 
-    private File            out;
-    private TypeLoader      typeLoader;
-    private JsonGenerator   generator;
+    private File          out;
+    private TypeLoader    typeLoader;
+    private JsonGenerator generator;
 
     @Before
     public void setUp() throws IOException {

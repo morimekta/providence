@@ -35,7 +35,6 @@
             <item href="providence-generator/index.html"          name="Tools : Generator" />
             <item href="providence-generator-java/index.html"     name="Tools : Generator - Java" />
             <item href="providence-generator-js/index.html"       name="Tools : Generator - JavaScript" />
-            <item href="providence-generator-json/index.html"     name="Tools : Generator - JSON" />
             <item href="providence-maven-plugin/index.html"       name="Tools : Maven Plugin" />
             <item href="providence-gradle-plugin.html"            name="Tools : Gradle Plugin" />
 

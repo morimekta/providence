@@ -38,10 +38,6 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator-json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator-js</artifactId>
         </dependency>
         <dependency>
