@@ -1628,38 +1628,51 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
     private void formatServiceMethod(IndentedPrintWriter writer, CServiceMethod method) {
-        if (method.getResponseType() != null) {
-            writer.appendln("var self = this;");
-            writer.appendln("return new Promise(function(onSuccess, onFailure) {")
-                  .begin();
-        }
-
         if (options.type_script) {
             writer.appendln("var message: {[key:string]:any} = {};");
         } else {
             writer.appendln("var message = {};");
         }
         for (CField param : method.getRequestType().getFields()) {
-            String target = String.format("message[self._named ? '%s' : '%s']", param.getName(), param.getId());
-            formatJsonFromValue(writer, param.getDescriptor(), target, JSUtils.getParamName(param), null, "self._named");
-        }
-        writer.appendln("var seq_id = ++self._seq_id;");
-        writer.formatln("var call = ['%s', (self._named ? '%s' : %d), seq_id, message];",
-                        method.getName(),
-                        method.getResponseType() == null ? PServiceCallType.ONEWAY.getName() : PServiceCallType.CALL.getName(),
-                        method.getResponseType() == null ? PServiceCallType.ONEWAY.asInteger() : PServiceCallType.CALL.asInteger());
+            writer.formatln("if (%s !== null && %s !== undefined) {", JSUtils.getParamName(param), JSUtils.getParamName(param))
+                  .begin();
+            String target = String.format("message[this._named ? '%s' : '%s']", param.getName(), param.getId());
+            formatJsonFromValue(writer, param.getDescriptor(), target, JSUtils.getParamName(param), null, "this._named");
+            if (JSUtils.alwaysPresent(param)) {
+                writer.end()
+                      .appendln("} else {")
+                      .begin()
+                      .formatln("message[this._named ? '%s' : '%s'] = ", param.getName(), param.getId());
 
+                new JSConstFormatter(writer, options, programContext).format(JSUtils.defaultValue(param));
+
+                writer.append(";");
+            }
+            writer.end()
+                  .appendln("}");
+        }
+
+        writer.appendln("var seq_id = ++this._seq_id;");
+        writer.formatln("var call = ['%s', (this._named ? '%s' : %d), seq_id, message];",
+                        method.getName(),
+                        method.isOneway() ? PServiceCallType.ONEWAY.getName() : PServiceCallType.CALL.getName(),
+                        method.isOneway() ? PServiceCallType.ONEWAY.asInteger() : PServiceCallType.CALL.asInteger());
+
+        // TODO: This should be replaced with a "build XHR" method or function.
         writer.appendln("var xhr = new XMLHttpRequest();");
-        writer.appendln("xhr.open('POST', self._endpoint, true);")
+        writer.appendln("xhr.open('POST', this._endpoint, true);")
               .newline();
-        writer.appendln("for (var header in self._headers) {")
-              .appendln("    xhr.setRequestHeader(header, self._headers[header]);")
-              .appendln("}")
-              .formatln("xhr.setRequestHeader('Content-Type', self._named ? '%s' : '%s');",
+        writer.formatln("xhr.setRequestHeader('Content-Type', this._named ? '%s' : '%s');",
                         JsonSerializer.JSON_MEDIA_TYPE, JsonSerializer.MEDIA_TYPE);
+        writer.appendln("for (var header in this._headers) {")
+              .appendln("    xhr.setRequestHeader(header, this._headers[header]);")
+              .appendln("}")
+              .newline();
 
         if (method.getResponseType() != null) {
-            writer.appendln("xhr.onreadystatechange = function() {")
+            writer.appendln("return new Promise(function(onSuccess, onFailure) {")
+                  .begin()
+                  .appendln("xhr.onreadystatechange = function() {")
                   .begin()
                   .appendln("if (xhr.readyState == XMLHttpRequest.DONE) {")
                   .begin()
@@ -1668,17 +1681,16 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .appendln("var response = JSON.parse(xhr.responseText);")
                   .appendln("if (Array.isArray(response) && response.length == 4) {")
                   .begin();
-
-            // just assume method and sequence ID is OK.
-
-            writer.appendln("try {")
-                  .begin();
+            // Just assume method, call type and sequence no are good.
 
             writer.formatln("if (response[1] === '%s' || response[1] === %d) {",
                             PServiceCallType.EXCEPTION.asString(),
                             PServiceCallType.EXCEPTION.asInteger())
                   .appendln("    onFailure(new _.PApplicationException(response[3]))")
                   .appendln("}");
+
+            writer.appendln("try {")
+                  .begin();
 
             writer.appendln("for (var k in response[3]) {")
                   .begin()
@@ -1711,7 +1723,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                         writer.formatln("onSuccess(%s);", coerce);
                     }
                 } else {
-                    // exception, always exception = coerced.
+                    // exception, always coerced.
                     String coerce = coerceValueFromJson(field.getDescriptor(), "response[3][k]", false);
                     writer.formatln("onFailure(%s);", coerce);
                 }
@@ -1733,7 +1745,7 @@ public class JSProgramFormatter extends ProgramFormatter {
                   .appendln("        'id': _.PApplicationExceptionType.INTERNAL_ERROR")
                   .appendln("    }));")
                   .appendln("    return;")
-                  .appendln("}")
+                  .appendln("}")  // catch
                   .newline()
                   .appendln("onFailure(new _.PApplicationException({")
                   .appendln("    'message': 'Unknown response field: ' + JSON.stringify(response[3]),")
@@ -1759,15 +1771,16 @@ public class JSProgramFormatter extends ProgramFormatter {
             writer.end()
                   .appendln("}")  // ready
                   .end()
-                  .appendln("};");
-        }
+                  .appendln("};")  // onreadystatechange
+                  .newline();
+        }  // has response
 
         writer.appendln("xhr.send(JSON.stringify(call));");
 
         if (method.getResponseType() != null) {
             writer.end()
-                  .appendln("});");
-        }
+                  .appendln("});");  // new Promise
+        }  // has response
     }
 
     protected void formatFooter(IndentedPrintWriter writer, CProgram program) {
