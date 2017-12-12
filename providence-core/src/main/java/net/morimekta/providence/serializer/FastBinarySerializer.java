@@ -44,6 +44,8 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.io.LittleEndianBinaryReader;
 import net.morimekta.util.io.LittleEndianBinaryWriter;
 
+import com.google.common.annotations.Beta;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -56,11 +58,13 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Compact binary serializer. This uses the most compact binary format
- * allowable.
+ * Compact binary serializer. This uses a pretty compact binary format
+ * while being optimized for fewer operations during read and write.
  * <p>
- * See data definition file <code>docs/fast-binary.md</code> for format spec.
+ * Documentation: <a href="http://www.morimekta.net/providence/serializer-fast-binary.html">Fast Binary Serialization Format</a>
+ * with IDL and explanation.
  */
+@Beta
 public class FastBinarySerializer extends Serializer {
     public static final String MEDIA_TYPE = "application/vnd.morimekta.providence.binary";
 
