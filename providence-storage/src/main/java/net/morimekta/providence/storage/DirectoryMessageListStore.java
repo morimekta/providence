@@ -4,8 +4,12 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.storage.dir.DefaultFileManager;
+import net.morimekta.providence.storage.dir.FileManager;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
+import net.morimekta.util.concurrent.ReadWriteMutex;
+import net.morimekta.util.concurrent.ReentrantReadWriteMutex;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -21,8 +25,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -43,8 +49,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * {@link DirectoryMessageListStore} instance active at a time.</b>
  */
 public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PField>
-        extends BaseDirectoryStorage<K>
         implements MessageListStore<K,M,F>, Closeable {
+    private final ReadWriteMutex           mutex;
+    private final Set<K>                   keyset;
+    private final FileManager<K>           manager;
     private final Serializer               serializer;
     private final PMessageDescriptor<M, F> descriptor;
     private final Cache<K, List<M>>        cache;
@@ -54,7 +62,15 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
                                      @Nonnull Function<String, K> keyParser,
                                      @Nonnull PMessageDescriptor<M,F> descriptor,
                                      @Nonnull Serializer serializer) {
-        super(directory, keyBuilder, keyParser);
+        this(new DefaultFileManager<>(directory, keyBuilder, keyParser), descriptor, serializer);
+    }
+
+    public DirectoryMessageListStore(@Nonnull FileManager<K> manager,
+                                     @Nonnull PMessageDescriptor<M,F> descriptor,
+                                     @Nonnull Serializer serializer) {
+        this.manager = manager;
+        this.mutex = new ReentrantReadWriteMutex();
+        this.keyset = new HashSet<>(manager.initialKeySet());
         this.descriptor = descriptor;
         this.serializer = serializer;
         this.cache = CacheBuilder.newBuilder()
@@ -81,7 +97,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
                 try {
                     out.put(key, cache.get(key, () -> read(key)));
                 } catch (ExecutionException e) {
-                    throw new RuntimeException("Unable to read " + keyBuilder.apply(key), e);
+                    throw new RuntimeException("Unable to read " + key.toString(), e);
                 }
             }
             return out;
@@ -111,7 +127,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
         return mutex.lockForWriting(() -> {
             Map<K, List<M>> out = new HashMap<>();
             for (K key : keys) {
-                File file = fileFor(key, false);
+                File file = manager.getFileFor(key);
                 if (file.exists()) {
                     try {
                         out.put(key, cache.get(key, () -> read(key)));
@@ -132,23 +148,23 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
 
     private List<M> read(K key) throws IOException {
         try {
-            return MessageStreams.file(fileFor(key, false), serializer, descriptor)
+            return MessageStreams.file(manager.getFileFor(key), serializer, descriptor)
                                  .collect(Collectors.toList());
         } catch (UncheckedIOException e) {
-            throw new IOException("Unable to read " + keyBuilder.apply(key), e.getCause());
+            throw new IOException("Unable to read " + key.toString(), e.getCause());
         }
     }
 
     private void write(K key, List<M> message) throws IOException {
-        File tmp = fileFor(key, true);
-        File file = fileFor(key, false);
+        File tmp = manager.tmpFileFor(key);
+        File file = manager.getFileFor(key);
         if (tmp.exists() && !tmp.delete()) {
             throw new IOException("Unable to delete old tmp file: " + tmp.getAbsolutePath());
         }
         try {
             message.stream().collect(MessageCollectors.toFile(tmp, serializer));
         } catch (UncheckedIOException e) {
-            throw new IOException("Unable to write " + keyBuilder.apply(key), e.getCause());
+            throw new IOException("Unable to write " + key.toString(), e.getCause());
         }
         Files.move(tmp.toPath(), file.toPath(), REPLACE_EXISTING);
     }
