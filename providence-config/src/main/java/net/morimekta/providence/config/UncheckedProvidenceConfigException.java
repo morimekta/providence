@@ -20,11 +20,13 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.util.Stringable;
+
 /**
  * Unchecked config exception wrapping the providence config exception.
  * Handy for using config in streams etc.
  */
-public class UncheckedProvidenceConfigException extends RuntimeException {
+public class UncheckedProvidenceConfigException extends RuntimeException implements Stringable {
     public UncheckedProvidenceConfigException(ProvidenceConfigException cause) {
         super(cause.getMessage(), cause);
     }
@@ -38,7 +40,18 @@ public class UncheckedProvidenceConfigException extends RuntimeException {
         return this;
     }
 
+    @Override
     public ProvidenceConfigException getCause() {
         return (ProvidenceConfigException) super.getCause();
+    }
+
+    @Override
+    public String toString() {
+        return getCause().toString();
+    }
+
+    @Override
+    public String asString() {
+        return getCause().asString();
     }
 }

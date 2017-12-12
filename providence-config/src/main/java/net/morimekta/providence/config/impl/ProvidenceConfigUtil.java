@@ -103,16 +103,16 @@ public class ProvidenceConfigUtil {
         }
 
         if (message == null || !message.has(field.getId())) {
-            return asFieldType(field, defValue);
+            return defaultAsFieldType(field, defValue);
         }
 
         return message.get(field.getId());
     }
 
     @SuppressWarnings("unchecked")
-    private static Object asFieldType(PField field, Object o) throws ProvidenceConfigException {
+    private static Object defaultAsFieldType(PField field, Object o) throws ProvidenceConfigException {
         if (o == null) {
-            return field.getDefaultValue();
+            return null;
         }
 
         switch (field.getType()) {
