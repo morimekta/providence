@@ -23,8 +23,7 @@ package net.morimekta.providence.descriptor;
 import javax.annotation.Nonnull;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Provider of a primitive descriptor.
  */
 public class PPrimitiveProvider implements PDescriptorProvider {
     private final PPrimitive mType;

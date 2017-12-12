@@ -21,9 +21,9 @@
 package net.morimekta.providence.descriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Simple provider of values.
  */
+@FunctionalInterface
 public interface PValueProvider<V> {
     V get();
 }

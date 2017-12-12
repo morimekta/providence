@@ -25,8 +25,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import javax.annotation.Nonnull;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * A specific value of a described type.
  */
 public interface PValue<T> extends Comparable<T> {
     @Nonnull

@@ -22,12 +22,22 @@ package net.morimekta.providence.descriptor;
 
 /**
  * Field requirement designation.
- * - Default: Value is always present unless nullable. Not required for
- *   validity.
- * - Optional: Value may always be missing.
- * - Required: Value is always present unless nullable. Value required for
- *   validity.
- */
+ *
+ * <ul>
+ *     <li>
+ *         <b>OPTIONAL:</b> Value may always be missing.
+ *     </li>
+ *     <li>
+ *         <b>DEFAULT:</b> Value is always present unless nullable. Not required for
+ *         validity. Also called <code>optional-in-required-out</code> some places
+ *         in Apache Thrift.
+ *     </li>
+ *     <li>
+ *         <b>REQUIRED:</b> Value is always present if a default value exists.
+ *         Explicit value required for validity in reading.
+ *     </li>
+ * </ul>
+*/
 public enum PRequirement {
     DEFAULT(true, false, ""),
     OPTIONAL(false, false, "optional"),

@@ -58,9 +58,6 @@ import java.util.Map;
 /**
  * Pretty printer that can print message content for easily reading and
  * debugging. This is a write only format used in stringifying messages.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
 public class PrettySerializer extends Serializer {
     public final static String MEDIA_TYPE = "text/plain";

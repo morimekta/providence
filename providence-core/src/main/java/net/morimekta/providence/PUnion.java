@@ -25,10 +25,7 @@ import net.morimekta.providence.descriptor.PField;
 import javax.annotation.Nonnull;
 
 /**
- * Base class for all messages.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Base class for all unions.
  */
 public interface PUnion<Union extends PUnion<Union, Field>, Field extends PField>
         extends PMessage<Union, Field> {

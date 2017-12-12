@@ -28,9 +28,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Base class for all messages.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
 public interface PMessage<Message extends PMessage<Message, Field>, Field extends PField>
         extends PValue<Message>, Stringable {
