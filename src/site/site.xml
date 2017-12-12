@@ -25,16 +25,18 @@
             <item href="providence-core-jackson/index.html"       name="Core : Jackson" />
 
             <item href="providence-reflect/index.html"            name="Utils : Reflect" />
-            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />
             <item href="providence-testing/index.html"            name="Utils : Testing" />
-            <item href="providence-config/index.html"             name="Utils : Config" />
-            <item href="providence-storage/index.html"            name="Utils : Storage" />
-            <item href="providence-storage-hazelcast/index.html"  name="Utils : Storage - Hazelcast" />
-            <item href="providence-jax-rs/index.html"             name="Utils : Javax-Ws-Rs" />
+
+            <!-- Utilities in Beta -->
+            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge (beta)" />
+            <item href="providence-config/index.html"             name="Utils : Config (beta)" />
+            <item href="providence-storage/index.html"            name="Utils : Storage (beta)" />
+            <item href="providence-storage-hazelcast/index.html"  name="Utils : Storage - Hazelcast (beta)" />
+            <item href="providence-jax-rs/index.html"             name="Utils : Javax-Ws-Rs (beta)" />
 
             <item href="providence-generator/index.html"          name="Tools : Generator" />
             <item href="providence-generator-java/index.html"     name="Tools : Generator - Java" />
-            <item href="providence-generator-js/index.html"       name="Tools : Generator - JavaScript" />
+            <item href="providence-generator-js/index.html"       name="Tools : Generator - JavaScript (beta)" />
             <item href="providence-maven-plugin/index.html"       name="Tools : Maven Plugin" />
             <item href="providence-gradle-plugin.html"            name="Tools : Gradle Plugin" />
 
