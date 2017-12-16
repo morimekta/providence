@@ -21,6 +21,7 @@
 package net.morimekta.providence.serializer.pretty;
 
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.LineBufferedReader;
 import net.morimekta.util.io.Utf8StreamReader;
 
 import javax.annotation.Nonnull;
