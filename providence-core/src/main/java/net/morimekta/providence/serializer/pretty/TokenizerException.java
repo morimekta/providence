@@ -35,6 +35,8 @@ import static java.lang.Math.max;
  * Exception when totalizing fails to make token or read the expected content.
  */
 public class TokenizerException extends SerializerException {
+    private final static long serialVersionUID = 1513434504497049610L;
+
     private int    lineNo;
     private int    linePos;
     private String line;

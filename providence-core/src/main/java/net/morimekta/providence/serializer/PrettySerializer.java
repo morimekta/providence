@@ -71,7 +71,6 @@ public class PrettySerializer extends Serializer {
     private final String  space;
     private final String  newline;
     private final String  entrySep;
-    private final boolean encloseOuter;
     private final boolean strict;
     private final boolean prefixWithQualifiedName;
 
@@ -80,7 +79,7 @@ public class PrettySerializer extends Serializer {
     }
 
     public PrettySerializer(boolean strict) {
-        this(INDENT, SPACE, NEWLINE, "", true, strict, false);
+        this(INDENT, SPACE, NEWLINE, "", strict, false);
     }
 
     /**
@@ -91,7 +90,7 @@ public class PrettySerializer extends Serializer {
      * @return Compact pretty serializer.
      */
     public PrettySerializer compact() {
-        return new PrettySerializer("", "", "", LIST_SEP, true, strict, false);
+        return new PrettySerializer("", "", "", LIST_SEP, strict, false);
     }
 
     /**
@@ -103,7 +102,7 @@ public class PrettySerializer extends Serializer {
      * @return String pretty serializer.
      */
     public PrettySerializer string() {
-        return new PrettySerializer("", "", "", LIST_SEP, true, strict, true);
+        return new PrettySerializer("", "", "", LIST_SEP, strict, true);
     }
 
     /**
@@ -117,38 +116,20 @@ public class PrettySerializer extends Serializer {
                                     space,
                                     newline,
                                     entrySep,
-                                    true,
                                     strict,
                                     true);
-    }
-
-    /**
-     * Make a PrettySerializer that generates content with minimal diff.
-     *
-     * @return Debug pretty serializer.
-     */
-    public PrettySerializer debug() {
-        return new PrettySerializer(indent,
-                                    space,
-                                    newline,
-                                    entrySep,
-                                    false,
-                                    strict,
-                                    prefixWithQualifiedName);
     }
 
     private PrettySerializer(String indent,
                              String space,
                              String newline,
                              String entrySep,
-                             boolean encloseOuter,
                              boolean strict,
                              boolean prefixWithQualifiedName) {
         this.indent = indent;
         this.space = space;
         this.newline = newline;
         this.entrySep = entrySep;
-        this.encloseOuter = encloseOuter;
         this.strict = strict;
         this.prefixWithQualifiedName = prefixWithQualifiedName;
     }
@@ -161,7 +142,7 @@ public class PrettySerializer extends Serializer {
             builder.append(message.descriptor().getQualifiedName())
                    .append(space);
         }
-        appendMessage(builder, message, encloseOuter || prefixWithQualifiedName);
+        appendMessage(builder, message, false);
         builder.flush();
         return cout.getByteCount();
     }
@@ -173,8 +154,10 @@ public class PrettySerializer extends Serializer {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
-        builder.format("%d: %s %s(",
-                       call.getSequence(),
+        if (call.getSequence() != 0) {
+            builder.format("%d: ", call.getSequence());
+        }
+        builder.format("%s %s",
                        call.getType().asString(),
                        call.getMethod())
                .begin(indent + indent);
@@ -182,7 +165,6 @@ public class PrettySerializer extends Serializer {
         appendMessage(builder, call.getMessage(), true);
 
         builder.end()
-               .append(Token.kParamsEnd)
                .newline()
                .flush();
 
@@ -210,7 +192,7 @@ public class PrettySerializer extends Serializer {
             }
             callType = PServiceCallType.findByName(token.asString());
             if (callType == null) {
-                throw new TokenizerException(token, "No such call type " + token.asString())
+                throw new TokenizerException(token, "No such call type %s", token.asString())
                         .setLine(tokenizer.getLine())
                         .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             }
@@ -220,13 +202,13 @@ public class PrettySerializer extends Serializer {
 
             PServiceMethod method = service.getMethod(methodName);
             if (method == null) {
-                throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName())
+                throw new TokenizerException(token, "no such method %s on service %s",
+                                             methodName, service.getQualifiedName())
                         .setLine(tokenizer.getLine())
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
             tokenizer.expectSymbol("call params start", Token.kParamsStart);
-            tokenizer.expectSymbol("message encloser", Token.kMessageStart);
 
             Message message;
             switch (callType) {
@@ -244,14 +226,12 @@ public class PrettySerializer extends Serializer {
                     throw new IllegalStateException("Unreachable code reached");
             }
 
-            tokenizer.expectSymbol("Call params closing", Token.kParamsEnd);
-
             return new PServiceCall<>(methodName, callType, sequence, message);
         } catch (TokenizerException e) {
-            throw new TokenizerException(e, null)
-                    .setCallType(callType)
-                    .setSequenceNo(sequence)
-                    .setMethodName(methodName);
+            e.setCallType(callType)
+             .setSequenceNo(sequence)
+             .setMethodName(methodName);
+            throw e;
         } catch (IOException e) {
             throw new SerializerException(e, e.getMessage())
                     .setCallType(callType)
@@ -267,38 +247,33 @@ public class PrettySerializer extends Serializer {
                         @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         Tokenizer tokenizer = new Tokenizer(input);
-        if (!tokenizer.hasNext() && !encloseOuter) {
-            return descriptor.builder().build();
-        }
         Token first = tokenizer.peek("start of message");
 
-        boolean requireEnd = false;
         if (first.isQualifiedIdentifier() &&
             first.asString().equals(descriptor.getQualifiedName())) {
             tokenizer.next();  // skip the name
             tokenizer.expectSymbol("message start", Token.kMessageStart);
-            requireEnd = true;
         } else if (first.isSymbol(Token.kMessageStart)) {
             tokenizer.next();
-            requireEnd = true;
+        } else {
+            throw tokenizer.failure(first, "");
         }
-        return readMessage(tokenizer, descriptor, requireEnd);
+        return readMessage(tokenizer, descriptor, false);
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(Tokenizer tokenizer,
                         PMessageDescriptor<Message, Field> descriptor,
-                        boolean requireEnd)
+                        boolean params)
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
 
-        Token token = tokenizer.next();
+        Token token = tokenizer.expect("message field or end");
         for (;;) {
-            if (token == null) {
-                if (requireEnd) {
-                    throw new TokenizerException("Unexpected end of stream");
+            if (params) {
+                if (token.isSymbol(Token.kParamsEnd)) {
+                    break;
                 }
-                break;
             } else if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             }
@@ -319,13 +294,10 @@ public class PrettySerializer extends Serializer {
                         tokenizer, tokenizer.expect("field value"), field.getDescriptor()));
             }
 
-            if (tokenizer.hasNext()) {
-                token = tokenizer.peek("");
-                if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
-                    tokenizer.next();
-                }
+            token = tokenizer.expect("Message field or end");
+            if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                token = tokenizer.expect("Message field or end");
             }
-            token = tokenizer.next();
         }
         return builder.build();
     }
@@ -454,7 +426,7 @@ public class PrettySerializer extends Serializer {
                     throw new TokenizerException(token, "Expected message start, got '%s'", token.asString())
                             .setLine(tokenizer.getLine());
                 }
-                return readMessage(tokenizer, (PMessageDescriptor<?, ?>) descriptor, true);
+                return readMessage(tokenizer, (PMessageDescriptor<?, ?>) descriptor, false);
             }
             case MAP: {
                 if (!token.isSymbol(Token.kMessageStart)) {
@@ -542,28 +514,29 @@ public class PrettySerializer extends Serializer {
         return MEDIA_TYPE;
     }
 
-    private void appendMessage(IndentedPrintWriter builder, PMessage<?,?> message, boolean enclose) {
+    private void appendMessage(IndentedPrintWriter builder, PMessage<?,?> message, boolean encloseParams) {
         PMessageDescriptor<?, ?> type = message.descriptor();
 
-        if (enclose) {
-            builder.append(Token.kMessageStart)
-                   .begin();
+        boolean empty = true;
+        if (encloseParams) {
+            builder.append(Token.kParamsStart);
+        } else {
+            builder.append(Token.kMessageStart);
         }
+        builder.begin();
 
         if (message instanceof PUnion) {
             if (((PUnion) message).unionFieldIsSet()) {
                 PField field = ((PUnion) message).unionField();
                 Object o = message.get(field.getId());
 
-                if (enclose) {
-                    builder.appendln();
-                }
-
-                builder.append(field.getName())
+                builder.appendln()
+                       .append(field.getName())
                        .append(space)
                        .append(Token.kFieldValueSep)
                        .append(space);
                 appendTypedValue(builder, field.getDescriptor(), o);
+                empty = false;
             }
         } else {
             boolean first = true;
@@ -571,27 +544,30 @@ public class PrettySerializer extends Serializer {
                 if (message.has(field.getId())) {
                     if (first) {
                         first = false;
-                        if (enclose) {
-                            builder.appendln();
-                        }
                     } else {
                         builder.append(entrySep);
-                        builder.appendln();
                     }
                     Object o = message.get(field.getId());
 
-                    builder.append(field.getName())
+                    builder.appendln()
+                           .append(field.getName())
                            .append(space)
                            .append(Token.kFieldValueSep)
                            .append(space);
                     appendTypedValue(builder, field.getDescriptor(), o);
+                    empty = false;
                 }
             }
         }
 
-        if (enclose) {
-            builder.end()
-                   .appendln(Token.kMessageEnd);
+        builder.end();
+        if (!empty) {
+            builder.appendln();
+        }
+        if (encloseParams) {
+            builder.append(Token.kParamsEnd);
+        } else {
+            builder.append(Token.kMessageEnd);
         }
     }
 
@@ -602,6 +578,11 @@ public class PrettySerializer extends Serializer {
                 PContainer<?> containerType = (PContainer<?>) descriptor;
                 PDescriptor itemType = containerType.itemDescriptor();
                 Collection<?> collection = (Collection<?>) o;
+                if (collection.isEmpty()) {
+                    writer.append(Token.kListStart)
+                          .append(Token.kListEnd);
+                    break;
+                }
 
                 PPrimitive primitive = PPrimitive.findByName(itemType.getName());
                 if (primitive != null &&
@@ -649,6 +630,11 @@ public class PrettySerializer extends Serializer {
                 PMap<?, ?> mapType = (PMap<?, ?>) descriptor;
 
                 Map<?, ?> map = (Map<?, ?>) o;
+                if (map.isEmpty()) {
+                    writer.append(Token.kMessageStart)
+                          .append(Token.kMessageEnd);
+                    break;
+                }
 
                 writer.append(Token.kMessageStart)
                       .begin();
@@ -676,7 +662,7 @@ public class PrettySerializer extends Serializer {
                 break;
             case MESSAGE:
                 PMessage<?,?> message = (PMessage<?, ?>) o;
-                appendMessage(writer, message, true);
+                appendMessage(writer, message, false);
                 break;
             default:
                 appendPrimitive(writer, o);

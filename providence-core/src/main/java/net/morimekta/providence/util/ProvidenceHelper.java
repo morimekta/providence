@@ -125,7 +125,7 @@ public class ProvidenceHelper {
     }
 
 
-    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer().debug();
+    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer();
 
     private ProvidenceHelper() {}
 }

@@ -76,9 +76,11 @@ public class DropWizardIT {
         Operand op = response.readEntity(Operand.class);
 
         assertThat(debugString(op), is(equalTo(
-                "imaginary = {\n" +
-                "  v = 68\n" +
-                "  i = -1\n" +
+                "{\n" +
+                "  imaginary = {\n" +
+                "    v = 68\n" +
+                "    i = -1\n" +
+                "  }\n" +
                 "}")));
     }
 
@@ -102,9 +104,11 @@ public class DropWizardIT {
         Operand op = response.readEntity(Operand.class);
 
         assertThat(debugString(op), is(equalTo(
-                "imaginary = {\n" +
-                "  v = 68\n" +
-                "  i = -1\n" +
+                "{\n" +
+                "  imaginary = {\n" +
+                "    v = 68\n" +
+                "    i = -1\n" +
+                "  }\n" +
                 "}")));
     }
 
@@ -130,23 +134,25 @@ public class DropWizardIT {
         CalculateException ex = response.readEntity(CalculateException.class);
 
         assertEquals(
-                "message = \"Unsupported operation: MULTIPLY\"\n" +
-                "operation = {\n" +
-                "  operator = MULTIPLY\n" +
-                "  operands = [\n" +
-                "    {\n" +
-                "      number = 52\n" +
-                "    },\n" +
-                "    {\n" +
-                "      imaginary = {\n" +
-                "        v = 1\n" +
-                "        i = -1\n" +
+                "{\n" +
+                "  message = \"Unsupported operation: MULTIPLY\"\n" +
+                "  operation = {\n" +
+                "    operator = MULTIPLY\n" +
+                "    operands = [\n" +
+                "      {\n" +
+                "        number = 52\n" +
+                "      },\n" +
+                "      {\n" +
+                "        imaginary = {\n" +
+                "          v = 1\n" +
+                "          i = -1\n" +
+                "        }\n" +
+                "      },\n" +
+                "      {\n" +
+                "        number = 15\n" +
                 "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      number = 15\n" +
-                "    }\n" +
-                "  ]\n" +
+                "    ]\n" +
+                "  }\n" +
                 "}", debugString(ex));
     }
 
@@ -166,9 +172,11 @@ public class DropWizardIT {
                                    withNumber(15d))));
 
         assertThat(debugString(result), is(equalTo(
-                "imaginary = {\n" +
-                "  v = 68\n" +
-                "  i = -1\n" +
+                "{\n" +
+                "  imaginary = {\n" +
+                "    v = 68\n" +
+                "    i = -1\n" +
+                "  }\n" +
                 "}")));
     }
 

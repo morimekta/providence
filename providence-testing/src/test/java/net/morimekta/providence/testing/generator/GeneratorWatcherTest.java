@@ -180,7 +180,7 @@ public class GeneratorWatcherTest {
                 "  id = 123\n" +
                 "  label = \"Sjampanjebrus\"\n" +
                 "}\n").getBytes(StandardCharsets.UTF_8));
-        MessageReader reader = new IOMessageReader(bais, new PrettySerializer().debug());
+        MessageReader reader = new IOMessageReader(bais, new PrettySerializer());
 
         CompactFields compact = CompactFields.builder()
                                              .setId(123)

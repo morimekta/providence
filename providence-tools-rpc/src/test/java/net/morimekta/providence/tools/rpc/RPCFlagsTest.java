@@ -67,8 +67,8 @@ public class RPCFlagsTest {
                 " --version (-v)            : Show program version.\n" +
                 " --rc FILE                 : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --include (-I) dir        : Allow includes of files in directory\n" +
-                " --in (-i) spec            : Input specification (default: json)\n" +
-                " --out (-o) spec           : Output Specification (default: pretty_json)\n" +
+                " --in (-i) spec            : Input specification (default: binary)\n" +
+                " --out (-o) spec           : Output Specification (default: pretty)\n" +
                 " --service (-s) srv        : Qualified identifier name from definitions to use for parsing source\n" +
                 "                             file.\n" +
                 " --format (-f) fmt         : Request RPC format (default: binary)\n" +
@@ -86,6 +86,7 @@ public class RPCFlagsTest {
                 " - unversioned_binary   : Binary serialization without version spec (deprecated).\n" +
                 " - fast_binary          : Fast binary protocol based on proto format.\n" +
                 " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
+                " - pretty_compact       : Compact format similar to toString of messages.\n" +
                 " - config               : As a complete config (see providence-config)\n" +
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +

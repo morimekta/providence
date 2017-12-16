@@ -85,6 +85,7 @@ public class ConvertTest {
                 " - unversioned_binary   : Binary serialization without version spec (deprecated).\n" +
                 " - fast_binary          : Fast binary protocol based on proto format.\n" +
                 " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
+                " - pretty_compact       : Compact format similar to toString of messages.\n" +
                 " - config               : As a complete config (see providence-config)\n" +
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
@@ -128,7 +129,7 @@ public class ConvertTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
-                "42: reply cont({\n" +
+                "42: reply cont(\n" +
                 "      success = {\n" +
                 "        booleanList = [false, true]\n" +
                 "        defaultValues = {\n" +
@@ -140,7 +141,7 @@ public class ConvertTest {
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
-                "    })\n" +
+                "    )\n" +
                 "\n")));
         assertEquals(0, exitCode);
     }

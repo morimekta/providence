@@ -23,6 +23,7 @@ public enum Format {
     unversioned_binary("Binary serialization without version spec (deprecated)."),
     fast_binary("Fast binary protocol based on proto format."),
     pretty("Debug format that allows comments with an easy to read syntax."),
+    pretty_compact("Compact format similar to toString of messages."),
     config("As a complete config (see providence-config)"),
 
     // TProtocolSerializer
@@ -69,9 +70,11 @@ public enum Format {
             case tuple_protocol:
                 return new TTupleProtocolSerializer(strict);
             case pretty:
-                return new PrettySerializer(strict).debug();
+                return new PrettySerializer(strict);
             case config:
                 return new PrettySerializer(strict).config();
+            case pretty_compact:
+                return new PrettySerializer(strict).compact();
             default:
                 throw new IllegalStateException("Unknown format: " + this);
         }

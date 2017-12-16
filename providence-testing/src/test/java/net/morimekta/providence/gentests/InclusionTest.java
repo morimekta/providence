@@ -22,12 +22,12 @@ public class InclusionTest {
                                                      .build())
                               .build();
 
-        assertEquals("program = {\n" +
-                     "  program_name = \"program\"\n" +
-                     "  namespaces = {\n" +
+        assertEquals("{\n" +
+                     "  program = {\n" +
+                     "    program_name = \"program\"\n" +
+                     "    namespaces = {}\n" +
+                     "    decl = []\n" +
                      "  }\n" +
-                     "  decl = [\n" +
-                     "  ]\n" +
                      "}",
                      ProvidenceHelper.debugString(prog));
     }

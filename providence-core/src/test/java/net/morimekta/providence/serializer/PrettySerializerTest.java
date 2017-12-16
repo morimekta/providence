@@ -18,9 +18,9 @@
  */
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.calculator.Calculator;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
@@ -33,15 +33,16 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.test.providence.core.calculator.Operand.withImaginary;
 import static net.morimekta.test.providence.core.calculator.Operand.withNumber;
 import static net.morimekta.test.providence.core.calculator.Operand.withOperation;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
@@ -66,41 +67,43 @@ public class PrettySerializerTest {
                               .addToOperands(withImaginary(new Imaginary(1.7, -2.0)))
                               .build();
 
-        mFormatted = "operator = MULTIPLY\n" +
-                     "operands = [\n" +
-                     "  {\n" +
-                     "    operation = {\n" +
-                     "      operator = ADD\n" +
-                     "      operands = [\n" +
-                     "        {\n" +
-                     "          number = 1234\n" +
-                     "        },\n" +
-                     "        {\n" +
-                     "          number = 4.321\n" +
-                     "        }\n" +
-                     "      ]\n" +
+        mFormatted = "{\n" +
+                     "  operator = MULTIPLY\n" +
+                     "  operands = [\n" +
+                     "    {\n" +
+                     "      operation = {\n" +
+                     "        operator = ADD\n" +
+                     "        operands = [\n" +
+                     "          {\n" +
+                     "            number = 1234\n" +
+                     "          },\n" +
+                     "          {\n" +
+                     "            number = 4.321\n" +
+                     "          }\n" +
+                     "        ]\n" +
+                     "      }\n" +
+                     "    },\n" +
+                     "    {\n" +
+                     "      imaginary = {\n" +
+                     "        v = 1.7\n" +
+                     "        i = -2\n" +
+                     "      }\n" +
                      "    }\n" +
-                     "  },\n" +
-                     "  {\n" +
-                     "    imaginary = {\n" +
-                     "      v = 1.7\n" +
-                     "      i = -2\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "]";
+                     "  ]\n" +
+                     "}";
     }
 
     @Test
     public void testFormat() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrettySerializer serializer = new PrettySerializer().debug();
+        PrettySerializer serializer = new PrettySerializer();
         serializer.serialize(baos, mOperation);
         assertEquals(mFormatted, new String(baos.toByteArray(), UTF_8));
     }
 
     @Test
     public void testParse() throws IOException {
-        PrettySerializer serializer = new PrettySerializer().debug();
+        PrettySerializer serializer = new PrettySerializer();
 
         Operation actual = serializer.deserialize(getClass().getResourceAsStream("/json/calculator/pretty.cfg"), Operation.kDescriptor);
 
@@ -122,18 +125,48 @@ public class PrettySerializerTest {
     }
 
     @Test
-    public void testConfig2() throws IOException {
+    public void testConfig_2() throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(ResourceUtils.getResourceAsBytes("/compat/config.cfg"));
         PrettySerializer serializer = new PrettySerializer().config();
 
+        Containers c = serializer.deserialize(in, Containers.kDescriptor);
+        assertThat(c, is(notNullValue()));
+    }
+
+    @Test
+    public void testService_fails() throws IOException {
+        SerializerException e;
+        assertServiceFailure("foo",
+                             "No such call type foo",
+                             "Error on line 1, pos 1: No such call type foo\n" +
+                             "foo\n" +
+                             "^^^");
+        assertServiceFailure("1: call bar",
+                             "no such method bar on service calculator.Calculator",
+                             "Error on line 1, pos 9: no such method bar on service calculator.Calculator\n" +
+                             "1: call bar\n" +
+                             "--------^^^");
+
+        assertServiceFailure("1: call calculate",
+                             "Expected call params start ('('), Got end of file",
+                             "Error on line 1, pos 18: Expected call params start ('('), Got end of file\n" +
+                             "1: call calculate\n" +
+                             "-----------------^");
+    }
+
+    private void assertServiceFailure(String content,
+                                      String message,
+                                      String output) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(
+                content.getBytes(StandardCharsets.UTF_8));
+        PrettySerializer serializer = new PrettySerializer().config();
+
         try {
-            serializer.deserialize(in, Containers.kDescriptor);
-        } catch (TokenizerException e) {
-            e.printStackTrace();
-            fail(e.asString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+            serializer.deserialize(in, Calculator.kDescriptor);
+            throw new AssertionError("no exception");
+        } catch (SerializerException e) {
+            assertThat(e.getMessage(), is(message));
+            assertThat(e.asString(), is(output));
         }
     }
 }

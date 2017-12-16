@@ -70,7 +70,7 @@ import static net.morimekta.console.util.Parser.dir;
 @SuppressWarnings("all")
 public class ConvertOptions extends CommonOptions {
     protected List<File>    includes  = new ArrayList<>();
-    protected ConvertStream in        = new ConvertStream(Format.json, null, false);
+    protected ConvertStream in        = new ConvertStream(Format.binary, null, false);
     protected ConvertStream out       = new ConvertStream(Format.pretty, null, false);
     protected boolean       strict    = false;
     protected boolean       listTypes = false;
@@ -85,8 +85,8 @@ public class ConvertOptions extends CommonOptions {
         ArgumentParser parser = super.getArgumentParser(prog, description);
 
         parser.add(new Option("--include", "I", "dir", "Include from directories.", dir(this::addInclude), "${PWD}", true, false, false));
-        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), "binary"));
-        parser.add(new Option("--out", "o", "spec", "Output specification", new ConvertStreamParser().andApply(this::setOut), "pretty"));
+        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), in.toString()));
+        parser.add(new Option("--out", "o", "spec", "Output specification", new ConvertStreamParser().andApply(this::setOut), out.toString()));
         parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
         parser.add(new Flag("--list-types", "L", "List the parsed types based on the input files", this::setListTypes));
         parser.add(new Argument("type", "Qualified identifier name from definitions to use for parsing source file.", this::setType));

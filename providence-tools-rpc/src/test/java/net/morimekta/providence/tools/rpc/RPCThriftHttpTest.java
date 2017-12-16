@@ -133,6 +133,8 @@ public class RPCThriftHttpTest {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty_json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint(ENDPOINT));
@@ -181,6 +183,8 @@ public class RPCThriftHttpTest {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty_json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint(ENDPOINT));
@@ -207,6 +211,7 @@ public class RPCThriftHttpTest {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-o", "binary",
                 "-s", "test.MyService",
@@ -226,6 +231,7 @@ public class RPCThriftHttpTest {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-o", "binary",
                 "-s", "test.MyService",

@@ -22,9 +22,9 @@ public class ThriftTokenizerTest {
             fail("no exception");
         } catch (ParseException e) {
             assertThat(e.asString(), is(
-                    "Error on line 1, pos 1: Expected java-style comment, got end of file\n" +
+                    "Error on line 1, pos 2: Expected java-style comment, got end of file\n" +
                     "/\n" +
-                    "^"));
+                    "-^"));
         }
 
         try {

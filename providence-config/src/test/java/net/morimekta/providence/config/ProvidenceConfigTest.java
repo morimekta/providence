@@ -88,47 +88,51 @@ public class ProvidenceConfigTest {
         Service stage_service = config.getConfig(stage);
         Service prod_service = config.getConfig(prod);
 
-        assertEquals("name = \"prod\"\n" +
-                     "http = {\n" +
-                     "  port = 8080\n" +
-                     "  context = \"/app\"\n" +
-                     "  signature_keys = {\n" +
-                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+        assertEquals("{\n" +
+                     "  name = \"prod\"\n" +
+                     "  http = {\n" +
+                     "    port = 8080\n" +
+                     "    context = \"/app\"\n" +
+                     "    signature_keys = {\n" +
+                     "      \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "    }\n" +
+                     "    signature_override_keys = [\n" +
+                     "      \"not_really_app_1\"\n" +
+                     "    ]\n" +
                      "  }\n" +
-                     "  signature_override_keys = [\n" +
-                     "    \"not_really_app_1\"\n" +
-                     "  ]\n" +
-                     "}\n" +
-                     "admin = {\n" +
-                     "  port = 8088\n" +
-                     "  oauth_token_key = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
-                     "}\n" +
-                     "db = {\n" +
-                     "  uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
-                     "  driver = \"org.mysql.Driver\"\n" +
-                     "  credentials = {\n" +
-                     "    username = \"dbuser\"\n" +
-                     "    password = \"DbP4s5w0rD\"\n" +
+                     "  admin = {\n" +
+                     "    port = 8088\n" +
+                     "    oauth_token_key = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "  }\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
+                     "    driver = \"org.mysql.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"dbuser\"\n" +
+                     "      password = \"DbP4s5w0rD\"\n" +
+                     "    }\n" +
                      "  }\n" +
                      "}",
                      debugString(prod_service));
-        assertEquals("name = \"stage\"\n" +
-                     "http = {\n" +
-                     "  port = 8080\n" +
-                     "  context = \"/app\"\n" +
-                     "  signature_keys = {\n" +
-                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+        assertEquals("{\n" +
+                     "  name = \"stage\"\n" +
+                     "  http = {\n" +
+                     "    port = 8080\n" +
+                     "    context = \"/app\"\n" +
+                     "    signature_keys = {\n" +
+                     "      \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "    }\n" +
+                     "    signature_override_keys = [\n" +
+                     "      \"not_really_app_1\"\n" +
+                     "    ]\n" +
                      "  }\n" +
-                     "  signature_override_keys = [\n" +
-                     "    \"not_really_app_1\"\n" +
-                     "  ]\n" +
-                     "}\n" +
-                     "db = {\n" +
-                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "  driver = \"org.h2.Driver\"\n" +
-                     "  credentials = {\n" +
-                     "    username = \"myuser\"\n" +
-                     "    password = \"MyP4s5w0rd\"\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "    driver = \"org.h2.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"myuser\"\n" +
+                     "      password = \"MyP4s5w0rd\"\n" +
+                     "    }\n" +
                      "  }\n" +
                      "}",
                      debugString(stage_service));
@@ -143,8 +147,10 @@ public class ProvidenceConfigTest {
         ConfigSupplier<Database,Database._Field> stage_db = config.resolveConfig(f_stage_db);
         ConfigSupplier<Database,Database._Field> stage_nocred = config.resolveConfig(f_stage_nocred, stage_db);
 
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"",
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "}",
                      debugString(stage_nocred.get()));
     }
 
@@ -155,11 +161,13 @@ public class ProvidenceConfigTest {
         ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
         Database stage_db = config.getConfig(f_stage_db);
 
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"\n" +
-                     "credentials = {\n" +
-                     "  username = \"myuser\"\n" +
-                     "  password = \"MyP4s5w0rd\"\n" +
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "  credentials = {\n" +
+                     "    username = \"myuser\"\n" +
+                     "    password = \"MyP4s5w0rd\"\n" +
+                     "  }\n" +
                      "}",
                      debugString(stage_db));
     }
@@ -173,8 +181,10 @@ public class ProvidenceConfigTest {
         Database stage_db = config.getConfig(f_stage_db);
         Database stage_nocred = config.getConfig(f_stage_nocred, stage_db);
 
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"",
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "}",
                      debugString(stage_nocred));
     }
 
@@ -214,23 +224,25 @@ public class ProvidenceConfigTest {
 
         Supplier<Service> stage_service = config.resolveConfig(stage);
 
-        assertEquals("name = \"stage\"\n" +
-                     "http = {\n" +
-                     "  port = 8080\n" +
-                     "  context = \"/app\"\n" +
-                     "  signature_keys = {\n" +
-                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+        assertEquals("{\n" +
+                     "  name = \"stage\"\n" +
+                     "  http = {\n" +
+                     "    port = 8080\n" +
+                     "    context = \"/app\"\n" +
+                     "    signature_keys = {\n" +
+                     "      \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "    }\n" +
+                     "    signature_override_keys = [\n" +
+                     "      \"not_really_app_1\"\n" +
+                     "    ]\n" +
                      "  }\n" +
-                     "  signature_override_keys = [\n" +
-                     "    \"not_really_app_1\"\n" +
-                     "  ]\n" +
-                     "}\n" +
-                     "db = {\n" +
-                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "  driver = \"org.h2.Driver\"\n" +
-                     "  credentials = {\n" +
-                     "    username = \"myuser\"\n" +
-                     "    password = \"MyP4s5w0rd\"\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "    driver = \"org.h2.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"myuser\"\n" +
+                     "      password = \"MyP4s5w0rd\"\n" +
+                     "    }\n" +
                      "  }\n" +
                      "}",
                      debugString(stage_service.get()));
@@ -253,23 +265,25 @@ public class ProvidenceConfigTest {
         assertThat(config.resolveConfig(stage), is(sameInstance(stage_service)));
         assertThat(stage_service.get(), is(sameInstance(stage_service.get())));
 
-        assertEquals("name = \"stage\"\n" +
-                     "http = {\n" +
-                     "  port = 8080\n" +
-                     "  context = \"/app\"\n" +
-                     "  signature_keys = {\n" +
-                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+        assertEquals("{\n" +
+                     "  name = \"stage\"\n" +
+                     "  http = {\n" +
+                     "    port = 8080\n" +
+                     "    context = \"/app\"\n" +
+                     "    signature_keys = {\n" +
+                     "      \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "    }\n" +
+                     "    signature_override_keys = [\n" +
+                     "      \"not_really_app_1\"\n" +
+                     "    ]\n" +
                      "  }\n" +
-                     "  signature_override_keys = [\n" +
-                     "    \"not_really_app_1\"\n" +
-                     "  ]\n" +
-                     "}\n" +
-                     "db = {\n" +
-                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "  driver = \"org.h2.Driver\"\n" +
-                     "  credentials = {\n" +
-                     "    username = \"myuser\"\n" +
-                     "    password = \"O7h3rP4ssw0rd\"\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "    driver = \"org.h2.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"myuser\"\n" +
+                     "      password = \"O7h3rP4ssw0rd\"\n" +
+                     "    }\n" +
                      "  }\n" +
                      "}",
                      debugString(stage_service.get()));

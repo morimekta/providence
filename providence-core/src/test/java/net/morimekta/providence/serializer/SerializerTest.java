@@ -162,112 +162,120 @@ public class SerializerTest {
      * @param serializer The serializer to test.
      */
     private void testSerializer(Serializer serializer) throws IOException {
-        // Just a sanity check.
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayInputStream bais;
-        int size;
+        try {
+            // Just a sanity check.
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayInputStream bais;
+            int size;
 
-        // simple message.
-        {
-            baos.reset();
+            // simple message.
+            {
+                baos.reset();
 
-            size = serializer.serialize(baos, operation);
-            assertEquals(baos.size(), size);
+                size = serializer.serialize(baos, operation);
+                assertEquals(baos.size(), size);
 
-            bais = new ByteArrayInputStream(baos.toByteArray());
-            Operation actual = serializer.deserialize(bais, Operation.kDescriptor);
+                bais = new ByteArrayInputStream(baos.toByteArray());
+                Operation actual = serializer.deserialize(bais, Operation.kDescriptor);
 
-            assertEquals(actual, operation);
-        }
-
-        // complex message, one at a time.
-        for (Containers expected : containers) {
-            baos.reset();
-
-            size = serializer.serialize(baos, expected);
-            assertEquals(baos.size(), size);
-
-            bais = new ByteArrayInputStream(baos.toByteArray());
-            Containers actual;
-            try {
-                actual = serializer.deserialize(bais, Containers.kDescriptor);
-            } catch (TokenizerException e) {
-                System.err.println(new String(baos.toByteArray(), UTF_8));
-                System.err.println(e.asString());
-                e.printStackTrace();
-                fail("oops");
-                return;
+                assertEquals(actual, operation);
             }
 
-            assertThat(actual, new EqualToMessage<>(expected));
-        }
-
-        // complex message in stream.
-        {
-            baos.reset();
-            boolean first = true;
-            size = 0;
-            for (Containers c : containers) {
-                if (first) {
-                    first = false;
-                } else {
-                    baos.write('\n');
-                    size += 1;
-                }
-                size += serializer.serialize(baos, c);
-            }
-
-            assertEquals(baos.size(), size);
-
-            bais = new ByteArrayInputStream(baos.toByteArray());
-
-            first = true;
+            // complex message, one at a time.
             for (Containers expected : containers) {
-                if (first) {
-                    first = false;
-                } else {
-                    assertThat(bais.read(), is((int)'\n'));
+                baos.reset();
+
+                size = serializer.serialize(baos, expected);
+                assertEquals(baos.size(), size);
+
+                bais = new ByteArrayInputStream(baos.toByteArray());
+                Containers actual;
+                try {
+                    actual = serializer.deserialize(bais, Containers.kDescriptor);
+                } catch (TokenizerException e) {
+                    System.err.println(new String(baos.toByteArray(), UTF_8));
+                    System.err.println(e.asString());
+                    e.printStackTrace();
+                    fail("oops");
+                    return;
                 }
-                Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
+
                 assertThat(actual, new EqualToMessage<>(expected));
             }
 
-            assertEquals(0, bais.available());
-        }
-
-        try {
-            if (serializer instanceof PrettySerializer) {
-                String tmp = new String(baos.toByteArray(), UTF_8);
-                bais = new ByteArrayInputStream(tmp.replaceFirst("providence[.]Containers", "providence.ConsumeAll").getBytes(UTF_8));
-            } else {
-                bais = new ByteArrayInputStream(baos.toByteArray());
-            }
-
-            boolean first = true;
-            for (Containers ignore : containers) {
-                if (first) {
-                    first = false;
-                } else {
-                    assertThat(bais.read(), is((int)'\n'));
+            // complex message in stream.
+            {
+                baos.reset();
+                boolean first = true;
+                size = 0;
+                for (Containers c : containers) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        baos.write('\n');
+                        size += 1;
+                    }
+                    size += serializer.serialize(baos, c);
                 }
-                ConsumeAll actual = serializer.deserialize(bais, ConsumeAll.kDescriptor);
-                assertThat(actual, new EqualToMessage<>(ConsumeAll.builder().build()));
+
+                assertEquals(baos.size(), size);
+
+                bais = new ByteArrayInputStream(baos.toByteArray());
+
+                first = true;
+                for (Containers expected : containers) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        assertThat(bais.read(), is((int) '\n'));
+                    }
+                    Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
+                    assertThat(actual, new EqualToMessage<>(expected));
+                }
+
+                assertEquals(0, bais.available());
             }
-        } catch (TokenizerException e) {
+
+            try {
+                if (serializer instanceof PrettySerializer) {
+                    String tmp = new String(baos.toByteArray(), UTF_8);
+                    bais = new ByteArrayInputStream(tmp.replaceFirst("providence[.]Containers", "providence.ConsumeAll")
+                                                       .getBytes(UTF_8));
+                } else {
+                    bais = new ByteArrayInputStream(baos.toByteArray());
+                }
+
+                boolean first = true;
+                for (Containers ignore : containers) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        assertThat(bais.read(), is((int) '\n'));
+                    }
+                    ConsumeAll actual = serializer.deserialize(bais, ConsumeAll.kDescriptor);
+                    assertThat(actual,
+                               new EqualToMessage<>(ConsumeAll.builder()
+                                                              .build()));
+                }
+            } catch (TokenizerException e) {
+                System.err.println(e.asString());
+                throw e;
+            }
+
+            // service
+            for (PServiceCall<?, ?> call : serviceCalls) {
+                baos.reset();
+                int i = serializer.serialize(baos, call);
+                assertThat(i, is(baos.size()));
+
+                bais = new ByteArrayInputStream(baos.toByteArray());
+                PServiceCall<?, ?> re = serializer.deserialize(bais, ContainerService.kDescriptor);
+
+                assertThat(re, is(call));
+            }
+        } catch (SerializerException e) {
             System.err.println(e.asString());
             throw e;
-        }
-
-        // service
-        for (PServiceCall<?,?> call : serviceCalls) {
-            baos.reset();
-            int i = serializer.serialize(baos, call);
-            assertThat(i, is(baos.size()));
-
-            bais = new ByteArrayInputStream(baos.toByteArray());
-            PServiceCall<?,?> re = serializer.deserialize(bais, ContainerService.kDescriptor);
-
-            assertThat(re, is(call));
         }
     }
 
@@ -339,11 +347,10 @@ public class SerializerTest {
 
     @Test
     public void testPretty() throws IOException {
-        testSerializer(new PrettySerializer(true));
-        testSerializer(new PrettySerializer(true).compact());
-        testSerializer(new PrettySerializer(true).debug());
-        testSerializer(new PrettySerializer(true).string());
-        testSerializer(new PrettySerializer(true).config());
+        testSerializer(new PrettySerializer(true));            // default aka debug.
+        testSerializer(new PrettySerializer(true).config());   // as providence-config
+        testSerializer(new PrettySerializer(true).compact());  // compact
+        testSerializer(new PrettySerializer(true).string());   // as toString()
         testOutput(new PrettySerializer(true), "/compat/pretty.cfg");
     }
 

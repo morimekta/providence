@@ -56,20 +56,26 @@ public class ProvidenceConfigParserTest {
         Pair<Database, Set<String>> cfg = parser.parseConfig(file, null);
 
         // all the unknowns are skipped.
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"",
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "}",
                      debugString(cfg.first));
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_field.cfg", temp.getRoot());
         cfg = parser.parseConfig(file, null);
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"",
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "}",
                      debugString(cfg.first));
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value.cfg", temp.getRoot());
         cfg = parser.parseConfig(file, null);
-        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
-                     "driver = \"org.h2.Driver\"",
+        assertEquals("{\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "}",
                      debugString(cfg.first));
     }
 
@@ -169,25 +175,27 @@ public class ProvidenceConfigParserTest {
             RefMerge merged = config.parseConfig(a, (RefMerge) null).first;
 
             assertThat(debugString(merged), is(
-                    "ref1 = {\n" +
-                    "  bool_value = false\n" +
-                    "  msg_value = {\n" +
-                    "    driver = \"Driver\"\n" +
+                    "{\n" +
+                    "  ref1 = {\n" +
+                    "    bool_value = false\n" +
+                    "    msg_value = {\n" +
+                    "      driver = \"Driver\"\n" +
+                    "    }\n" +
                     "  }\n" +
-                    "}\n" +
-                    "ref1_1 = {\n" +
-                    "  bool_value = false\n" +
-                    "  i16_value = 12345\n" +
-                    "  msg_value = {\n" +
-                    "    uri = \"someuri\"\n" +
-                    "    driver = \"Driver\"\n" +
+                    "  ref1_1 = {\n" +
+                    "    bool_value = false\n" +
+                    "    i16_value = 12345\n" +
+                    "    msg_value = {\n" +
+                    "      uri = \"someuri\"\n" +
+                    "      driver = \"Driver\"\n" +
+                    "    }\n" +
                     "  }\n" +
-                    "}\n" +
-                    "ref2 = {\n" +
-                    "  bool_value = false\n" +
-                    "  msg_value = {\n" +
-                    "    uri = \"someuri\"\n" +
-                    "    driver = \"Driver\"\n" +
+                    "  ref2 = {\n" +
+                    "    bool_value = false\n" +
+                    "    msg_value = {\n" +
+                    "      uri = \"someuri\"\n" +
+                    "      driver = \"Driver\"\n" +
+                    "    }\n" +
                     "  }\n" +
                     "}"));
         } catch (ProvidenceConfigException e) {

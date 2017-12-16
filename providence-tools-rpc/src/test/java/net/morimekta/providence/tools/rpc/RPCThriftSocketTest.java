@@ -103,6 +103,8 @@ public class RPCThriftSocketTest {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty_json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -155,6 +157,8 @@ public class RPCThriftSocketTest {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty_json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -193,6 +197,8 @@ public class RPCThriftSocketTest {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
+                "-o", "pretty_json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService2",
                 endpoint());
@@ -220,6 +226,7 @@ public class RPCThriftSocketTest {
         when(impl.test(any(Request.class))).thenReturn(new Response("failure"));
 
         rpc.run("--rc", rc.getAbsolutePath(),
+                "-i", "json",
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 "thrift://localhost:" + (port - 10));

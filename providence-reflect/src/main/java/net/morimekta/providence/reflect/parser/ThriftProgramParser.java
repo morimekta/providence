@@ -39,6 +39,7 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -78,7 +78,6 @@ import static net.morimekta.providence.reflect.parser.internal.ThriftTokenizer.k
  * @since 07.09.15
  */
 public class ThriftProgramParser implements ProgramParser {
-    private final static Pattern RE_BLOCK_LINE       = Pattern.compile("^([\\s]*[*])?[\\s]?");
     private static final Pattern VALID_PROGRAM_NAME  = Pattern.compile(
             "[-._a-zA-Z][-._a-zA-Z0-9]*");
     public static final Pattern  VALID_NAMESPACE     = Pattern.compile(
@@ -139,7 +138,7 @@ public class ThriftProgramParser implements ProgramParser {
                 doc_string = parseDocLine(tokenizer, doc_string);
                 continue;
             } else if (token.strEquals(kBlockCommentStart)) {
-                doc_string = parseDocBlock(tokenizer);
+                doc_string = tokenizer.parseDocBlock();
                 continue;
             }
 
@@ -229,14 +228,14 @@ public class ThriftProgramParser implements ProgramParser {
         return program.build();
     }
 
-    private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException, ParseException {
+    private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException {
         Token token = tokenizer.expect("const typename", t -> t.isIdentifier() || t.isQualifiedIdentifier());
         String type = parseType(tokenizer, token, includedPrograms);
         Token id = tokenizer.expectIdentifier("const identifier");
 
         tokenizer.expectSymbol("const value separator", Token.kFieldValueSep);
 
-        Token value = parseValue(tokenizer);
+        Token value = tokenizer.parseValue();
         if (tokenizer.hasNext()) {
             Token sep = tokenizer.peek("");
             if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
@@ -254,67 +253,15 @@ public class ThriftProgramParser implements ProgramParser {
                         .build();
     }
 
-    private Token parseValue(ThriftTokenizer tokenizer) throws IOException {
-        Stack<Character> enclosures = new Stack<>();
-
-        int startLineNo = 0;
-        int startLinePos = 0;
-        int offset = -1;
-        while (true) {
-            Token token = tokenizer.expect("const value");
-            if (offset < 0) {
-                offset = token.getOffset();
-                startLineNo = token.getLineNo();
-                startLinePos = token.getLinePos();
-            }
-
-            if (token.strEquals(kBlockCommentStart)) {
-                parseDocBlock(tokenizer);  // ignore.
-                continue;
-            } else if (token.strEquals(kLineCommentStart)) {
-                parseDocLine(tokenizer, null);  // ignore
-                continue;
-            } else if (token.isSymbol(Token.kMessageStart)) {
-                enclosures.push(Token.kMessageEnd);
-            } else if (token.isSymbol(Token.kListStart)) {
-                enclosures.push(Token.kListEnd);
-            } else if ((token.isSymbol(Token.kMessageEnd) || token.isSymbol(Token.kListEnd)) &&
-                       enclosures.peek().equals(token.charAt(0))) {
-                enclosures.pop();
-            }
-
-            if (enclosures.isEmpty()) {
-                return tokenizer.token(offset,
-                                       (token.getOffset() - offset) + token.length(),
-                                       startLineNo,
-                                       startLinePos);
-            }
-        }
-    }
-
     private String parseDocLine(ThriftTokenizer tokenizer, String comment) throws IOException {
-        String line = tokenizer.readUntil("\n").trim();
+        String line = IOUtils.readString(tokenizer, "\n").trim();
         if (comment != null) {
             return comment + "\n" + line;
         }
         return line;
     }
 
-    private String parseDocBlock(ThriftTokenizer tokenizer) throws IOException {
-        String block = tokenizer.readUntil(ThriftTokenizer.kBlockCommentEnd)
-                              .trim();
-        String[] lines = block.split("\\r?\\n");
-        StringBuilder builder = new StringBuilder();
-
-        for (String line : lines) {
-            builder.append(RE_BLOCK_LINE.matcher(line).replaceFirst(""));
-            builder.append('\n');
-        }
-        return builder.toString()
-                      .trim();
-    }
-
-    private ServiceType parseService(ThriftTokenizer tokenizer, String doc_string, Set<String> includedPrograms) throws IOException, ParseException {
+    private ServiceType parseService(ThriftTokenizer tokenizer, String doc_string, Set<String> includedPrograms) throws IOException {
         ServiceType._Builder service = ServiceType.builder();
 
         if (doc_string != null) {
@@ -342,7 +289,7 @@ public class ThriftProgramParser implements ProgramParser {
                 doc_string = parseDocLine(tokenizer, doc_string);
                 continue;
             } else if (token.strEquals(kBlockCommentStart)) {
-                doc_string = parseDocBlock(tokenizer);
+                doc_string = tokenizer.parseDocBlock();
                 continue;
             }
 
@@ -388,7 +335,7 @@ public class ThriftProgramParser implements ProgramParser {
                     doc_string = parseDocLine(tokenizer, doc_string);
                     continue;
                 } else if (token.strEquals(kBlockCommentStart)) {
-                    doc_string = parseDocBlock(tokenizer);
+                    doc_string = tokenizer.parseDocBlock();
                     continue;
                 }
 
@@ -445,7 +392,7 @@ public class ThriftProgramParser implements ProgramParser {
                         doc_string = parseDocLine(tokenizer, doc_string);
                         continue;
                     } else if (token.strEquals(kBlockCommentStart)) {
-                        doc_string = parseDocBlock(tokenizer);
+                        doc_string = tokenizer.parseDocBlock();
                         continue;
                     }
 
@@ -612,7 +559,7 @@ public class ThriftProgramParser implements ProgramParser {
                 } else if (token.strEquals(kLineCommentStart)) {
                     doc_string = parseDocLine(tokenizer, doc_string);
                 } else if (token.strEquals(kBlockCommentStart)) {
-                    doc_string = parseDocBlock(tokenizer);
+                    doc_string = tokenizer.parseDocBlock();
                 } else if (token.isIdentifier()) {
                     EnumValue._Builder enum_value = EnumValue.builder();
                     enum_value.setName(token.asString());
@@ -699,7 +646,7 @@ public class ThriftProgramParser implements ProgramParser {
                 comment = parseDocLine(tokenizer, comment);
                 continue;
             } else if (token.strEquals(kBlockCommentStart)) {
-                comment = parseDocBlock(tokenizer);
+                comment = tokenizer.parseDocBlock();
                 continue;
             }
 
@@ -775,7 +722,7 @@ public class ThriftProgramParser implements ProgramParser {
             // Default value
             if (token.isSymbol(Token.kFieldValueSep)) {
                 tokenizer.next();
-                Token defaultValue = parseValue(tokenizer);
+                Token defaultValue = tokenizer.parseValue();
                 field.setDefaultValue(defaultValue.asString());
                 field.setStartLineNo(defaultValue.getLineNo());
                 field.setStartLinePos(defaultValue.getLinePos());

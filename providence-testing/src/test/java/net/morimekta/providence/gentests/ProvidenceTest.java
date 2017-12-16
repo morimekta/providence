@@ -203,7 +203,7 @@ public class ProvidenceTest {
         assertThat(dv.getCompactValue(), is(nullValue()));
 
         // And it serializes as no fields.
-        assertThat(debugString(dv), is(equalTo("")));
+        assertThat(debugString(dv), is(equalTo("{}")));
     }
 
     @Test
@@ -241,20 +241,22 @@ public class ProvidenceTest {
         assertThat(af2, is(equalToMessage(af)));
         // An interesting side effect from auto ID fields, is that the numeric
         // order is reverse that of declared order. Always.
-        assertEquals("compactValue = {\n" +
-                     "  name = \"name\"\n" +
-                     "  id = 14\n" +
-                     "  label = \"label\"\n" +
-                     "}\n" +
-                     "enumValue = SIXTEENTH\n" +
-                     "binaryValue = b64(ASNFZ4mrze8)\n" +
-                     "stringValue = \"a string\"\n" +
-                     "doubleValue = 12.12\n" +
-                     "longValue = 10\n" +
-                     "integerValue = 8\n" +
-                     "shortValue = 6\n" +
-                     "byteValue = 4\n" +
-                     "booleanValue = false", debugString(af2));
+        assertEquals("{\n" +
+                     "  compactValue = {\n" +
+                     "    name = \"name\"\n" +
+                     "    id = 14\n" +
+                     "    label = \"label\"\n" +
+                     "  }\n" +
+                     "  enumValue = SIXTEENTH\n" +
+                     "  binaryValue = b64(ASNFZ4mrze8)\n" +
+                     "  stringValue = \"a string\"\n" +
+                     "  doubleValue = 12.12\n" +
+                     "  longValue = 10\n" +
+                     "  integerValue = 8\n" +
+                     "  shortValue = 6\n" +
+                     "  byteValue = 4\n" +
+                     "  booleanValue = false\n" +
+                     "}", debugString(af2));
     }
 
     @Test
@@ -302,21 +304,21 @@ public class ProvidenceTest {
         containers.mutableShortSet().add((short) 3);
 
         assertThat(containers.build(), is(equalToMessage(parseDebugString(
-                "byteList = []\n" +
-                "longList = [1, 2, 3, 4, 5]\n" +
-                "shortSet = [1, 2, -2, 3]\n" +
-                "binarySet = [\n" +
-                "]\n" +
-                "integerMap = {\n" +
-                "}\n" +
-                "doubleMap = {\n" +
-                "  44: 12\n" +
-                "  12: 44\n" +
-                "}\n" +
-                "enumSet = [\n" +
-                "  EIGHTEENTH,\n" +
-                "  THIRD\n" +
-                "]", Containers.kDescriptor))));
+                "{\n" +
+                "  byteList = []\n" +
+                "  longList = [1, 2, 3, 4, 5]\n" +
+                "  shortSet = [1, 2, -2, 3]\n" +
+                "  binarySet = []\n" +
+                "  integerMap = {}\n" +
+                "  doubleMap = {\n" +
+                "    44: 12\n" +
+                "    12: 44\n" +
+                "  }\n" +
+                "  enumSet = [\n" +
+                "    EIGHTEENTH,\n" +
+                "    THIRD\n" +
+                "  ]\n" +
+                "}", Containers.kDescriptor))));
     }
 
     @Test

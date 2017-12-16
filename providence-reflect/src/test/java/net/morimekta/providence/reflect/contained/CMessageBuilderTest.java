@@ -155,38 +155,40 @@ public class CMessageBuilderTest {
         CStruct a = ba.build();
 
         assertThat(debugString(a), is(equalToLines(
-                "integerList = [3, 4, 5, 6]\n" +
-                "longList = [5, 6, 7, 8]\n" +
-                "integerSet = [4, 3, 2, 1, 5, 6]\n" +
-                "longSet = [5, 6, 7, 8]\n" +
-                "integerMap = {\n" +
-                "  1: 4\n" +
-                "  2: 3\n" +
-                "  3: 5\n" +
-                "  4: 6\n" +
-                "  5: 7\n" +
-                "  6: 8\n" +
-                "}\n" +
-                "longMap = {\n" +
-                "  5: 4\n" +
-                "  6: 3\n" +
-                "  7: 2\n" +
-                "  8: 1\n" +
-                "}\n" +
-                "defaultFields = {\n" +
-                "  booleanValue = true\n" +
-                "  byteValue = 42\n" +
-                "  shortValue = 0\n" +
-                "  integerValue = 0\n" +
-                "  longValue = 52\n" +
-                "  doubleValue = 0\n" +
-                "  stringValue = \"\"\n" +
-                "  binaryValue = b64()\n" +
-                "}\n" +
-                "optionalFields = {\n" +
-                "  booleanValue = true\n" +
-                "  byteValue = 42\n" +
-                "  integerValue = 42\n" +
+                "{\n" +
+                "  integerList = [3, 4, 5, 6]\n" +
+                "  longList = [5, 6, 7, 8]\n" +
+                "  integerSet = [4, 3, 2, 1, 5, 6]\n" +
+                "  longSet = [5, 6, 7, 8]\n" +
+                "  integerMap = {\n" +
+                "    1: 4\n" +
+                "    2: 3\n" +
+                "    3: 5\n" +
+                "    4: 6\n" +
+                "    5: 7\n" +
+                "    6: 8\n" +
+                "  }\n" +
+                "  longMap = {\n" +
+                "    5: 4\n" +
+                "    6: 3\n" +
+                "    7: 2\n" +
+                "    8: 1\n" +
+                "  }\n" +
+                "  defaultFields = {\n" +
+                "    booleanValue = true\n" +
+                "    byteValue = 42\n" +
+                "    shortValue = 0\n" +
+                "    integerValue = 0\n" +
+                "    longValue = 52\n" +
+                "    doubleValue = 0\n" +
+                "    stringValue = \"\"\n" +
+                "    binaryValue = b64()\n" +
+                "  }\n" +
+                "  optionalFields = {\n" +
+                "    booleanValue = true\n" +
+                "    byteValue = 42\n" +
+                "    integerValue = 42\n" +
+                "  }\n" +
                 "}")));
 
         CStruct.Builder bc = (CStruct.Builder) (CMessageBuilder) registry.getDeclaredType("test.Containers")
@@ -204,10 +206,12 @@ public class CMessageBuilderTest {
         bb.addTo(123, 42L);  // no effect.
 
         assertThat(debugString(bc.build()), is(equalToLines(
-                "integerList = [123, 42]\n" +
-                "longList = [42]\n" +
-                "booleanSet = [true, false]\n" +
-                "longSet = [42]")));
+                "{\n" +
+                "  integerList = [123, 42]\n" +
+                "  longList = [42]\n" +
+                "  booleanSet = [true, false]\n" +
+                "  longSet = [42]\n" +
+                "}")));
 
         assertThat(bc.toString(),
                    is("test.Containers._Builder{values={4=[123, 42], 5=[42], 11=[true, false], 15=[42]}, modified=[4, 5, 11, 15]}"));

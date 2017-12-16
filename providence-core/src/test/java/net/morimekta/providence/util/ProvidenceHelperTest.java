@@ -153,55 +153,59 @@ public class ProvidenceHelperTest {
 
     @Test
     public void testDebugString() {
-        assertEquals("operator = MULTIPLY\n" +
-                     "operands = [\n" +
-                     "  {\n" +
-                     "    operation = {\n" +
-                     "      operator = ADD\n" +
-                     "      operands = [\n" +
-                     "        {\n" +
-                     "          number = 1234\n" +
-                     "        },\n" +
-                     "        {\n" +
-                     "          number = 4.321\n" +
-                     "        }\n" +
-                     "      ]\n" +
+        assertEquals("{\n" +
+                     "  operator = MULTIPLY\n" +
+                     "  operands = [\n" +
+                     "    {\n" +
+                     "      operation = {\n" +
+                     "        operator = ADD\n" +
+                     "        operands = [\n" +
+                     "          {\n" +
+                     "            number = 1234\n" +
+                     "          },\n" +
+                     "          {\n" +
+                     "            number = 4.321\n" +
+                     "          }\n" +
+                     "        ]\n" +
+                     "      }\n" +
+                     "    },\n" +
+                     "    {\n" +
+                     "      imaginary = {\n" +
+                     "        v = 1.7\n" +
+                     "        i = -2\n" +
+                     "      }\n" +
                      "    }\n" +
-                     "  },\n" +
-                     "  {\n" +
-                     "    imaginary = {\n" +
-                     "      v = 1.7\n" +
-                     "      i = -2\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "]", ProvidenceHelper.debugString(mOperation));
+                     "  ]\n" +
+                     "}", ProvidenceHelper.debugString(mOperation));
     }
 
     @Test
     public void testParseDebugString() {
         assertEquals(mOperation, ProvidenceHelper.parseDebugString(
-                "operator = MULTIPLY\n" +
-                "operands = [\n" +
-                "  {\n" +
-                "    operation = {\n" +
-                "      operator = ADD\n" +
-                "      operands = [\n" +
-                "        {\n" +
-                "          number = 1234\n" +
-                "        },\n" +
-                "        {\n" +
-                "          number = 4.321\n" +
-                "        }\n" +
-                "      ]\n" +
+                "{\n" +
+                "  operator = MULTIPLY\n" +
+                "  operands = [\n" +
+                "    {\n" +
+                "      operation = {\n" +
+                "        operator = ADD\n" +
+                "        operands = [\n" +
+                "          {\n" +
+                "            number = 1234\n" +
+                "          },\n" +
+                "          {\n" +
+                "            number = 4.321\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    },\n" +
+                "    {\n" +
+                "      imaginary = {\n" +
+                "        v = 1.7\n" +
+                "        i = -2\n" +
+                "      }\n" +
                 "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    imaginary = {\n" +
-                "      v = 1.7\n" +
-                "      i = -2\n" +
-                "    }\n" +
-                "  }\n" +
-                "]", Operation.kDescriptor));
+                "  ]\n" +
+                "}", Operation.kDescriptor));
     }
 
     @Test

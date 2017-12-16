@@ -81,16 +81,16 @@ import static net.morimekta.console.util.Parser.oneOf;
  */
 @SuppressWarnings("all")
 public class RPCOptions extends CommonOptions {
-    protected ConvertStream in = new ConvertStream(Format.json, null, false);
-    protected ConvertStream out = new ConvertStream(Format.pretty_json, null, false);
-    protected boolean strict = false;
-    protected List<File> includes = new ArrayList<>();
-    protected String service = "";
-    protected Format format = Format.binary;
-    protected int connect_timeout = 10000;
-    protected int read_timeout = 10000;
-    protected List<String> headers = new ArrayList<>();
-    protected String endpoint = "";
+    protected ConvertStream in              = new ConvertStream(Format.binary, null, false);
+    protected ConvertStream out             = new ConvertStream(Format.pretty, null, false);
+    protected boolean       strict          = false;
+    protected List<File>    includes        = new ArrayList<>();
+    protected String        service         = "";
+    protected Format        format          = Format.binary;
+    protected int           connect_timeout = 10000;
+    protected int           read_timeout    = 10000;
+    protected List<String>  headers         = new ArrayList<>();
+    protected String        endpoint        = "";
 
     public RPCOptions(STTY tty) {
         super(tty);
@@ -101,11 +101,11 @@ public class RPCOptions extends CommonOptions {
         ArgumentParser parser = super.getArgumentParser(prog, description);
 
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
-        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), "json"));
-        parser.add(new Option("--out", "o", "spec", "Output Specification", new ConvertStreamParser().andApply(this::setOut), "pretty_json"));
+        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), in.toString()));
+        parser.add(new Option("--out", "o", "spec", "Output Specification", new ConvertStreamParser().andApply(this::setOut), out.toString()));
         parser.add(new Option("--service", "s", "srv", "Qualified identifier name from definitions to use for parsing source file.",
                               this::setService, null, false, true, false));
-        parser.add(new Option("--format", "f", "fmt", "Request RPC format", oneOf(Format.class, this::setFormat), "binary"));
+        parser.add(new Option("--format", "f", "fmt", "Request RPC format", oneOf(Format.class, this::setFormat), format.name()));
         parser.add(new Option("--connect_timeout", "C", "ms", "Connection timeout in milliseconds. 0 means infinite.", i32(this::setConnectTimeout), "10000"));
         parser.add(new Option("--read_timeout", "R", "ms", "Request timeout in milliseconds. 0 means infinite.", i32(this::setReadTimeout), "10000"));
         parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.", this::addHeaders, null, true, false, false));

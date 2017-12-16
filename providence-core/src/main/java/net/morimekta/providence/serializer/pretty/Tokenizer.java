@@ -109,7 +109,7 @@ public class Tokenizer extends LineBufferedReader {
     @Nonnull
     public Token expect(@Nonnull String expected) throws IOException {
         if (!hasNext()) {
-            throw failure("Expected %s: Got end of file", expected);
+            throw eof("Expected %s: Got end of file", expected);
         }
         Token tmp = unreadToken;
         unreadToken = null;
@@ -126,7 +126,7 @@ public class Tokenizer extends LineBufferedReader {
      */
     public Token expect(@Nonnull String expected, @Nonnull TokenValidator validator) throws IOException {
         if (!hasNext()) {
-            throw failure("Expected %s, got end of file", expected);
+            throw eof("Expected %s, got end of file", expected);
         } else if (validator.validate(unreadToken)) {
             Token next = unreadToken;
             unreadToken = null;
@@ -148,9 +148,9 @@ public class Tokenizer extends LineBufferedReader {
         }
         if (!hasNext()) {
             if (symbols.length == 1) {
-                throw failure("Expected %s ('%c'), Got end of file", expected, symbols[0]);
+                throw eof("Expected %s ('%c'), Got end of file", expected, symbols[0]);
             }
-            throw failure("Expected %s (one of ['%s']): Got end of file", expected, Strings.joinP("', '", symbols));
+            throw eof("Expected %s (one of ['%s']): Got end of file", expected, Strings.joinP("', '", symbols));
         } else {
             for (char symbol : symbols) {
                 if (unreadToken.isSymbol(symbol)) {
@@ -221,7 +221,7 @@ public class Tokenizer extends LineBufferedReader {
             }
             baos.write(lastChar);
         }
-        throw failure("Unexpected end of file in binary");
+        throw eof("Unexpected end of file in binary");
     }
 
     /**
@@ -562,7 +562,7 @@ public class Tokenizer extends LineBufferedReader {
     }
 
     @Nonnull
-    protected TokenizerException failure(int startLineNo,
+    protected final TokenizerException failure(int startLineNo,
                                          int startLinePos,
                                          int length,
                                          String format,
@@ -574,27 +574,16 @@ public class Tokenizer extends LineBufferedReader {
     }
 
     @Nonnull
-    protected TokenizerException failure(Throwable cause,
-                                         int startLineNo,
-                                         int startLinePos,
-                                         int length,
-                                         String message,
-                                         Object... params) {
-        return failure(startLineNo, startLinePos, length, message, params).initCause(cause);
+    protected final TokenizerException eof(String format, Object ... params) {
+        return failure(format, params)
+                .setLinePos(getLinePos() + 1)
+                .setLength(1)
+                .setLineNo(getLineNo())
+                .setLine(getLine());
     }
 
     @Nonnull
     protected TokenizerException failure(String format, Object ... params) {
         return new TokenizerException(format, params);
-    }
-
-    @Nonnull
-    protected Token token(int off, int len, int linePos) {
-        return token(off, len, lineNo, linePos);
-    }
-
-    @Nonnull
-    public Token token(int off, int len, int lineNo, int linePos) {
-        return new Token(buffer, off, len, lineNo, linePos);
     }
 }
