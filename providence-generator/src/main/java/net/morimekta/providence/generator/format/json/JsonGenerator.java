@@ -24,8 +24,7 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.model.ProgramType;
-import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.SerializerException;
 
@@ -37,39 +36,33 @@ import java.util.stream.Collectors;
  * Generate a simple JSON model of the program structure.
  */
 public class JsonGenerator extends Generator {
-    private final TypeLoader     typeLoader;
     private final JsonSerializer serializer;
 
-    public JsonGenerator(FileManager fileManager, TypeLoader loader) {
+    public JsonGenerator(FileManager fileManager) {
         super(fileManager);
-        typeLoader = loader;
         serializer = new JsonSerializer().pretty();
     }
 
     @Override
-    public void generate(CProgram document) throws IOException, GeneratorException {
-        for (ProgramType doc : typeLoader.loadedPrograms()) {
-            if (doc.getProgramName()
-                   .equals(document.getProgramName())) {
-                if (doc.hasIncludes()) {
-                    doc = doc.mutate()
-                             .setIncludes(doc.getIncludes()
-                                             .stream()
-                                             .map(path -> path.replaceAll("(\\.thrift)$", ".json"))
-                                             .collect(Collectors.toList()))
-                             .build();
-                }
-
-                OutputStream out = getFileManager().create(null, doc.getProgramName() + ".json");
-                try {
-                    serializer.serialize(out, doc);
-                    out.write('\n');
-                } catch (SerializerException e) {
-                    throw new GeneratorException("Unable to serialize document.", e);
-                }
-
-                getFileManager().finalize(out);
-            }
+    public void generate(ProgramTypeRegistry registry) throws IOException, GeneratorException {
+        ProgramType doc = registry.getProgramType();
+        if (doc.hasIncludes()) {
+            doc = doc.mutate()
+                     .setIncludes(doc.getIncludes()
+                                     .stream()
+                                     .map(path -> path.replaceAll("(\\.thrift)$", ".json"))
+                                     .collect(Collectors.toList()))
+                     .build();
         }
+
+        OutputStream out = getFileManager().create(null, doc.getProgramName() + ".json");
+        try {
+            serializer.serialize(out, doc);
+            out.write('\n');
+        } catch (SerializerException e) {
+            throw new GeneratorException("Unable to serialize document.", e);
+        }
+
+        getFileManager().finalize(out);
     }
 }

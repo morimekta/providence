@@ -16,10 +16,7 @@
     <artifactId>providence-tools-compiler</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
+        <!-- the general generator dependencies. -->
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
@@ -33,18 +30,19 @@
             <artifactId>providence-generator</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator-java</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator-js</artifactId>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>io-util</artifactId>
         </dependency>
+
+        <!-- internal dependencies that the generators should NOT need. -->
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-common</artifactId>
         </dependency>
-
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
@@ -60,7 +58,6 @@
             <artifactId>testing-util</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

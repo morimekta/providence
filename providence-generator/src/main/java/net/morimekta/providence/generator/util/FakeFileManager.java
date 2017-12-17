@@ -20,20 +20,22 @@
  */
 package net.morimekta.providence.generator.util;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * A fake file manager meant for testing only.
  */
+@VisibleForTesting
 public class FakeFileManager extends FileManager {
     public FakeFileManager(File root) {
         super(root);
     }
 
-    public OutputStream create(String path, String name) throws IOException {
+    public OutputStream create(String path, String name) {
         System.out.println();
         System.out.println("### --> " + relativePath(path, name));
         return System.out;

@@ -179,10 +179,9 @@ public class JSGeneratorTest {
 
         for (CProgram program : programs) {
             Generator generator = new JSGenerator(fileManager,
-                                                  programRegistry.registryForPath(program.getProgramFilePath()),
                                                   generatorOptions,
                                                   options);
-            generator.generate(program);
+            generator.generate(programRegistry.registryForPath(program.getProgramFilePath()));
         }
     }
 

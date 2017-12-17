@@ -28,12 +28,19 @@ import net.morimekta.providence.generator.format.js.formatter.ProgramFormatter;
 import net.morimekta.providence.generator.format.js.utils.JSUtils;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
+import net.morimekta.util.Strings;
+import net.morimekta.util.io.IOUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Generate JS message models for providence.
@@ -42,22 +49,23 @@ import java.io.OutputStream;
  * format.
  */
 public class JSGenerator extends Generator {
-    private final ProgramFormatter formatter;
     private final GeneratorOptions generatorOptions;
+    private final JSOptions options;
 
-    public JSGenerator(FileManager manager,
-                       ProgramTypeRegistry registry, GeneratorOptions generatorOptions, JSOptions jsOptions) throws GeneratorException {
+    public JSGenerator(FileManager manager, GeneratorOptions generatorOptions, JSOptions jsOptions) throws GeneratorException {
         super(manager);
 
-        this.formatter = new JSProgramFormatter(jsOptions, registry);
+        this.options = jsOptions;
         this.generatorOptions = generatorOptions;
     }
 
     @Override
     @SuppressWarnings("resource")
-    public void generate(CProgram program) throws IOException, GeneratorException {
+    public void generate(ProgramTypeRegistry registry) throws IOException, GeneratorException {
+        CProgram program = registry.getProgram();
         String path = JSUtils.getPackageClassPath(program);
 
+        ProgramFormatter formatter = new JSProgramFormatter(options, registry);
         String fileName = formatter.getFileName(program);
         OutputStream out = new BufferedOutputStream(getFileManager().create(path, fileName));
         try {
@@ -70,5 +78,47 @@ public class JSGenerator extends Generator {
         } finally {
             getFileManager().finalize(out);
         }
+    }
+
+    @Override
+    public void generateGlobal(ProgramRegistry registry,
+                               Collection<File> inputFiles) throws IOException, GeneratorException {
+        boolean service = false;
+        for (ProgramTypeRegistry reg : registry.getLoadedRegistries()) {
+            CProgram program = reg.getProgram();
+            if (program.getServices().size() > 0) {
+                service = true;
+                break;
+            }
+        }
+
+        if (service) {
+            InputStream source;
+
+            String targetPath = Strings.join(File.separator,
+                                           "morimekta",
+                                           "providence");
+            String targetName = "service.js";
+            if (options.type_script) {
+                // copy ts.
+                source = getClass().getResourceAsStream("/type_script/morimekta/providence/service.ts");
+                targetName = "service.ts";
+            } else if (options.node_js) {
+                source = getClass().getResourceAsStream("/node_module/morimekta/providence/service.js");
+            } else if (options.closure) {
+                source = getClass().getResourceAsStream("/closure/morimekta/providence/service.js");
+            } else {
+                source = getClass().getResourceAsStream("/js/morimekta/providence/service.js");
+            }
+
+            OutputStream out = getFileManager().create(targetPath, targetName);
+
+            try {
+                IOUtils.copy(source, out);
+            } finally {
+                getFileManager().finalize(out);
+            }
+        }
+
     }
 }

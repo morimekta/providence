@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.compiler.options;
 
-import net.morimekta.providence.tools.compiler.Language;
+import net.morimekta.providence.generator.GeneratorFactory;
 
 import java.util.Collection;
 
@@ -9,17 +9,17 @@ import java.util.Collection;
  */
 public class GeneratorSpec {
     // expected appendEnumClass.
-    public final Language           generator;
+    public final GeneratorFactory   factory;
     public final Collection<String> options;
 
-    public GeneratorSpec(Language generator, Collection<String> options) {
-        this.generator = generator;
+    public GeneratorSpec(GeneratorFactory factory, Collection<String> options) {
+        this.factory = factory;
         this.options = options;
     }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(generator.name());
+        builder.append(factory.generatorName());
         boolean first = true;
         for (String option : options) {
             if (first) {

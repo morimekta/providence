@@ -21,9 +21,12 @@
 package net.morimekta.providence.generator;
 
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  */
@@ -44,9 +47,21 @@ public abstract class Generator {
     /**
      * Each compiler must implement this method.
      *
-     * @param document The document to generate files from.
+     * @param registry The typed and scoped registry for the program.
      * @throws IOException If a file could not be written.
      * @throws GeneratorException If some part of the file code could not be generated (invalid content).
      */
-    public abstract void generate(CProgram document) throws IOException, GeneratorException;
+    public abstract void generate(ProgramTypeRegistry registry) throws IOException, GeneratorException;
+
+    /**
+     * Generate anything that is dependent on the global scope, or not
+     * directly connected to a single program.
+     *
+     * @param registry The global program registry.
+     * @param inputFiles List of files that are generated for.
+     * @throws IOException If writing files failed.
+     * @throws GeneratorException If bad generation.
+     */
+    public void generateGlobal(ProgramRegistry registry,
+                               Collection<File> inputFiles) throws IOException, GeneratorException {}
 }

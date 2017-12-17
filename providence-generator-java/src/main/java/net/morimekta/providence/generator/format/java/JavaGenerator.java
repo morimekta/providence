@@ -39,6 +39,7 @@ import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,22 +49,19 @@ import java.io.OutputStream;
  * @since 05.09.15
  */
 public class JavaGenerator extends Generator {
-    private final JHelper          helper;
     private final GeneratorOptions generatorOptions;
-    private final   JavaOptions      javaOptions;
+    private final JavaOptions      javaOptions;
 
     public JavaGenerator(FileManager manager,
-                         ProgramTypeRegistry registry,
                          GeneratorOptions generatorOptions,
                          JavaOptions javaOptions) throws GeneratorException {
         super(manager);
 
         this.generatorOptions = generatorOptions;
-        this.helper = new JHelper(registry);
         this.javaOptions = javaOptions;
     }
 
-    private BaseMessageFormatter messageFormatter(IndentedPrintWriter writer) {
+    private BaseMessageFormatter messageFormatter(IndentedPrintWriter writer, JHelper helper) {
         return new JavaMessageFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
@@ -71,15 +69,15 @@ public class JavaGenerator extends Generator {
         return new JavaEnumFormatter(writer, generatorOptions, javaOptions);
     }
 
-    private BaseProgramFormatter constFomatter(IndentedPrintWriter writer) {
+    private BaseProgramFormatter constFomatter(IndentedPrintWriter writer, JHelper helper) {
         return new JavaConstantsFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
-    private BaseProgramFormatter hazelcastFomatter(IndentedPrintWriter writer) {
+    private BaseProgramFormatter hazelcastFomatter(IndentedPrintWriter writer, JHelper helper) {
         return new HazelcastPortableProgramFormatter(writer, helper, generatorOptions, javaOptions);
     }
 
-    private BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer) {
+    private BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer, JHelper helper) {
         return new JavaServiceFormatter(
                 writer,
                 helper,
@@ -95,8 +93,10 @@ public class JavaGenerator extends Generator {
 
     @Override
     @SuppressWarnings("resource")
-    public void generate(CProgram program) throws IOException, GeneratorException {
+    public void generate(@Nonnull ProgramTypeRegistry registry) throws IOException, GeneratorException {
+        CProgram program = registry.getProgram();
         String javaPackage = JUtils.getJavaPackage(program);
+        JHelper helper = new JHelper(registry);
 
         String path = JUtils.getPackageClassPath(javaPackage);
 
@@ -106,8 +106,8 @@ public class JavaGenerator extends Generator {
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, program);
-                constFomatter(writer).appendProgramClass(program);
+                appendFileHeader(writer, helper, program);
+                constFomatter(writer, helper).appendProgramClass(program);
 
                 writer.flush();
             } finally {
@@ -128,8 +128,8 @@ public class JavaGenerator extends Generator {
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, program);
-                hazelcastFomatter(writer).appendProgramClass(program);
+                appendFileHeader(writer, helper, program);
+                hazelcastFomatter(writer, helper).appendProgramClass(program);
 
                 writer.flush();
             } finally {
@@ -147,11 +147,11 @@ public class JavaGenerator extends Generator {
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, program);
+                appendFileHeader(writer, helper, program);
 
                 switch (type.getType()) {
                     case MESSAGE:
-                        messageFormatter(writer).appendMessageClass((PMessageDescriptor<?, ?>) type);
+                        messageFormatter(writer, helper).appendMessageClass((PMessageDescriptor<?, ?>) type);
                         break;
                     case ENUM:
                         enumFormatter(writer).appendEnumClass((CEnumDescriptor) type);
@@ -175,8 +175,8 @@ public class JavaGenerator extends Generator {
             OutputStream out = new BufferedOutputStream(getFileManager().create(path, file));
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
-                appendFileHeader(writer, program);
-                serviceFormatter(writer).appendServiceClass(service);
+                appendFileHeader(writer, helper, program);
+                serviceFormatter(writer, helper).appendServiceClass(service);
                 writer.flush();
             } finally {
                 try {
@@ -189,6 +189,7 @@ public class JavaGenerator extends Generator {
     }
 
     private void appendFileHeader(IndentedPrintWriter writer,
+                                  JHelper helper,
                                   CProgram document)
             throws GeneratorException, IOException {
         writer.format("package %s;", helper.getJavaPackage(document))

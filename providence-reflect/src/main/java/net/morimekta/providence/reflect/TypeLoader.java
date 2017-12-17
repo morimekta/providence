@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -208,6 +207,7 @@ public class TypeLoader {
 
         CProgram program = converter.convert(path, doc);
         programRegistry.putProgram(path, program);
+        programRegistry.putProgramType(path, doc);
         return registry;
     }
 

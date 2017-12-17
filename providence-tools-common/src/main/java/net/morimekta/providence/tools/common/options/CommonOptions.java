@@ -27,6 +27,12 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
+import net.morimekta.providence.config.ProvidenceConfig;
+import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.tools.common.ProvidenceTools;
+import net.morimekta.providence.util.SimpleTypeRegistry;
+
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,10 +50,10 @@ import static net.morimekta.providence.tools.common.options.Utils.getVersionStri
  */
 @SuppressWarnings("all")
 public class CommonOptions {
-    private boolean help;
-    private boolean verbose;
-    private boolean version;
-    private STTY    tty;
+    private   boolean help;
+    private   boolean verbose;
+    private   boolean version;
+    protected STTY    tty;
     private File    rc = new File(System.getenv("HOME"), ".pvdrc");
 
     public CommonOptions(STTY tty) {
@@ -81,6 +87,19 @@ public class CommonOptions {
     public File getRc() {
         return rc;
     }
+    public ProvidenceTools getConfig() throws ProvidenceConfigException {
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
+        registry.registerRecursively(ProvidenceTools.kDescriptor);
+        ProvidenceConfig loader = new ProvidenceConfig(registry);
+
+        ProvidenceTools config = ProvidenceTools.builder()
+                                                .setGeneratorPaths(ImmutableList.of())
+                                                .build();
+        if (rc.isFile()) {
+            config = loader.getConfig(rc, config);
+        }
+        return config;
+    }
     private void setHelp(boolean help) {
         this.help = help;
     }
@@ -90,7 +109,7 @@ public class CommonOptions {
     private void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
-    private void setRc(File file) {
+    protected void setRc(File file) {
         this.rc = file;
     }
 

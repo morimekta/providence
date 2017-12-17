@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
+import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.util.TypeRegistry;
 
@@ -92,6 +93,16 @@ public class ProgramRegistry implements TypeRegistry {
      */
     public void putProgram(String path, CProgram program) {
         registryForPath(path).setProgram(program);
+    }
+
+    /**
+     * Put the given program into the registry at the given path.
+     *
+     * @param path The thrift file path.
+     * @param program The contained program.
+     */
+    public void putProgramType(String path, ProgramType program) {
+        registryForPath(path).setProgramType(program);
     }
 
     @Nonnull

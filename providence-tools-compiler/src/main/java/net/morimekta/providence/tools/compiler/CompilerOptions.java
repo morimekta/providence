@@ -26,18 +26,20 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
+import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.config.UncheckedProvidenceConfigException;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorFactory;
 import net.morimekta.providence.generator.GeneratorOptions;
-import net.morimekta.providence.generator.format.java.JavaGenerator;
-import net.morimekta.providence.generator.format.java.JavaOptions;
-import net.morimekta.providence.generator.format.js.JSGenerator;
-import net.morimekta.providence.generator.format.js.JSOptions;
-import net.morimekta.providence.generator.format.json.JsonGenerator;
+import net.morimekta.providence.generator.format.json.JsonGeneratorFactory;
+import net.morimekta.providence.generator.util.FactoryLoader;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+import net.morimekta.providence.tools.common.ProvidenceTools;
+import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
 import net.morimekta.providence.tools.compiler.options.GeneratorSpecParser;
@@ -46,20 +48,22 @@ import net.morimekta.providence.tools.compiler.options.HelpSpec;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.file;
+import static net.morimekta.console.util.Parser.outputDir;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 15.09.15
  */
 @SuppressWarnings("all")
-public class CompilerOptions {
-    private final STTY tty;
-
+public class CompilerOptions extends CommonOptions {
     protected File          out              = new File(".");
     protected List<File>    includes         = new ArrayList<>();
     protected HelpSpec      help             = null;
@@ -75,17 +79,70 @@ public class CompilerOptions {
         ArgumentParser parser = new ArgumentParser(prog, Utils.getVersionString(), description, opts);
 
         parser.add(new Option("--gen", "g", "generator", "Generate files for this language spec.",
-                              new GeneratorSpecParser().andApply(this::setGenerator)));
-        parser.add(new HelpOption("--help", "h?", "Show this help or about language.", this::setHelp));
+                              new GeneratorSpecParser(this::getFactories).andApply(this::setGenerator)));
+        parser.add(new HelpOption("--help", "h?", "Show this help or about language.", this::getFactories, this::setHelp));
         parser.add(new Flag("--verbose", "V", "Show verbose output and error messages.", this::setVerbose));
         parser.add(new Flag("--version", "v", "Show program version.", this::setVersion));
+        parser.add(new Option("--rc", null, "FILE", "Providence RC to use", file(this::setRc), "~" + File.separator + ".pvdrc"));
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
-        parser.add(new Option("--out", "o", "dir", "Output directory", dir(this::setOut), "${PWD}"));
+        parser.add(new Option("--out", "o", "dir", "Output directory", outputDir(this::setOut), "${PWD}"));
         parser.add(new Flag("--require-field-id", null, "Require all fields to have a defined ID", this::setRequireFieldId));
         parser.add(new Flag("--require-enum-value", null, "Require all enum values to have a defined ID", this::setRequireEnumValue));
         parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
 
         return parser;
+    }
+
+    public File currentJarDirectory() {
+        try {
+            ProvidenceTools config = getConfig();
+            List<File> paths = new ArrayList<>();
+            URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+
+            if ("file".equals(url.getProtocol())) {
+                String path = url.getPath();
+                if (path.endsWith(".jar")) {
+                    return new File(path).getParentFile();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<GeneratorFactory> getFactories() {
+        try {
+            List<GeneratorFactory> factories = new ArrayList<>();
+            factories.add(new JsonGeneratorFactory());
+
+            File currentDir = currentJarDirectory();
+            if (currentDir != null) {
+                File generators = new File(currentDir, "generator");
+                if (generators.isDirectory()) {
+                    FactoryLoader loader = new FactoryLoader(generators);
+                    factories.addAll(loader.getFactories());
+                }
+            }
+
+            {
+                ProvidenceTools config = getConfig();
+                if (config.hasGeneratorPaths()) {
+                    for (String path : config.getGeneratorPaths()) {
+                        File file = new File(path);
+                        FactoryLoader loader = new FactoryLoader(file);
+                        factories.addAll(loader.getFactories());
+                    }
+                }
+            }
+
+            Collections.sort(factories, Comparator.comparing(GeneratorFactory::generatorName));
+
+            return factories;
+        } catch (ProvidenceConfigException e) {
+            throw new UncheckedProvidenceConfigException(e);
+        }
     }
 
     private void setVerbose(boolean verbose) {
@@ -122,7 +179,7 @@ public class CompilerOptions {
     }
 
     public CompilerOptions(STTY tty) {
-        this.tty = tty;
+        super(tty);
     }
 
     public boolean isHelp() {
@@ -150,89 +207,15 @@ public class CompilerOptions {
         return new ThriftProgramParser(requireFieldId, requireEnumValue);
     }
 
-    public JavaOptions makeJavaOptions() {
-        JavaOptions options = new JavaOptions();
-        for (String opt : gen.options) {
-            switch (opt) {
-                case "android":
-                    options.android = true;
-                    break;
-                case "jackson":
-                    options.jackson = true;
-                    break;
-                case "no_rw_binary":
-                    options.rw_binary = false;
-                    break;
-                case "hazelcast_portable":
-                    options.hazelcast_portable = true;
-                    break;
-                case "no_generated_annotation_version":
-                    options.generated_annotation_version = false;
-                    break;
-                case "public_constructors":
-                    options.public_constructors = true;
-                    break;
-                default:
-                    throw new ArgumentException("No such option for java generator: " + opt);
-            }
-        }
-        return options;
-    }
-
-    public JSOptions makeJsOptions() {
-        JSOptions options = new JSOptions();
-        for (String opt : gen.options) {
-            switch (opt) {
-                case "es51":
-                    options.es51 = true;
-                    break;
-                case "ts":
-                    options.type_script = true;
-                    break;
-                case "closure":
-                    options.closure = true;
-                    break;
-                case "node.js":
-                    options.node_js = true;
-                    break;
-                case "pvd":
-                    // external to this.
-                    break;
-                default:
-                    throw new ArgumentException("No such option for js generator: " + opt);
-            }
-        }
-        if (gen.options.contains("closure") && gen.options.contains("node.js")) {
-            throw new ArgumentException("Generator options 'closure' and 'node.js' are mutually exclusive.");
-        }
-
-        return options;
-    }
-
-    public Generator getGenerator(String programPath, TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
+    public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
         GeneratorOptions generatorOptions = new GeneratorOptions();
         generatorOptions.generator_program_name = "pvdc";
         generatorOptions.program_version = Utils.getVersionString();
-        switch (gen.generator) {
-            case json: {
-                return new JsonGenerator(getFileManager(), loader);
-            }
-            case java: {
-                JavaOptions options = makeJavaOptions();
-                return new JavaGenerator(getFileManager(),
-                                         loader.getProgramRegistry().registryForPath(programPath),
-                                         generatorOptions,
-                                         options);
-            }
-            case js: {
-                JSOptions options = makeJsOptions();
-                return new JSGenerator(getFileManager(),
-                                       loader.getProgramRegistry().registryForPath(programPath),
-                                       generatorOptions,
-                                       options);
-            }
-            default:
-                throw new ArgumentException("Unknown language %s.", gen.generator.name());
+
+        try {
+            return gen.factory.createGenerator(getFileManager(), generatorOptions, gen.options);
+        } catch (GeneratorException e) {
+            throw new ArgumentException(e, e.getMessage());
         }
     }
 }

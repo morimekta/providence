@@ -38,8 +38,17 @@ public class CompilerFlagsTest {
         copyResourceTo("/compiler/ref.thrift", include);
         thriftFile = copyResourceTo("/compiler/test.thrift", temp.getRoot());
 
+        File generator = temp.newFolder("generator");
+
+        copyResourceTo("/generator/java.jar", generator);
+        copyResourceTo("/generator/js.jar", generator);
+
         exitCode = 0;
-        sut = new Compiler(console.tty()) {
+        sut = new Compiler(new CompilerOptions(console.tty()) {
+            @Override
+            public File currentJarDirectory() {
+                return temp.getRoot();
+            }}) {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -54,25 +63,25 @@ public class CompilerFlagsTest {
         assertThat(console.error(), is(""));
         assertThat(console.output(),
                    is(equalToLines("Providence compiler - " + version + "\n" +
-                     "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "\n" +
-                     "Example code to run:\n" +
-                     "$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" +
-                     "\n" +
-                     " --gen (-g) generator       : Generate files for this language spec.\n" +
-                     " --help (-h, -?) [language] : Show this help or about language.\n" +
-                     " --verbose (-V)             : Show verbose output and error messages.\n" +
-                     " --version (-v)             : Show program version.\n" +
-                     " --include (-I) dir         : Allow includes of files in directory\n" +
-                     " --out (-o) dir             : Output directory (default: ${PWD})\n" +
-                     " --require-field-id         : Require all fields to have a defined ID\n" +
-                     " --require-enum-value       : Require all enum values to have a defined ID\n" +
-                     " file                       : Files to compile.\n" +
-                     "\n" +
-                     "Available generators:\n" +
-                     " - java       : Main java (1.8+) code generator.\n" +
-                     " - json       : Generates JSON specification files.\n" +
-                     " - js         : Generated JavaScript (es5.1 or es6).\n")));
+                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
+                                   "Example code to run:\n" +
+                                   "$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" + "\n" +
+                                   " --gen (-g) generator       : Generate files for this language spec.\n" +
+                                   " --help (-h, -?) [language] : Show this help or about language.\n" +
+                                   " --verbose (-V)             : Show verbose output and error messages.\n" +
+                                   " --version (-v)             : Show program version.\n" +
+                                   " --rc FILE                  : Providence RC to use (default: ~/.pvdrc)\n" +
+                                   " --include (-I) dir         : Allow includes of files in directory\n" +
+                                   " --out (-o) dir             : Output directory (default: ${PWD})\n" +
+                                   " --require-field-id         : Require all fields to have a defined ID\n" +
+                                   " --require-enum-value       : Require all enum values to have a defined ID\n" +
+                                   " file                       : Files to compile.\n" +
+                                   "\n" +
+                                   "Available generators:\n" +
+                                   " - java       : Generates java (1.8+) classes.\n" +
+                                   " - js         : Generates JavaScript (es5.1 or es6).\n" +
+                                   " - json       : Print out the IDL as json files.\n" +
+                                   "")));
         assertThat(exitCode, is(0));
     }
 
@@ -84,7 +93,7 @@ public class CompilerFlagsTest {
         assertThat(console.output(),
                    is(equalToLines("Providence compiler - " + version + "\n" +
                                    "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
-                                   "java : Main java (1.8+) code generator.\n" +
+                                   "java : Generates java (1.8+) classes.\n" +
                                    "\n" +
                                    "Available options\n" +
                                    "\n" +
@@ -109,7 +118,7 @@ public class CompilerFlagsTest {
                    is(equalToLines("Providence compiler - " + version + "\n" +
                                    "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                                    "\n" +
-                                   "js : Generated JavaScript (es5.1 or es6).\n" +
+                                   "js : Generates JavaScript (es5.1 or es6).\n" +
                                    "\n" +
                                    "Available options\n" +
                                    "\n" +
@@ -125,7 +134,7 @@ public class CompilerFlagsTest {
     public void testIncludeNotExist() {
         sut.run("-I",
                      temp.getRoot().getAbsolutePath() + "/does_not_exist",
-                "-g", "java",
+                "-g", "json",
                 thriftFile.getAbsolutePath());
 
         assertThat(console.output(), is(""));
@@ -141,7 +150,7 @@ public class CompilerFlagsTest {
     public void testIncludeNotADirectory() throws IOException {
         sut.run("-I",
                 thriftFile.getCanonicalPath(),
-                "-g", "java",
+                "-g", "json",
                 thriftFile.getCanonicalPath());
 
         assertThat(console.output(), is(""));
@@ -154,32 +163,16 @@ public class CompilerFlagsTest {
     }
 
     @Test
-    public void testOutputDirNotExist() {
-        sut.run("--out",
-                     temp.getRoot().getAbsolutePath() + "/does_not_exist",
-                "-g", "java",
-                thriftFile.getAbsolutePath());
-
-        assertThat(console.output(), is(""));
-        assertThat(console.error(),
-                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
-                     "\n" +
-                     "Run $ pvdc --help # for available options.\n")));
-        assertThat(exitCode, is(1));
-    }
-
-    @Test
     public void testOutputDirNotADirectory() {
         sut.run("--out",
                 thriftFile.getAbsolutePath(),
-                "-g", "java",
+                "-g", "json",
                 thriftFile.getAbsolutePath());
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
                    is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     thriftFile.getAbsolutePath() + " is not a directory\n" +
+                     thriftFile.getAbsolutePath() + " exists and is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n")));
         assertThat(exitCode, is(1));

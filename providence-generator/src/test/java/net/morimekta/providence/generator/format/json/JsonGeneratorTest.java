@@ -3,7 +3,6 @@ package net.morimekta.providence.generator.format.json;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.testing.ResourceUtils;
@@ -42,16 +41,16 @@ public class JsonGeneratorTest {
         ProgramParser parser = new ThriftProgramParser();
 
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        generator = new JsonGenerator(fileManager, typeLoader);
+        generator = new JsonGenerator(fileManager);
     }
 
     @Test
-    public void testGenerate() throws GeneratorException, IOException, ParseException {
+    public void testGenerate() throws GeneratorException, IOException {
         ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/test.thrift", tmp.getRoot());
         ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/included.thrift", tmp.getRoot());
         File file = new File(tmp.getRoot(), "test.thrift");
 
-        generator.generate(typeLoader.load(file).getProgram());
+        generator.generate(typeLoader.load(file));
 
         File test = new File(out, "test.json");
         assertTrue(test.exists());

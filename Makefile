@@ -31,4 +31,8 @@ js:
 	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js:closure -o providence-generator-js/src/main/resources/closure     providence-core/src/main/providence/*
 	java -jar providence-tools-compiler/target/providence-tools-compiler.jar --gen js:ts      -o providence-generator-js/src/main/resources/type_script providence-core/src/main/providence/*
 
+resources:
+	cp -R providence-generator-java/target/java.jar providence-tools-compiler/src/test/resources/generator
+	cp -R providence-generator-js/target/js.jar     providence-tools-compiler/src/test/resources/generator
+
 .PHONY: compile test-compile models test-models thrift js

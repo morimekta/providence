@@ -2,6 +2,7 @@ package net.morimekta.providence.reflect.util;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.contained.CProgram;
 
 import javax.annotation.Nonnull;
@@ -12,6 +13,7 @@ import javax.annotation.Nonnull;
  */
 public class ProgramTypeRegistry extends RecursiveTypeRegistry {
     private CProgram program;
+    private ProgramType programType;
 
     public ProgramTypeRegistry(@Nonnull String localProgramContext) {
         super(localProgramContext);
@@ -30,6 +32,10 @@ public class ProgramTypeRegistry extends RecursiveTypeRegistry {
         return program;
     }
 
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
     public void setProgram(CProgram program) {
         this.program = program;
         if (isEmpty()) {
@@ -43,5 +49,9 @@ public class ProgramTypeRegistry extends RecursiveTypeRegistry {
                 registerRecursively(service);
             }
         }
+    }
+
+    public void setProgramType(ProgramType type) {
+        this.programType = type;
     }
 }

@@ -28,6 +28,7 @@ public class JSOptions {
     public boolean closure     = false;
     public boolean node_js     = false;
     public boolean es51        = false;
+    public boolean pvd         = false;
 
     public boolean useMaps() {
         return !es51;

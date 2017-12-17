@@ -41,8 +41,17 @@ public class CompilerJavaTest {
         refFile = copyResourceTo("/compiler/ref.thrift", include);
         testFile = copyResourceTo("/compiler/test.thrift", temp.getRoot());
 
+        File generator = temp.newFolder("generator");
+
+        copyResourceTo("/generator/java.jar", generator);
+        copyResourceTo("/generator/js.jar", generator);
+
         exitCode = 0;
-        compiler = new Compiler(console.tty()) {
+        compiler = new Compiler(new CompilerOptions(console.tty()) {
+            @Override
+            public File currentJarDirectory() {
+                return temp.getRoot();
+            }}) {
             @Override
             protected void exit(int i) {
                 exitCode = i;

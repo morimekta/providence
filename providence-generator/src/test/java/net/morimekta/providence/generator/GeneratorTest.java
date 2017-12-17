@@ -2,12 +2,11 @@ package net.morimekta.providence.generator;
 
 import net.morimekta.providence.generator.util.FakeFileManager;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -41,8 +40,8 @@ public class GeneratorTest {
         }
 
         @Override
-        public void generate(CProgram document) throws IOException, GeneratorException {
-
+        public void generate(ProgramTypeRegistry document) throws GeneratorException {
+            // ignore
         }
     }
 }

@@ -21,29 +21,38 @@ package net.morimekta.providence.tools.compiler.options;/*
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.util.Parser;
-import net.morimekta.providence.tools.compiler.Language;
+import net.morimekta.providence.generator.GeneratorFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class GeneratorSpecParser implements Parser<GeneratorSpec> {
+    private final Supplier<List<GeneratorFactory>> factoryListSupplier;
+
+    public GeneratorSpecParser(Supplier<List<GeneratorFactory>> factoryListSupplier) {
+        this.factoryListSupplier = factoryListSupplier;
+    }
+
     @Override
     public GeneratorSpec parse(String spec) {
-        Language generator = null;
+        List<GeneratorFactory> factories = factoryListSupplier.get();
+        Map<String, GeneratorFactory> factoryMap = new HashMap<>();
+        for (GeneratorFactory factory : factories) {
+            factoryMap.put(factory.generatorName().toLowerCase(), factory);
+        }
+
         ArrayList<String> options = new ArrayList<>();
 
         String[] gen = spec.split("[:]", 2);
         if (gen.length > 2) {
             throw new ArgumentException("Invalid generator spec, only one ':' allowed: " + spec);
         }
-
-        for (Language lang : Language.values()) {
-            if (gen[0].equalsIgnoreCase(lang.name())) {
-                generator = lang;
-                break;
-            }
-        }
-        if (generator == null) {
+        GeneratorFactory factory = factoryMap.get(gen[0].toLowerCase());
+        if (factory == null) {
             throw new ArgumentException("Unknown output language " + gen[0]);
         }
 
@@ -51,6 +60,6 @@ public class GeneratorSpecParser implements Parser<GeneratorSpec> {
             Collections.addAll(options, gen[1].split("[,]"));
         }
 
-        return new GeneratorSpec(generator, options);
+        return new GeneratorSpec(factory, options);
     }
 }

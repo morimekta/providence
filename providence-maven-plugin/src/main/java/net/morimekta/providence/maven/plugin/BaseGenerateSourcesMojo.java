@@ -27,12 +27,10 @@ import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
-import net.morimekta.providence.maven.util.UncheckedMojoExecutionException;
-import net.morimekta.providence.maven.util.UncheckedMojoFailureException;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
@@ -66,7 +64,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -273,8 +270,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value);
         TypeLoader loader = new TypeLoader(includes, parser);
 
-        ArrayList<CProgram> documents = new ArrayList<>();
-
         if (print_debug) {
             inputFiles.stream()
                       .filter(Objects::nonNull)
@@ -290,9 +285,25 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                       .forEach(f -> getLog().info("Compiling: " + f));
         }
 
+        JavaOptions javaOptions = new JavaOptions();
+        javaOptions.android = android;
+        javaOptions.jackson = jackson;
+        javaOptions.rw_binary = rw_binary;
+        javaOptions.hazelcast_portable = hazelcast_portable;
+        javaOptions.generated_annotation_version = generated_annotation_version;
+        javaOptions.public_constructors = public_constructors;
+        GeneratorOptions generatorOptions = new GeneratorOptions();
+        generatorOptions.generator_program_name = "providence-maven-plugin";
+        generatorOptions.program_version = getVersionString();
+
+        Generator generator = new JavaGenerator(fileManager,
+                                                generatorOptions,
+                                                javaOptions);
+
         for (File in : inputFiles) {
+            ProgramTypeRegistry registry;
             try {
-                documents.add(loader.load(in).getProgram());
+                registry = loader.load(in);
             } catch (SerializerException e) {
                 // ParseException is a SerializerException. And serialize exceptions can come from
                 // failing to make sense of constant definitions.
@@ -306,44 +317,22 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
             }
-        }
 
-        if (documents.isEmpty()) {
-            return false;
+            try {
+                generator.generate(registry);
+            } catch (GeneratorException e) {
+                throw new MojoFailureException("Failed to generate program: " + registry.getProgram().getProgramName(), e);
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to write program file: " + registry.getProgram().getProgramName(), e);
+            }
         }
 
         try {
-            JavaOptions javaOptions = new JavaOptions();
-            javaOptions.android = android;
-            javaOptions.jackson = jackson;
-            javaOptions.rw_binary = rw_binary;
-            javaOptions.hazelcast_portable = hazelcast_portable;
-            javaOptions.generated_annotation_version = generated_annotation_version;
-            javaOptions.public_constructors = public_constructors;
-            GeneratorOptions generatorOptions = new GeneratorOptions();
-            generatorOptions.generator_program_name = "providence-maven-plugin";
-            generatorOptions.program_version = getVersionString();
-
-            documents.parallelStream()
-                     .forEach(doc -> {
-                         try {
-                             Generator generator = new JavaGenerator(fileManager,
-                                                                     loader.getProgramRegistry().registryForPath(doc.getProgramFilePath()),
-                                                                     generatorOptions,
-                                                                     javaOptions);
-                             generator.generate(doc);
-                         } catch (GeneratorException e) {
-                             throw new UncheckedMojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
-                         } catch (IOException e) {
-                             throw new UncheckedMojoExecutionException("Failed to write document: " + doc.getProgramName(), e);
-                         }
-                     });
-        } catch (UncheckedMojoFailureException e) {
-            throw new MojoFailureException(e.getMessage(), e);
-        } catch (UncheckedMojoExecutionException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+            generator.generateGlobal(loader.getProgramRegistry(), inputFiles);
         } catch (GeneratorException e) {
-            throw new MojoFailureException("Failed to generate file: " + e.getMessage(), e);
+            throw new MojoFailureException("Failed to generate global", e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to write global file", e);
         }
 
         return compileOutput;
