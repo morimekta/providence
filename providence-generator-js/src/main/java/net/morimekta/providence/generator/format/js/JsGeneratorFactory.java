@@ -1,7 +1,6 @@
 package net.morimekta.providence.generator.format.js;
 
 import net.morimekta.providence.generator.Generator;
-import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorFactory;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.util.FileManager;
@@ -52,11 +51,7 @@ public class JsGeneratorFactory implements GeneratorFactory {
                     throw new RuntimeException("No such option for js generator: " + opt);
             }
         }
-        if ((options.closure && options.node_js) ||
-            (options.closure && options.type_script) ||
-            (options.node_js && options.type_script)) {
-            throw new GeneratorException("");
-        }
+        options.validate();
         return options;
     }
 

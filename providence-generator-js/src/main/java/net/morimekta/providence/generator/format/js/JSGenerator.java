@@ -24,8 +24,6 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.js.formatter.JSProgramFormatter;
-import net.morimekta.providence.generator.format.js.formatter.ProgramFormatter;
-import net.morimekta.providence.generator.format.js.utils.JSUtils;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
@@ -40,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Generate JS message models for providence.
@@ -63,11 +60,11 @@ public class JSGenerator extends Generator {
     @SuppressWarnings("resource")
     public void generate(ProgramTypeRegistry registry) throws IOException, GeneratorException {
         CProgram program = registry.getProgram();
-        String path = JSUtils.getPackageClassPath(program);
 
-        ProgramFormatter formatter = new JSProgramFormatter(options, registry);
+        JSProgramFormatter formatter = new JSProgramFormatter(options, registry);
         String fileName = formatter.getFileName(program);
-        OutputStream out = new BufferedOutputStream(getFileManager().create(path, fileName));
+        String filePath = formatter.getFilePath(program);
+        OutputStream out = new BufferedOutputStream(getFileManager().create(filePath, fileName));
         try {
             IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
@@ -95,16 +92,16 @@ public class JSGenerator extends Generator {
         if (service) {
             InputStream source;
 
-            String targetPath = Strings.join(File.separator,
-                                           "morimekta",
-                                           "providence");
+            String targetPath = Strings.join(File.separator, "morimekta", "providence");
             String targetName = "service.js";
             if (options.type_script) {
                 // copy ts.
-                source = getClass().getResourceAsStream("/type_script/morimekta/providence/service.ts");
+                source = getClass().getResourceAsStream("/type_script/morimekta-providence/service.ts");
+                targetPath = "morimekta-providence";
                 targetName = "service.ts";
             } else if (options.node_js) {
-                source = getClass().getResourceAsStream("/node_module/morimekta/providence/service.js");
+                source = getClass().getResourceAsStream("/node_module/morimekta-providence/service.js");
+                targetPath = "morimekta-providence";
             } else if (options.closure) {
                 source = getClass().getResourceAsStream("/closure/morimekta/providence/service.js");
             } else {

@@ -1,82 +1,61 @@
-/*
- * Copyright 2017 Providence Authors
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package net.morimekta.providence.generator.format.js.formatter;
 
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.format.js.JSOptions;
-import net.morimekta.providence.reflect.contained.CConst;
-import net.morimekta.providence.reflect.contained.CEnumDescriptor;
-import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
-import net.morimekta.util.io.IndentedPrintWriter;
+import net.morimekta.util.Strings;
 
-/**
- * Base class for formatting a complete .js (.as, .ts etc) file. The
- * basic paradigm is that each file contains code matching a whole
- * thrift program, so that
- */
-public abstract class ProgramFormatter {
-    final JSOptions           options;
-    final ProgramTypeRegistry registry;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-    protected ProgramFormatter(JSOptions options, ProgramTypeRegistry registry) {
+abstract class ProgramFormatter {
+    final JSOptions options;
+
+    ProgramFormatter(JSOptions options) {
         this.options = options;
-        this.registry = registry;
     }
 
-    public void format(IndentedPrintWriter writer, CProgram program) {
-        formatHeader(writer, program);
-
-        for (PDeclaredDescriptor descriptor : program.getDeclaredTypes()) {
-            if (descriptor instanceof PEnumDescriptor) {
-                formatEnum(writer, (CEnumDescriptor) descriptor);
-            } else if (descriptor instanceof PMessageDescriptor) {
-                formatMessage(writer, (CMessageDescriptor) descriptor);
-            } else {
-                throw new IllegalArgumentException("Impossible");
-            }
+    public String getFileName(CProgram program) {
+        if (options.type_script) {
+            return program.getProgramName() + ".ts";
         }
-        for (CConst constant : program.getConstants()) {
-            formatConstant(writer, program, constant);
-        }
-        if (!options.es51) {
-            // es5.1 does not support Promises, so no services either.
-            for (CService service : program.getServices()) {
-                formatService(writer, service);
-            }
-        }
-
-        formatFooter(writer, program);
+        return program.getProgramName() + ".js";
     }
 
-    public abstract String getFileName(CProgram program);
+    public String getFilePath(CProgram program) {
+        Object[] parts;
+        if (program.getNamespaceForLanguage("js") != null) {
+            parts = program.getNamespaceForLanguage("js").split("[.]");
+        } else {
+            return program.getProgramName();
+        }
 
-    protected abstract void formatHeader(IndentedPrintWriter writer, CProgram program);
-    protected abstract void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor);
-    protected abstract void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor);
-    protected abstract void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant);
-    protected abstract void formatService(IndentedPrintWriter writer, CService service);
-    protected abstract void formatFooter(IndentedPrintWriter writer, CProgram program);
+        if (options.type_script || options.node_js) {
+            return Strings.join("-", parts);
+        }
+        return Strings.join(File.separator, parts);
+    }
+
+    /**
+     * Get the node-like include / require path.
+     *
+     * @param toBeIncluded The program to include.
+     * @param context The current (context) program.
+     * @return The package require / include path.
+     */
+    String getNodePackageInclude(CProgram toBeIncluded, CProgram context) {
+        Path relativeTo = Paths.get(File.separator + getFilePath(context));
+        Path includedPath = Paths.get(File.separator + getFilePath(toBeIncluded), toBeIncluded.getProgramName());
+        String relative = relativeTo.relativize(includedPath).toString();
+        if (!"/".equals(File.separator)) {
+            // in case file separator is not '/'
+            relative = String.join("/", relative.split(File.separator));
+        }
+        if (!relative.startsWith(".")) {
+            relative = "./" + relative;
+        }
+
+        return relative;
+    }
+
 }

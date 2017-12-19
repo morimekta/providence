@@ -124,17 +124,17 @@ public class JSGeneratorTest {
 
         options.node_js = true;
         generateSources("/number.thrift", "/calculator.thrift", "/providence.thrift", "/service.thrift");
-        loadModule("morimekta/providence/service", new File(getClass().getResource(
-                "/node_module/morimekta/providence/service.js").getFile()));
-        loadModule("pvd/testing/number",     new File(out, "pvd/testing/number.js"));
-        loadModule("pvd/testing/calculator", new File(out, "pvd/testing/calculator.js"));
-        loadModule("pvd/testing/providence", new File(out, "pvd/testing/providence.js"));
-        loadModule("pvd/testing/service",    new File(out, "pvd/testing/service.js"));
+        loadModule("morimekta-providence/service", new File(getClass().getResource(
+                "/node_module/morimekta-providence/service.js").getFile()));
+        loadModule("pvd-testing/number",     new File(out, "pvd-testing/number.js"));
+        loadModule("pvd-testing/calculator", new File(out, "pvd-testing/calculator.js"));
+        loadModule("pvd-testing/providence", new File(out, "pvd-testing/providence.js"));
+        loadModule("pvd-testing/service",    new File(out, "pvd-testing/service.js"));
 
-        engine.eval("var number     = node.registry['pvd/testing/number'];");
-        engine.eval("var calculator = node.registry['pvd/testing/calculator'];");
-        engine.eval("var providence = node.registry['pvd/testing/providence'];");
-        engine.eval("var service    = node.registry['pvd/testing/service'];");
+        engine.eval("var number     = node.registry['pvd-testing/number'];");
+        engine.eval("var calculator = node.registry['pvd-testing/calculator'];");
+        engine.eval("var providence = node.registry['pvd-testing/providence'];");
+        engine.eval("var service    = node.registry['pvd-testing/service'];");
 
         assertWorkingJavascript();
     }

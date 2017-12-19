@@ -1,4 +1,4 @@
-// Generated with pvdc v0.7.3-SNAPSHOT
+// Generated with pvdc v1.0.0-SNAPSHOT
 
 goog.provide('morimekta.providence.service');
 
@@ -51,7 +51,7 @@ _service.PServiceCallType = {
  *
  * @param {number|string} id Identification for enum value
  * @param {boolean=} opt_keepNumeric Optional arg to keep numeric values even if invalid.
- * @return {service.PServiceCallType?} The enum value if valid.
+ * @return {_service.PServiceCallType?} The enum value if valid.
  */
 _service.PServiceCallType.valueOf = function(id, opt_keepNumeric) {
     switch(id) {
@@ -188,7 +188,7 @@ _service.PApplicationExceptionType = {
  *
  * @param {number|string} id Identification for enum value
  * @param {boolean=} opt_keepNumeric Optional arg to keep numeric values even if invalid.
- * @return {service.PApplicationExceptionType?} The enum value if valid.
+ * @return {_service.PApplicationExceptionType?} The enum value if valid.
  */
 _service.PApplicationExceptionType.valueOf = function(id, opt_keepNumeric) {
     switch(id) {
@@ -294,7 +294,7 @@ _service.PApplicationException = function(opt_json) {
      */
     this._message = null;
     /**
-     * @type {service.PApplicationExceptionType?}
+     * @type {_service.PApplicationExceptionType?}
      * @private
      */
     this._id = null;
@@ -353,7 +353,7 @@ _service.PApplicationException.prototype.setMessage = function(value) {
 /**
  * The application exception type.
  *
- * @return {service.PApplicationExceptionType?} The field value
+ * @return {_service.PApplicationExceptionType?} The field value
  */
 _service.PApplicationException.prototype.getId = function() {
     if (this._id === null) {
@@ -366,7 +366,7 @@ _service.PApplicationException.prototype.getId = function() {
 /**
  * The application exception type.
  *
- * @param {service.PApplicationExceptionType?} value The new field value
+ * @param {_service.PApplicationExceptionType?} value The new field value
  */
 _service.PApplicationException.prototype.setId = function(value) {
     if (value !== null && value !== undefined) {

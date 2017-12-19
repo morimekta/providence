@@ -1,4 +1,4 @@
-// Generated with pvdc v0.7.3-SNAPSHOT
+// Generated with pvdc v1.0.0-SNAPSHOT
 
 var _service = module.exports = exports = {};
 

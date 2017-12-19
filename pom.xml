@@ -1009,6 +1009,18 @@
                 <module>providence-tools</module>
             </modules>
         </profile>
+        <profile>
+            <id>generator-java</id>
+            <modules>
+                <module>providence-generator-java</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>generator-js</id>
+            <modules>
+                <module>providence-generator-js</module>
+            </modules>
+        </profile>
         <!-- one profile for each integration test module -->
         <profile>
             <id>it-serialization</id>

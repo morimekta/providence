@@ -53,9 +53,6 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -71,35 +68,48 @@ import static net.morimekta.providence.generator.format.js.utils.JSUtils.getClas
  * requiring much of a browse to be compatible.
  */
 public class JSProgramFormatter extends ProgramFormatter {
-    private final AtomicInteger tmp;
-    private final String        programContext;
+    private final ProgramTypeRegistry registry;
+    private final AtomicInteger       tmp;
+    private final String              programContext;
 
     public JSProgramFormatter(JSOptions options,
                               ProgramTypeRegistry registry) {
-        super(options, registry);
-
-        if ((options.node_js && options.closure) ||
-            (options.node_js && options.type_script) ||
-            (options.closure && options.type_script)) {
-            throw new IllegalArgumentException("More than one of node.js, closure and type_script options used!");
-        }
-
+        super(options);
+        this.registry = registry;
         this.programContext = registry.getProgram().getProgramName();
         this.tmp = new AtomicInteger();
+    }
+
+    public void format(IndentedPrintWriter writer, CProgram program) {
+        formatHeader(writer, program);
+
+        for (PDeclaredDescriptor descriptor : program.getDeclaredTypes()) {
+            if (descriptor instanceof PEnumDescriptor) {
+                formatEnum(writer, (CEnumDescriptor) descriptor);
+            } else if (descriptor instanceof PMessageDescriptor) {
+                formatMessage(writer, (CMessageDescriptor) descriptor);
+            } else {
+                throw new IllegalArgumentException("Impossible");
+            }
+        }
+        for (CConst constant : program.getConstants()) {
+            formatConstant(writer, program, constant);
+        }
+        if (!options.es51) {
+            // es5.1 does not support Promises, so no services either.
+            for (CService service : program.getServices()) {
+                formatService(writer, service);
+            }
+        }
+
+        formatFooter(writer);
     }
 
     private String tmpVar(String name) {
         return name + "_" + tmp.incrementAndGet();
     }
 
-    public String getFileName(CProgram program) {
-        if (options.type_script) {
-            return program.getProgramName() + ".ts";
-        }
-        return program.getProgramName() + ".js";
-    }
-
-    protected void formatHeader(IndentedPrintWriter writer, CProgram program) {
+    private void formatHeader(IndentedPrintWriter writer, CProgram program) {
         String namespace = JSUtils.getPackage(program);
         if (program.getDocumentation() != null) {
             new ClosureDocBuilder(writer)
@@ -108,42 +118,26 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
 
         if (options.type_script) {
-            Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
-
             if (JSUtils.hasService(program)) {
-                // TODO: Relativize???
-                writer.formatln("import * as _ from '%s';", "morimekta/providence/service").newline();
+                // TODO: Relative???
+                writer.formatln("import * as _ from '%s';", "morimekta-providence/service").newline();
             }
             if (program.getIncludedPrograms().size() > 0) {
                 for (String include : program.getIncludedPrograms()) {
                     CProgram included = registry.getProgramForName(include);
-                    Path includedPath = Paths.get(File.separator + JSUtils.getPackageClassPath(included), included.getProgramName());
-                    String relative = String.join("/", relativeTo.relativize(includedPath).toString().split(File.separator));
-                    if (!relative.startsWith(".")) {
-                        relative = "./" + relative;
-                    }
-
-                    writer.formatln("import * as _%s from '%s';", included.getProgramName(), relative);
+                    writer.formatln("import * as _%s from '%s';", included.getProgramName(), getNodePackageInclude(included, program));
                 }
                 writer.newline();
             }
         } else if (options.node_js) {
-            Path relativeTo = Paths.get(File.separator + JSUtils.getPackageClassPath(program));
             if (JSUtils.hasService(program)) {
-                // TODO: Relativize???
-                writer.formatln("var _ = require('%s');", "morimekta/providence/service").newline();
+                // TODO: Relative???
+                writer.formatln("var _ = require('%s');", "morimekta-providence/service").newline();
             }
 
             for (String include : program.getIncludedPrograms()) {
                 CProgram included = registry.getProgramForName(include);
-
-                Path includedPath = Paths.get(File.separator + JSUtils.getPackageClassPath(included), included.getProgramName());
-                String relative = relativeTo.relativize(includedPath).toString();
-                if (!relative.startsWith(".")) {
-                    relative = "./" + relative;
-                }
-
-                writer.formatln("var _%s = require('%s');", included.getProgramName(), relative);
+                writer.formatln("var _%s = require('%s');", included.getProgramName(), getNodePackageInclude(included, program));
             }
 
             writer.formatln("var _%s = module.exports = exports = {};", program.getProgramName())
@@ -223,7 +217,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         return JSUtils.getClassReference(declaredDescriptor);
     }
 
-    protected void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
+    private void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
         maybeComment(writer, descriptor, comment -> comment.enum_("number"));
 
         if (options.type_script) {
@@ -354,7 +348,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         }
     }
 
-    protected void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
+    private void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
         if (options.type_script) {
             writer.formatln("export class %s {", getClassReference(descriptor))
                   .begin();
@@ -1325,7 +1319,7 @@ public class JSProgramFormatter extends ProgramFormatter {
     }
 
 
-    protected void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
+    private void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
         maybeComment(writer, constant, comment -> comment.const_(ClosureUtils.getTypeString(constant.getDescriptor(), options)));
         if (options.type_script) {
             writer.formatln("export const %s = ", constant.getName());
@@ -1337,8 +1331,7 @@ public class JSProgramFormatter extends ProgramFormatter {
               .newline();
     }
 
-    @Override
-    protected void formatService(IndentedPrintWriter writer, CService service) {
+    private void formatService(IndentedPrintWriter writer, CService service) {
         // A: Service Interface
         formatServiceInterface(writer, service);
 
@@ -1783,7 +1776,7 @@ public class JSProgramFormatter extends ProgramFormatter {
         }  // has response
     }
 
-    protected void formatFooter(IndentedPrintWriter writer, CProgram program) {
+    private void formatFooter(IndentedPrintWriter writer) {
         if (!options.node_js && !options.type_script) {
             // node modules and typescript modules already handle the enclosure.
             writer.appendln("})();");

@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.generator.format.js;
 
+import net.morimekta.providence.generator.GeneratorException;
+
 /**
  * Options class for js generator.
  */
@@ -32,5 +34,13 @@ public class JSOptions {
 
     public boolean useMaps() {
         return !es51;
+    }
+
+    public void validate() {
+        if ((node_js && closure) ||
+            (node_js && type_script) ||
+            (closure && type_script)) {
+            throw new GeneratorException("More than one of node.js, closure and type_script options used!");
+        }
     }
 }

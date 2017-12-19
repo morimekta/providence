@@ -33,7 +33,6 @@ import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 
 /**
  * General utilities for js generator.
@@ -66,14 +65,6 @@ public class JSUtils {
             return document.getProgramName();
         }
         return javaPackage + "." + document.getProgramName();
-    }
-
-    public static String getPackageClassPath(@Nonnull CProgram document) throws GeneratorException {
-        String javaPackage = document.getNamespaceForLanguage("js");
-        if (javaPackage == null) {
-            return document.getProgramName();
-        }
-        return Strings.join(File.separator, (Object[]) javaPackage.split("[.]"));
     }
 
     public static String enumConst(PEnumValue value) {
