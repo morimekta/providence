@@ -5,8 +5,6 @@ import net.morimekta.console.args.ArgumentList;
 import net.morimekta.console.args.BaseOption;
 import net.morimekta.providence.generator.GeneratorFactory;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -15,16 +13,16 @@ import java.util.function.Supplier;
  * Cli options handler for stream specification (file / url, appendEnumClass).
  */
 public class HelpOption extends BaseOption {
-    private final Consumer<HelpSpec>               consumer;
-    private final Supplier<List<GeneratorFactory>> factoryListSupplier;
+    private final Consumer<HelpSpec>                     consumer;
+    private final Supplier<Map<String,GeneratorFactory>> generatorFactoryMap;
 
     public HelpOption(String name,
                       String shortNames,
                       String usage,
-                      Supplier<List<GeneratorFactory>> factoryListSupplier,
+                      Supplier<Map<String,GeneratorFactory>> generatorFactoryMap,
                       Consumer<HelpSpec> consumer) {
         super(name, shortNames, "[language]", usage, null, false, false, false);
-        this.factoryListSupplier = factoryListSupplier;
+        this.generatorFactoryMap = generatorFactoryMap;
         this.consumer = consumer;
     }
 
@@ -55,14 +53,8 @@ public class HelpOption extends BaseOption {
 
         if (args.remaining() == 2) {
             String spec = args.get(1);
-            List<GeneratorFactory> factories = factoryListSupplier.get();
-            Map<String, GeneratorFactory> factoryMap = new HashMap<>();
-            for (GeneratorFactory factory : factories) {
-                factoryMap.put(factory.generatorName()
-                                      .toLowerCase(), factory);
-            }
 
-            GeneratorFactory factory = factoryMap.get(spec.toLowerCase());
+            GeneratorFactory factory = generatorFactoryMap.get().get(spec.toLowerCase());
             if (factory == null) {
                 throw new ArgumentException("Unknown output language " + spec);
             }

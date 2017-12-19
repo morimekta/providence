@@ -104,7 +104,7 @@
                         </goals>
                         <configuration>
                             <finalName>providence-tools-compiler</finalName>
-                            <minimizeJar>true</minimizeJar>
+                            <minimizeJar>false</minimizeJar>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -120,23 +120,6 @@
                                         <exclude>**/package.html</exclude>
                                         <exclude>**/overview.html</exclude>
                                     </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.slf4j:slf4j-simple</artifact>
-                                    <includes>
-                                        <include>org/slf4j/**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <!--
-                                     The hazelcast library is *huge*, so only include the interfaces
-                                     we reference in the generator
-                                     -->
-                                    <artifact>com.hazelcast:hazelcast</artifact>
-                                    <includes>
-                                        <include>com/hazelcast/config/**</include>
-                                        <include>com/hazelcast/nio/serialization/**</include>
-                                    </includes>
                                 </filter>
                             </filters>
                             <transformers>

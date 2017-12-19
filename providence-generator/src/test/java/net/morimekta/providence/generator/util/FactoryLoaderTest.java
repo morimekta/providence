@@ -21,15 +21,16 @@ public class FactoryLoaderTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
+    private FactoryLoader loader = new FactoryLoader();
+
     @Test
     public void testLoader() {
         GeneratorOptions options = new GeneratorOptions();
         options.generator_program_name = "loader-test";
         options.program_version = "1.0";
         ResourceUtils.copyResourceTo("/test.jar", tmp.getRoot());
-        FactoryLoader loader = new FactoryLoader(tmp.getRoot());
 
-        List<GeneratorFactory> factories = loader.getFactories();
+        List<GeneratorFactory> factories = loader.getFactories(tmp.getRoot());
         assertThat(factories, hasSize(1));
 
         GeneratorFactory factory = factories.get(0);

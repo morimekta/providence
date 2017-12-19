@@ -75,6 +75,7 @@ public class CompilerFlagsTest {
                                    " --out (-o) dir             : Output directory (default: ${PWD})\n" +
                                    " --require-field-id         : Require all fields to have a defined ID\n" +
                                    " --require-enum-value       : Require all enum values to have a defined ID\n" +
+                                   " --add-generator FILE       : Add extra generator .jar file\n" +
                                    " file                       : Files to compile.\n" +
                                    "\n" +
                                    "Available generators:\n" +

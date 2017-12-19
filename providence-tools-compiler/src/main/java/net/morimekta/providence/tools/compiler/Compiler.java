@@ -33,6 +33,7 @@ import net.morimekta.providence.tools.common.options.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Stein Eldar Johnsen
@@ -78,9 +79,9 @@ public class Compiler {
                     System.out.println();
                     System.out.println("Available generators:");
 
-                    List<GeneratorFactory> factories = options.getFactories();
+                    Map<String,GeneratorFactory> factories = options.getFactories();
 
-                    for (GeneratorFactory lang : factories) {
+                    for (GeneratorFactory lang : factories.values()) {
                         System.out.format(" - %-10s : %s%n", lang.generatorName(), lang.generatorDescription());
                     }
                 }

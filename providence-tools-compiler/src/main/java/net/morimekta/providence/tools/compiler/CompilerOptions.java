@@ -50,9 +50,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.file;
@@ -69,6 +69,7 @@ public class CompilerOptions extends CommonOptions {
     protected HelpSpec      help             = null;
     protected GeneratorSpec gen              = null;
     protected List<File>    files            = new ArrayList<>();
+    protected List<File>    extraGenerators  = new ArrayList<>();
     protected boolean       version          = false;
     protected boolean       verbose          = false;
     protected boolean       requireEnumValue = false;
@@ -88,6 +89,7 @@ public class CompilerOptions extends CommonOptions {
         parser.add(new Option("--out", "o", "dir", "Output directory", outputDir(this::setOut), "${PWD}"));
         parser.add(new Flag("--require-field-id", null, "Require all fields to have a defined ID", this::setRequireFieldId));
         parser.add(new Flag("--require-enum-value", null, "Require all enum values to have a defined ID", this::setRequireEnumValue));
+        parser.add(new Option("--add-generator", null, "FILE", "Add extra generator .jar file", file(extraGenerators::add)));
         parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
 
         return parser;
@@ -112,17 +114,23 @@ public class CompilerOptions extends CommonOptions {
         return null;
     }
 
-    public List<GeneratorFactory> getFactories() {
+    private void addToMap(Map<String, GeneratorFactory> factoryMap, List<GeneratorFactory> factories) {
+        for (GeneratorFactory factory : factories) {
+            factoryMap.put(factory.generatorName(), factory);
+        }
+    }
+
+    public Map<String, GeneratorFactory> getFactories() {
         try {
-            List<GeneratorFactory> factories = new ArrayList<>();
-            factories.add(new JsonGeneratorFactory());
+            FactoryLoader loader = new FactoryLoader();
+            Map<String, GeneratorFactory> factories = new TreeMap<>();
+            factories.put("json", new JsonGeneratorFactory());
 
             File currentDir = currentJarDirectory();
             if (currentDir != null) {
                 File generators = new File(currentDir, "generator");
                 if (generators.isDirectory()) {
-                    FactoryLoader loader = new FactoryLoader(generators);
-                    factories.addAll(loader.getFactories());
+                    addToMap(factories, loader.getFactories(generators));
                 }
             }
 
@@ -130,14 +138,15 @@ public class CompilerOptions extends CommonOptions {
                 ProvidenceTools config = getConfig();
                 if (config.hasGeneratorPaths()) {
                     for (String path : config.getGeneratorPaths()) {
-                        File file = new File(path);
-                        FactoryLoader loader = new FactoryLoader(file);
-                        factories.addAll(loader.getFactories());
+                        addToMap(factories, loader.getFactories(new File(path)));
                     }
                 }
             }
 
-            Collections.sort(factories, Comparator.comparing(GeneratorFactory::generatorName));
+            for (File extra : extraGenerators) {
+                GeneratorFactory factory = loader.getFactory(extra);
+                factories.put(factory.generatorName(), factory);
+            }
 
             return factories;
         } catch (ProvidenceConfigException e) {

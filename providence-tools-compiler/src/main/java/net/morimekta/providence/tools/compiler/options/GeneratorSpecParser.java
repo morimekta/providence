@@ -25,26 +25,19 @@ import net.morimekta.providence.generator.GeneratorFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class GeneratorSpecParser implements Parser<GeneratorSpec> {
-    private final Supplier<List<GeneratorFactory>> factoryListSupplier;
+    private final Supplier<Map<String,GeneratorFactory>> generatorFactoryMap;
 
-    public GeneratorSpecParser(Supplier<List<GeneratorFactory>> factoryListSupplier) {
-        this.factoryListSupplier = factoryListSupplier;
+    public GeneratorSpecParser(Supplier<Map<String,GeneratorFactory>> generatorFactoryMap) {
+        this.generatorFactoryMap = generatorFactoryMap;
     }
 
     @Override
     public GeneratorSpec parse(String spec) {
-        List<GeneratorFactory> factories = factoryListSupplier.get();
-        Map<String, GeneratorFactory> factoryMap = new HashMap<>();
-        for (GeneratorFactory factory : factories) {
-            factoryMap.put(factory.generatorName().toLowerCase(), factory);
-        }
-
+        Map<String, GeneratorFactory> factoryMap = generatorFactoryMap.get();
         ArrayList<String> options = new ArrayList<>();
 
         String[] gen = spec.split("[:]", 2);

@@ -13,30 +13,31 @@ import java.util.List;
 import java.util.jar.Manifest;
 
 public class FactoryLoader {
-    private final File path;
+    public FactoryLoader() {}
 
-    public FactoryLoader(File path) {
-        this.path = path;
-        if (!path.isDirectory()) {
-            throw new IllegalArgumentException(path.getAbsolutePath() + " is not a directory.");
-        }
-    }
-
-    public List<GeneratorFactory> getFactories() {
+    public List<GeneratorFactory> getFactories(File path) {
         try {
-            List<File> jars = findJarFiles();
+            List<File> jars = findJarFiles(path);
             List<GeneratorFactory> factories = new ArrayList<>();
             for (File jar : jars) {
                 URLClassLoader classLoader = getClassLoader(jar);
                 factories.add(getFactory(classLoader));
             }
             return factories;
-        } catch (Exception mue) {
-            throw new IllegalStateException(mue.getMessage(), mue);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    private List<File> findJarFiles() {
+    public GeneratorFactory getFactory(File file) {
+        try {
+            return getFactory(getClassLoader(file));
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    private List<File> findJarFiles(File path) {
         List<File> out = new ArrayList<>();
         File[] files = path.listFiles();
         if (files != null) {
