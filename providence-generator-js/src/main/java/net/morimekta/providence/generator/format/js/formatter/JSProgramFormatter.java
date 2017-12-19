@@ -67,7 +67,7 @@ import static net.morimekta.providence.generator.format.js.utils.JSUtils.getClas
  * the generated code should be totally platform independent and not
  * requiring much of a browse to be compatible.
  */
-public class JSProgramFormatter extends ProgramFormatter {
+public class JSProgramFormatter extends BaseFormatter {
     private final ProgramTypeRegistry registry;
     private final AtomicInteger       tmp;
     private final String              programContext;

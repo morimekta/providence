@@ -2,16 +2,15 @@ package net.morimekta.providence.generator.format.js.formatter;
 
 import net.morimekta.providence.generator.format.js.JSOptions;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.util.Strings;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-abstract class ProgramFormatter {
+abstract class BaseFormatter {
     final JSOptions options;
 
-    ProgramFormatter(JSOptions options) {
+    BaseFormatter(JSOptions options) {
         this.options = options;
     }
 
@@ -23,17 +22,15 @@ abstract class ProgramFormatter {
     }
 
     public String getFilePath(CProgram program) {
-        Object[] parts;
         if (program.getNamespaceForLanguage("js") != null) {
-            parts = program.getNamespaceForLanguage("js").split("[.]");
+            String[] parts = program.getNamespaceForLanguage("js").split("[.]");
+            if (options.type_script || options.node_js) {
+                return String.join("-", parts);
+            }
+            return String.join(File.separator, parts);
         } else {
             return program.getProgramName();
         }
-
-        if (options.type_script || options.node_js) {
-            return Strings.join("-", parts);
-        }
-        return Strings.join(File.separator, parts);
     }
 
     /**
