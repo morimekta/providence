@@ -35,6 +35,10 @@
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-common-formats</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>

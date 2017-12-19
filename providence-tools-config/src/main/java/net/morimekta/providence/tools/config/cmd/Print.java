@@ -8,7 +8,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.tools.common.options.Format;
+import net.morimekta.providence.tools.common.formats.Format;
 
 import java.io.File;
 import java.io.IOException;

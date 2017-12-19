@@ -30,7 +30,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.tools.common.options.Format;
+import net.morimekta.providence.tools.common.formats.Format;
 
 import com.google.api.client.http.HttpResponseException;
 
@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ConnectException;
 
-import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
+import static net.morimekta.providence.tools.common.Utils.getVersionString;
 
 public class RPC {
     private final RPCOptions options;

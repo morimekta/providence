@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.config;
 
-import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.common.Utils;
 
 import org.junit.Before;
 import org.junit.Test;

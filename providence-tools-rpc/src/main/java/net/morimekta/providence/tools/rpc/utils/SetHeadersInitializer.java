@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.common.handler;
+package net.morimekta.providence.tools.rpc.utils;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
@@ -22,7 +22,7 @@ public class SetHeadersInitializer implements HttpRequestInitializer {
     }
 
     @Override
-    public void initialize(HttpRequest request) throws IOException {
+    public void initialize(HttpRequest request) {
         request.setConnectTimeout(connect_timeout);
         request.setReadTimeout(read_timeout);
 

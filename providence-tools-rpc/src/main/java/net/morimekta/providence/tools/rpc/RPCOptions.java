@@ -45,17 +45,18 @@ import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.thrift.ThriftSerializerProvider;
 import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.thrift.client.SocketClientHandler;
-import net.morimekta.providence.tools.common.handler.SetHeadersInitializer;
-import net.morimekta.providence.tools.common.options.CommonOptions;
-import net.morimekta.providence.tools.common.options.ConvertStream;
-import net.morimekta.providence.tools.common.options.ConvertStreamParser;
-import net.morimekta.providence.tools.common.options.Format;
-import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.common.CommonOptions;
+import net.morimekta.providence.tools.common.formats.ConvertStream;
+import net.morimekta.providence.tools.common.formats.ConvertStreamParser;
+import net.morimekta.providence.tools.common.formats.Format;
+import net.morimekta.providence.tools.common.formats.FormatUtils;
+import net.morimekta.providence.tools.rpc.utils.SetHeadersInitializer;
 import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -172,7 +173,7 @@ public class RPCOptions extends CommonOptions {
     }
 
     public PService getDefinition() throws ParseException, IOException {
-        Map<String, File> includeMap = getIncludeMap(includes);
+        Map<String, File> includeMap = FormatUtils.getIncludeMap(getRc(), includes);
         if (service.isEmpty()) {
             throw new ArgumentException("Missing service type name");
         }
@@ -296,7 +297,7 @@ public class RPCOptions extends CommonOptions {
             hdrs.put(parts[0].trim(), parts[1].trim());
         }
 
-        HttpTransport transport = Utils.createTransport();
+        HttpTransport transport = new NetHttpTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs, connect_timeout, read_timeout));
         SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mediaType());
         return new HttpClientHandler(() -> url, factory, serializerProvider);

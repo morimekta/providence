@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.common.options;
+package net.morimekta.providence.tools.common.formats;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.util.Parser;

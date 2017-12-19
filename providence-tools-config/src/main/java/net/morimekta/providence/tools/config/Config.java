@@ -9,7 +9,7 @@ import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 import java.io.IOException;
 
-import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
+import static net.morimekta.providence.tools.common.Utils.getVersionString;
 
 /**
  * Configuration Tool for Providence.

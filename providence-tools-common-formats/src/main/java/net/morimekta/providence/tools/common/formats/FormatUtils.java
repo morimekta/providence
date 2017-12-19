@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.common.options;
+package net.morimekta.providence.tools.common.formats;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.providence.PMessage;
@@ -14,9 +14,6 @@ import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.tools.common.ProvidenceTools;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,15 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-/**
- * General utility methods.
- */
-public class Utils {
+public class FormatUtils {
     public static void collectIncludes(File dir, Map<String, File> includes) throws IOException {
         if (!dir.exists()) {
             throw new ArgumentException("No such include directory: " + dir.getCanonicalFile().getPath());
@@ -95,22 +90,27 @@ public class Utils {
         }
     }
 
-    public static String getVersionString() throws IOException {
-        Properties properties = new Properties();
-        try (InputStream in = Utils.class.getResourceAsStream("/version.properties")) {
-            properties.load(in);
+    public static Map<String, File> getIncludeMap(File rc, List<File> includes) throws IOException {
+        Map<String, File> includeMap = new HashMap<>();
+        if (includes.isEmpty()) {
+            collectConfigIncludes(rc, includeMap);
         }
-        return "v" + properties.getProperty("build.version");
-    }
-
-    public static HttpTransport createTransport() {
-        return new NetHttpTransport();
+        if (includes.isEmpty()) {
+            throw new ArgumentException("No includes, use --include/-I or update ~/.pvdrc");
+        }
+        if (includeMap.isEmpty()) {
+            for (File file : includes) {
+                collectIncludes(file, includeMap);
+            }
+        }
+        return includeMap;
     }
 
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, ?, Integer> getOutput(Format defaultFormat,
                                              ConvertStream out,
-                                             boolean strict) throws IOException {
+                                             boolean strict)
+            throws IOException {
         Format fmt = defaultFormat;
         File file = null;
         if (out != null) {
@@ -177,5 +177,4 @@ public class Utils {
             return MessageStreams.stream(is, serializer, descriptor);
         }
     }
-
 }

@@ -19,9 +19,8 @@
  * under the License.
  */
 
-package net.morimekta.providence.tools.common.options;
+package net.morimekta.providence.tools.common;
 
-import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
@@ -29,21 +28,14 @@ import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.config.ProvidenceConfigException;
-import net.morimekta.providence.tools.common.ProvidenceTools;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static net.morimekta.console.util.Parser.file;
-import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
-import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
-import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
 /**
  * Options used by the providence converter.
@@ -65,7 +57,7 @@ public class CommonOptions {
     }
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
-        ArgumentParser parser = new ArgumentParser(prog, getVersionString(), description, getArgumentOptions());
+        ArgumentParser parser = new ArgumentParser(prog, Utils.getVersionString(), description, getArgumentOptions());
 
         parser.add(new Flag("--help", "h?", "This help listing.", this::setHelp));
         parser.add(new Flag("--verbose", "V", "Show verbose output and error messages.", this::setVerbose));
@@ -112,21 +104,4 @@ public class CommonOptions {
     protected void setRc(File file) {
         this.rc = file;
     }
-
-    public Map<String, File> getIncludeMap(List<File> includes) throws IOException {
-        Map<String, File> includeMap = new HashMap<>();
-        if (includes.isEmpty()) {
-            collectConfigIncludes(getRc(), includeMap);
-        }
-        if (includes.isEmpty()) {
-            throw new ArgumentException("No includes, use --include/-I or update ~/.pvdrc");
-        }
-        if (includeMap.isEmpty()) {
-            for (File file : includes) {
-                collectIncludes(file, includeMap);
-            }
-        }
-        return includeMap;
-    }
-
 }

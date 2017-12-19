@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.common.Utils;
 import net.morimekta.testing.rules.ConsoleWatcher;
 
 import org.junit.Before;

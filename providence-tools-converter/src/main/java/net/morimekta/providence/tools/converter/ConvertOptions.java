@@ -43,11 +43,11 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.tools.common.options.CommonOptions;
-import net.morimekta.providence.tools.common.options.ConvertStream;
-import net.morimekta.providence.tools.common.options.ConvertStreamParser;
-import net.morimekta.providence.tools.common.options.Format;
-import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.common.CommonOptions;
+import net.morimekta.providence.tools.common.formats.ConvertStream;
+import net.morimekta.providence.tools.common.formats.ConvertStreamParser;
+import net.morimekta.providence.tools.common.formats.Format;
+import net.morimekta.providence.tools.common.formats.FormatUtils;
 import net.morimekta.util.Strings;
 
 import java.io.BufferedInputStream;
@@ -123,7 +123,7 @@ public class ConvertOptions extends CommonOptions {
     }
 
     public ProgramRegistry getProgramRegistry() throws IOException {
-        Map<String, File> includeMap = getIncludeMap(includes);
+        Map<String, File> includeMap = FormatUtils.getIncludeMap(getRc(), includes);
         if (type.isEmpty()) {
             throw new ArgumentException("Missing input type name");
         }
@@ -175,7 +175,7 @@ public class ConvertOptions extends CommonOptions {
         if (srv == null) {
             String programName = type.substring(0, type.lastIndexOf("."));
             programName = programName.replaceAll("[-.]", "_");
-            Map<String, File> includeMap = getIncludeMap(includes);
+            Map<String, File> includeMap = FormatUtils.getIncludeMap(getRc(), includes);
             String filePath = includeMap.get(programName).toString();
 
             CProgram document = registry.registryForPath(filePath).getProgram();
@@ -196,13 +196,13 @@ public class ConvertOptions extends CommonOptions {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, ?, Integer> getOutput()
             throws IOException {
-        return Utils.getOutput(Format.pretty, out, strict);
+        return FormatUtils.getOutput(Format.pretty, out, strict);
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> getInput() throws ParseException, IOException {
         PMessageDescriptor<Message, Field> descriptor = getDefinition();
-        return Utils.getInput(descriptor, in, Format.binary, strict);
+        return FormatUtils.getInput(descriptor, in, Format.binary, strict);
     }
 
     public MessageReader getServiceInput() throws ParseException {

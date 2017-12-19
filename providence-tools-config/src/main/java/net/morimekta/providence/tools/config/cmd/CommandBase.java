@@ -3,6 +3,7 @@ package net.morimekta.providence.tools.config.cmd;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.tools.config.ConfigOptions;
+import net.morimekta.providence.tools.common.formats.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public abstract class CommandBase implements Command {
     @Override
     public void execute(ConfigOptions options) throws IOException {
-        Map<String, File> includeMap = options.getIncludeMap(options.getIncludes());
+        Map<String, File> includeMap = FormatUtils.getIncludeMap(options.getRc(), options.getIncludes());
 
         Set<File> rootSet = includeMap.values()
                                       .stream()

@@ -112,6 +112,8 @@
                                         <!-- The accompanied license and notice is not from this project. -->
                                         <exclude>META-INF/LICENSE</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
                                         <exclude>META-INF/DEPENDENCIES</exclude>
                                         <exclude>META-INF/maven/</exclude>
                                         <exclude>META-INF/*.SF</exclude>
@@ -119,6 +121,10 @@
                                         <exclude>META-INF/*.RSA</exclude>
                                         <exclude>**/package.html</exclude>
                                         <exclude>**/overview.html</exclude>
+                                        <!-- special for pure annotation packages -->
+                                        <exclude>com/google/j2objc/annotations/</exclude>
+                                        <exclude>com/google/errorprone/annotations/</exclude>
+                                        <exclude>org/codehaus/mojo/animal_sniffer/</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

@@ -36,7 +36,7 @@ import net.morimekta.providence.reflect.contained.CUnionDescriptor;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.tools.common.options.Format;
+import net.morimekta.providence.tools.common.formats.Format;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.common.options;
+package net.morimekta.providence.tools.common.formats;
 
 import java.io.File;
 import java.io.IOException;

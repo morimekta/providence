@@ -195,6 +195,11 @@
                 <artifactId>providence-tools-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-tools-common-formats</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- MORIMEKTA UTILS -->
             <dependency>
@@ -1001,6 +1006,7 @@
             </activation>
             <modules>
                 <module>providence-tools-common</module>
+                <module>providence-tools-common-formats</module>
                 <!-- CLI Tooling (not deployed as artifacts) -->
                 <module>providence-tools-compiler</module>
                 <module>providence-tools-config</module>

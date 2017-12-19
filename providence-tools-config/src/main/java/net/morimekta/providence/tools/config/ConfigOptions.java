@@ -27,7 +27,7 @@ import net.morimekta.console.args.Option;
 import net.morimekta.console.args.SubCommand;
 import net.morimekta.console.args.SubCommandSet;
 import net.morimekta.console.util.STTY;
-import net.morimekta.providence.tools.common.options.CommonOptions;
+import net.morimekta.providence.tools.common.CommonOptions;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
 import net.morimekta.providence.tools.config.cmd.Print;

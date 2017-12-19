@@ -28,7 +28,7 @@ import net.morimekta.providence.generator.GeneratorFactory;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
-import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.common.Utils;
 
 import java.io.File;
 import java.io.IOException;
