@@ -26,6 +26,7 @@ import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
+import net.morimekta.providence.maven.util.ProvidenceDependency;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ProgramParser;
@@ -163,14 +164,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter(defaultValue = "false",
                property = "providence.print_debug")
     protected boolean print_debug;
-
-    // ----------------------------
-    public static class ProvidenceDependency extends Dependency {
-        public ProvidenceDependency() {
-            setType(ProvidenceAssemblyMojo.TYPE);
-            setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
-        }
-    }
 
     /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
