@@ -36,6 +36,10 @@ public class JSOptions {
         return !es51;
     }
 
+    public boolean useNodeJs() {
+        return type_script || node_js;
+    }
+
     public void validate() {
         if ((node_js && closure) ||
             (node_js && type_script) ||

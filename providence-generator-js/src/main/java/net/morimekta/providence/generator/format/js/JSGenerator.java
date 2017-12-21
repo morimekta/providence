@@ -24,6 +24,7 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.js.formatter.JSProgramFormatter;
+import net.morimekta.providence.generator.format.js.formatter.TSDefinitionFormatter;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
@@ -46,8 +47,8 @@ import java.util.Collection;
  * format.
  */
 public class JSGenerator extends Generator {
-    private final GeneratorOptions generatorOptions;
-    private final JSOptions options;
+    private final GeneratorOptions         generatorOptions;
+    private final JSOptions                options;
 
     public JSGenerator(FileManager manager, GeneratorOptions generatorOptions, JSOptions jsOptions) throws GeneratorException {
         super(manager);
@@ -60,6 +61,28 @@ public class JSGenerator extends Generator {
     @SuppressWarnings("resource")
     public void generate(ProgramTypeRegistry registry) throws IOException, GeneratorException {
         CProgram program = registry.getProgram();
+        if (program.getNamespaceForLanguage("js") == null) {
+            // just skip programs with missing js namespace.
+            return;
+        }
+
+        // Generate .d.ts definition files if typescript is enabled.
+        if (options.type_script) {
+            TSDefinitionFormatter tsdf = new TSDefinitionFormatter(options, registry);
+            String fileName = tsdf.getFileName(program);
+            String filePath = tsdf.getFilePath(program);
+            OutputStream out = new BufferedOutputStream(getFileManager().create(filePath, fileName));
+            try {
+                IndentedPrintWriter writer = new IndentedPrintWriter(out);
+
+                writer.format("// Generated with %s %s", generatorOptions.generator_program_name, generatorOptions.program_version)
+                      .newline();
+
+                tsdf.format(writer, program);
+            } finally {
+                getFileManager().finalize(out);
+            }
+        }
 
         JSProgramFormatter formatter = new JSProgramFormatter(options, registry);
         String fileName = formatter.getFileName(program);
@@ -93,13 +116,7 @@ public class JSGenerator extends Generator {
             InputStream source;
 
             String targetPath = Strings.join(File.separator, "morimekta", "providence");
-            String targetName = "service.js";
-            if (options.type_script) {
-                // copy ts.
-                source = getClass().getResourceAsStream("/type_script/morimekta-providence/service.ts");
-                targetPath = "morimekta-providence";
-                targetName = "service.ts";
-            } else if (options.node_js) {
+            if (options.node_js || options.type_script) {
                 source = getClass().getResourceAsStream("/node_module/morimekta-providence/service.js");
                 targetPath = "morimekta-providence";
             } else if (options.closure) {
@@ -108,12 +125,22 @@ public class JSGenerator extends Generator {
                 source = getClass().getResourceAsStream("/js/morimekta/providence/service.js");
             }
 
-            OutputStream out = getFileManager().create(targetPath, targetName);
+            OutputStream out = getFileManager().create(targetPath, "service.js");
 
             try {
                 IOUtils.copy(source, out);
             } finally {
                 getFileManager().finalize(out);
+            }
+
+            if (options.type_script) {
+                // copy .d.ts.
+                out = getFileManager().create(targetPath, "service.d.ts");
+                try {
+                    IOUtils.copy(getClass().getResourceAsStream("/type_script/morimekta-providence/service.d.ts"), out);
+                } finally {
+                    getFileManager().finalize(out);
+                }
             }
         }
 

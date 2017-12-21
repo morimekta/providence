@@ -34,7 +34,6 @@ import net.morimekta.providence.generator.format.js.utils.ClosureDocBuilder;
 import net.morimekta.providence.generator.format.js.utils.ClosureUtils;
 import net.morimekta.providence.generator.format.js.utils.JSConstFormatter;
 import net.morimekta.providence.generator.format.js.utils.JSUtils;
-import net.morimekta.providence.generator.format.js.utils.TSUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
@@ -117,19 +116,9 @@ public class JSProgramFormatter extends BaseFormatter {
                     .finish();
         }
 
-        if (options.type_script) {
-            if (JSUtils.hasService(program)) {
-                // TODO: Relative???
-                writer.formatln("import * as _ from '%s';", "morimekta-providence/service").newline();
-            }
-            if (program.getIncludedPrograms().size() > 0) {
-                for (String include : program.getIncludedPrograms()) {
-                    CProgram included = registry.getProgramForName(include);
-                    writer.formatln("import * as _%s from '%s';", included.getProgramName(), getNodePackageInclude(included, program));
-                }
-                writer.newline();
-            }
-        } else if (options.node_js) {
+        if (options.useNodeJs()) {
+            writer.appendln("'use strict';");
+
             if (JSUtils.hasService(program)) {
                 // TODO: Relative???
                 writer.formatln("var _ = require('%s');", "morimekta-providence/service").newline();
@@ -140,7 +129,7 @@ public class JSProgramFormatter extends BaseFormatter {
                 writer.formatln("var _%s = require('%s');", included.getProgramName(), getNodePackageInclude(included, program));
             }
 
-            writer.formatln("var _%s = module.exports = exports = {};", program.getProgramName())
+            writer.formatln("var _%s = module.exports = exports;", program.getProgramName())
                   .newline();
         } else {
             if (options.closure) {
@@ -199,32 +188,10 @@ public class JSProgramFormatter extends BaseFormatter {
         }
     }
 
-    private String getClassReference(CService service) {
-        if (options.type_script && programContext.equals(service.getProgramName())) {
-            return Strings.camelCase("", service.getName());
-        }
-        return "_" + service.getProgramName() + "." + Strings.camelCase("", service.getName());
-    }
-
-    private String getClassReference(CMessageDescriptor descriptor) {
-        return getClassReference((PDeclaredDescriptor) descriptor);
-    }
-
-    private String getClassReference(PDeclaredDescriptor declaredDescriptor) {
-        if (options.type_script) {
-            return TSUtils.getTypeReference(programContext, declaredDescriptor);
-        }
-        return JSUtils.getClassReference(declaredDescriptor);
-    }
-
     private void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
         maybeComment(writer, descriptor, comment -> comment.enum_("number"));
 
-        if (options.type_script) {
-            writer.formatln("export enum %s {", getClassName(descriptor));
-        } else {
-            writer.formatln("%s = {", getClassReference(descriptor));
-        }
+        writer.formatln("%s = {", getClassReference(descriptor));
         writer.begin();
 
         boolean first = true;
@@ -237,19 +204,11 @@ public class JSProgramFormatter extends BaseFormatter {
 
             maybeComment(writer, value, comment -> comment.const_("number"));
 
-            if (options.type_script) {
-                writer.formatln("%s = %s", JSUtils.enumConst(value), value.asInteger());
-            } else {
-                writer.formatln("%s: %d", JSUtils.enumConst(value), value.asInteger());
-            }
+            writer.formatln("%s: %d", JSUtils.enumConst(value), value.asInteger());
         }
 
         writer.end();
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
+        writer.appendln("};");
         writer.newline();
 
         ClosureDocBuilder comment = new ClosureDocBuilder(writer);
@@ -262,14 +221,8 @@ public class JSProgramFormatter extends BaseFormatter {
                             "The enum value if valid.");
         }
         comment.finish();
-        if (options.type_script) {
-            writer.formatln("namespace %s {", getClassName(descriptor))
-                  .begin();
+        writer.formatln("%s.valueOf = function(id, opt_keepNumeric) {", getClassReference(descriptor));
 
-            writer.formatln("export function valueOf(id:any, opt_keepNumeric?:boolean):number {");
-        } else {
-            writer.formatln("%s.valueOf = function(id, opt_keepNumeric) {", getClassReference(descriptor));
-        }
         writer.begin()
               .appendln("switch(id) {")
               .begin();
@@ -292,11 +245,7 @@ public class JSProgramFormatter extends BaseFormatter {
         writer.end()
               .appendln("}")
               .end();
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
+        writer.appendln("};");
         writer.newline();
 
         comment = new ClosureDocBuilder(writer);
@@ -309,11 +258,7 @@ public class JSProgramFormatter extends BaseFormatter {
         }
         comment.finish();
 
-        if (options.type_script) {
-            writer.appendln("export function nameOf(value:any, opt_keepNumeric?:boolean):string {");
-        } else {
-            writer.formatln("%s.nameOf = function(value, opt_keepNumeric) {", getClassReference(descriptor));
-        }
+        writer.formatln("%s.nameOf = function(value, opt_keepNumeric) {", getClassReference(descriptor));
         writer.begin()
               .appendln("switch(value) {")
               .begin();
@@ -324,49 +269,18 @@ public class JSProgramFormatter extends BaseFormatter {
         }
 
         writer.appendln("default:");
-        if (options.type_script) {
-            // Typescript enforces string return type here...
-            writer.appendln("    if (!!opt_keepNumeric) return String(value);");
-        } else {
-            writer.appendln("    if (!!opt_keepNumeric) return value;");
-        }
+        writer.appendln("    if (!!opt_keepNumeric) return value;");
+
         writer.appendln("    return null;");
 
         writer.end()
               .appendln("}")
-              .end();
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
-        writer.newline();
-
-        if (options.type_script) {
-            writer.end()
-                  .appendln("}");
-        }
+              .end()
+              .appendln("};")
+              .newline();
     }
 
     private void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
-        if (options.type_script) {
-            writer.formatln("export class %s {", getClassReference(descriptor))
-                  .begin();
-
-            if (JSUtils.isUnion(descriptor)) {
-                writer.appendln("private _field: string;");
-                writer.appendln("private _value: any;");
-            } else {
-                // CA: declare fields.
-                for (CField field : descriptor.getFields()) {
-                    writer.formatln("private _%s: %s;",
-                                    field.getName(),
-                                    TSUtils.getTypeString(programContext, field.getDescriptor(), options));
-                }
-            }
-            writer.newline();
-        }
-
         // A: constructor
         formatMessageConstructor(writer, descriptor);
         // B: getters, setters
@@ -375,11 +289,6 @@ public class JSProgramFormatter extends BaseFormatter {
         }
         // C: toJson, toJsonString
         formatMessageMethods(writer, descriptor);
-
-        if (options.type_script) {
-            writer.end()
-                  .appendln("}");
-        }
     }
 
     private void formatMessageConstructor(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
@@ -396,11 +305,7 @@ public class JSProgramFormatter extends BaseFormatter {
             comment.constructor_();
         });
 
-        if (options.type_script) {
-            writer.formatln("constructor(opt_json?:any) {");
-        } else {
-            writer.formatln("%s = function(opt_json) {", getClassReference(descriptor));
-        }
+        writer.formatln("%s = function(opt_json) {", getClassReference(descriptor));
         writer.begin();
 
         if (JSUtils.isUnion(descriptor)) {
@@ -575,26 +480,17 @@ public class JSProgramFormatter extends BaseFormatter {
                   .appendln("}");
         }
 
-        writer.end();
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
-        writer.newline();
+        writer.end()
+              .appendln("};")
+              .newline();
     }
 
     private void formatMessageFieldMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor, CField field) {
         maybeComment(writer, field, comment -> comment.return_(ClosureUtils.getFieldType(field, options), "The field value"));
-        if (options.type_script) {
-            writer.formatln("%s():%s {",
-                            Strings.camelCase("get", field.getName()),
-                            TSUtils.getTypeString(programContext, field.getDescriptor(), options));
-        } else {
-            writer.formatln("%s.prototype.%s = function() {",
-                            getClassReference(descriptor),
-                            Strings.camelCase("get", field.getName()));
-        }
+        writer.formatln("%s.prototype.%s = function() {",
+                        getClassReference(descriptor),
+                        Strings.camelCase("get", field.getName()));
+
         if (JSUtils.isUnion(descriptor)) {
             writer.formatln("    return '%s' == this._field ? this._value : null;", field.getName());
         } else if (JSUtils.defaultValue(field) != null && !JSUtils.alwaysPresent(field)) {
@@ -615,67 +511,50 @@ public class JSProgramFormatter extends BaseFormatter {
             writer.formatln("    return this._%s;", field.getName());
         }
 
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
+        writer.appendln("};");
         writer.newline();
 
         maybeComment(writer,
                      field,
                      comment -> comment.param_("value", ClosureUtils.getFieldType(field, options), "The new field value"));
 
-        if (options.type_script) {
-            writer.formatln("%s(value?:%s):void {",
-                            Strings.camelCase("set", field.getName()),
-                            TSUtils.getTypeString(programContext, field.getDescriptor(), options));
-        } else {
-            writer.formatln("%s.prototype.%s = function(value) {",
-                            getClassReference(descriptor),
-                            Strings.camelCase("set", field.getName()));
-        }
+        writer.formatln("%s.prototype.%s = function(value) {",
+                        getClassReference(descriptor),
+                        Strings.camelCase("set", field.getName()));
+
         writer.begin()
               // If value is neither null nor undefined, it should be OK.
               .appendln("if (value !== null && value !== undefined) {")
               .begin();
 
         if (JSUtils.isUnion(descriptor)) {
-            if (options.type_script) {
-                writer.appendln("this._value = value;");
-            } else {
-                switch (field.getType()) {
-                    // Skip value coercing for these field types.
-                    case MESSAGE:
-                    case ENUM:
-                    case LIST:
-                    case SET:
-                    case MAP:
-                        writer.appendln("this._value = value;");
-                        break;
-                    default:
-                        formatValueFromJson(writer, field.getDescriptor(), "this._value", "value");
-                        break;
-                }
+            switch (field.getType()) {
+                // Skip value coercing for these field types.
+                case MESSAGE:
+                case ENUM:
+                case LIST:
+                case SET:
+                case MAP:
+                    writer.appendln("this._value = value;");
+                    break;
+                default:
+                    formatValueFromJson(writer, field.getDescriptor(), "this._value", "value");
+                    break;
             }
             writer.formatln("this._field = '%s';", field.getName());
         } else {
-            if (options.type_script) {
-                writer.formatln("this._%s = value;", field.getName());
-            } else {
-                switch (field.getType()) {
-                    // Skip value coercing for these field types.
-                    case MESSAGE:
-                    case ENUM:
-                    case LIST:
-                    case SET:
-                    case MAP:
-                        writer.formatln("this._%s = value;", field.getName());
-                        break;
-                    default:
-                        formatValueFromJson(writer, field.getDescriptor(), "this._" + field.getName(), "value");
-                        break;
-                }
+            switch (field.getType()) {
+                // Skip value coercing for these field types.
+                case MESSAGE:
+                case ENUM:
+                case LIST:
+                case SET:
+                case MAP:
+                    writer.formatln("this._%s = value;", field.getName());
+                    break;
+                default:
+                    formatValueFromJson(writer, field.getDescriptor(), "this._" + field.getName(), "value");
+                    break;
             }
         }
 
@@ -706,11 +585,7 @@ public class JSProgramFormatter extends BaseFormatter {
                   .end();
         }
 
-        if (options.type_script) {
-            writer.appendln("}");
-        } else {
-            writer.appendln("};");
-        }
+        writer.appendln("};");
         writer.newline();
 
     }
@@ -725,20 +600,10 @@ public class JSProgramFormatter extends BaseFormatter {
             }
             comment.finish();
 
-            if (options.type_script) {
-                writer.formatln("unionField(): string {");
-            } else {
-                writer.formatln("%s.prototype.unionField = function() {", getClassReference(descriptor));
-            }
-
-            writer.appendln("    return this._field;");
-
-            if (options.type_script) {
-                writer.formatln("}");
-            } else {
-                writer.formatln("};");
-            }
-            writer.newline();
+            writer.formatln("%s.prototype.unionField = function() {", getClassReference(descriptor))
+                  .appendln("    return this._field;")
+                  .formatln("};")
+                  .newline();
         } else if (JSUtils.jsonCompactible(descriptor)) {
             ClosureDocBuilder comment = new ClosureDocBuilder(writer);
             comment.comment("Check if the instance can be serialized as compact");
@@ -748,12 +613,8 @@ public class JSProgramFormatter extends BaseFormatter {
             }
             comment.finish();
 
-            if (options.type_script) {
-                writer.formatln("compact(): boolean {");
-            } else {
-                writer.formatln("%s.prototype.compact = function() {", getClassReference(descriptor));
-            }
-            writer.begin()
+            writer.formatln("%s.prototype.compact = function() {", getClassReference(descriptor))
+                  .begin()
                   .appendln("var missing = false;");
 
             for (CField field : descriptor.getFields()) {
@@ -768,11 +629,7 @@ public class JSProgramFormatter extends BaseFormatter {
 
             writer.appendln("return true;")
                   .end();
-            if (options.type_script) {
-                writer.formatln("}");
-            } else {
-                writer.formatln("};");
-            }
+            writer.formatln("};");
             writer.newline();
         }
 
@@ -789,20 +646,12 @@ public class JSProgramFormatter extends BaseFormatter {
         }
         comment.finish();
 
-        if (options.type_script) {
-            writer.formatln("toJson(opt_named?:boolean): any {");
-        } else {
-            writer.formatln("%s.prototype.toJson = function(opt_named) {", getClassReference(descriptor));
-        }
+        writer.formatln("%s.prototype.toJson = function(opt_named) {", getClassReference(descriptor));
         writer.begin();
 
         if (JSUtils.isUnion(descriptor)) {
-            if (options.type_script) {
-                writer.appendln("var ret: {[key:string]:any} = {}");
-            } else {
-                writer.appendln("var ret = {}");
-            }
-            writer.appendln("switch (this._field) {")
+            writer.appendln("var ret = {}")
+                  .appendln("switch (this._field) {")
                   .begin();
 
             for (CField field : descriptor.getFields()) {
@@ -833,11 +682,7 @@ public class JSProgramFormatter extends BaseFormatter {
                 // Check for and maybe make compact.
                 writer.appendln("if (this.compact()) {")
                       .begin();
-                if (options.type_script) {
-                    writer.appendln("var arr: any[] = [];");
-                } else {
-                    writer.appendln("var arr = [];");
-                }
+                writer.appendln("var arr = [];");
                 ArrayList<CField> fields = new ArrayList<>();
                 Collections.addAll(fields, descriptor.getFields());
                 fields.sort(Comparator.comparing(CField::getId));
@@ -861,11 +706,7 @@ public class JSProgramFormatter extends BaseFormatter {
                       .appendln("}");
             }
 
-            if (options.type_script) {
-                writer.appendln("var obj : { [key:string]: any } = {};");
-            } else {
-                writer.appendln("var obj = {};");
-            }
+            writer.appendln("var obj = {};");
             writer.appendln("if (opt_named) {")
                   .begin();
 
@@ -916,14 +757,9 @@ public class JSProgramFormatter extends BaseFormatter {
                   .appendln("return obj;");
         }
 
-        if (options.type_script) {
-            writer.end()
-                  .appendln("}");
-        } else {
-            writer.end()
-                  .appendln("};");
-        }
-        writer.newline();
+        writer.end()
+              .appendln("};")
+              .newline();
 
         comment = new ClosureDocBuilder(writer);
         comment.comment("Make a JSON string representation of the message.");
@@ -934,17 +770,10 @@ public class JSProgramFormatter extends BaseFormatter {
         }
         comment.finish();
 
-        if (options.type_script) {
-            writer.formatln("toJsonString(opt_named?:boolean):string {")
-                  .appendln("    return JSON.stringify(this.toJson(opt_named));")
-                  .appendln("}")
-                  .newline();
-        } else {
-            writer.formatln("%s.prototype.toJsonString = function(opt_named) {", getClassReference(descriptor))
-                  .appendln("    return JSON.stringify(this.toJson(opt_named));")
-                  .appendln("};")
-                  .newline();
-        }
+        writer.formatln("%s.prototype.toJsonString = function(opt_named) {", getClassReference(descriptor))
+              .appendln("    return JSON.stringify(this.toJson(opt_named));")
+              .appendln("};")
+              .newline();
 
         comment = new ClosureDocBuilder(writer);
         comment.comment("String representation of the message.");
@@ -953,17 +782,10 @@ public class JSProgramFormatter extends BaseFormatter {
                    .return_("string", "Message as string.");
         }
         comment.finish();
-        if (options.type_script) {
-            writer.formatln("toString():string {")
-                  .formatln("    return '%s' + JSON.stringify(this.toJson(true));", getClassName((PMessageDescriptor) descriptor))
-                  .appendln("}")
-                  .newline();
-        } else {
-            writer.formatln("%s.prototype.toString = function() {", getClassReference(descriptor))
-                  .formatln("    return '%s' + JSON.stringify(this.toJson(true));", getClassName((PMessageDescriptor) descriptor))
-                  .appendln("};")
-                  .newline();
-        }
+        writer.formatln("%s.prototype.toString = function() {", getClassReference(descriptor))
+              .formatln("    return '%s' + JSON.stringify(this.toJson(true));", getClassName((PMessageDescriptor) descriptor))
+              .appendln("};")
+              .newline();
     }
 
     private void maybeComment(@Nonnull IndentedPrintWriter writer,
@@ -1003,13 +825,8 @@ public class JSProgramFormatter extends BaseFormatter {
         if (descriptor.getType() == PType.SET ||
             descriptor.getType() == PType.LIST) {
             PContainer container = (PContainer) descriptor;
-            if (options.type_script) {
-                writer.formatln("%s = %s.map(function(i:any) {", target, source)
-                      .begin();
-            } else {
-                writer.formatln("%s = %s.map(function(i) {", target, source)
-                      .begin();
-            }
+            writer.formatln("%s = %s.map(function(i) {", target, source)
+                  .begin();
 
             coerced = coerceValueFromJson(container.itemDescriptor(), "i", false);
             if (coerced != null) {
@@ -1029,8 +846,6 @@ public class JSProgramFormatter extends BaseFormatter {
 
             if (options.useMaps()) {
                 writer.formatln("var %s = new Map();", tmpMap);
-            } else if (options.type_script) {
-                writer.formatln("var %s: {[key:string]:any} = {};", tmpMap);
             } else {
                 writer.formatln("var %s = {};", tmpMap);
             }
@@ -1045,11 +860,7 @@ public class JSProgramFormatter extends BaseFormatter {
 
             if (coerceValue == null) {
                 tmpItem = tmpVar("v");
-                if (options.type_script) {
-                    writer.formatln("var %s: any = %s[%s];", tmpItem, source, tmpKey);
-                } else {
-                    writer.formatln("var %s = %s[%s];", tmpItem, source, tmpKey);
-                }
+                writer.formatln("var %s = %s[%s];", tmpItem, source, tmpKey);
                 formatValueFromJson(writer, map.itemDescriptor(), tmpItem, tmpItem);
                 coerceValue = tmpItem;
             }
@@ -1095,11 +906,7 @@ public class JSProgramFormatter extends BaseFormatter {
                 writer.formatln("return %s;", coerced);
             } else {
                 String tmp = tmpVar("i");
-                if (options.type_script) {
-                    writer.formatln("var %s: any;");
-                } else {
-                    writer.formatln("var %s;", tmp);
-                }
+                writer.formatln("var %s;", tmp);
                 formatJsonFromValue(writer, pc.itemDescriptor(), tmp, "i", named, optNamed);
             }
             writer.end()
@@ -1111,31 +918,18 @@ public class JSProgramFormatter extends BaseFormatter {
             String tmpValue = tmpVar("v");
             String tmpMap = tmpVar("m");
             // ...
-            if (options.type_script) {
-                writer.formatln("var %s: {[key:string]:any} = {};", tmpMap);
-            } else {
-                writer.formatln("var %s = {};", tmpMap);
-            }
+            writer.formatln("var %s = {};", tmpMap);
+
             if (options.useMaps()) {
-                if (options.type_script) {
-                    writer.formatln("%s.forEach(function(%s:any,%s:any) {",
-                                    source, tmpValue, tmpKey)
-                          .begin();
-                } else {
-                    writer.formatln("%s.forEach(function(%s,%s) {",
-                                    source, tmpValue, tmpKey)
-                          .begin();
-                }
-            } else {
-                writer.formatln("for (var %s in %s) {", tmpKey, source);
-                writer.begin()
-                      .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
+                writer.formatln("%s.forEach(function(%s,%s) {",
+                                source, tmpValue, tmpKey)
                       .begin();
-                if (options.type_script) {
-                    writer.formatln("var %s: any = %s[%s]", tmpValue, source, tmpKey);
-                } else {
-                    writer.formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
-                }
+            } else {
+                writer.formatln("for (var %s in %s) {", tmpKey, source)
+                      .begin()
+                      .formatln("if (%s.hasOwnProperty(%s)) {", source, tmpKey)
+                      .begin()
+                      .formatln("var %s = %s[%s]", tmpValue, source, tmpKey);
             }
 
             String coerceKey = coerceJsonFromValue(map.keyDescriptor(), tmpKey, named, true, optNamed);
@@ -1263,10 +1057,6 @@ public class JSProgramFormatter extends BaseFormatter {
                 return "true";
             case BOOL:
                 if (mapKey) {
-                    if (options.type_script) {
-                        return String.format("('string' === typeof(%s) ? 'true' === %s : !!%s) ? 1 : 0",
-                                             source, source, source);
-                    }
                     return String.format("'string' === typeof(%s) ? 'true' === %s : !!%s",
                                              source, source, source);
                 }
@@ -1321,11 +1111,7 @@ public class JSProgramFormatter extends BaseFormatter {
 
     private void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
         maybeComment(writer, constant, comment -> comment.const_(ClosureUtils.getTypeString(constant.getDescriptor(), options)));
-        if (options.type_script) {
-            writer.formatln("export const %s = ", constant.getName());
-        } else {
-            writer.formatln("_%s.%s = ", program.getProgramName(), constant.getName());
-        }
+        writer.formatln("_%s.%s = ", program.getProgramName(), constant.getName());
         new JSConstFormatter(writer, options, programContext).format(constant.getDefaultValue());
         writer.append(";")
               .newline();
@@ -1349,51 +1135,7 @@ public class JSProgramFormatter extends BaseFormatter {
             }
         });
 
-        if (options.type_script) {
-            if (service.getExtendsService() != null) {
-                String ext = getClassReference(service.getExtendsService());
-                writer.formatln("export interface %s extends %s {", serviceName, ext);
-            } else {
-                writer.formatln("export interface %s {", serviceName);
-            }
-            writer.begin()
-                  .newline();
-
-            for (CServiceMethod method : service.getMethods()) {
-                if (method.getDocumentation() != null) {
-                    new ClosureDocBuilder(writer)
-                            .comment(method.getDocumentation())
-                            .finish();
-                }
-                writer.formatln("%s(", method.getName());
-
-                boolean first = true;
-                for (CField param : method.getRequestType().getFields()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(",");
-                    }
-                    writer.format("%s:%s", JSUtils.getParamName(param), TSUtils.getTypeString(programContext, param.getDescriptor(), options));
-                }
-                CUnionDescriptor responseType = method.getResponseType();
-                if (responseType == null) {
-                    writer.append("):void;");
-                } else {
-                    CField response = responseType.fieldForId(0);
-                    if (response.getType() == PType.VOID) {
-                        writer.append("):Promise;");
-                    } else {
-                        writer.format("):Promise<%s>;", TSUtils.getTypeString(programContext, response.getDescriptor(), options));
-                    }
-                }
-                writer.newline();
-            }
-
-            writer.end()
-                  .appendln("}")
-                  .newline();
-        } else if (options.closure){
+        if (options.closure){
             if (service.getExtendsService() != null) {
                 String ext = getClassReference(service.getExtendsService());
                 writer.formatln("%s = function() {", getClassReference(service));
@@ -1456,137 +1198,71 @@ public class JSProgramFormatter extends BaseFormatter {
         String serviceName = Strings.camelCase("", service.getName());
 
         // A: Interface.
-        if (options.type_script) {
-            writer.formatln("namespace %s {", serviceName)
-                  .begin()
-                  .newline();
+        writer.formatln("%s.Client = function(endpoint, opt_headers) {", getClassReference(service))
+              .begin();
+        if (options.closure) {
+            writer.formatln("%s.Client.base(this);", getClassReference(service));
+        }
 
-            writer.formatln("class Client extends %s {", serviceName)
-                  .begin()
-                  .appendln("private _seq_id: number;")
-                  .appendln("private _named: boolean;")
-                  .appendln("private _endpoint: string;")
-                  .appendln("private _headers: {[key:string]:any};")
-                  .newline();
+        formatServiceConstructor(writer);
 
-            writer.formatln("constructor(endpoint:string, opt_headers?:{[key:string]:any}) {")
-                  .begin();
+        writer.end()
+              .appendln("};");
+        if (options.closure) {
+            writer.formatln("goog.inherits(%s.Client, %s);", getClassReference(service), getClassReference(service));
+        }
+        writer.newline();
 
-            formatServiceConstructor(writer);
-
-            writer.end()
-                  .appendln("}");
-
-            writer.newline();
-
-            for (CServiceMethod method : service.getMethodsIncludingExtended()) {
+        for (CServiceMethod method : service.getMethodsIncludingExtended()) {
+            if (method.getDocumentation() != null || options.closure) {
+                ClosureDocBuilder comment = new ClosureDocBuilder(writer);
                 if (method.getDocumentation() != null) {
-                    new ClosureDocBuilder(writer)
-                            .comment(method.getDocumentation())
-                            .finish();
+                    comment.comment(method.getDocumentation());
                 }
-                writer.formatln("%s(", method.getName());
-
-                boolean first = true;
-                for (CField param : method.getRequestType().getFields()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(",");
+                if (method.getDocumentation() != null && options.closure) {
+                    comment.newline();
+                }
+                if (options.closure) {
+                    for (CField field : method.getRequestType()
+                                              .getFields()) {
+                        comment.param_(field.getName(), ClosureUtils.getFieldType(field, options), field.getDocumentation());
                     }
-                    writer.format("%s:%s", JSUtils.getParamName(param), TSUtils.getTypeString(programContext, param.getDescriptor(), options));
+                    CUnionDescriptor responseType = method.getResponseType();
+                    if (responseType != null) {
+                        CField response = responseType.fieldForId(0);
+                        if (response.getType() != PType.VOID) {
+                            comment.return_("Promise<" + ClosureUtils.getFieldType(response, options) + ">", null);
+                        } else {
+                            comment.return_("Promise", null);
+                        }
+                    }
+                    if (method.hasAnnotation(ThriftAnnotation.DEPRECATED)) {
+                        comment.deprecated_(method.getAnnotationValue(ThriftAnnotation.DEPRECATED));
+                    }
                 }
-                CUnionDescriptor responseType = method.getResponseType();
-                if (responseType == null) {
-                    writer.append("):void {");
+                comment.finish();
+            }
+            writer.formatln("%s.Client.prototype.%s = function(", getClassReference(service), method.getName());
+
+            boolean first = true;
+            for (CField param : method.getRequestType()
+                                      .getFields()) {
+                if (first) {
+                    first = false;
                 } else {
-                    CField response = responseType.fieldForId(0);
-                    if (response.getType() == PType.VOID) {
-                        writer.append("):Promise {");
-                    } else {
-                        writer.format("):Promise<%s> {", TSUtils.getTypeString(programContext, response.getDescriptor(), options));
-                    }
+                    writer.append(",");
                 }
-                writer.begin();
-
-                formatServiceMethod(writer, method);
-
-                writer.end()
-                      .appendln("}")
-                      .newline();
+                writer.format("%s", JSUtils.getParamName(param));
             }
-
-            writer.end()
-                  .appendln("}")
-                  .end()
-                  .appendln("}")
-                  .newline();
-        } else {
-            writer.formatln("%s.Client = function(endpoint, opt_headers) {", getClassReference(service))
+            writer.append(") {")
                   .begin();
-            if (options.closure) {
-                writer.formatln("%s.Client.base(this);", getClassReference(service));
-            }
 
-            formatServiceConstructor(writer);
+            // method impl...
+            formatServiceMethod(writer, method);
 
             writer.end()
-                  .appendln("};");
-            if (options.closure) {
-                writer.formatln("goog.inherits(%s.Client, %s);", getClassReference(service), getClassReference(service));
-            }
-            writer.newline();
-
-            for (CServiceMethod method : service.getMethodsIncludingExtended()) {
-                if (method.getDocumentation() != null || options.closure) {
-                    ClosureDocBuilder comment = new ClosureDocBuilder(writer);
-                    if (method.getDocumentation() != null) {
-                        comment.comment(method.getDocumentation());
-                    }
-                    if (method.getDocumentation() != null && options.closure) {
-                        comment.newline();
-                    }
-                    if (options.closure) {
-                        for (CField field : method.getRequestType()
-                                                  .getFields()) {
-                            comment.param_(field.getName(), ClosureUtils.getFieldType(field, options), field.getDocumentation());
-                        }
-                        CUnionDescriptor responseType = method.getResponseType();
-                        if (responseType != null) {
-                            CField response = responseType.fieldForId(0);
-                            if (response.getType() != PType.VOID) {
-                                comment.return_("Promise<" + ClosureUtils.getFieldType(response, options) + ">", null);
-                            } else {
-                                comment.return_("Promise", null);
-                            }
-                        }
-                        if (method.hasAnnotation(ThriftAnnotation.DEPRECATED)) {
-                            comment.deprecated_(method.getAnnotationValue(ThriftAnnotation.DEPRECATED));
-                        }
-                    }
-                    comment.finish();
-                }
-                writer.formatln("%s.Client.prototype.%s = function(", getClassReference(service), method.getName());
-
-                boolean first = true;
-                for (CField param : method.getRequestType().getFields()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(",");
-                    }
-                    writer.format("%s", JSUtils.getParamName(param));
-                }
-                writer.append(") {")
-                      .begin();
-
-                // method impl...
-                formatServiceMethod(writer, method);
-
-                writer.end()
-                      .appendln("};")
-                      .newline();
-            }
+                  .appendln("};")
+                  .newline();
         }
     }
 
@@ -1621,11 +1297,7 @@ public class JSProgramFormatter extends BaseFormatter {
     }
 
     private void formatServiceMethod(IndentedPrintWriter writer, CServiceMethod method) {
-        if (options.type_script) {
-            writer.appendln("var message: {[key:string]:any} = {};");
-        } else {
-            writer.appendln("var message = {};");
-        }
+        writer.appendln("var message = {};");
         for (CField param : method.getRequestType().getFields()) {
             writer.formatln("if (%s !== null && %s !== undefined) {", JSUtils.getParamName(param), JSUtils.getParamName(param))
                   .begin();
@@ -1705,11 +1377,7 @@ public class JSProgramFormatter extends BaseFormatter {
                         String coerce = coerceValueFromJson(field.getDescriptor(), "response[3][k]", false);
                         if (coerce == null) {
                             String tmp = tmpVar("suc");
-                            if (options.type_script) {
-                                writer.formatln("var %s: %s;", tmp, TSUtils.getTypeString(programContext, field.getDescriptor(), options));
-                            } else {
-                                writer.formatln("var %s;", tmp);
-                            }
+                            writer.formatln("var %s;", tmp);
                             formatValueFromJson(writer, field.getDescriptor(), tmp, "response[3][k]");
                             coerce = tmp;
                         }
@@ -1777,7 +1445,7 @@ public class JSProgramFormatter extends BaseFormatter {
     }
 
     private void formatFooter(IndentedPrintWriter writer) {
-        if (!options.node_js && !options.type_script) {
+        if (!options.useNodeJs()) {
             // node modules and typescript modules already handle the enclosure.
             writer.appendln("})();");
         }

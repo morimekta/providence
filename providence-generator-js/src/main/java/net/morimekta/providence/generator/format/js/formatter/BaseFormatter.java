@@ -1,13 +1,18 @@
 package net.morimekta.providence.generator.format.js.formatter;
 
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.generator.format.js.JSOptions;
+import net.morimekta.providence.generator.format.js.utils.JSUtils;
+import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.contained.CService;
+import net.morimekta.util.Strings;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-abstract class BaseFormatter {
+public abstract class BaseFormatter {
     final JSOptions options;
 
     BaseFormatter(JSOptions options) {
@@ -15,9 +20,6 @@ abstract class BaseFormatter {
     }
 
     public String getFileName(CProgram program) {
-        if (options.type_script) {
-            return program.getProgramName() + ".ts";
-        }
         return program.getProgramName() + ".js";
     }
 
@@ -31,6 +33,16 @@ abstract class BaseFormatter {
         } else {
             return program.getProgramName();
         }
+    }
+
+    String getClassReference(CService service) {
+        return "_" + service.getProgramName() + "." + Strings.camelCase("", service.getName());
+    }
+    String getClassReference(PDeclaredDescriptor declaredDescriptor) {
+        return JSUtils.getClassReference(declaredDescriptor);
+    }
+    String getClassReference(CMessageDescriptor descriptor) {
+        return getClassReference((PDeclaredDescriptor) descriptor);
     }
 
     /**

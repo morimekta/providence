@@ -288,7 +288,7 @@ _service.PApplicationException.prototype.setMessage = function(value) {
  */
 _service.PApplicationException.prototype.getId = function() {
     if (this._id === null) {
-        return _service.PApplicationExceptionType.UNKNOWN;
+        return PApplicationExceptionType.UNKNOWN;
     } else {
         return this._id;
     }
