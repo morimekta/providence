@@ -166,6 +166,8 @@ public class HttpClientHandlerTest {
 
         Response response = client.test(new Request("request"));
 
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
+
         verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
         verifyNoMoreInteractions(impl);
 
@@ -191,7 +193,7 @@ public class HttpClientHandlerTest {
     }
 
     private class TestServiceBypass extends TestService {
-        public PMessage<?,?> testResponse(String text) {
+        PMessage<?,?> testResponse(String text) {
             return TestService._test_response.withSuccess(Response.builder().setText(text));
         }
     }
@@ -223,7 +225,7 @@ public class HttpClientHandlerTest {
             assertThat(e.getSequenceNo(), is(1));
         }
 
-        reply.set(new PServiceCall("test", PServiceCallType.CALL, 2, new TestServiceBypass().testResponse("foo")));
+        reply.set(new PServiceCall("test", PServiceCallType.CALL, 2, new TestServiceBypass().testResponse("bar")));
         try {
             client.test(new Request("request"));
             fail("no exception");
@@ -232,7 +234,7 @@ public class HttpClientHandlerTest {
             assertThat(e.getId(), is(PApplicationExceptionType.INVALID_MESSAGE_TYPE));
         }
 
-        reply.set(new PServiceCall("test", PServiceCallType.REPLY, 100, new TestServiceBypass().testResponse("foo")));
+        reply.set(new PServiceCall("test", PServiceCallType.REPLY, 100, new TestServiceBypass().testResponse("baz")));
         try {
             client.test(new Request("request"));
             fail("no exception");
@@ -262,6 +264,7 @@ public class HttpClientHandlerTest {
         doThrow(new NullPointerException()).when(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
 
         client.test(Request.builder().build());
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
 
         verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
 
@@ -274,6 +277,7 @@ public class HttpClientHandlerTest {
 
         try {
             client.test(Request.builder().build());
+            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
             fail("no exception");
         } catch (Exception ignore) {
         }
@@ -290,6 +294,7 @@ public class HttpClientHandlerTest {
                 .thenReturn(new net.morimekta.test.thrift.client.Response("response"));
 
         Response response = client.test(new Request("request"));
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
 
         verify(impl).test(any(net.morimekta.test.thrift.client.Request.class));
         verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
