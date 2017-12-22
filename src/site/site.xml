@@ -26,11 +26,11 @@
 
             <item href="providence-reflect/index.html"            name="Utils : Reflect" />
             <item href="providence-testing/index.html"            name="Utils : Testing" />
+            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />
+            <item href="providence-storage/index.html"            name="Utils : Storage" />
 
             <!-- Utilities in Beta -->
-            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge (beta)" />
             <item href="providence-config/index.html"             name="Utils : Config (beta)" />
-            <item href="providence-storage/index.html"            name="Utils : Storage (beta)" />
             <item href="providence-storage-hazelcast/index.html"  name="Utils : Storage - Hazelcast (beta)" />
             <item href="providence-jax-rs/index.html"             name="Utils : Javax-Ws-Rs (beta)" />
 
