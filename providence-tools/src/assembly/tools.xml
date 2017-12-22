@@ -40,11 +40,11 @@
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
         <fileSet>
-            <directory>${project.parent.basedir}/providence-tools-rpc/target/</directory>
+            <directory>${project.parent.basedir}/providence-generator-java/target/</directory>
             <includes>
-                <include>providence-tools-rpc.jar</include>
+                <include>java.jar</include>
             </includes>
-            <outputDirectory>share/providence</outputDirectory>
+            <outputDirectory>share/providence/generator</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>

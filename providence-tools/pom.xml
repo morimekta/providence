@@ -20,12 +20,6 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator-js</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -54,7 +48,7 @@
                 <executions>
                     <execution>
                         <id>create-providence-assembly</id>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -129,14 +123,6 @@
                                 </data>
                                 <data>
                                     <src>${project.parent.basedir}/providence-generator-java/target/java.jar</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/usr/local/share/providence/generator</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.parent.basedir}/providence-generator-js/target/js.jar</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -232,9 +218,6 @@
                                     <sources>
                                         <source>
                                             <location>${project.parent.basedir}/providence-generator-java/target/java.jar</location>
-                                        </source>
-                                        <source>
-                                            <location>${project.parent.basedir}/providence-generator-js/target/js.jar</location>
                                         </source>
                                     </sources>
                                 </mapping>

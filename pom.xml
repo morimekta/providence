@@ -187,11 +187,6 @@
             </dependency>
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
-                <artifactId>providence-generator-js</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-tools-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -987,7 +982,6 @@
                 <module>providence-reflect</module>
                 <module>providence-generator</module>
                 <module>providence-generator-java</module>
-                <module>providence-generator-js</module>
                 <module>providence-maven-plugin</module>
 
                 <!-- Utility Modules -->
@@ -1005,13 +999,17 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <!-- Common Libraries -->
                 <module>providence-tools-common</module>
                 <module>providence-tools-common-formats</module>
-                <!-- CLI Tooling (not deployed as artifacts) -->
+                <!-- Generator Modules -->
+                <module>providence-generator-java</module>
+                <!-- CLI Tooling Program Jars -->
                 <module>providence-tools-generator</module>
                 <module>providence-tools-config</module>
                 <module>providence-tools-converter</module>
                 <module>providence-tools-rpc</module>
+                <!-- The actual packaging (deb, rpm, tar.gz) -->
                 <module>providence-tools</module>
             </modules>
         </profile>
@@ -1019,12 +1017,6 @@
             <id>generator-java</id>
             <modules>
                 <module>providence-generator-java</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>generator-js</id>
-            <modules>
-                <module>providence-generator-js</module>
             </modules>
         </profile>
         <!-- one profile for each integration test module -->
