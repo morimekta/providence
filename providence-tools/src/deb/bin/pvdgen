@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PARENT_DIR="$(cd $(dirname $0)/.. && pwd)"
+exec java -jar ${PARENT_DIR}/share/providence/providence-tools-generator.jar "$@"

@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.compiler;
+package net.morimekta.providence.tools.generator;
 
 import net.morimekta.testing.rules.ConsoleWatcher;
 
@@ -26,12 +26,12 @@ public class CompilerJavaTest {
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher();
 
-    private int      exitCode;
-    private Compiler compiler;
-    private File     testFile;
-    private File     refFile;
-    private File     include;
-    private File     output;
+    private int           exitCode;
+    private GeneratorMain generator;
+    private File          testFile;
+    private File          refFile;
+    private File          include;
+    private File          output;
 
     @Before
     public void setUp() throws IOException {
@@ -47,7 +47,7 @@ public class CompilerJavaTest {
         copyResourceTo("/generator/js.jar", generator);
 
         exitCode = 0;
-        compiler = new Compiler(new CompilerOptions(console.tty()) {
+        this.generator = new GeneratorMain(new GeneratorOptions(console.tty()) {
             @Override
             public File currentJarDirectory() {
                 return temp.getRoot();
@@ -61,7 +61,7 @@ public class CompilerJavaTest {
 
     @Test
     public void testCompile() throws IOException {
-        compiler.run(
+        generator.run(
                 "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
@@ -85,7 +85,7 @@ public class CompilerJavaTest {
 
     @Test
     public void testCompile_2() throws IOException {
-        compiler.run(
+        generator.run(
                 "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
@@ -112,7 +112,7 @@ public class CompilerJavaTest {
     public void testCompile_hazelcast() throws IOException {
         File hz = copyResourceTo("/compiler/hz.thrift", temp.getRoot());
 
-        compiler.run(
+        generator.run(
                 "--out", output.getAbsolutePath(),
                 "-g", "java:hazelcast_portable",
                 hz.getAbsolutePath());
@@ -134,7 +134,7 @@ public class CompilerJavaTest {
 
     @Test
     public void testCompile_missingInclude() throws IOException {
-        compiler.run(
+        generator.run(
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
                 testFile.getAbsolutePath());
@@ -151,7 +151,7 @@ public class CompilerJavaTest {
     public void testCompile_badReference() throws IOException {
         File test2 = copyResourceTo("/compiler/test_2.thrift", temp.getRoot());
 
-        compiler.run(
+        generator.run(
                 "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",

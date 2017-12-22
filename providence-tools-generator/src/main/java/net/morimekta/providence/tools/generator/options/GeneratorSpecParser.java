@@ -1,5 +1,5 @@
-package net.morimekta.providence.tools.compiler.options;/*
- * Copyright (c) 2016, Stein Eldar Johnsen
+/*
+ * Copyright (c) 2017, Stein Eldar Johnsen
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -18,6 +18,7 @@ package net.morimekta.providence.tools.compiler.options;/*
  * specific language governing permissions and limitations
  * under the License.
  */
+package net.morimekta.providence.tools.generator.options;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.util.Parser;
@@ -40,7 +41,7 @@ public class GeneratorSpecParser implements Parser<GeneratorSpec> {
         Map<String, GeneratorFactory> factoryMap = generatorFactoryMap.get();
         ArrayList<String> options = new ArrayList<>();
 
-        String[] gen = spec.split("[:]", 2);
+        String[] gen = spec.split("[:]");
         if (gen.length > 2) {
             throw new ArgumentException("Invalid generator spec, only one ':' allowed: " + spec);
         }

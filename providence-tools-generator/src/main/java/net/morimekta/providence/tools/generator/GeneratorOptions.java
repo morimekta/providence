@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2017, Stein Eldar Johnsen
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,8 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package net.morimekta.providence.tools.compiler;
+package net.morimekta.providence.tools.generator;
 
 import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentException;
@@ -31,20 +32,19 @@ import net.morimekta.providence.config.UncheckedProvidenceConfigException;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorFactory;
-import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.json.JsonGeneratorFactory;
 import net.morimekta.providence.generator.util.FactoryLoader;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
-import net.morimekta.providence.tools.common.ProvidenceTools;
 import net.morimekta.providence.tools.common.CommonOptions;
+import net.morimekta.providence.tools.common.ProvidenceTools;
 import net.morimekta.providence.tools.common.Utils;
-import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
-import net.morimekta.providence.tools.compiler.options.GeneratorSpecParser;
-import net.morimekta.providence.tools.compiler.options.HelpOption;
-import net.morimekta.providence.tools.compiler.options.HelpSpec;
+import net.morimekta.providence.tools.generator.options.GeneratorSpec;
+import net.morimekta.providence.tools.generator.options.GeneratorSpecParser;
+import net.morimekta.providence.tools.generator.options.HelpOption;
+import net.morimekta.providence.tools.generator.options.HelpSpec;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +59,10 @@ import static net.morimekta.console.util.Parser.file;
 import static net.morimekta.console.util.Parser.outputDir;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 15.09.15
+ * Options helper for the generator binary.
  */
 @SuppressWarnings("all")
-public class CompilerOptions extends CommonOptions {
+public class GeneratorOptions extends CommonOptions {
     protected File          out              = new File(".");
     protected List<File>    includes         = new ArrayList<>();
     protected HelpSpec      help             = null;
@@ -187,7 +186,7 @@ public class CompilerOptions extends CommonOptions {
         this.files.add(files);
     }
 
-    public CompilerOptions(STTY tty) {
+    public GeneratorOptions(STTY tty) {
         super(tty);
     }
 
@@ -217,7 +216,7 @@ public class CompilerOptions extends CommonOptions {
     }
 
     public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
-        GeneratorOptions generatorOptions = new GeneratorOptions();
+        net.morimekta.providence.generator.GeneratorOptions generatorOptions = new net.morimekta.providence.generator.GeneratorOptions();
         generatorOptions.generator_program_name = "pvdc";
         generatorOptions.program_version = Utils.getVersionString();
 

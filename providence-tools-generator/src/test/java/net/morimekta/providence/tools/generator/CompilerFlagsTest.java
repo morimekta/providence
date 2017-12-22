@@ -1,4 +1,4 @@
-package net.morimekta.providence.tools.compiler;
+package net.morimekta.providence.tools.generator;
 
 import net.morimekta.providence.tools.common.Utils;
 import net.morimekta.testing.rules.ConsoleWatcher;
@@ -24,10 +24,10 @@ public class CompilerFlagsTest {
     public ConsoleWatcher console = new ConsoleWatcher()
             .withTerminalSize(40, 100);
 
-    private int      exitCode;
-    private Compiler sut;
-    private File     thriftFile;
-    private String   version;
+    private int           exitCode;
+    private GeneratorMain sut;
+    private File          thriftFile;
+    private String        version;
 
     @Before
     public void setUp() throws IOException {
@@ -44,7 +44,7 @@ public class CompilerFlagsTest {
         copyResourceTo("/generator/js.jar", generator);
 
         exitCode = 0;
-        sut = new Compiler(new CompilerOptions(console.tty()) {
+        sut = new GeneratorMain(new GeneratorOptions(console.tty()) {
             @Override
             public File currentJarDirectory() {
                 return temp.getRoot();

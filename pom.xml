@@ -1008,7 +1008,7 @@
                 <module>providence-tools-common</module>
                 <module>providence-tools-common-formats</module>
                 <!-- CLI Tooling (not deployed as artifacts) -->
-                <module>providence-tools-compiler</module>
+                <module>providence-tools-generator</module>
                 <module>providence-tools-config</module>
                 <module>providence-tools-converter</module>
                 <module>providence-tools-rpc</module>

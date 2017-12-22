@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2017, Stein Eldar Johnsen
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,8 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package net.morimekta.providence.tools.compiler;
+package net.morimekta.providence.tools.generator;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
@@ -36,21 +37,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 15.09.15
+ * Main class for the Generator binary.
  */
-public class Compiler {
-    private final CompilerOptions options;
+public class GeneratorMain {
+    private final GeneratorOptions options;
 
-    public Compiler() {
+    public GeneratorMain() {
         this(new STTY());
     }
 
-    protected Compiler(STTY tty) {
-        this(new CompilerOptions(tty));
+    protected GeneratorMain(STTY tty) {
+        this(new GeneratorOptions(tty));
     }
 
-    protected Compiler(CompilerOptions options) {
+    protected GeneratorMain(GeneratorOptions options) {
         this.options = options;
     }
 
@@ -144,7 +144,7 @@ public class Compiler {
     }
 
     public static void main(String[] args) throws Throwable {
-        new Compiler().run(args);
+        new GeneratorMain().run(args);
     }
 
 }

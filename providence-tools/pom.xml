@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Providence CLI : Packaging</name>
-    <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), a providence config helper (pvdcfg) and an RPC tool (pvdrpc).</description>
+    <description>Providence tools. Contains the providence generator (pvdgen), a providence data converter (pvd), a providence config helper (pvdcfg) and an RPC tool (pvdrpc).</description>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-tools-compiler</artifactId>
+            <artifactId>providence-tools-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -93,7 +93,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${project.basedir}/src/deb/bin/pvdc</src>
+                                    <src>${project.basedir}/src/deb/bin/pvdgen</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -120,7 +120,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${project.parent.basedir}/providence-tools-compiler/target/providence-tools-compiler.jar</src>
+                                    <src>${project.parent.basedir}/providence-tools-generator/target/providence-tools-generator.jar</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -213,7 +213,7 @@
                                     <filemode>644</filemode>
                                     <sources>
                                         <source>
-                                            <location>${project.parent.basedir}/providence-tools-compiler/target/providence-tools-compiler.jar</location>
+                                            <location>${project.parent.basedir}/providence-tools-generator/target/providence-tools-generator.jar</location>
                                         </source>
                                         <source>
                                             <location>${project.parent.basedir}/providence-tools-converter/target/providence-tools-converter.jar</location>
