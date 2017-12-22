@@ -1033,6 +1033,13 @@
             </modules>
         </profile>
         <profile>
+            <id>it-generator</id>
+            <modules>
+                <module>it-generator-java</module>
+                <module>it-generator-js</module>
+            </modules>
+        </profile>
+        <profile>
             <id>it</id>
             <modules>
                 <module>it-serialization</module>
