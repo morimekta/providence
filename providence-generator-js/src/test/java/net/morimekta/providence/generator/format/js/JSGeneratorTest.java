@@ -106,6 +106,7 @@ public class JSGeneratorTest {
         load("/js/es6-shim.js");
         load("/js/closure.js");
 
+        options.es51 = true;  // closure inheritance requires true es6, which we don't have.
         options.closure = true;
         generateAndLoadSources();
         assertWorkingJavascript();

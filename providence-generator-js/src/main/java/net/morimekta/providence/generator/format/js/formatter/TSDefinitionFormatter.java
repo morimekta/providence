@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.js.formatter;
 
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
@@ -181,8 +182,12 @@ public class TSDefinitionFormatter extends BaseFormatter {
     }
 
     private void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
-        writer.formatln("export declare class %s {", getClassReference(descriptor))
-              .begin();
+        if (options.es51 || descriptor.getVariant() != PMessageVariant.EXCEPTION) {
+            writer.formatln("export declare class %s {", getClassReference(descriptor));
+        } else {
+            writer.formatln("export declare class %s extends Error {", getClassReference(descriptor));
+        }
+        writer.begin();
 
         if (JSUtils.isUnion(descriptor)) {
             writer.appendln("private _field: string;");

@@ -125,7 +125,7 @@ namespace PApplicationExceptionType {
     export function nameOf(value:any, opt_keepNumeric?:boolean):string;
 
 }
-export declare class PApplicationException {
+export declare class PApplicationException extends Error {
     private _message: string;
     private _id: PApplicationExceptionType;
 

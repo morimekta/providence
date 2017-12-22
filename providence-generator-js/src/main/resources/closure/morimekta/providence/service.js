@@ -288,6 +288,9 @@ _service.PApplicationExceptionType.nameOf = function(value, opt_keepNumeric) {
  * @constructor
  */
 _service.PApplicationException = function(opt_json) {
+    _service.PApplicationException.base(this);
+    this.message = 'PApplicationException';
+
     /**
      * @type {string?}
      * @private
@@ -323,6 +326,7 @@ _service.PApplicationException = function(opt_json) {
         throw 'Bad json input type: ' + typeof(opt_json);
     }
 };
+goog.inherits(_service.PApplicationException, Error);
 
 /**
  * Exception message.
@@ -420,5 +424,4 @@ _service.PApplicationException.prototype.toJsonString = function(opt_named) {
 _service.PApplicationException.prototype.toString = function() {
     return 'PApplicationException' + JSON.stringify(this.toJson(true));
 };
-
 })();

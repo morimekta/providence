@@ -26,21 +26,21 @@ thrift:
 	gradle -b thrift.gradle generateStaticThrift
 
 js:
-	java -jar providence-tools-compiler/target/providence-tools-compiler.jar \
+	java -jar providence-tools-generator/target/providence-tools-generator.jar \
 	    --add-generator     providence-generator-js/target/js.jar \
 	    --gen js         -o providence-generator-js/src/main/resources/js          providence-core/src/main/providence/*
-	java -jar providence-tools-compiler/target/providence-tools-compiler.jar \
+	java -jar providence-tools-generator/target/providence-tools-generator.jar \
 	    --add-generator     providence-generator-js/target/js.jar \
 	    --gen js:node.js -o providence-generator-js/src/main/resources/node_module providence-core/src/main/providence/*
-	java -jar providence-tools-compiler/target/providence-tools-compiler.jar \
+	java -jar providence-tools-generator/target/providence-tools-generator.jar \
 	    --add-generator     providence-generator-js/target/js.jar \
 	    --gen js:closure -o providence-generator-js/src/main/resources/closure     providence-core/src/main/providence/*
-	java -jar providence-tools-compiler/target/providence-tools-compiler.jar \
+	java -jar providence-tools-generator/target/providence-tools-generator.jar \
 	    --add-generator     providence-generator-js/target/js.jar \
 	    --gen js:ts      -o providence-generator-js/src/main/resources/type_script providence-core/src/main/providence/*
 
 resources:
-	cp -R providence-generator-java/target/java.jar providence-tools-compiler/src/test/resources/generator
-	cp -R providence-generator-js/target/js.jar     providence-tools-compiler/src/test/resources/generator
+	cp -R providence-generator-java/target/java.jar providence-tools-generator/src/test/resources/generator
+	cp -R providence-generator-js/target/js.jar     providence-tools-generator/src/test/resources/generator
 
 .PHONY: compile test-compile models test-models thrift js

@@ -23,7 +23,6 @@ package net.morimekta.providence.generator.format.js.utils;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
@@ -39,7 +38,7 @@ import javax.annotation.Nonnull;
  */
 public class JSUtils {
     public static boolean isUnion(CMessageDescriptor messageDescriptor) {
-        return ((PMessageDescriptor) messageDescriptor).getVariant() == PMessageVariant.UNION;
+        return messageDescriptor.getVariant() == PMessageVariant.UNION;
     }
 
     public static String getClassReference(@Nonnull PDeclaredDescriptor descriptor) {

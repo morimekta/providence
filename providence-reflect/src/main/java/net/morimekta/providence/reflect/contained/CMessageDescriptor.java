@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
@@ -44,4 +44,19 @@ public interface CMessageDescriptor
 
     @Nullable
     CField findFieldById(int id);
+
+    @Nullable
+    CField fieldForName(String name);
+
+    @Nullable
+    CField fieldForId(int id);
+
+    @Nonnull
+    PMessageVariant getVariant();
+
+    /**
+     * @return True if the message is simple. A simple message contains no
+     *         containers, and no sub-messages.
+     */
+    boolean isSimple();
 }

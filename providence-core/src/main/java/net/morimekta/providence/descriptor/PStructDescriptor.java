@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageVariant;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +38,7 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
         super(programName, name, builderSupplier, simple);
     }
 
+    @Nonnull
     @Override
     public PMessageVariant getVariant() {
         return PMessageVariant.STRUCT;

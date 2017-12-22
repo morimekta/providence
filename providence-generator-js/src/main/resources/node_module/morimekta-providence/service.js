@@ -3,6 +3,7 @@
 'use strict';
 var _service = module.exports = exports;
 
+
 /**
  * The service call type is a base distinction of what the message means, and
  * lets the server or client select the proper message to be serialized or
@@ -233,6 +234,9 @@ _service.PApplicationExceptionType.nameOf = function(value, opt_keepNumeric) {
  * other server-side service call issues.
  */
 _service.PApplicationException = function(opt_json) {
+    Error.captureStackTrace(this, this.constructor);
+    this.message = 'PApplicationException';
+
     this._message = null;
     this._id = null;
 
@@ -260,6 +264,7 @@ _service.PApplicationException = function(opt_json) {
         throw 'Bad json input type: ' + typeof(opt_json);
     }
 };
+_service.PApplicationException.prototype = new Error;
 
 /**
  * Exception message.

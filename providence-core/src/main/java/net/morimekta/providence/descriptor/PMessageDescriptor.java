@@ -118,6 +118,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     /**
      * @return The struct variant.
      */
+    @Nonnull
     public abstract PMessageVariant getVariant();
 
     /**

@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.js.formatter;
 
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
@@ -184,11 +185,12 @@ public class JSProgramFormatter extends BaseFormatter {
             }
 
             writer.formatln("var _%s = %s;", program.getProgramName(), namespace);
-            writer.newline();
         }
     }
 
     private void formatEnum(IndentedPrintWriter writer, CEnumDescriptor descriptor) {
+        writer.newline();
+
         maybeComment(writer, descriptor, comment -> comment.enum_("number"));
 
         writer.formatln("%s = {", getClassReference(descriptor));
@@ -276,8 +278,7 @@ public class JSProgramFormatter extends BaseFormatter {
         writer.end()
               .appendln("}")
               .end()
-              .appendln("};")
-              .newline();
+              .appendln("};");
     }
 
     private void formatMessage(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
@@ -292,6 +293,7 @@ public class JSProgramFormatter extends BaseFormatter {
     }
 
     private void formatMessageConstructor(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
+        writer.newline();
         maybeComment(writer, descriptor, comment -> {
             if (JSUtils.jsonCompactible(descriptor)) {
                 comment.param_("opt_json",
@@ -307,6 +309,15 @@ public class JSProgramFormatter extends BaseFormatter {
 
         writer.formatln("%s = function(opt_json) {", getClassReference(descriptor));
         writer.begin();
+        if (descriptor.getVariant() == PMessageVariant.EXCEPTION) {
+            if (options.closure && !options.es51) {
+                writer.formatln("%s.base(this);", getClassReference(descriptor));
+            } else {
+                writer.appendln("Error.captureStackTrace(this, this.constructor);");
+            }
+            writer.formatln("this.message = '%s';", descriptor.getName())
+                  .newline();
+        }
 
         if (JSUtils.isUnion(descriptor)) {
             if (options.closure) {
@@ -481,11 +492,19 @@ public class JSProgramFormatter extends BaseFormatter {
         }
 
         writer.end()
-              .appendln("};")
-              .newline();
+              .appendln("};");
+
+        if (descriptor.getVariant() == PMessageVariant.EXCEPTION && !options.es51) {
+            if (options.closure) {
+                writer.formatln("goog.inherits(%s, Error);", getClassReference(descriptor));
+            } else {
+                writer.formatln("%s.prototype = new Error;", getClassReference(descriptor));
+            }
+        }
     }
 
     private void formatMessageFieldMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor, CField field) {
+        writer.newline();
         maybeComment(writer, field, comment -> comment.return_(ClosureUtils.getFieldType(field, options), "The field value"));
         writer.formatln("%s.prototype.%s = function() {",
                         getClassReference(descriptor),
@@ -559,7 +578,6 @@ public class JSProgramFormatter extends BaseFormatter {
         }
 
         if (JSUtils.isUnion(descriptor)) {
-
             writer.end()
                   .formatln("} else if (this._field === '%s') {", field.getName())
                   .appendln("    this._field = null;")
@@ -586,12 +604,11 @@ public class JSProgramFormatter extends BaseFormatter {
         }
 
         writer.appendln("};");
-        writer.newline();
-
     }
 
     private void formatMessageMethods(IndentedPrintWriter writer, CMessageDescriptor descriptor) {
         if (JSUtils.isUnion(descriptor)) {
+            writer.newline();
             ClosureDocBuilder comment = new ClosureDocBuilder(writer);
             comment.comment("Get the current set field on the union.");
             if (options.closure) {
@@ -605,6 +622,7 @@ public class JSProgramFormatter extends BaseFormatter {
                   .formatln("};")
                   .newline();
         } else if (JSUtils.jsonCompactible(descriptor)) {
+            writer.newline();
             ClosureDocBuilder comment = new ClosureDocBuilder(writer);
             comment.comment("Check if the instance can be serialized as compact");
             if (options.closure) {
@@ -630,9 +648,9 @@ public class JSProgramFormatter extends BaseFormatter {
             writer.appendln("return true;")
                   .end();
             writer.formatln("};");
-            writer.newline();
         }
 
+        writer.newline();
         ClosureDocBuilder comment = new ClosureDocBuilder(writer);
         comment.comment("Make a JSON compatible object representation of the message.");
         if (options.closure) {
@@ -784,8 +802,7 @@ public class JSProgramFormatter extends BaseFormatter {
         comment.finish();
         writer.formatln("%s.prototype.toString = function() {", getClassReference(descriptor))
               .formatln("    return '%s' + JSON.stringify(this.toJson(true));", getClassName((PMessageDescriptor) descriptor))
-              .appendln("};")
-              .newline();
+              .appendln("};");
     }
 
     private void maybeComment(@Nonnull IndentedPrintWriter writer,
@@ -1110,11 +1127,11 @@ public class JSProgramFormatter extends BaseFormatter {
 
 
     private void formatConstant(IndentedPrintWriter writer, CProgram program, CConst constant) {
+        writer.newline();
         maybeComment(writer, constant, comment -> comment.const_(ClosureUtils.getTypeString(constant.getDescriptor(), options)));
         writer.formatln("_%s.%s = ", program.getProgramName(), constant.getName());
         new JSConstFormatter(writer, options, programContext).format(constant.getDefaultValue());
-        writer.append(";")
-              .newline();
+        writer.append(";");
     }
 
     private void formatService(IndentedPrintWriter writer, CService service) {
@@ -1126,7 +1143,8 @@ public class JSProgramFormatter extends BaseFormatter {
     }
 
     private void formatServiceInterface(IndentedPrintWriter writer, CService service) {
-        String serviceName = Strings.camelCase("", service.getName());
+        writer.newline();
+
         maybeComment(writer, service, comment -> {
             comment.interface_();
             if (service.getExtendsService() != null) {
@@ -1149,12 +1167,13 @@ public class JSProgramFormatter extends BaseFormatter {
             }
 
             for (CServiceMethod method : service.getMethods()) {
+                writer.newline();
+
                 ClosureDocBuilder comment = new ClosureDocBuilder(writer);
                 if (method.getDocumentation() != null) {
                     comment.comment(method.getDocumentation())
                            .newline();
                 }
-
                 for (CField param : method.getRequestType()
                                           .getFields()) {
                     comment.param_(JSUtils.getParamName(param), ClosureUtils.getFieldType(param, options), param.getDocumentation());
@@ -1184,21 +1203,19 @@ public class JSProgramFormatter extends BaseFormatter {
                     }
                     writer.format("%s", field.getName());
                 }
-                writer.append(") {};")
-                      .newline();
+                writer.append(") {};");
             }
         } else {
             // no interface in plain JS, we just need the block.
-            writer.formatln("%s = {};", getClassReference(service))
-                  .newline();
+            writer.newline()
+                  .formatln("%s = {};", getClassReference(service));
         }
     }
 
     private void formatServiceClient(IndentedPrintWriter writer, CService service) {
-        String serviceName = Strings.camelCase("", service.getName());
-
         // A: Interface.
-        writer.formatln("%s.Client = function(endpoint, opt_headers) {", getClassReference(service))
+        writer.newline()
+              .formatln("%s.Client = function(endpoint, opt_headers) {", getClassReference(service))
               .begin();
         if (options.closure) {
             writer.formatln("%s.Client.base(this);", getClassReference(service));
@@ -1261,8 +1278,7 @@ public class JSProgramFormatter extends BaseFormatter {
             formatServiceMethod(writer, method);
 
             writer.end()
-                  .appendln("};")
-                  .newline();
+                  .appendln("};");
         }
     }
 
@@ -1449,5 +1465,6 @@ public class JSProgramFormatter extends BaseFormatter {
             // node modules and typescript modules already handle the enclosure.
             writer.appendln("})();");
         }
+        writer.newline();
     }
 }
