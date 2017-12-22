@@ -47,7 +47,7 @@
             <item href="providence-tools-converter.html" name="CLI : Converter" />
             <item href="providence-tools-rpc.html"       name="CLI : RPC Tool" />
             <item href="providence-tools-config.html"    name="CLI : Config Helper" />
-            <item href="providence-tools-compiler.html"  name="CLI : Compiler" />
+            <item href="providence-tools-generator.html" name="CLI : Generator" />
 
         </menu>
 

@@ -38,8 +38,8 @@ public class CompilerJavaTest {
         include = temp.newFolder("include");
         output = temp.newFolder("output");
 
-        refFile = copyResourceTo("/compiler/ref.thrift", include);
-        testFile = copyResourceTo("/compiler/test.thrift", temp.getRoot());
+        refFile = copyResourceTo("/thrift/ref.thrift", include);
+        testFile = copyResourceTo("/thrift/test.thrift", temp.getRoot());
 
         File generator = temp.newFolder("generator");
 
@@ -110,7 +110,7 @@ public class CompilerJavaTest {
 
     @Test
     public void testCompile_hazelcast() throws IOException {
-        File hz = copyResourceTo("/compiler/hz.thrift", temp.getRoot());
+        File hz = copyResourceTo("/thrift/hz.thrift", temp.getRoot());
 
         generator.run(
                 "--out", output.getAbsolutePath(),
@@ -149,7 +149,7 @@ public class CompilerJavaTest {
 
     @Test
     public void testCompile_badReference() throws IOException {
-        File test2 = copyResourceTo("/compiler/test_2.thrift", temp.getRoot());
+        File test2 = copyResourceTo("/thrift/test_2.thrift", temp.getRoot());
 
         generator.run(
                 "-I", include.getAbsolutePath(),

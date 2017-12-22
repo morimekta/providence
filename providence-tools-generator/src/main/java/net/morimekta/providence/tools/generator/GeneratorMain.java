@@ -56,12 +56,12 @@ public class GeneratorMain {
 
     public void run(String... args) {
         try {
-            ArgumentParser cli = options.getArgumentParser("pvdc", "Providence compiler");
+            ArgumentParser cli = options.getArgumentParser("pvdgen", "Providence generator");
 
             cli.parse(args);
             if (options.isHelp()) {
-                System.out.println("Providence compiler - " + Utils.getVersionString());
-                System.out.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
+                System.out.println("Providence generator - " + Utils.getVersionString());
+                System.out.println("Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
                 System.out.println();
                 if (options.help.factory != null) {
                     System.out.format("%s : %s%n",
@@ -73,7 +73,7 @@ public class GeneratorMain {
                     options.help.factory.printGeneratorOptionsHelp(System.out);
                 } else {
                     System.out.println("Example code to run:");
-                    System.out.println("$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift");
+                    System.out.println("$ pvdgen -I thrift/ --out target/ --gen java:android thrift/the-one.thrift");
                     System.out.println();
                     cli.printUsage(System.out);
                     System.out.println();
@@ -87,7 +87,7 @@ public class GeneratorMain {
                 }
                 return;
             } else if (options.version) {
-                System.out.println("Providence compiler - " + Utils.getVersionString());
+                System.out.println("Providence generator - " + Utils.getVersionString());
                 return;
             }
 
@@ -106,10 +106,10 @@ public class GeneratorMain {
             generator.generateGlobal(loader.getProgramRegistry(), input);
             return;
         } catch (ArgumentException e) {
-            System.err.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
+            System.err.println("Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
             System.err.println(e.getLocalizedMessage());
             System.err.println();
-            System.err.println("Run $ pvdc --help # for available options.");
+            System.err.println("Run $ pvdgen --help # for available options.");
             if (options.verbose) {
                 e.printStackTrace();
             }

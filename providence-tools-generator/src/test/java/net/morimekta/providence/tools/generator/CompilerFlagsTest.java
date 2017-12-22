@@ -35,8 +35,8 @@ public class CompilerFlagsTest {
 
         File include = temp.newFolder("include").getCanonicalFile();
 
-        copyResourceTo("/compiler/ref.thrift", include);
-        thriftFile = copyResourceTo("/compiler/test.thrift", temp.getRoot());
+        copyResourceTo("/thrift/ref.thrift", include);
+        thriftFile = copyResourceTo("/thrift/test.thrift", temp.getRoot());
 
         File generator = temp.newFolder("generator");
 
@@ -62,10 +62,10 @@ public class CompilerFlagsTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(),
-                   is(equalToLines("Providence compiler - " + version + "\n" +
-                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
+                   is(equalToLines("Providence generator - " + version + "\n" +
+                                   "Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
                                    "Example code to run:\n" +
-                                   "$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" + "\n" +
+                                   "$ pvdgen -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" + "\n" +
                                    " --gen (-g) generator       : Generate files for this language spec.\n" +
                                    " --help (-h, -?) [language] : Show this help or about language.\n" +
                                    " --verbose (-V)             : Show verbose output and error messages.\n" +
@@ -92,8 +92,8 @@ public class CompilerFlagsTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(),
-                   is(equalToLines("Providence compiler - " + version + "\n" +
-                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
+                   is(equalToLines("Providence generator - " + version + "\n" +
+                                   "Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
                                    "java : Generates java (1.8+) classes.\n" +
                                    "\n" +
                                    "Available options\n" +
@@ -116,8 +116,8 @@ public class CompilerFlagsTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(),
-                   is(equalToLines("Providence compiler - " + version + "\n" +
-                                   "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                   is(equalToLines("Providence generator - " + version + "\n" +
+                                   "Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                                    "\n" +
                                    "js : Generates JavaScript (es5.1 or es6).\n" +
                                    "\n" +
@@ -140,10 +140,10 @@ public class CompilerFlagsTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                   is(equalToLines("Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n")));
+                     "Run $ pvdgen --help # for available options.\n")));
         assertThat(exitCode, is(1));
     }
 
@@ -156,10 +156,10 @@ public class CompilerFlagsTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                   is(equalToLines("Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "" + temp.getRoot().getCanonicalPath() + File.separator + "test.thrift is not a directory\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n")));
+                     "Run $ pvdgen --help # for available options.\n")));
         assertThat(exitCode, is(1));
     }
 
@@ -172,10 +172,10 @@ public class CompilerFlagsTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                   is(equalToLines("Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      thriftFile.getAbsolutePath() + " exists and is not a directory\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n")));
+                     "Run $ pvdgen --help # for available options.\n")));
         assertThat(exitCode, is(1));
     }
 }

@@ -18,7 +18,7 @@
         <fileSet>
             <directory>${project.parent.basedir}/providence-tools-compiler/target/</directory>
             <includes>
-                <include>providence-tools-compiler.jar</include>
+                <include>providence-tools-thrift.jar</include>
             </includes>
             <outputDirectory>share/providence</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
