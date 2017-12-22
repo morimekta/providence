@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Providence CLI : Packaging</name>
-    <description>Providence tools. Contains the providence generator (pvdgen), a providence data converter (pvd), a providence config helper (pvdcfg) and an RPC tool (pvdrpc).</description>
+    <description>Providence tools. Contains the data converter (pvd), generator (pvdgen), config helper (pvdcfg) and RPC tool (pvdrpc).</description>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
