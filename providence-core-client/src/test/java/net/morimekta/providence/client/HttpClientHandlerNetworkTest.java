@@ -9,6 +9,7 @@ import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.apache.http.conn.HttpHostConnectException;
@@ -103,7 +104,7 @@ public class HttpClientHandlerNetworkTest {
     }
 
     @Test
-    public void testBrokenPipe_NetHttpTransport() throws IOException, TException, Failure {
+    public void testBrokenPipe_NetHttpTransport() throws Failure {
         HttpRequestFactory factory = new NetHttpTransport().createRequestFactory();
 
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
@@ -113,14 +114,16 @@ public class HttpClientHandlerNetworkTest {
             // The request must be larger than the socket read buffer, to force it to fail the write to socket.
             client.test(new Request(Strings.times("request ", 1024 * 1024)));
             fail("No exception");
+        } catch (HttpResponseException e) {
+            fail("When did this become a HttpResponseException?");
         } catch (IOException ex) {
             // TODO: This should be a HttpResponseException
-            assertThat(ex.getMessage(), is("insufficient data written"));
+            assertThat(ex.getMessage(), is("Error writing request body to server"));
         }
     }
 
     @Test
-    public void testBrokenPipe_ApacheHttpTransport() throws IOException, TException, Failure {
+    public void testBrokenPipe_ApacheHttpTransport() throws IOException, Failure {
         HttpRequestFactory factory = new ApacheHttpTransport().createRequestFactory();
 
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
@@ -140,7 +143,7 @@ public class HttpClientHandlerNetworkTest {
     }
 
     @Test
-    public void testSimpleRequest_connectionRefused_netHttpTransport() throws IOException, Failure, TException {
+    public void testSimpleRequest_connectionRefused_netHttpTransport() throws IOException, Failure {
         HttpRequestFactory factory = new NetHttpTransport().createRequestFactory();
 
         GenericUrl url = new GenericUrl("http://localhost:" + (port - 10) + "/" + ENDPOINT);
@@ -156,7 +159,7 @@ public class HttpClientHandlerNetworkTest {
     }
 
     @Test
-    public void testSimpleRequest_connectionRefused_apacheHttpTransport() throws IOException, Failure, TException {
+    public void testSimpleRequest_connectionRefused_apacheHttpTransport() throws IOException, Failure {
         HttpRequestFactory factory = new ApacheHttpTransport().createRequestFactory();
 
         GenericUrl url = new GenericUrl("http://localhost:" + (port - 10) + "/" + ENDPOINT);
