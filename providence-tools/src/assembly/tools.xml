@@ -16,9 +16,9 @@
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
         <fileSet>
-            <directory>${project.parent.basedir}/providence-tools-compiler/target/</directory>
+            <directory>${project.parent.basedir}/providence-tools-generator/target/</directory>
             <includes>
-                <include>providence-tools-thrift.jar</include>
+                <include>providence-tools-generator.jar</include>
             </includes>
             <outputDirectory>share/providence</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
@@ -35,6 +35,14 @@
             <directory>${project.parent.basedir}/providence-tools-converter/target/</directory>
             <includes>
                 <include>providence-tools-converter.jar</include>
+            </includes>
+            <outputDirectory>share/providence</outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}/providence-tools-rpc/target/</directory>
+            <includes>
+                <include>providence-tools-rpc.jar</include>
             </includes>
             <outputDirectory>share/providence</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
