@@ -1045,6 +1045,53 @@
                 <module>it-hazelcast</module>
             </modules>
         </profile>
+
+        <profile>
+            <id>all</id>
+            <modules>
+                <!-- LIB -->
+
+                <!-- Core Modules -->
+                <module>providence-core</module>
+                <module>providence-core-client</module>
+                <module>providence-core-server</module>
+                <module>providence-core-jackson</module>
+
+                <!-- Tooling Modules -->
+                <module>providence-reflect</module>
+                <module>providence-generator</module>
+                <module>providence-generator-java</module>
+                <module>providence-maven-plugin</module>
+
+                <!-- Utility Modules -->
+                <module>providence-testing</module>
+                <module>providence-thrift</module>
+                <module>providence-config</module>
+                <module>providence-storage</module>
+                <module>providence-storage-hazelcast</module>
+                <module>providence-jax-rs</module>
+
+                <!-- CLI -->
+
+                <!-- Common Libraries -->
+                <module>providence-tools-common</module>
+                <module>providence-tools-common-formats</module>
+                <!-- CLI Tooling Program Jars -->
+                <module>providence-tools-generator</module>
+                <module>providence-tools-config</module>
+                <module>providence-tools-converter</module>
+                <module>providence-tools-rpc</module>
+                <!-- The actual packaging (deb, rpm, tar.gz) -->
+                <module>providence-tools</module>
+
+                <!-- IT -->
+
+                <module>it-generator-java</module>
+                <module>it-generator-js</module>
+                <module>it-serialization</module>
+                <module>it-hazelcast</module>
+            </modules>
+        </profile>
         <!-- release process modifications -->
         <profile>
             <id>release-sign-artifacts</id>

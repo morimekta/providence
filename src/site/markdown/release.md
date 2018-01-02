@@ -29,7 +29,7 @@ mvn versions:display-plugin-updates
 
 ```bash
 # Do the maven release:
-mvn -Plib,cli,it release:prepare
+mvn -Pall release:prepare
 mvn -Plib release:perform
 git fetch origin
 ```
