@@ -9,9 +9,7 @@
 *.war
 *.ear
 
-.idea/*
-!.idea/codeStyleSettings.xml
-!.idea/codeStyles
+.idea/
 *.iml
 dependency-reduced-pom.xml
 
