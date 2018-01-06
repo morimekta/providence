@@ -27,7 +27,7 @@ import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.util.ThriftAnnotation;
-import net.morimekta.providence.util.ThriftCollection;
+import net.morimekta.providence.util.ThriftContainer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -63,7 +63,7 @@ public class CUnion implements PUnion<CUnion,CField> {
         } else if (builder.currentValue instanceof List) {
             this.unionValue = ImmutableList.copyOf((List) builder.currentValue);
         } else if (builder.currentValue instanceof Map) {
-            switch (ThriftCollection.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
+            switch (ThriftContainer.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
                 case SORTED:
                     this.unionValue = ImmutableSortedMap.copyOf((Map) builder.currentValue);
                     break;
@@ -72,7 +72,7 @@ public class CUnion implements PUnion<CUnion,CField> {
                     break;
             }
         } else if (builder.currentValue instanceof Set) {
-            switch (ThriftCollection.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
+            switch (ThriftContainer.forName(unionField.getAnnotationValue(ThriftAnnotation.CONTAINER))) {
                 case SORTED:
                     this.unionValue = ImmutableSortedSet.copyOf((Set) builder.currentValue);
                     break;

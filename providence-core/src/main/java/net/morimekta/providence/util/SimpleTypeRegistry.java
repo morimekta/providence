@@ -33,7 +33,9 @@ import java.util.Set;
 /**
  * Registry for declared types referenced in a flat space program context.
  * The registry itself does not have a context per se, as these may
- * reference each other recursively.
+ * reference each other recursively. Note that this registry does not
+ * handle situations where two programs with the same name exist with
+ * a type each with the same name.
  */
 public class SimpleTypeRegistry extends BaseTypeRegistry {
     private final Map<String, PDeclaredDescriptor<?>> declaredTypes;

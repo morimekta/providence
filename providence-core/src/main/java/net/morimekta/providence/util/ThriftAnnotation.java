@@ -23,15 +23,20 @@ package net.morimekta.providence.util;
 import javax.annotation.Nonnull;
 
 /**
- * Enum containing known "general" thrift annotations.
+ * Enum containing known "general" thrift annotations. Note that annotation
+ * tags are case sensitive, values depends on the implementation details.
  */
 public enum ThriftAnnotation {
     NONE(null),
+
     /**
      * Whether a set-like container are normal (hash-), ordered (linked-hash-)
      * or sorted (tree-). Valid for set and map type fields.
      * <p>
-     * container = "ORDERED"
+     * <code>container = "ordered"</code>
+     * <p>
+     * See the {@link ThriftContainer} enum for valid values, and how it is
+     * handled.
      */
     CONTAINER("container"),
 
@@ -40,15 +45,15 @@ public enum ThriftAnnotation {
      * more. Whatever is in the value part may be used as the 'deprecated'
      * reason.
      * <p>
-     * deprecated = "For some reason"
+     * <code>deprecated = "For some reason"</code>
      */
     DEPRECATED("deprecated"),
 
     /**
      * If a struct can use a compact serialized format. Only valid for struct,
-     * not for union and exception.
+     * not for union or exception.
      * <p>
-     * json.compact = ""
+     * <code>json.compact = ""</code>
      */
     JSON_COMPACT("json.compact"),
 
@@ -58,7 +63,7 @@ public enum ThriftAnnotation {
      * The interface methods must either match the methods implemented by the
      * struct, <b>or</b> have a default implementation.
      * <p>
-     * java.implements = "my.package.MyInterface"
+     * <code>java.implements = "my.package.MyInterface"</code>
      */
     JAVA_IMPLEMENTS("java.implements"),
 
@@ -67,13 +72,15 @@ public enum ThriftAnnotation {
      * to extend {@link java.lang.Exception}, this will override that verbatim.
      * The exception class <b>must</b> be available at compile time.
      * <p>
-     * java.exception.class = "my.package.MyException"
+     * <code>java.exception.class = "my.package.MyException"</code>
      */
     JAVA_EXCEPTION_CLASS("java.exception.class"),
 
     /**
      * For struct and exception. If true will add a public create constructor
      * with all fields available as parameters. Default is not.
+     * <p>
+     * <code>java.public.constructor = ""</code>
      */
     JAVA_PUBLIC_CONSTRUCTOR("java.public.constructor"),
 
@@ -86,27 +93,28 @@ public enum ThriftAnnotation {
      * be handled as a system failure, and wrapped in an IOException or sent as
      * an application exception.
      * <p>
-     * java.service.methods.throws = "my.package.MyException"
+     * <code>java.service.methods.throws = "my.package.MyException"</code>
      */
     JAVA_SERVICE_METHOD_THROWS("java.service.methods.throws"),
+
     /**
      * Specify if a file should generate with support with hazelcast portable
-     * implementaiton.
+     * implementation.
      * <p>
-     * The id needs to be a unique int id for each file that is generated with
+     * The id needs to be a unique int id for each program that is generated with
      * support for hazelcast.
      * </p>
-     *
-     * hazelcast.factory.id = "1"
+     * <code>hazelcast.factory.id = "1"</code>
      */
     JAVA_HAZELCAST_FACTORY_ID("hazelcast.factory.id"),
+
     /**
-     * Specify if a stuct should be generated using hazelcast.portable interface
+     * Specify if a struct should be generated using hazelcast.portable interface
      * to be compatible with serialization and deserialization of hazelcast portable.
      * <p>
-     * The id needs to be a unique int id for each struct in the class.
+     * The id needs to be a unique int id for each struct in the program.
      * </p>
-     * hazelcast.factory.id = "1"
+     * <code>hazelcast.factory.id = "1"</code>
      */
     JAVA_HAZELCAST_CLASS_ID("hazelcast.class.id"),
     ;

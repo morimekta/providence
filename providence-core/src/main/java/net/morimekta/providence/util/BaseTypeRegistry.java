@@ -84,7 +84,7 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
                                  .split(",", 2);
             String keyType = parts[0];
             String valueType = parts[1];
-            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
+            switch (ThriftContainer.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
                 case SORTED:
                     return PMap.sortedProvider(getProvider(keyType, context, null),
                                                getProvider(valueType, context, null));
@@ -98,7 +98,7 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
         }
         if (name.startsWith("set<") && name.endsWith(">")) {
             String itemType = name.substring(4, name.length() - 1);
-            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
+            switch (ThriftContainer.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
                 case SORTED:
                     return PSet.sortedProvider(getProvider(itemType, context, null));
                 case ORDERED:

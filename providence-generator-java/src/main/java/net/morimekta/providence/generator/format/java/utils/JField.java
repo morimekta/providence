@@ -31,6 +31,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftContainer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -167,7 +168,7 @@ public class JField {
         }
     }
 
-    public ContainerType containerType() {
+    public ThriftContainer containerType() {
         return JAnnotation.containerType(this);
     }
 
@@ -303,7 +304,7 @@ public class JField {
         String container = field.getAnnotationValue("container");
         String containerProvider = "provider";
         if (container != null) {
-            ContainerType containerType = ContainerType.valueOf(container.toUpperCase());
+            ThriftContainer containerType = ThriftContainer.forName(container);
             switch (containerType) {
                 case DEFAULT:
                     containerProvider = "provider";

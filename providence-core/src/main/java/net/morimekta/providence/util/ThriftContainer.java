@@ -21,14 +21,15 @@
 package net.morimekta.providence.util;
 
 /**
- * Enum containing known "general" thrift annotations.
+ * Enum containing the values of the <code>container = "..."</code>
+ * annotation.
  */
-public enum ThriftCollection {
+public enum ThriftContainer {
     DEFAULT,
     ORDERED,
     SORTED;
 
-    public static ThriftCollection forName(String id) {
+    public static ThriftContainer forName(String id) {
         if (id == null) return DEFAULT;
         switch (id.toLowerCase()) {
             case "ordered": return ORDERED;

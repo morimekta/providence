@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.util.ThriftAnnotation;
+import net.morimekta.providence.util.ThriftContainer;
 
 /**
  *
@@ -45,18 +46,18 @@ public class JAnnotation {
         return descriptor instanceof CAnnotatedDescriptor && isDeprecated((CAnnotatedDescriptor) descriptor);
     }
 
-    static ContainerType containerType(CField field) {
+    static ThriftContainer containerType(CField field) {
         return containerType((CAnnotatedDescriptor) field);
     }
 
-    static ContainerType containerType(JField field) {
+    static ThriftContainer containerType(JField field) {
         return containerType((CAnnotatedDescriptor) field.field());
     }
 
-    private static ContainerType containerType(CAnnotatedDescriptor descriptor) {
+    private static ThriftContainer containerType(CAnnotatedDescriptor descriptor) {
         if (descriptor.hasAnnotation(ThriftAnnotation.CONTAINER)) {
-            return ContainerType.valueOf(descriptor.getAnnotationValue(ThriftAnnotation.CONTAINER));
+            return ThriftContainer.forName(descriptor.getAnnotationValue(ThriftAnnotation.CONTAINER));
         }
-        return ContainerType.DEFAULT;
+        return ThriftContainer.DEFAULT;
     }
 }

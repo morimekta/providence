@@ -32,6 +32,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
+import net.morimekta.providence.util.ThriftContainer;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableMap;
@@ -97,7 +98,7 @@ public class JHelper {
             case BINARY:
                 return Binary.class.getName();
             case MAP: {
-                ContainerType ct = JAnnotation.containerType(field);
+                ThriftContainer ct = JAnnotation.containerType(field);
                 switch (ct) {
                     case DEFAULT:
                         return ImmutableMap.class.getName();
@@ -108,7 +109,7 @@ public class JHelper {
                 }
             }
             case SET:{
-                ContainerType ct = JAnnotation.containerType(field);
+                ThriftContainer ct = JAnnotation.containerType(field);
                 switch (ct) {
                     case DEFAULT:
                         return ImmutableSet.class.getName();

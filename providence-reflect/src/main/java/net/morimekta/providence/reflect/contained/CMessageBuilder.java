@@ -25,7 +25,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.util.ThriftAnnotation;
-import net.morimekta.providence.util.ThriftCollection;
+import net.morimekta.providence.util.ThriftContainer;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -185,8 +185,8 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                     break;
                 }
                 case SET: {
-                    ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
-                    if (ctype == ThriftCollection.SORTED) {
+                    ThriftContainer ctype = ThriftContainer.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                    if (ctype == ThriftContainer.SORTED) {
                         values.put(key, ImmutableSortedSet.copyOf((Collection) value));
                     } else {
                         values.put(key, ImmutableSet.copyOf((Collection) value));
@@ -194,8 +194,8 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                     break;
                 }
                 case MAP: {
-                    ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
-                    if (ctype == ThriftCollection.SORTED) {
+                    ThriftContainer ctype = ThriftContainer.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                    if (ctype == ThriftContainer.SORTED) {
                         values.put(key, ImmutableSortedMap.copyOf((Map) value));
                     } else {
                         values.put(key, ImmutableMap.copyOf((Map) value));
@@ -280,7 +280,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         out.put(key, ImmutableList.copyOf((List<Object>) values.get(key)));
                         break;
                     case SET: {
-                        ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                        ThriftContainer ctype = ThriftContainer.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
                         switch (ctype) {
                             case SORTED:
                                 out.put(key, ImmutableSortedSet.copyOf((Set) values.get(key)));
@@ -292,7 +292,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         break;
                     }
                     case MAP: {
-                        ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                        ThriftContainer ctype = ThriftContainer.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
                         switch (ctype) {
                             case SORTED:
                                 out.put(key, ImmutableSortedMap.copyOf((Map) values.get(key)));
