@@ -1,27 +1,31 @@
 package net.morimekta.providence.generator.util;
 
-import net.morimekta.providence.generator.GeneratorFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Manifest;
 
-public class FactoryLoader {
-    public FactoryLoader() {}
+public class FactoryLoader<Factory> {
+    private final String manifestProperty;
 
-    public List<GeneratorFactory> getFactories(File path) {
+    public FactoryLoader(String manifestProperty) {
+        this.manifestProperty = manifestProperty;
+    }
+
+    public List<Factory> getFactories(File path) {
         try {
             List<File> jars = findJarFiles(path);
-            List<GeneratorFactory> factories = new ArrayList<>();
+            List<Factory> factories = new ArrayList<>();
             for (File jar : jars) {
                 URLClassLoader classLoader = getClassLoader(jar);
-                factories.add(getFactory(classLoader));
+                Factory factory = getFactory(classLoader);
+                if (factory != null) {
+                    factories.add(factory);
+                }
             }
             return factories;
         } catch (Exception e) {
@@ -29,7 +33,7 @@ public class FactoryLoader {
         }
     }
 
-    public GeneratorFactory getFactory(File file) {
+    public Factory getFactory(File file) {
         try {
             return getFactory(getClassLoader(file));
         } catch (Exception e) {
@@ -54,18 +58,16 @@ public class FactoryLoader {
         return URLClassLoader.newInstance(new URL[]{file.toURI().toURL()}, ClassLoader.getSystemClassLoader());
     }
 
-    private GeneratorFactory getFactory(URLClassLoader classLoader)
+    private Factory getFactory(URLClassLoader classLoader)
             throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         URL url = classLoader.findResource("META-INF/MANIFEST.MF");
         Manifest manifest = new Manifest(url.openStream());
-        String factoryClass = manifest.getMainAttributes().getValue("Providence-Generator-Factory");
+        String factoryClass = manifest.getMainAttributes().getValue(manifestProperty);
         if (factoryClass == null) {
-            throw new IllegalStateException("No Providence-Generator-Factory in " + Arrays.toString(classLoader.getURLs()));
+            return null;
         }
-        Class klass = classLoader.loadClass(factoryClass);
-        if (!GeneratorFactory.class.isAssignableFrom(klass)) {
-            throw new IllegalStateException("Registered factory " + klass.getName() + " is not a GeneratorFactory.");
-        }
-        return (GeneratorFactory) klass.newInstance();
+        @SuppressWarnings("unchecked")
+        Class<Factory> klass = (Class<Factory>) classLoader.loadClass(factoryClass);
+        return klass.newInstance();
     }
 }

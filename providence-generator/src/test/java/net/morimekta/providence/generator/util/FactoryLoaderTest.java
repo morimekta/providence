@@ -21,7 +21,7 @@ public class FactoryLoaderTest {
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
-    private FactoryLoader loader = new FactoryLoader();
+    private FactoryLoader<GeneratorFactory> loader = new FactoryLoader<>(GeneratorFactory.MANIFEST_PROPERTY);
 
     @Test
     public void testLoader() {

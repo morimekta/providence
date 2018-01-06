@@ -121,7 +121,7 @@ public class GeneratorOptions extends CommonOptions {
 
     public Map<String, GeneratorFactory> getFactories() {
         try {
-            FactoryLoader loader = new FactoryLoader();
+            FactoryLoader<GeneratorFactory> loader = new FactoryLoader<>(GeneratorFactory.MANIFEST_PROPERTY);
             Map<String, GeneratorFactory> factories = new TreeMap<>();
             factories.put("json", new JsonGeneratorFactory());
 

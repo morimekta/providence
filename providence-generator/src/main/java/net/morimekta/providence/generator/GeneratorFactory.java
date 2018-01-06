@@ -64,6 +64,8 @@ import java.util.Collection;
  * }</pre>
  */
 public interface GeneratorFactory {
+    String MANIFEST_PROPERTY = "Providence-Generator-Factory";
+
     /**
      * The name of the generator. This is what must be matched in the
      * <code>--gen</code> generator CLI argument.
