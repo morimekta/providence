@@ -64,7 +64,7 @@ public class TokenizerExceptionTest {
         assertThat(b.getLineNo(), is(a.getLineNo()));
         assertThat(b.getLinePos(), is(a.getLinePos()));
 
-        assertThat(b.asString(), is("Error: message is"));
+        assertThat(b.asString(), is("Error in file: message is"));
 
         TokenizerException c = new TokenizerException(b, new File("other"));
         assertThat(c.getFile(), is(b.getFile()));

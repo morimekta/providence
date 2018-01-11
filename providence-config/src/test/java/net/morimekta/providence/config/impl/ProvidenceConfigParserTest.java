@@ -329,7 +329,7 @@ public class ProvidenceConfigParserTest {
         writeContentTo("config.Database {}", temp.newFile("a.cfg"));
         writeContentTo("config.Database {}", temp.newFile("b.cfg"));
 
-        assertParseFailure("Error: No message in config: test.cfg",
+        assertParseFailure("Error in test.cfg: No message in config: test.cfg",
                            "");
         assertParseFailure("Error in test.cfg on line 1, pos 11: Invalid termination of number: '1f'\n" +
                            "def { n = 1f }\n" +

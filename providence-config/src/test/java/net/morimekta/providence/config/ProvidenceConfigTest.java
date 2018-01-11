@@ -54,6 +54,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the providence config parsers.
@@ -155,6 +156,24 @@ public class ProvidenceConfigTest {
     }
 
     @Test
+    public void testResolveConfig_withParent_badType() {
+        try {
+            File first = copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", temp.getRoot());
+            File second = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+
+            ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
+            ConfigSupplier<Service,Service._Field> firstConfig = config.resolveConfig(first);
+            config.resolveConfig(second, firstConfig);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Loaded config type config.Service does not match parent config.Database"));
+            assertThat(e.getFile(), is("stage_db.cfg"));
+            assertThat(e.asString(),
+                       is("Error in stage_db.cfg: Loaded config type config.Service does not match parent config.Database"));
+        }
+    }
+
+    @Test
     public void testGetConfig() throws IOException {
         File f_stage_db = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
 
@@ -186,6 +205,24 @@ public class ProvidenceConfigTest {
                      "  driver = \"org.h2.Driver\"\n" +
                      "}",
                      debugString(stage_nocred));
+    }
+
+    @Test
+    public void testGetConfig_withParent_badType() {
+        try {
+            File first = copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", temp.getRoot());
+            File second = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());
+
+            ProvidenceConfig config = new ProvidenceConfig(registry, null, true);
+            Service firstConfig = config.getConfig(first);
+            config.getConfig(second, firstConfig);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Loaded config type config.Service does not match parent config.Database"));
+            assertThat(e.getFile(), is("stage_db.cfg"));
+            assertThat(e.asString(),
+                       is("Error in stage_db.cfg: Loaded config type config.Service does not match parent config.Database"));
+        }
     }
 
     @Test

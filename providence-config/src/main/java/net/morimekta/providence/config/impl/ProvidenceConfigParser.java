@@ -408,6 +408,11 @@ public class ProvidenceConfigParser {
                         .setLine(tokenizer.getLine());
             }
         } else if (parent != null) {
+            if (!builder.descriptor().equals(parent.descriptor())) {
+                throw new ProvidenceConfigException("Loaded config type %s does not match parent %s",
+                                                    parent.descriptor().getQualifiedName(),
+                                                    builder.descriptor().getQualifiedName());
+            }
             builder.merge(parent);
         }
 

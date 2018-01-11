@@ -163,6 +163,8 @@ public class TokenizerException extends SerializerException {
                                      getLinePos(),
                                      getMessage());
             }
+        } else if (file != null) {
+            return String.format("Error in %s: %s", file, getMessage());
         } else {
             return String.format("Error: %s", getMessage());
         }
