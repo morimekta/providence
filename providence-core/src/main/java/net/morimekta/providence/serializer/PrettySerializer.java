@@ -256,7 +256,7 @@ public class PrettySerializer extends Serializer {
         } else if (first.isSymbol(Token.kMessageStart)) {
             tokenizer.next();
         } else {
-            throw tokenizer.failure(first, "");
+            throw tokenizer.failure(first, "Expected message start, Got '" + first.asString() + "'");
         }
         return readMessage(tokenizer, descriptor, false);
     }

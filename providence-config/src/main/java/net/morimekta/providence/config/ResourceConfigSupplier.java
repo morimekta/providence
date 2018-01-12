@@ -27,6 +27,7 @@ import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,40 +87,53 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
         if (lastDot < 1) {
             throw new ProvidenceConfigException("No file ending, or no resource file name: " + resourceName);
         }
-        String suffix = resourceName.substring(lastDot).toLowerCase();
-        Serializer serializer;
-        switch (suffix) {
-            case ".json":
-                serializer = new JsonSerializer();
-                break;
-            case ".cfg":
-            case ".cnf":
-            case ".config":
-            case ".pvd":
-            case ".providence":
-                serializer = new PrettySerializer().config();
-                break;
-            // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
-            default:
-                throw new ProvidenceConfigException(
-                        String.format("Unrecognized resource config type: %s (%s)",
-                                      suffix, resourceName));
+        int lastSlash = resourceName.lastIndexOf("/");
+        String fileName = resourceName;
+        if (lastSlash >= 0) {
+            fileName = resourceName.substring(lastSlash + 1);
         }
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        InputStream in = classLoader.getResourceAsStream(resourceName);
-        if (in == null) {
-            in = ResourceConfigSupplier.class.getResourceAsStream(resourceName);
-            if (in == null) {
-                throw new ProvidenceConfigException("No such config resource: " + resourceName);
-            }
-        }
-
         try {
-            return serializer.deserialize(in, descriptor);
-        } catch (SerializerException se) {
-            throw new ProvidenceConfigException(se);
-        } catch (IOException e) {
-            throw new ProvidenceConfigException(e, "Unknown serializer exception: " + e.getMessage());
+            String suffix = resourceName.substring(lastDot)
+                                        .toLowerCase();
+            Serializer serializer;
+            switch (suffix) {
+                case ".json":
+                    serializer = new JsonSerializer();
+                    break;
+                case ".cfg":
+                case ".cnf":
+                case ".config":
+                case ".pvd":
+                case ".providence":
+                    serializer = new PrettySerializer().config();
+                    break;
+                // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
+                default:
+                    throw new ProvidenceConfigException(String.format("Unrecognized resource config type: %s (%s)",
+                                                                      suffix,
+                                                                      resourceName));
+            }
+            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+            InputStream in = classLoader.getResourceAsStream(resourceName);
+            if (in == null) {
+                in = ResourceConfigSupplier.class.getResourceAsStream(resourceName);
+                if (in == null) {
+                    throw new ProvidenceConfigException("No such config resource: " + resourceName);
+                }
+            }
+
+            try {
+                return serializer.deserialize(in, descriptor);
+            } catch (TokenizerException te) {
+                throw new ProvidenceConfigException(te);
+            } catch (SerializerException se) {
+                throw new ProvidenceConfigException(se);
+            } catch (IOException e) {
+                throw  new ProvidenceConfigException(e, "Unknown serializer exception: " + e.getMessage());
+            }
+        } catch (ProvidenceConfigException pce) {
+            pce.setFile(fileName);
+            throw pce;
         }
     }
 }
