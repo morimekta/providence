@@ -94,6 +94,7 @@ public class MessageCollectors {
             }
         }, (a, b) -> a, (outputStream) -> {
             try {
+                outputStream.flush();
                 outputStream.close();
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to close " + file.getName(), e);
@@ -115,6 +116,24 @@ public class MessageCollectors {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, AtomicInteger, Integer> toStream(OutputStream out,
                                                         Serializer serializer) {
+        return toStream(out, serializer, false);
+    }
+
+    /**
+     * Serialize stream of messages into stream.
+     *
+     * @param out The output stream to write to.
+     * @param serializer The serializer to use.
+     * @param close Close the stream when ending.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The collector.
+     */
+    @Nonnull
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Collector<Message, AtomicInteger, Integer> toStream(OutputStream out,
+                                                        Serializer serializer,
+                                                        boolean close) {
         return Collector.of(AtomicInteger::new, (counter, t) -> {
             try {
                 synchronized (out) {
@@ -132,6 +151,9 @@ public class MessageCollectors {
         }, i -> {
             try {
                 out.flush();
+                if (close) {
+                    out.close();
+                }
             } catch (IOException e) {
                 throw new UncheckedIOException(e.getMessage(), e);
             }
