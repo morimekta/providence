@@ -51,7 +51,9 @@ public class Calculator {
                 throws java.io.IOException,
                        net.morimekta.test.providence.core.calculator.CalculateException {
             net.morimekta.test.providence.core.calculator.Calculator._calculate_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._calculate_request.builder();
-            rq.setOp(pOp);
+            if (pOp != null) {
+                rq.setOp(pOp);
+            }
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);

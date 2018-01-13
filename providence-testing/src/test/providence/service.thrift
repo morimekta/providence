@@ -29,7 +29,7 @@ service TestService extends BaseTestService {
 
     Response test(1: Request request) throws (1: Failure fail);
 
-    double otherTest(1: double p1, 2: double p2);
+    double otherTest(1: double p1, 2: optional double p2);
 } (java.service.methods.throws = "net.morimekta.providence.testing.util.TestException")
 
 service TestService2  {
@@ -37,7 +37,7 @@ service TestService2  {
 
     Response test(1: Request request) throws (1: Failure fail);
 
-    double otherTest(1: double p1, 2: double p2);
+    double otherTest(1: required double p1, 2: optional i8 p2);
 
     // Testing fix for https://github.com/morimekta/providence/issues/55
     map<string,i32> returnamap();

@@ -29,6 +29,7 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PServiceProvider;
@@ -180,7 +181,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 } else {
                     writer.append(",");
                 }
-                writer.formatln("%s %s", param.valueType(), param.param());
+                writer.formatln("%s %s", param.fieldType(), param.param());
             }
 
             writer.end()
@@ -202,7 +203,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                             service.getRequestClassRef(method));
 
             for (JField param : method.params()) {
+                if (!param.alwaysPresent()) {
+                    writer.formatln("if (%s != null) {", param.param())
+                          .begin();
+                }
                 writer.formatln("rq.%s(%s);", param.setter(), param.param());
+                if (!param.alwaysPresent()) {
+                    writer.end()
+                          .appendln("}");
+                }
             }
 
             String type = method.getMethod().isOneway()
@@ -350,7 +359,20 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                     writer.append(',')
                           .appendln();
                 }
+                // An optional primitive value without an explicit default
+                // should be called with null value if not present in the
+                // request.
+                boolean optionalPrimitiveNoDefault =
+                        param.isPrimitiveJavaValue() &&
+                        param.field().getRequirement() == PRequirement.OPTIONAL &&
+                        param.field().getDefaultValue() == null;
+                if (optionalPrimitiveNoDefault) {
+                    writer.format("req.%s() ? ", param.presence());
+                }
                 writer.format("req.%s()", param.getter());
+                if (optionalPrimitiveNoDefault) {
+                    writer.append(" : null");
+                }
             }
             writer.end()
                   .append(");");
@@ -664,7 +686,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 } else {
                     writer.append(",");
                 }
-                writer.formatln("%s %s", param.valueType(), param.param());
+                writer.formatln("%s %s", param.fieldType(), param.param());
             }
 
             writer.end()

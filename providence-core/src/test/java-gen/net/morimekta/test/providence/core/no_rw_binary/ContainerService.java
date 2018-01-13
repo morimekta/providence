@@ -39,7 +39,9 @@ public class ContainerService {
                 throws java.io.IOException,
                        net.morimekta.test.providence.core.no_rw_binary.ExceptionFields {
             net.morimekta.test.providence.core.no_rw_binary.ContainerService._load_request._Builder rq = net.morimekta.test.providence.core.no_rw_binary.ContainerService._load_request.builder();
-            rq.setC(pC);
+            if (pC != null) {
+                rq.setC(pC);
+            }
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("load", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, ContainerService.kDescriptor);
