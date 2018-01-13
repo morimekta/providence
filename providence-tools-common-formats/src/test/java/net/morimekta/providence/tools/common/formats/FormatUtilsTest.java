@@ -27,7 +27,7 @@ public class FormatUtilsTest {
                                 .build());
 
         int i = tool.stream()
-                    .collect(FormatUtils.getOutput(Format.json, new ConvertStream(null, null, true), false));
+                    .collect(FormatUtils.getOutput(new ConvertStream(Format.json, null, true, false), false));
 
         assertThat(i, is(12));
         assertThat(console.output(), is("eyIxIjoiZm9vIn0K"));

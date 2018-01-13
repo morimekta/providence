@@ -30,10 +30,6 @@ import net.morimekta.console.util.STTY;
 import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.mio.FileMessageReader;
-import net.morimekta.providence.mio.FileMessageWriter;
-import net.morimekta.providence.mio.IOMessageReader;
-import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -58,7 +54,6 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -82,8 +77,8 @@ import static net.morimekta.console.util.Parser.oneOf;
  */
 @SuppressWarnings("all")
 public class RPCOptions extends CommonOptions {
-    protected ConvertStream in              = new ConvertStream(Format.binary, null, false);
-    protected ConvertStream out             = new ConvertStream(Format.pretty, null, false);
+    protected ConvertStream in              = new ConvertStream(Format.json);
+    protected ConvertStream out             = new ConvertStream(Format.pretty_json);
     protected boolean       strict          = false;
     protected List<File>    includes        = new ArrayList<>();
     protected String        service         = "";
@@ -101,17 +96,26 @@ public class RPCOptions extends CommonOptions {
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
         ArgumentParser parser = super.getArgumentParser(prog, description);
 
-        parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
-        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), in.toString()));
-        parser.add(new Option("--out", "o", "spec", "Output Specification", new ConvertStreamParser().andApply(this::setOut), out.toString()));
+        parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory",
+                              dir(this::addInclude), null, true, false, false));
+        parser.add(new Option("--in", "i", "spec", "Input specification",
+                              new ConvertStreamParser(in).andApply(this::setIn), in.toString()));
+        parser.add(new Option("--out", "o", "spec", "Output Specification",
+                              new ConvertStreamParser(out).andApply(this::setOut), out.toString()));
         parser.add(new Option("--service", "s", "srv", "Qualified identifier name from definitions to use for parsing source file.",
                               this::setService, null, false, true, false));
-        parser.add(new Option("--format", "f", "fmt", "Request RPC format", oneOf(Format.class, this::setFormat), format.name()));
-        parser.add(new Option("--connect_timeout", "C", "ms", "Connection timeout in milliseconds. 0 means infinite.", i32(this::setConnectTimeout), "10000"));
-        parser.add(new Option("--read_timeout", "R", "ms", "Request timeout in milliseconds. 0 means infinite.", i32(this::setReadTimeout), "10000"));
-        parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.", this::addHeaders, null, true, false, false));
-        parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
-        parser.add(new Argument("URI", "The endpoint URI", this::setEndpoint, null, s -> {
+        parser.add(new Option("--format", "f", "fmt", "Request RPC format",
+                              oneOf(Format.class, this::setFormat), format.name()));
+        parser.add(new Option("--connect_timeout", "C", "ms", "Connection timeout in milliseconds. 0 means infinite.",
+                              i32(this::setConnectTimeout), "10000"));
+        parser.add(new Option("--read_timeout", "R", "ms", "Request timeout in milliseconds. 0 means infinite.",
+                              i32(this::setReadTimeout), "10000"));
+        parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.",
+                              this::addHeaders, null, true, false, false));
+        parser.add(new Flag("--strict", "S", "Read incoming messages strictly.",
+                            this::setStrict));
+        parser.add(new Argument("URI", "The endpoint URI",
+                                this::setEndpoint, null, s -> {
             try {
                 if (!s.contains("://")) return false;
 
@@ -218,42 +222,13 @@ public class RPCOptions extends CommonOptions {
         return srv;
     }
 
-    public MessageReader getInput() throws ParseException {
-        Format fmt = Format.json;
-        File file = null;
-        if (in != null) {
-            fmt = in.format != null ? in.format : fmt;
-            file = in.file;
-        }
-
-        Serializer serializer = getSerializer(fmt);
-        if (file != null) {
-            return new FileMessageReader(file, serializer);
-        } else {
-            BufferedInputStream is = new BufferedInputStream(System.in);
-            return new IOMessageReader(is, serializer);
-        }
+    public MessageReader getInput() throws IOException {
+        return FormatUtils.getServiceInput(in, strict);
     }
 
     public MessageWriter getOutput()
             throws IOException {
-        Format fmt = Format.pretty_json;
-        File file = null;
-        if (out != null) {
-            fmt = out.format != null ? out.format : fmt;
-            file = out.file;
-        }
-
-        final Serializer serializer = getSerializer(fmt);
-        if (file != null) {
-            if (file.exists() && !file.isFile()) {
-                throw new ArgumentException("%s exists and is not a file.", file.getAbsolutePath());
-            }
-
-            return new FileMessageWriter(file, serializer);
-        } else {
-            return new IOMessageWriter(System.out, serializer);
-        }
+        return FormatUtils.getServiceOutput(out, strict);
     }
 
     public PServiceCallHandler getHandler() {

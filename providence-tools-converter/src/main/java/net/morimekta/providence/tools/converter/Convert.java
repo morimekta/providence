@@ -105,15 +105,22 @@ public class Convert {
 
                 cli.validate();
 
-                if (options.getDefinition() == null || options.listTypes) {
+                if (options.getDefinition() == null) {
                     MessageReader in = options.getServiceInput();
                     MessageWriter out = options.getServiceOutput();
                     PService service = options.getServiceDefinition();
 
                     PServiceCall call = in.read(service);
+
+                    in.close();
+
                     out.write(call);
                     out.separator();
+                    out.close();
                     // TODO: Validate we don't have garbage data after call.
+                    if (options.out.base64mime && options.out.file == null) {
+                        System.out.println();
+                    }
                 } else {
                     AtomicInteger num = new AtomicInteger(0);
                     int size = options.getInput()
@@ -121,6 +128,9 @@ public class Convert {
                                       .collect(options.getOutput());
                     if (num.get() == 0 || size == 0) {
                         throw new IOException("No data");
+                    }
+                    if (options.out.base64mime && options.out.file == null) {
+                        System.out.println();
                     }
                 }
                 return;
@@ -166,7 +176,7 @@ public class Convert {
         System.exit(i);
     }
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
         new Convert().run(args);
     }
 }

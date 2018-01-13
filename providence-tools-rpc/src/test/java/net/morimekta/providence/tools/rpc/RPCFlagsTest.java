@@ -67,8 +67,8 @@ public class RPCFlagsTest {
                 " --version (-v)            : Show program version.\n" +
                 " --rc FILE                 : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --include (-I) dir        : Allow includes of files in directory\n" +
-                " --in (-i) spec            : Input specification (default: binary)\n" +
-                " --out (-o) spec           : Output Specification (default: pretty)\n" +
+                " --in (-i) spec            : Input specification (default: json)\n" +
+                " --out (-o) spec           : Output Specification (default: pretty_json)\n" +
                 " --service (-s) srv        : Qualified identifier name from definitions to use for parsing source\n" +
                 "                             file.\n" +
                 " --format (-f) fmt         : Request RPC format (default: binary)\n" +

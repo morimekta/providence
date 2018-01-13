@@ -173,7 +173,7 @@ public class RPCThriftHttpTest {
         assertThat(exitCode, is(0));
 
         String out = new String(Files.readAllBytes(outFile.toPath()), UTF_8);
-        assertThat(out, is("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]"));
+        assertThat(out, is("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]\n"));
     }
 
     @Test

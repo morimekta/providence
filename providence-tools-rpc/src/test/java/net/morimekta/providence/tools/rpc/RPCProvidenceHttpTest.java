@@ -27,6 +27,7 @@ import java.nio.file.Files;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.tools.rpc.internal.TestNetUtil.getExposedPort;
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.getResourceAsBytes;
 import static org.hamcrest.CoreMatchers.is;
@@ -147,16 +148,17 @@ public class RPCProvidenceHttpTest {
                 "-s", "test.MyService",
                 "-i", "file:" + inFile.getAbsolutePath(),
                 "-o", "json,file:" + outFile.getAbsolutePath(),
+                "--verbose",
                 endpoint());
+
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines("")));
+        assertThat(exitCode, is(0));
 
         verify(impl).test(any(Request.class));
 
-        assertThat(console.output(), is(""));
-        assertThat(console.error(), is(""));
-        assertThat(exitCode, is(0));
-
         String out = new String(Files.readAllBytes(outFile.toPath()), UTF_8);
-        assertThat(out, is("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]"));
+        assertThat(out, is("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]\n"));
     }
 
     @Test

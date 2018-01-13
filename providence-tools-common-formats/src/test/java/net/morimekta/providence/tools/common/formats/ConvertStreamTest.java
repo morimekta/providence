@@ -17,11 +17,22 @@ public class ConvertStreamTest {
     public void testRoundTrip() throws IOException {
         ConvertStream stream = new ConvertStream(Format.config,
                                                  tmp.newFile("foo"),
-                                                 true);
+                                                 true,
+                                                 false);
         assertThat(stream.toString(), is("config,base64,file:" + tmp.getRoot().getAbsolutePath() + "/foo"));
 
-        ConvertStreamParser parser = new ConvertStreamParser();
+        ConvertStreamParser parser = new ConvertStreamParser(new ConvertStream(Format.pretty_json));
         ConvertStream other = parser.parse(stream.toString());
         assertThat(other, is(stream));
+
+        stream = new ConvertStream(Format.binary,
+                                   null,
+                                   false,
+                                   false);
+        assertThat(stream.toString(), is("binary"));
+
+        other = parser.parse(stream.toString());
+        assertThat(other, is(stream));
+
     }
 }

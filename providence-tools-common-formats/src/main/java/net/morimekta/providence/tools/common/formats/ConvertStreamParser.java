@@ -10,21 +10,18 @@ import java.io.File;
  * arg4j options handler for stream specification (file / url, format).
  */
 public class ConvertStreamParser implements Parser<ConvertStream> {
-    private final Format defaultFormat;
+    private final ConvertStream defaultStream;
 
-    public ConvertStreamParser() {
-        this(Format.json);
-    }
-
-    public ConvertStreamParser(Format defaultFormat) {
-        this.defaultFormat = defaultFormat;
+    public ConvertStreamParser(@Nonnull ConvertStream defaultStream) {
+        this.defaultStream = defaultStream;
     }
 
     @Override
     public ConvertStream parse(@Nonnull String next) {
-        Format format = defaultFormat;
-        File file = null;
-        boolean base64 = false;
+        Format format = defaultStream.format;
+        File file = defaultStream.file;
+        boolean base64 = defaultStream.base64;
+        boolean base64mime = defaultStream.base64mime;
 
         for (;;) {
             if (next.startsWith("file:")) {
@@ -34,6 +31,10 @@ public class ConvertStreamParser implements Parser<ConvertStream> {
             String[] parts = next.split("[,]", 2);
             if ("base64".equals(parts[0])) {
                 base64 = true;
+                base64mime = false;
+            } else if ("base64mime".equals(parts[0])) {
+                base64mime = true;
+                base64 = false;
             } else {
                 try {
                     format = Format.valueOf(parts[0]);
@@ -48,6 +49,6 @@ public class ConvertStreamParser implements Parser<ConvertStream> {
             }
         }
 
-        return new ConvertStream(format, file, base64);
+        return new ConvertStream(format, file, base64, base64mime);
     }
 }

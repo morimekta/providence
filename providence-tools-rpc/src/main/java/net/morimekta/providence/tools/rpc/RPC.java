@@ -88,10 +88,16 @@ public class RPC {
                 PServiceCallHandler handler = options.getHandler();
 
                 PServiceCall call = in.read(service);
+                in.close();
+
                 PServiceCall resp = handler.handleCall(call, service);
 
                 out.write(resp);
                 out.separator();
+                out.close();
+                if (options.out.base64mime && options.out.file == null) {
+                    System.out.println();
+                }
                 return;
             } catch (ConnectException e) {
                 System.out.flush();

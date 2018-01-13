@@ -10,6 +10,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
@@ -71,8 +72,8 @@ public class ConvertTest {
                 " --version (-v)     : Show program version.\n" +
                 " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --include (-I) dir : Include from directories. (default: ${PWD})\n" +
-                " --in (-i) spec     : Input specification (default: binary)\n" +
-                " --out (-o) spec    : Output specification (default: pretty)\n" +
+                " --in (-i) spec     : Input specification (default: json)\n" +
+                " --out (-o) spec    : Output specification (default: pretty_json)\n" +
                 " --strict (-S)      : Read incoming messages strictly.\n" +
                 " --list-types (-L)  : List the parsed types based on the input files\n" +
                 " type               : Qualified identifier name from definitions to use for parsing source file.\n" +
@@ -147,7 +148,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testStream_BinaryToJson() throws IOException {
+    public void testStream_BinaryToJson() {
         console.setInput(getResourceAsBytes("/binary.data"));
 
         convert.run(
@@ -165,7 +166,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testStream_JsonToBinary_empty() throws IOException {
+    public void testStream_JsonToBinary_empty() {
         console.setInput("{\n" +
                          "}\n");
 
@@ -182,7 +183,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testStream_BinaryToJson_empty() throws IOException {
+    public void testStream_BinaryToJson_empty() {
         console.setInput('\0');
 
         convert.run(
@@ -198,7 +199,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testStream_JsonToBinary() throws IOException {
+    public void testStream_JsonToBinary() {
         console.setInput(getResourceAsBytes("/pretty.json"));
 
         convert.run(
@@ -212,6 +213,52 @@ public class ConvertTest {
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(tmp));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testStream_BinaryToBinary_base64() {
+        byte[] data = getResourceAsBytes("/binary.data");
+        console.setInput(Base64.getMimeEncoder()
+                               .encodeToString(data),
+                         "\n");
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "binary,base64mime",
+                "-o", "binary,base64",
+                "cont.Containers");
+
+        assertThat(console.error(),
+                   is(equalToLines("")));
+        assertThat(console.output(),
+                   is(equalToLines(Base64.getEncoder()
+                                         .withoutPadding()
+                                         .encodeToString(data))));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testStream_BinaryToBinary_base64mime() {
+        byte[] data = getResourceAsBytes("/binary.data");
+        console.setInput(Base64.getEncoder()
+                               .withoutPadding()
+                               .encodeToString(data));
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "binary,base64",
+                "-o", "binary,base64mime",
+                "--verbose",
+                "cont.Containers");
+
+        assertThat(console.error(),
+                   is(equalToLines("")));
+        assertThat(console.output(),
+                   is(Base64.getMimeEncoder()
+                            .encodeToString(data) + System.lineSeparator()));
         assertThat(exitCode, is(0));
     }
 

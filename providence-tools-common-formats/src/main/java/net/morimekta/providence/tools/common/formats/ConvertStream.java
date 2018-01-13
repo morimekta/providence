@@ -15,18 +15,28 @@ public class ConvertStream {
     public final File file;
     // If the content is (or should be) base 64 encoded.
     public final boolean base64;
+    // If the content is (or should be) base 64 encoded line wrapped and padded.
+    public final boolean base64mime;
 
     private static final String PARENT_PARENT = ".." + File.separator + ".." + File.separator;
 
-    public ConvertStream(Format format, File file, boolean base64) {
+    public ConvertStream(Format format) {
+        this(format, null, false, false);
+    }
+
+    public ConvertStream(Format format,
+                         File file,
+                         boolean base64,
+                         boolean base64mime) {
         this.format = format;
         this.file = file;
         this.base64 = base64;
+        this.base64mime = base64mime;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getClass(), format, base64, file);
+        return Objects.hash(getClass(), format, base64, base64mime, file);
     }
 
     @Override
@@ -35,6 +45,7 @@ public class ConvertStream {
         if (o == null || !getClass().equals(o.getClass())) return false;
         ConvertStream other = (ConvertStream) o;
         return base64 == other.base64 &&
+               base64mime == other.base64mime &&
                Objects.equals(format, other.format) &&
                Objects.equals(file, other.file);
     }
@@ -52,6 +63,13 @@ public class ConvertStream {
                 builder.append(',');
             }
             builder.append("base64");
+            hasFormat = true;
+        }
+        if (base64mime) {
+            if (hasFormat) {
+                builder.append(',');
+            }
+            builder.append("base64mime");
             hasFormat = true;
         }
         if (file != null) {
