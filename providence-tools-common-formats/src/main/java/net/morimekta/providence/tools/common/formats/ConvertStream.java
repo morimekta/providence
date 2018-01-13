@@ -3,6 +3,7 @@ package net.morimekta.providence.tools.common.formats;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * Convert params for input or output of providence data.
@@ -23,6 +24,22 @@ public class ConvertStream {
         this.base64 = base64;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClass(), format, base64, file);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !getClass().equals(o.getClass())) return false;
+        ConvertStream other = (ConvertStream) o;
+        return base64 == other.base64 &&
+               Objects.equals(format, other.format) &&
+               Objects.equals(file, other.file);
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         boolean hasFormat = false;
@@ -41,6 +58,7 @@ public class ConvertStream {
             if (hasFormat) {
                 builder.append(',');
             }
+            builder.append("file:");
             Path pwd = new File(System.getenv("PWD")).toPath();
             try {
                 pwd = pwd.toFile().getCanonicalFile().toPath();
