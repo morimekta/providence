@@ -21,6 +21,7 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.model.EnumType;
@@ -354,6 +355,14 @@ public class ThriftProgramParser implements ProgramParser {
                         throw tokenizer.failure(token, "Missing param ID in strict declaration");
                     }
                     field.setId(nextAutoParamKey--);
+                }
+
+                if (PRequirement.OPTIONAL.label.equals(token.asString())) {
+                    field.setRequirement(FieldRequirement.OPTIONAL);
+                    token = tokenizer.expect("param type");
+                } else if (PRequirement.REQUIRED.label.equals(token.asString())) {
+                    field.setRequirement(FieldRequirement.REQUIRED);
+                    token = tokenizer.expect("param type");
                 }
 
                 field.setType(parseType(tokenizer, token, includedPrograms));

@@ -174,6 +174,24 @@ public class ThriftProgramParserTest {
                            "            one_way = true\n" +
                            "            name = \"iamalive\"\n" +
                            "            params = []\n" +
+                           "          },\n" +
+                           "          {\n" +
+                           "            return_type = \"i32\"\n" +
+                           "            name = \"numCalls\"\n" +
+                           "            params = [\n" +
+                           "              {\n" +
+                           "                id = 1\n" +
+                           "                requirement = REQUIRED\n" +
+                           "                type = \"i32\"\n" +
+                           "                name = \"minus\"\n" +
+                           "              },\n" +
+                           "              {\n" +
+                           "                id = 2\n" +
+                           "                requirement = OPTIONAL\n" +
+                           "                type = \"i32\"\n" +
+                           "                name = \"inAdditionTo\"\n" +
+                           "              }\n" +
+                           "            ]\n" +
                            "          }\n" +
                            "        ]\n" +
                            "        annotations = {\n" +
@@ -215,7 +233,7 @@ public class ThriftProgramParserTest {
                            "        type = \"Operand\"\n" +
                            "        name = \"PI\"\n" +
                            "        value = \"{\\n  \\\"number\\\": 3.141592\\n}\"\n" +
-                           "        start_line_no = 62\n" +
+                           "        start_line_no = 63\n" +
                            "        start_line_pos = 20\n" +
                            "      }\n" +
                            "    },\n" +
@@ -225,7 +243,7 @@ public class ThriftProgramParserTest {
                            "        type = \"set<Operator>\"\n" +
                            "        name = \"kComplexOperands\"\n" +
                            "        value = \"[\\n    Operator.MULTIPLY,\\n    Operator.DIVIDE\\n]\"\n" +
-                           "        start_line_no = 67\n" +
+                           "        start_line_no = 68\n" +
                            "        start_line_pos = 40\n" +
                            "      }\n" +
                            "    }\n" +

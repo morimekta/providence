@@ -44,6 +44,7 @@ exception CalculateException {
 service BaseCalculator {
     // line comment on method.
     oneway void iamalive();
+    i32 numCalls(1: required i32 minus, 2: optional i32 inAdditionTo);
 } (deprecated = "Because reasons")
 
 /**

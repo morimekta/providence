@@ -78,12 +78,14 @@ public class CServiceTest {
 
         CServiceMethod iamalive = calc.getMethod("iamalive");  // yes, this goes
         assertThat(iamalive, is(notNullValue()));
+        CServiceMethod numCalls = calc.getMethod("numCalls");  // yes, this goes
+        assertThat(numCalls, is(notNullValue()));
         CServiceMethod calculate = calc.getMethod("calculate");
         assertThat(calculate, is(notNullValue()));
 
         assertThat(calc.getMethod("ping"), is(nullValue()));
 
-        assertThat(base.getMethods(), is(ImmutableList.of(iamalive)));
+        assertThat(base.getMethods(), is(ImmutableList.of(iamalive, numCalls)));
         assertThat(calc.getMethods(), is(ImmutableList.of(calculate)));
 
         assertThat(base.getAnnotations(), is(ImmutableSet.of("deprecated")));
