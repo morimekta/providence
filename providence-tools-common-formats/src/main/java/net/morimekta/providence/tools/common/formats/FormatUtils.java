@@ -94,11 +94,11 @@ public class FormatUtils {
         Map<String, File> includeMap = new HashMap<>();
         if (includes.isEmpty()) {
             collectConfigIncludes(rc, includeMap);
-        }
-        if (includes.isEmpty()) {
-            throw new ArgumentException("No includes, use --include/-I or update ~/.pvdrc");
-        }
-        if (includeMap.isEmpty()) {
+
+            if (includeMap.isEmpty()) {
+                throw new ArgumentException("No includes, use --include/-I or update ~/.pvdrc");
+            }
+        } else {
             for (File file : includes) {
                 collectIncludes(file, includeMap);
             }
