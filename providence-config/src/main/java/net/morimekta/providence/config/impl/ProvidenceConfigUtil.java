@@ -37,10 +37,14 @@ import net.morimekta.util.Strings;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Utilities for helping with providence config handling.
@@ -103,38 +107,38 @@ public class ProvidenceConfigUtil {
         }
 
         if (message == null || !message.has(field.getId())) {
-            return defaultAsFieldType(field, defValue);
+            return asType(field.getDescriptor(), defValue);
         }
 
         return message.get(field.getId());
     }
 
     @SuppressWarnings("unchecked")
-    private static Object defaultAsFieldType(PField field, Object o) throws ProvidenceConfigException {
+    private static Object asType(PDescriptor descriptor, Object o) throws ProvidenceConfigException {
         if (o == null) {
             return null;
         }
 
-        switch (field.getType()) {
+        switch (descriptor.getType()) {
             case BOOL:
                 return asBoolean(o);
             case BYTE:
-                return (byte) asInteger(o);
+                return (byte) asInteger(o, Byte.MIN_VALUE, Byte.MAX_VALUE);
             case I16:
-                return (short) asInteger(o);
+                return (short) asInteger(o, Short.MIN_VALUE, Short.MAX_VALUE);
             case I32:
-                return asInteger(o);
+                return asInteger(o, Integer.MIN_VALUE, Integer.MAX_VALUE);
             case I64:
                 return asLong(o);
             case DOUBLE:
                 return asDouble(o);
             case ENUM:
                 if (o instanceof Number) {
-                    return ((PEnumDescriptor) field.getDescriptor()).findById(((Number) o).intValue());
+                    return ((PEnumDescriptor) descriptor).findById(((Number) o).intValue());
                 } else if (o instanceof Numeric) {
-                    return ((PEnumDescriptor) field.getDescriptor()).findById(((Numeric) o).asInteger());
+                    return ((PEnumDescriptor) descriptor).findById(((Numeric) o).asInteger());
                 } else if (o instanceof CharSequence) {
-                    return ((PEnumDescriptor) field.getDescriptor()).findByName(o.toString());
+                    return ((PEnumDescriptor) descriptor).findByName(o.toString());
                 } else {
                     throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to enum type.");
                 }
@@ -155,18 +159,26 @@ public class ProvidenceConfigUtil {
                 } else {
                     throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to binary.");
                 }
-            case LIST:
-                return ((PList<Object>) field.getDescriptor()).builder().addAll(asCollection(o)).build();
-            case SET:
-                return ((PSet<Object>) field.getDescriptor()).builder().addAll(asCollection(o)).build();
-            case MAP:
-                if (o instanceof Map) {
-                    return ((PMap<Object,Object>) field.getDescriptor()).builder().putAll((Map<Object,Object>) o).build();
-                } else {
-                    throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to map.");
-                }
+            case LIST: {
+                PList<Object> list = (PList) descriptor;
+                return list.builder()
+                           .addAll(asCollection(o, list.itemDescriptor()))
+                           .build();
+            }
+            case SET: {
+                PSet<Object> set = (PSet) descriptor;
+                return set.builder()
+                          .addAll(asCollection(o, set.itemDescriptor()))
+                          .build();
+            }
+            case MAP: {
+                PMap<Object, Object> map = (PMap) descriptor;
+                return map.builder()
+                          .putAll(asMap(o, map.keyDescriptor(), map.itemDescriptor()))
+                          .build();
+            }
             default:
-                throw new IllegalStateException("Unhandled field type: " + field.getType());
+                throw new IllegalStateException("Unhandled field type: " + descriptor.getType());
         }
     }
 
@@ -181,7 +193,7 @@ public class ProvidenceConfigUtil {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof Double || value instanceof Float) {
-            throw new ProvidenceConfigException("Unable to convert double value to boolean");
+            throw new ProvidenceConfigException("Unable to convert real value to boolean");
         } else if (value instanceof Number) {
             long l = ((Number) value).longValue();
             if (l == 0L) return false;
@@ -217,16 +229,30 @@ public class ProvidenceConfigUtil {
      * @return The integer value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
-    static int asInteger(Object value) throws ProvidenceConfigException {
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
+    static int asInteger(Object value, int min, int max) throws ProvidenceConfigException {
+        if (value instanceof Long) {
+            return validateInRange("Long", (Long) value, min, max);
+        } else if (value instanceof Float || value instanceof Double) {
+            long l = ((Number) value).longValue();
+            if ((double) l != ((Number) value).doubleValue()) {
+                throw new ProvidenceConfigException("Truncating integer decimals from " + value.toString());
+            }
+            return validateInRange(value.getClass().getSimpleName(), l, min, max);
+        } else if (value instanceof Number) {
+            return validateInRange(value.getClass().getSimpleName(), ((Number) value).intValue(), min, max);
         } else if (value instanceof Numeric) {
-            return ((Numeric) value).asInteger();
+            return validateInRange("Numeric", ((Numeric) value).asInteger(), min, max);
         } else if (value instanceof Boolean) {
             return ((Boolean) value) ? 1 : 0;
         } else if (value instanceof CharSequence) {
             try {
-                return Integer.parseInt(value.toString());
+                String s = value.toString();
+                if (s.startsWith("0x")) {
+                    return validateInRange("String", Integer.parseInt(s.substring(2), 16), min, max);
+                } else if (s.startsWith("0")) {
+                    return validateInRange("String", Integer.parseInt(s, 8), min, max);
+                }
+                return validateInRange("String", Integer.parseInt(value.toString()), min, max);
             } catch (NumberFormatException nfe) {
                 throw new ProvidenceConfigException(
                         "Unable to parse string \"" + Strings.escape(value.toString()) +
@@ -234,9 +260,18 @@ public class ProvidenceConfigUtil {
             }
         } else if (value instanceof Date) {
             // Convert date timestamp to seconds since epoch.
-            return (int) (((Date) value).getTime() / 1000);
+            return validateInRange("Date", (((Date) value).getTime() / 1000), min, max);
         }
         throw new ProvidenceConfigException("Unable to convert " + value.getClass().getSimpleName() + " to an int");
+    }
+
+    private static int validateInRange(String type, long l, int min, int max) throws ProvidenceConfigException {
+        if (l < min) {
+            throw new ProvidenceConfigException(type + " value outsize of bounds: " + l + " < " + min);
+        } else if (l > max) {
+            throw new ProvidenceConfigException(type + " value outsize of bounds: " + l + " > " + max);
+        }
+        return (int) l;
     }
 
     /**
@@ -247,7 +282,13 @@ public class ProvidenceConfigUtil {
      * @throws ProvidenceConfigException When unable to convert value.
      */
     static long asLong(Object value) throws ProvidenceConfigException {
-        if (value instanceof Number) {
+        if (value instanceof Float || value instanceof Double) {
+            long l = ((Number) value).longValue();
+            if ((double) l != ((Number) value).doubleValue()) {
+                throw new ProvidenceConfigException("Truncating long decimals from " + value.toString());
+            }
+            return l;
+        } else if (value instanceof Number) {
             return ((Number) value).longValue();
         } else if (value instanceof Numeric) {
             return ((Numeric) value).asInteger();
@@ -255,13 +296,19 @@ public class ProvidenceConfigUtil {
             return ((Boolean) value) ? 1L : 0L;
         } else if (value instanceof CharSequence) {
             try {
-                return Long.parseLong(value.toString());
+                String s = value.toString();
+                if (s.startsWith("0x")) {
+                    return Long.parseLong(s.substring(2), 16);
+                } else if (s.startsWith("0")) {
+                    return Long.parseLong(s, 8);
+                }
+                return Long.parseLong(s);
             } catch (NumberFormatException nfe) {
                 throw new ProvidenceConfigException("Unable to parse string \"" + Strings.escape(value.toString()) +
                                                     "\" to a long", nfe);
             }
         } else if (value instanceof Date) {
-            // Return date timestamp.
+            // Return date timestamp in milliseconds.
             return ((Date) value).getTime();
         }
         throw new ProvidenceConfigException("Unable to convert " + value.getClass().getSimpleName() + " to a long");
@@ -315,14 +362,44 @@ public class ProvidenceConfigUtil {
      * Convert the value to a collection.
      *
      * @param value The value instance.
-     * @param <T> The collection item type.
+     * @param itemType The item type descriptor.
+     * @param <T> The item type.
      * @return The collection value.
      * @throws ProvidenceConfigException When unable to convert value.
      */
     @SuppressWarnings("unchecked")
-    static <T> Collection<T> asCollection(Object value) throws ProvidenceConfigException {
+    static <T> Collection<T> asCollection(Object value, PDescriptor itemType) throws ProvidenceConfigException {
         if (value instanceof Collection) {
-            return (Collection) value;
+            List<T> out = new ArrayList<>();
+            for (Object item : (Collection) value) {
+                out.add((T) asType(itemType, item));
+            }
+            return out;
+        }
+        throw new ProvidenceConfigException(
+                "Unable to convert " + value.getClass().getSimpleName() + " to a collection");
+    }
+
+    /**
+     * Convert the value to a collection.
+     *
+     * @param value The value instance.
+     * @param keyType The key type descriptor.
+     * @param itemType The value type descriptor.
+     * @param <K> The map key type.
+     * @param <V> The map value type.
+     * @return The map value.
+     * @throws ProvidenceConfigException When unable to convert value.
+     */
+    @SuppressWarnings("unchecked")
+    static <K,V> Map<K,V> asMap(Object value, PDescriptor keyType, PDescriptor itemType) throws ProvidenceConfigException {
+        if (value instanceof Map) {
+            Map<K,V> out = value instanceof TreeMap ? new TreeMap<>() : new LinkedHashMap<>();
+            for (Map.Entry item : ((Map<?,?>) value).entrySet()) {
+                out.put((K) asType(keyType, item.getKey()),
+                        (V) asType(itemType, item.getValue()));
+            }
+            return out;
         }
         throw new ProvidenceConfigException(
                 "Unable to convert " + value.getClass().getSimpleName() + " to a collection");

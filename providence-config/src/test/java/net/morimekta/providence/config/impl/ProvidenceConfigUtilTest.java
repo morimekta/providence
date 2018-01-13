@@ -7,6 +7,7 @@ import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.ServicePort;
+import net.morimekta.util.Numeric;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +16,10 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asBoolean;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asInteger;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -97,5 +101,96 @@ public class ProvidenceConfigUtilTest {
         } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Field 'name' is not of message type in config.Service"));
         }
+    }
+
+    @Test
+    public void testAsBoolean() throws ProvidenceConfigException {
+        assertThat(asBoolean("true"), is(true));
+        assertThat(asBoolean(true), is(true));
+        assertThat(asBoolean(1L), is(true));
+        assertThat(asBoolean((byte) 0), is(false));
+        assertThat(asBoolean(new StringBuilder("F")), is(false));
+        try {
+            asBoolean(new Object());
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to convert Object to a boolean"));
+        }
+        try {
+            asBoolean("foo");
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to parse the string \"foo\" to boolean"));
+        }
+        try {
+            asBoolean(111);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to convert number 111 to boolean"));
+        }
+        try {
+            asBoolean(1.0);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to convert real value to boolean"));
+        }
+    }
+
+    @Test
+    public void testAsInteger() throws ProvidenceConfigException {
+        assertThat(asInteger(2,
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(2));
+        assertThat(asInteger("1234",
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(1234));
+        assertThat(asInteger("0xff",
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(0xff));
+        assertThat(asInteger("0777",
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(511));
+        assertThat(asInteger((Numeric) () -> 111,
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(111));
+        assertThat(asInteger(new StringBuilder("111"),
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(111));
+        assertThat(asInteger(false,
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(0));
+        assertThat(asInteger(new Date(1234567890000L),
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(1234567890));
+        assertThat(asInteger(12345.0,
+                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(12345));
+
+        try {
+            asInteger(new StringBuilder("foo"), Integer.MIN_VALUE, Integer.MAX_VALUE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to parse string \"foo\" to an int"));
+        }
+        try {
+            asInteger(1234567890123456789L, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Long value outsize of bounds: 1234567890123456789 > 2147483647"));
+        }
+        try {
+            asInteger(-1234, Byte.MIN_VALUE, Byte.MAX_VALUE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Integer value outsize of bounds: -1234 < -128"));
+        }
+        try {
+            asInteger(12.345, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Truncating integer decimals from 12.345"));
+        }
+        try {
+            asInteger(new Object(), Byte.MIN_VALUE, Byte.MAX_VALUE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to convert Object to an int"));
+        }
+    }
+
+    @Test
+    public void testAsLong() {
+
     }
 }

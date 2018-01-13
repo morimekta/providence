@@ -918,11 +918,11 @@ public class ProvidenceConfigParser {
             case BOOL:
                 return (V) (Object) asBoolean(value);
             case BYTE:
-                return (V) (Object) (byte) asInteger(value);
+                return (V) (Object) (byte) asInteger(value, Byte.MIN_VALUE, Byte.MAX_VALUE);
             case I16:
-                return (V) (Object) (short) asInteger(value);
+                return (V) (Object) (short) asInteger(value, Short.MIN_VALUE, Short.MAX_VALUE);
             case I32:
-                return (V) (Object) asInteger(value);
+                return (V) (Object) asInteger(value, Integer.MIN_VALUE, Integer.MAX_VALUE);
             case I64:
                 return (V) (Object) asLong(value);
             case DOUBLE:
