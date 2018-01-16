@@ -285,7 +285,7 @@ public class ProvidenceConfigTest {
                      debugString(stage_service.get()));
 
         AtomicBoolean watcherCalled = new AtomicBoolean(false);
-        watcher.weakAddWatcher(file -> watcherCalled.set(true));
+        watcher.addWatcher(file -> watcherCalled.set(true));
 
         File tmp = temp.newFile();
         writeContentTo(getResourceAsString("/net/morimekta/providence/config/files/stage_db2.cfg"), tmp);

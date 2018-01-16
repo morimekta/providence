@@ -67,13 +67,11 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
     @Nonnull
     @Override
     public final M get() {
-        synchronized (this) {
-            M config = instance.get();
-            if (config == null) {
-                throw new IllegalStateException("No config instance");
-            }
-            return config;
+        M config = instance.get();
+        if (config == null) {
+            throw new IllegalStateException("No config instance");
         }
+        return config;
     }
 
     @Override
@@ -106,7 +104,8 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
     protected final void set(M config) {
         ArrayList<WeakReference<ConfigListener<M,F>>> iterateOver;
         synchronized (this) {
-            if (instance.get() != null && instance.get().equals(config)) {
+            M old = instance.get();
+            if (old == config || (old != null && old.equals(config))) {
                 return;
             }
 
