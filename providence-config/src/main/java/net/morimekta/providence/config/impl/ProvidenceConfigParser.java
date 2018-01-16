@@ -51,7 +51,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -61,11 +60,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asBoolean;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asDouble;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asInteger;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asLong;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asString;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
 
 /**
  * This parser parses config files. The class in itself should be stateless, so
@@ -82,11 +77,27 @@ public class ProvidenceConfigParser {
         MESSAGE
     }
 
+    /**
+     * Create a providence config parser instance.
+     *
+     * @param registry The type registry used.
+     * @param strict If config should be parsed and handled strictly.
+     */
     public ProvidenceConfigParser(TypeRegistry registry, boolean strict) {
         this.registry = registry;
         this.strict = strict;
     }
 
+    /**
+     * Parse a providence config into a message.
+     *
+     * @param configFile The config file to be parsed.
+     * @param parent The parent config message.
+     * @param <M> The config message type.
+     * @param <F> The config field type.
+     * @return Pair of parsed config and set of included file paths.
+     * @throws ProvidenceConfigException If parsing failed.
+     */
     @Nonnull
     <M extends PMessage<M, F>, F extends PField>
     Pair<M, Set<String>> parseConfig(@Nonnull File configFile, @Nullable M parent) throws ProvidenceConfigException {
@@ -419,7 +430,9 @@ public class ProvidenceConfigParser {
         return parseMessage(tokenizer, context, builder);
     }
 
-    private void consumeValue(ProvidenceConfigContext context, Tokenizer tokenizer, Token token) throws IOException {
+    private void consumeValue(@Nonnull ProvidenceConfigContext context,
+                              @Nonnull Tokenizer tokenizer,
+                              @Nonnull Token token) throws IOException {
         if (UNDEFINED.equals(token.asString())) {
             // ignore undefined.
             return;
@@ -429,7 +442,7 @@ public class ProvidenceConfigParser {
                 return;
             }
             // reference + message.
-            token = tokenizer.next();
+            token = tokenizer.expect("start of message");
         }
 
         if (token.isSymbol(Token.kMessageStart)) {
@@ -470,16 +483,16 @@ public class ProvidenceConfigParser {
 
                     if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
                         // direct inheritance of message field.
-                        consumeValue(context, tokenizer, tokenizer.next());
+                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
                     } else {
                         tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
-                        consumeValue(context, tokenizer, tokenizer.next());
+                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
                     }
                     token = nextNotLineSep(tokenizer, "message field or end");
                 }
             }
         } else if (token.isSymbol(Token.kListStart)) {
-            token = tokenizer.next();
+            token = tokenizer.expect("list value or end");
             while (!token.isSymbol(Token.kListEnd)) {
                 consumeValue(context, tokenizer, token);
                 // lists and sets require list separator (,), and allows trailing separator.
@@ -501,9 +514,9 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    private <M extends PMessage<M, F>, F extends PField> M parseMessage(Tokenizer tokenizer,
-                                                                        ProvidenceConfigContext context,
-                                                                        PMessageBuilder<M, F> builder)
+    private <M extends PMessage<M, F>, F extends PField> M parseMessage(@Nonnull Tokenizer tokenizer,
+                                                                        @Nonnull ProvidenceConfigContext context,
+                                                                        @Nonnull PMessageBuilder<M, F> builder)
             throws IOException {
         PMessageDescriptor<M, F> descriptor = builder.descriptor();
 
@@ -641,7 +654,7 @@ public class ProvidenceConfigParser {
                         }
                     }
                 } else {
-                    baseValue.putAll((Map) builder.build().get(field.getId()));
+                    baseValue.putAll(builder.build().get(field.getId()));
                 }
 
                 if (!token.isSymbol(Token.kMessageStart)) {
@@ -914,61 +927,7 @@ public class ProvidenceConfigParser {
         if (value == null) {
             return null;
         }
-        switch (descriptor.getType()) {
-            case BOOL:
-                return (V) (Object) asBoolean(value);
-            case BYTE:
-                return (V) (Object) (byte) asInteger(value, Byte.MIN_VALUE, Byte.MAX_VALUE);
-            case I16:
-                return (V) (Object) (short) asInteger(value, Short.MIN_VALUE, Short.MAX_VALUE);
-            case I32:
-                return (V) (Object) asInteger(value, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            case I64:
-                return (V) (Object) asLong(value);
-            case DOUBLE:
-                return (V) (Object) asDouble(value);
-            case ENUM:
-                if (value instanceof PEnumValue) {
-                    PEnumValue verified = ((PEnumDescriptor) descriptor).findById(((PEnumValue) value).asInteger());
-                    if (value.equals(verified)) {
-                        return (V) value;
-                    }
-                } else if (value instanceof Number) {
-                    return (V) ((PEnumDescriptor) descriptor).findById(((Number) value).intValue());
-                } else if (value instanceof CharSequence) {
-                    return (V) ((PEnumDescriptor) descriptor).findByName(value.toString());
-                }
-                throw new ProvidenceConfigException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getQualifiedName());
-            case STRING:
-                return (V) asString(value);
-            case BINARY:
-                if (value instanceof Binary) {
-                    return (V) value;
-                } else if (value instanceof CharSequence) {
-                    return (V) Binary.fromBase64(value.toString());
-                }
-                throw new ProvidenceConfigException(value.getClass().getSimpleName() + " is not compatible with binary");
-            case MAP:
-                if (value instanceof Map) {
-                    return (V) value;
-                }
-                throw new ProvidenceConfigException(value.getClass().getSimpleName() + " is not compatible with map");
-            case SET:
-            case LIST:
-                if (value instanceof Collection) {
-                    return (V) value;
-                }
-                throw new ProvidenceConfigException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getType());
-            case MESSAGE:
-                if (value instanceof PMessage) {
-                    if (descriptor.equals(((PMessage) value).descriptor())) {
-                        return (V) value;
-                    }
-                }
-                throw new ProvidenceConfigException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getQualifiedName());
-            default:
-                throw new IllegalArgumentException("Type " + descriptor.getType() + " is not handled by config.");
-        }
+        return (V) asType(descriptor, value);
     }
 
     private Object resolveAny(ProvidenceConfigContext context, Token token, Tokenizer tokenizer)

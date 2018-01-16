@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.config.impl;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.config.ProvidenceConfigException;
@@ -49,7 +50,7 @@ import java.util.TreeMap;
 /**
  * Utilities for helping with providence config handling.
  */
-public class ProvidenceConfigUtil {
+class ProvidenceConfigUtil {
     /**
      * Look up a key in the message structure. If the key is not found, return null.
      *
@@ -114,7 +115,7 @@ public class ProvidenceConfigUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static Object asType(PDescriptor descriptor, Object o) throws ProvidenceConfigException {
+    static Object asType(PDescriptor descriptor, Object o) throws ProvidenceConfigException {
         if (o == null) {
             return null;
         }
@@ -133,21 +134,31 @@ public class ProvidenceConfigUtil {
             case DOUBLE:
                 return asDouble(o);
             case ENUM:
-                if (o instanceof Number) {
+                if (o instanceof PEnumValue) {
+                    PEnumValue verified = ((PEnumDescriptor) descriptor).findById(((PEnumValue) o).asInteger());
+                    if (o.equals(verified)) {
+                        return verified;
+                    }
+                } else if (o instanceof Number) {
                     return ((PEnumDescriptor) descriptor).findById(((Number) o).intValue());
                 } else if (o instanceof Numeric) {
                     return ((PEnumDescriptor) descriptor).findById(((Numeric) o).asInteger());
                 } else if (o instanceof CharSequence) {
                     return ((PEnumDescriptor) descriptor).findByName(o.toString());
-                } else {
-                    throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to enum type.");
                 }
+                throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to enum " + descriptor.getQualifiedName());
             case MESSAGE:
                 if (o instanceof PMessage) {
                     // Assume the correct message.
-                    return o;
+                    PMessage message = (PMessage) o;
+                    if (descriptor.equals(message.descriptor())) {
+                        return o;
+                    }
+                    throw new ProvidenceConfigException("Message type mismatch: " + message.descriptor().getQualifiedName() +
+                                                        " is not compatible with " + descriptor.getQualifiedName());
                 } else {
-                    throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to message.");
+                    throw new ProvidenceConfigException(o.getClass().getSimpleName() + " is not compatible with message " +
+                                                        descriptor.getQualifiedName());
                 }
             case STRING:
                 return asString(o);
@@ -157,7 +168,8 @@ public class ProvidenceConfigUtil {
                 } else if (o instanceof CharSequence) {
                     return Binary.fromBase64(o.toString());
                 } else {
-                    throw new ProvidenceConfigException("Unable to cast " + o.getClass().getSimpleName() + " to binary.");
+                    throw new ProvidenceConfigException(o.getClass()
+                                                         .getSimpleName() + " is not compatible with binary");
                 }
             case LIST: {
                 PList<Object> list = (PList) descriptor;
