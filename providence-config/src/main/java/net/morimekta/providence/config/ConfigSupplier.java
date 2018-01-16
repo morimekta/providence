@@ -70,6 +70,9 @@ public interface ConfigSupplier<M extends PMessage<M,F>, F extends PField> exten
      * @return Non-modifiable supplier of current config containing a snapshot.
      */
     default ConfigSupplier<M,F> snapshot() {
+        if (this instanceof FixedConfigSupplier) {
+            return this;
+        }
         return new FixedConfigSupplier<>(this);
     }
 }

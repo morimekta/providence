@@ -24,12 +24,14 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.time.Clock;
 import java.util.Objects;
 
 /**
  * A supplier and instance holder for an immutable config instance.
  */
+@Immutable
 public class FixedConfigSupplier<M extends PMessage<M,F>, F extends PField> implements ConfigSupplier<M,F> {
     private final M instance;
     private final long timestamp;
