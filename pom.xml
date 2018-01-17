@@ -112,7 +112,7 @@
         <jackson.version>2.9.3</jackson.version>
         <slf4j.version>1.7.25</slf4j.version>
 
-        <morimekta_utils.version>2.4.1</morimekta_utils.version>
+        <morimekta_utils.version>2.4.2</morimekta_utils.version>
         <guava.version>23.6-jre</guava.version>
 
         <!-- Controlling the providence-maven-plugin -->
