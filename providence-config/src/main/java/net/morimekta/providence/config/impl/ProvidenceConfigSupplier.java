@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.time.Clock;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,14 +60,6 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     public ProvidenceConfigSupplier(@Nonnull File configFile,
                                     @Nullable ConfigSupplier<Message, Field> parentSupplier,
                                     @Nullable FileWatcher fileWatcher,
-                                    @Nonnull ProvidenceConfigParser configParser)
-            throws ProvidenceConfigException {
-        this(configFile, parentSupplier, fileWatcher, configParser, Clock.systemUTC());
-    }
-
-    public ProvidenceConfigSupplier(@Nonnull File configFile,
-                                    @Nullable ConfigSupplier<Message, Field> parentSupplier,
-                                    @Nullable FileWatcher fileWatcher,
                                     @Nonnull ProvidenceConfigParser configParser,
                                     @Nonnull Clock clock)
             throws ProvidenceConfigException {
@@ -74,7 +67,8 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
         this.configFile = configFile;
         this.configParser = configParser;
         this.parentSupplier = parentSupplier;
-        this.includedFiles = new HashSet<>();
+        this.includedFiles = Collections.synchronizedSet(new HashSet<>());
+        this.includedFiles.add(configFile.toString());
         this.fileWatcher = fileWatcher;
 
         synchronized (this) {
@@ -83,7 +77,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
                 // TODO: Make the file watcher hold weak references.
                 // This may cause long term memory leaks.
                 fileListener = file -> {
-                    if (includedFiles.contains(file.toString())) {
+                    if (configFile.equals(file) || includedFiles.contains(file.toString())) {
                         reload();
                     }
                 };
@@ -106,7 +100,8 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ProvidenceConfig{" + configFile.getName());
+        builder.append("ProvidenceConfig{")
+               .append(configFile.getName());
         if (parentSupplier != null) {
             builder.append(", parent=");
             builder.append(parentSupplier.getName());
@@ -140,7 +135,6 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     private Message loadConfig(@Nullable Message parent) throws ProvidenceConfigException {
         Pair<Message, Set<String>> tmp = configParser.parseConfig(configFile, parent);
         if (fileWatcher != null) {
-            fileWatcher.startWatching(configFile);
             synchronized (this) {
                 if (!tmp.second.equals(includedFiles)) {
                     includedFiles.clear();

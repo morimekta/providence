@@ -22,6 +22,7 @@ package net.morimekta.providence.config.impl;
 
 import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
 
@@ -57,10 +58,12 @@ public class ProvidenceConfigSupplierTest {
 
     private ProvidenceConfigParser parser;
     private FileWatcher            watcher;
+    private FakeClock              clock;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
+        clock = new FakeClock();
         parser = mock(ProvidenceConfigParser.class);
         watcher = mock(FileWatcher.class);
     }
@@ -81,7 +84,7 @@ public class ProvidenceConfigSupplierTest {
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
-                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
 
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
@@ -103,7 +106,6 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(second)));
 
         verify(parser).parseConfig(file, null);
-        verify(watcher).startWatching(any(File.class));
         verifyNoMoreInteractions(parser, watcher);
     }
 
@@ -123,7 +125,7 @@ public class ProvidenceConfigSupplierTest {
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
-                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
 
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
@@ -145,7 +147,6 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(second)));
 
         verify(parser).parseConfig(file, null);
-        verify(watcher).startWatching(file);
         verifyNoMoreInteractions(parser, watcher);
     }
 
@@ -160,7 +161,7 @@ public class ProvidenceConfigSupplierTest {
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
-                new ProvidenceConfigSupplier<>(file, null, watcher, parser);
+                new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
         assertThat(supplier.get(), is(first));
         verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         reset(parser, watcher);

@@ -47,4 +47,8 @@ public class ProvidenceConfigException extends TokenizerException {
         super(cause, null);
         setFile(cause.getFile());
     }
+
+    public ProvidenceConfigException setFile(String file) {
+        return (ProvidenceConfigException) super.setFile(file);
+    }
 }

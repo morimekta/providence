@@ -101,20 +101,18 @@ public class ProvidenceConfigParser {
     @Nonnull
     <M extends PMessage<M, F>, F extends PField>
     Pair<M, Set<String>> parseConfig(@Nonnull File configFile, @Nullable M parent) throws ProvidenceConfigException {
-        configFile = absoluteCanonical(configFile);
+        try {
+            configFile = canonicalFileLocation(configFile);
+        } catch (IOException e) {
+            throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile)
+                    .setFile(configFile.getName());
+        }
         Pair<M, Set<String>> result = checkAndParseInternal(configFile, parent);
         if (result == null) {
-            throw new IllegalArgumentException("No config: " + configFile.toString());
+            throw new ProvidenceConfigException("No config: " + configFile.toString())
+                    .setFile(configFile.getName());
         }
         return result;
-    }
-
-    private File absoluteCanonical(File f) throws ProvidenceConfigException {
-        try {
-            return f.getAbsoluteFile().getCanonicalFile();
-        } catch (IOException e) {
-            throw new ProvidenceConfigException(e, "Unable to resolve config file " + f);
-        }
     }
 
     // --- private
@@ -124,15 +122,14 @@ public class ProvidenceConfigParser {
                                                @Nullable M parent,
                                                String... includeStack) throws ProvidenceConfigException {
         try {
-            configFile = configFile.getAbsoluteFile()
-                                   .getCanonicalFile();
-
-            String filePath = configFile.toString();
+            // So we map actual loaded files by the absolute canonical location.
+            String canonicalFile = configFile.getCanonicalFile()
+                                             .getAbsolutePath();
             List<String> stackList = new ArrayList<>();
             Collections.addAll(stackList, includeStack);
 
-            if (Arrays.binarySearch(includeStack, filePath) >= 0) {
-                stackList.add(filePath);
+            if (Arrays.binarySearch(includeStack, canonicalFile) >= 0) {
+                stackList.add(canonicalFile);
                 throw new ProvidenceConfigException("Circular includes detected: " +
                                                     String.join(" -> ",
                                                                 stackList.stream()
@@ -140,7 +137,7 @@ public class ProvidenceConfigParser {
                                                                          .collect(Collectors.toList())));
             }
 
-            stackList.add(filePath);
+            stackList.add(canonicalFile);
 
             return parseConfigRecursively(configFile, parent, stackList.toArray(new String[stackList.size()]));
         } catch (IOException e) {
@@ -158,9 +155,8 @@ public class ProvidenceConfigParser {
                 }
                 throw new ProvidenceConfigException(te);
             }
-            ProvidenceConfigException ex = new ProvidenceConfigException(e, e.getMessage());
-            ex.setFile(configFile.getName());
-            throw ex;
+            throw new ProvidenceConfigException(e, e.getMessage())
+                    .setFile(configFile.getName());
         }
     }
 
@@ -991,22 +987,29 @@ public class ProvidenceConfigParser {
             INCLUDE
     );
 
+    public static File canonicalFileLocation(@Nonnull File file) throws IOException {
+        File parent = file.getAbsoluteFile()
+                          .getParentFile()
+                          .getCanonicalFile()
+                          .getAbsoluteFile();
+        return new File(parent, file.getName());
+    }
+
     /**
      * Resolve a file path within the source roots.
      *
-     * @param ref A file or directory reference
+     * @param reference A file or directory reference
      * @param path The file reference to resolve.
      * @return The resolved file.
      * @throws FileNotFoundException When the file is not found.
      * @throws IOException When unable to make canonical path.
      */
-    protected static File resolveFile(File ref, String path) throws IOException {
-        if (ref == null) {
-            // relative to PWD from initial load file path.
-            File tmp = new File(path).getCanonicalFile().getAbsoluteFile();
-            if (tmp.exists()) {
-                if (tmp.isFile()) {
-                    return tmp;
+    static File resolveFile(File reference, String path) throws IOException {
+        if (reference == null) {
+            File file = canonicalFileLocation(new File(path));
+            if (file.exists()) {
+                if (file.getCanonicalFile().isFile()) {
+                    return file;
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
             }
@@ -1014,16 +1017,20 @@ public class ProvidenceConfigParser {
         } else if (path.startsWith("/")) {
             throw new FileNotFoundException("Absolute path includes not allowed: " + path);
         } else {
-            // relative to reference file. Parent directory lookup (..) allowed.
-
-            if (!ref.isDirectory()) {
-                ref = ref.getParentFile();
+            // Referenced files are referenced from the real file,
+            // not from symlink location, in case of sym-linked files.
+            // this way include references are always consistent, but
+            // files can be referenced via symlinks if needed.
+            reference = reference.getCanonicalFile()
+                                 .getAbsoluteFile();
+            if (!reference.isDirectory()) {
+                reference = reference.getParentFile();
             }
-            File tmp = new File(ref, path).getCanonicalFile()
-                                          .getAbsoluteFile();
-            if (tmp.exists()) {
-                if (tmp.isFile()) {
-                    return tmp;
+            File file = canonicalFileLocation(new File(reference, path));
+
+            if (file.exists()) {
+                if (file.isFile()) {
+                    return file;
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
             }

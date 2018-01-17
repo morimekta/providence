@@ -35,6 +35,8 @@ import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static net.morimekta.providence.config.impl.ProvidenceConfigParser.canonicalFileLocation;
+
 /**
  * Providence config loader. This loads providence configs.
  */
@@ -85,18 +87,21 @@ public class ProvidenceConfig implements ConfigResolver {
     ConfigSupplier<M, F> resolveConfig(@Nonnull File configFile,
                                        @Nullable ConfigSupplier<M, F> parentConfig)
             throws ProvidenceConfigException {
+        try {
+            configFile = canonicalFileLocation(configFile);
+        } catch (IOException e) {
+            throw new ProvidenceConfigException(e, e.getMessage());
+        }
+
         String path = null;
         if (parentConfig == null) {
-            try {
-                path = configFile.getAbsoluteFile().getCanonicalPath();
-                if (loaded.containsKey(path)) {
-                    return (ConfigSupplier<M,F>) loaded.get(path);
-                }
-            } catch (IOException e) {
-                throw new ProvidenceConfigException(e, e.getMessage());
+            path = configFile.toString();
+            if (loaded.containsKey(path)) {
+                return (ConfigSupplier<M, F>) loaded.get(path);
             }
         }
-        ProvidenceConfigSupplier<M,F> supplier = new ProvidenceConfigSupplier<>(configFile, parentConfig, watcher, parser, clock);
+        ProvidenceConfigSupplier<M, F> supplier = new ProvidenceConfigSupplier<>(
+                configFile, parentConfig, watcher, parser, clock);
         if (parentConfig == null) {
             loaded.put(path, supplier);
         }
