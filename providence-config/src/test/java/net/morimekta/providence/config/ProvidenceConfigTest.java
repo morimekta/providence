@@ -250,6 +250,31 @@ public class ProvidenceConfigTest {
     }
 
     @Test
+    public void testReusableObject() throws ProvidenceConfigException {
+        FileWatcher watcher = new FileWatcher();
+        ProvidenceConfig lazy = new ProvidenceConfig(registry, watcher, false);
+        ProvidenceConfig strict = new ProvidenceConfig(registry, watcher, true);
+
+        File file = copyResourceTo("/net/morimekta/providence/config/files/reusable_object.cfg", temp.getRoot());
+
+        Service service = lazy.getConfig(file);
+        assertThat(service.getAdmin().getOauthTokenKey(),
+                   is(service.getHttp().getSignatureKeys().get("app1")));
+
+        try {
+            strict.getConfig(file);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Reusable objects are not allowed in strict mode."));
+            assertThat(e.getFile(), is(file.getName()));
+            assertThat(e.asString(),
+                       is("Error in reusable_object.cfg on line 9, pos 27: Reusable objects are not allowed in strict mode.\n" +
+                          "        oauth_token_key & token = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                          "--------------------------^^^^^"));
+        }
+    }
+
+    @Test
     public void testReload() throws IOException {
         copyResourceTo("/net/morimekta/providence/config/files/base_service.cfg", temp.getRoot());
         File stageDb = copyResourceTo("/net/morimekta/providence/config/files/stage_db.cfg", temp.getRoot());

@@ -471,9 +471,12 @@ public class ProvidenceConfigParser {
                     }
                     if (tokenizer.peek().isSymbol(DEFINE_REFERENCE)) {
                         tokenizer.next();
+                        Token ref = tokenizer.expectIdentifier("reference name");
+                        if (strict) {
+                            throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
+                        }
                         context.setReference(
-                                context.initReference(
-                                        tokenizer.expectIdentifier("reference name"), tokenizer),
+                                context.initReference(ref, tokenizer),
                                 null);
                     }
 
@@ -560,7 +563,11 @@ public class ProvidenceConfigParser {
                         Token.kMessageStart,
                         DEFINE_REFERENCE);
                 if (symbol == DEFINE_REFERENCE) {
-                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    Token ref = tokenizer.expectIdentifier("reference name");
+                    if (strict) {
+                        throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
+                    }
+                    reference = context.initReference(ref, tokenizer);
                     symbol = tokenizer.expectSymbol("Message assigner or start after " + reference, Token.kFieldValueSep, Token.kMessageStart);
                 }
 
@@ -621,7 +628,11 @@ public class ProvidenceConfigParser {
                 Map baseValue = new LinkedHashMap<>();
                 String reference = null;
                 if (token.isSymbol(DEFINE_REFERENCE)) {
-                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    Token ref = tokenizer.expectIdentifier("reference name");
+                    if (strict) {
+                        throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
+                    }
+                    reference = context.initReference(ref, tokenizer);
                     token = tokenizer.expect("field sep or value start");
                 }
 
@@ -664,7 +675,11 @@ public class ProvidenceConfigParser {
                 // Simple fields *must* have the '=' separation, may have '&' reference.
                 if (tokenizer.expectSymbol("field value sep", Token.kFieldValueSep, DEFINE_REFERENCE) ==
                     DEFINE_REFERENCE) {
-                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    Token ref = tokenizer.expectIdentifier("reference name");
+                    if (strict) {
+                        throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
+                    }
+                    reference = context.initReference(ref, tokenizer);
                     tokenizer.expectSymbol("field value sep", Token.kFieldValueSep);
                 }
                 token = tokenizer.expect("field value");
