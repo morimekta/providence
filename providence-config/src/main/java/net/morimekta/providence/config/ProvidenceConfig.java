@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,15 +88,16 @@ public class ProvidenceConfig implements ConfigResolver {
     ConfigSupplier<M, F> resolveConfig(@Nonnull File configFile,
                                        @Nullable ConfigSupplier<M, F> parentConfig)
             throws ProvidenceConfigException {
+        Path configPath;
         try {
-            configFile = canonicalFileLocation(configFile);
+            configPath = canonicalFileLocation(configFile.toPath());
         } catch (IOException e) {
             throw new ProvidenceConfigException(e, e.getMessage());
         }
 
         String path = null;
         if (parentConfig == null) {
-            path = configFile.toString();
+            path = configPath.toString();
             if (loaded.containsKey(path)) {
                 return (ConfigSupplier<M, F>) loaded.get(path);
             }

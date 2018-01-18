@@ -53,7 +53,7 @@ public class ProvidenceConfigParserTest {
         copyResourceTo("/net/morimekta/providence/config/files/unknown.cfg", temp.getRoot());
         File file = copyResourceTo("/net/morimekta/providence/config/files/unknown_include.cfg", temp.getRoot());
 
-        Pair<Database, Set<String>> cfg = parser.parseConfig(file, null);
+        Pair<Database, Set<String>> cfg = parser.parseConfig(file.toPath(), null);
 
         // all the unknowns are skipped.
         assertEquals("{\n" +
@@ -63,7 +63,7 @@ public class ProvidenceConfigParserTest {
                      debugString(cfg.first));
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_field.cfg", temp.getRoot());
-        cfg = parser.parseConfig(file, null);
+        cfg = parser.parseConfig(file.toPath(), null);
         assertEquals("{\n" +
                      "  uri = \"jdbc:h2:localhost:mem\"\n" +
                      "  driver = \"org.h2.Driver\"\n" +
@@ -71,7 +71,7 @@ public class ProvidenceConfigParserTest {
                      debugString(cfg.first));
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value.cfg", temp.getRoot());
-        cfg = parser.parseConfig(file, null);
+        cfg = parser.parseConfig(file.toPath(), null);
         assertEquals("{\n" +
                      "  uri = \"jdbc:h2:localhost:mem\"\n" +
                      "  driver = \"org.h2.Driver\"\n" +
@@ -86,7 +86,7 @@ public class ProvidenceConfigParserTest {
 
         ProvidenceConfigParser config = new ProvidenceConfigParser(registry, true);
         try {
-            config.parseConfig(file, null);
+            config.parseConfig(file.toPath(), null);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
             assertEquals("Unknown declared type: unknown.OtherConfig", e.getMessage());
@@ -94,7 +94,7 @@ public class ProvidenceConfigParserTest {
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_field.cfg", temp.getRoot());
         try {
-            config.parseConfig(file, null);
+            config.parseConfig(file.toPath(), null);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
             assertEquals("No such field unknown_field in config.Database", e.getMessage());
@@ -102,7 +102,7 @@ public class ProvidenceConfigParserTest {
 
         file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value.cfg", temp.getRoot());
         try {
-            config.parseConfig(file, null);
+            config.parseConfig(file.toPath(), null);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
             assertEquals("No such enum value LAST for config.Value.", e.getMessage());
@@ -125,7 +125,7 @@ public class ProvidenceConfigParserTest {
         ProvidenceConfigParser config = new ProvidenceConfigParser(registry, false);
 
         try {
-            config.parseConfig(a, null);
+            config.parseConfig(a.toPath(), null);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
@@ -141,7 +141,7 @@ public class ProvidenceConfigParserTest {
         ProvidenceConfigParser config = new ProvidenceConfigParser(registry, false);
 
         try {
-            config.parseConfig(a, null);
+            config.parseConfig(a.toPath(), null);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Included file \"b.cfg\" not found.", e.getMessage());
@@ -172,7 +172,7 @@ public class ProvidenceConfigParserTest {
 
         try {
             ProvidenceConfigParser config = new ProvidenceConfigParser(registry, false);
-            RefMerge merged = config.parseConfig(a, (RefMerge) null).first;
+            RefMerge merged = config.parseConfig(a.toPath(), (RefMerge) null).first;
 
             assertThat(debugString(merged), is(
                     "{\n" +
@@ -272,7 +272,7 @@ public class ProvidenceConfigParserTest {
         try {
             File a = writeContentTo(cfg, temp.newFile());
             ProvidenceConfigParser config = new ProvidenceConfigParser(registry, false);
-            config.parseConfig(a, null);
+            config.parseConfig(a.toPath(), null);
             fail("No exception on fail: " + message);
         } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is(message));
@@ -293,10 +293,10 @@ public class ProvidenceConfigParserTest {
         writeContentTo("a", f1_2);
         writeContentTo("a", f2_1);
 
-        assertEquals(f1_1.getCanonicalPath(), resolveFile(null, temp.getRoot() + "/test/test.cfg").getAbsolutePath());
-        assertEquals(f1_2.getCanonicalPath(), resolveFile(f1_1, "same.cfg").getAbsolutePath());
-        assertEquals(f2_1.getCanonicalPath(), resolveFile(f1_1, "../other/other.cfg").getAbsolutePath());
-        assertEquals(f2_2.getCanonicalPath(), resolveFile(f1_1, "../third.cfg").getAbsolutePath());
+        assertEquals(f1_1.getCanonicalFile().toPath(), resolveFile(null, temp.getRoot() + "/test/test.cfg").toAbsolutePath());
+        assertEquals(f1_2.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "same.cfg").toAbsolutePath());
+        assertEquals(f2_1.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "../other/other.cfg").toAbsolutePath());
+        assertEquals(f2_2.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "../third.cfg").toAbsolutePath());
 
         assertFileNotResolved(f1_1, "../", "../ is a directory, expected file");
         assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
@@ -305,6 +305,7 @@ public class ProvidenceConfigParserTest {
         assertFileNotResolved(f1_1, "other/fourth.cfg", "Included file other/fourth.cfg not found");
         assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
         assertFileNotResolved(f1_1, "other", "Included file other not found");
+        assertFileNotResolved(f1_1, "../../../../../../../../other", "Included file ../../../../../../../../other not found");
 
         assertFileNotResolved(null, "../", "../ is a directory, expected file");
         assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found");
@@ -317,7 +318,7 @@ public class ProvidenceConfigParserTest {
 
     private void assertFileNotResolved(File ref, String file, String message) throws IOException {
         try {
-            resolveFile(ref, file);
+            resolveFile(ref == null ? null : ref.toPath(), file);
             fail("no exception on unresolved file");
         } catch (FileNotFoundException e) {
             assertEquals(message, e.getMessage());
@@ -415,7 +416,7 @@ public class ProvidenceConfigParserTest {
         ProvidenceConfigParser config = new ProvidenceConfigParser(registry, strict);
 
         try {
-            config.parseConfig(a, null);
+            config.parseConfig(a.toPath(), null);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
             String actual = e.asString().replaceAll("\\r", "");

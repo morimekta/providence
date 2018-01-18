@@ -20,13 +20,17 @@
  */
 package net.morimekta.providence.config.impl;
 
+import net.morimekta.providence.config.ConfigListener;
 import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.Service;
 import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
 
 import com.google.common.collect.ImmutableSet;
+import org.awaitility.Duration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +39,13 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static net.morimekta.testing.ResourceUtils.writeContentTo;
+import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -79,7 +89,7 @@ public class ProvidenceConfigSupplierTest {
 
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
-        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
@@ -90,13 +100,13 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(parser).parseConfig(file, null);
+        verify(parser).parseConfig(file.toPath(), null);
         verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         verify(watcher, atLeast(1)).startWatching(any(File.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
-        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
+        when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
@@ -105,7 +115,7 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
 
-        verify(parser).parseConfig(file, null);
+        verify(parser).parseConfig(file.toPath(), null);
         verifyNoMoreInteractions(parser, watcher);
     }
 
@@ -120,7 +130,7 @@ public class ProvidenceConfigSupplierTest {
 
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
-        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
@@ -131,13 +141,13 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(parser).parseConfig(file, null);
+        verify(parser).parseConfig(file.toPath(), null);
         verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         verify(watcher, atMost(4)).startWatching(file);
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
-        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
+        when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
@@ -146,7 +156,7 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
 
-        verify(parser).parseConfig(file, null);
+        verify(parser).parseConfig(file.toPath(), null);
         verifyNoMoreInteractions(parser, watcher);
     }
 
@@ -156,7 +166,7 @@ public class ProvidenceConfigSupplierTest {
 
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
-        when((Pair) parser.parseConfig(file, null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
+        when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
         doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
 
@@ -165,13 +175,78 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(first));
         verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
         reset(parser, watcher);
-        when(parser.parseConfig(file, null)).thenThrow(new ProvidenceConfigException("test"));
+        when(parser.parseConfig(file.toPath(), null)).thenThrow(new ProvidenceConfigException("test"));
 
         watcherCapture.getValue().onFileUpdate(file);
 
-        verify(parser).parseConfig(file, null);
+        verify(parser).parseConfig(file.toPath(), null);
         verifyNoMoreInteractions(parser);
 
         assertThat(supplier.get(), is(first));
+    }
+
+    @Test
+    public void testReferencedFilesOnUpdatesFromCanonicalFiles() throws IOException {
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
+        registry.registerRecursively(Service.kDescriptor);
+        watcher = new FileWatcher();
+        parser = new ProvidenceConfigParser(registry, true);
+
+        File service = new File(tmp.getRoot(), "service.config").getAbsoluteFile();
+        File include = new File(tmp.getRoot(), "include.config").getAbsoluteFile();
+
+        File v1 = tmp.newFolder("..dist", "v1").getAbsoluteFile();
+        File service1 = new File(v1, "service.config").getAbsoluteFile();
+        File include1 = new File(v1, "include.config").getAbsoluteFile();
+        File v2 = tmp.newFolder("..dist", "v2").getAbsoluteFile();
+        File service2 = new File(v2, "service.config").getAbsoluteFile();
+        File include2 = new File(v2, "include.config").getAbsoluteFile();
+
+        // write v1 config
+        writeContentTo("config.ServicePort {\n" +
+                       "  port = 8080\n" +
+                       "}\n", include1);
+        writeContentTo("include \"include.config\" as inc\n" +
+                       "config.Service {\n" +
+                       "  name = \"test\"\n" +
+                       "  http = inc\n" +
+                       "}\n", service1);
+        // write v2 config
+        writeContentTo("config.ServicePort {\n" +
+                       "  port = 80\n" +
+                       "}\n", include2);
+        writeContentTo("include \"include.config\" as inc\n" +
+                       "config.Service {\n" +
+                       "  name = \"other\"\n" +
+                       "  http = inc\n" +
+                       "}\n", service2);
+
+        Files.createSymbolicLink(service.toPath(), service1.toPath());
+        Files.createSymbolicLink(include.toPath(), include1.toPath());
+
+        ProvidenceConfigSupplier<Service,Service._Field> config = new ProvidenceConfigSupplier<>(service, null, watcher, parser, clock);
+        Service serviceConfig = config.get();
+        AtomicReference<Service> serviceRef = new AtomicReference<>(serviceConfig);
+
+        assertThat(serviceConfig.getName(), is("test"));
+        assertThat(serviceConfig.getHttp().getPort(), is((short) 8080));
+
+        AtomicBoolean updated = new AtomicBoolean();
+        ConfigListener<Service,Service._Field> listener = cf -> {
+                serviceRef.set(cf);
+                updated.set(true);
+        };
+        config.addListener(listener);
+
+        File tmpFile = new File(tmp.getRoot(), "..tmp");
+        Files.createSymbolicLink(tmpFile.toPath(), service2.toPath());
+        Files.move(tmpFile.toPath(), service.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        waitAtMost(Duration.ONE_SECOND).untilTrue(updated);
+
+        serviceConfig = serviceRef.get();
+
+        assertThat(serviceConfig.getName(), is("other"));
+        assertThat(serviceConfig.getHttp().getPort(), is((short) 80));
     }
 }

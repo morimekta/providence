@@ -49,6 +49,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,17 +103,17 @@ public class ProvidenceConfigParser {
      */
     @Nonnull
     <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> parseConfig(@Nonnull File configFile, @Nullable M parent) throws ProvidenceConfigException {
+    Pair<M, Set<String>> parseConfig(@Nonnull Path configFile, @Nullable M parent) throws ProvidenceConfigException {
         try {
             configFile = canonicalFileLocation(configFile);
         } catch (IOException e) {
             throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile)
-                    .setFile(configFile.getName());
+                    .setFile(configFile.getFileName().toString());
         }
         Pair<M, Set<String>> result = checkAndParseInternal(configFile, parent);
         if (result == null) {
             throw new ProvidenceConfigException("No config: " + configFile.toString())
-                    .setFile(configFile.getName());
+                    .setFile(configFile.getFileName().toString());
         }
         return result;
     }
@@ -118,13 +121,12 @@ public class ProvidenceConfigParser {
     // --- private
 
     private <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> checkAndParseInternal(@Nonnull File configFile,
+    Pair<M, Set<String>> checkAndParseInternal(@Nonnull Path configFile,
                                                @Nullable M parent,
                                                String... includeStack) throws ProvidenceConfigException {
         try {
             // So we map actual loaded files by the absolute canonical location.
-            String canonicalFile = configFile.getCanonicalFile()
-                                             .getAbsolutePath();
+            String canonicalFile = readCanonicalPath(configFile).toString();
             List<String> stackList = new ArrayList<>();
             Collections.addAll(stackList, includeStack);
 
@@ -144,36 +146,36 @@ public class ProvidenceConfigParser {
             if (e instanceof ProvidenceConfigException) {
                 ProvidenceConfigException pce = (ProvidenceConfigException) e;
                 if (pce.getFile() == null) {
-                    pce.setFile(configFile.getName());
+                    pce.setFile(configFile.getFileName().toString());
                 }
                 throw pce;
             }
             if (e instanceof TokenizerException) {
                 TokenizerException te = (TokenizerException) e;
                 if (te.getFile() == null) {
-                    te.setFile(configFile.getName());
+                    te.setFile(configFile.getFileName().toString());
                 }
                 throw new ProvidenceConfigException(te);
             }
             throw new ProvidenceConfigException(e, e.getMessage())
-                    .setFile(configFile.getName());
+                    .setFile(configFile.getFileName().toString());
         }
     }
 
     @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> parseConfigRecursively(@Nonnull File file,
-                                               M parent,
-                                               String[] stack) throws IOException {
+    Pair<M, Set<String>> parseConfigRecursively(@Nonnull Path file,
+                                                M parent,
+                                                String[] stack) throws IOException {
         Tokenizer tokenizer;
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file.toFile()))) {
             // Non-enclosed content, meaning we should read the whole file immediately.
             tokenizer = new Tokenizer(new Utf8StreamReader(in), Tokenizer.DEFAULT_BUFFER_SIZE, true);
         }
 
         ProvidenceConfigContext context = new ProvidenceConfigContext();
         Set<String> includedFilePaths = new TreeSet<>();
-        includedFilePaths.add(file.toString());
+        includedFilePaths.add(canonicalFileLocation(file).toString());
 
         Stage lastStage = Stage.INCLUDES;
         M result = null;
@@ -194,7 +196,7 @@ public class ProvidenceConfigParser {
                 token = tokenizer.expectLiteral("file to be included");
                 String includedFilePath = token.decodeLiteral(strict);
                 PMessage included;
-                File includedFile;
+                Path includedFile;
                 try {
                     includedFile = resolveFile(file, includedFilePath);
                     Pair<PMessage, Set<String>> tmp = checkAndParseInternal(includedFile, null, stack);
@@ -258,7 +260,7 @@ public class ProvidenceConfigParser {
         }
 
         if (result == null) {
-            throw new TokenizerException("No message in config: " + file.getName());
+            throw new TokenizerException("No message in config: " + file.getFileName().toString());
         }
 
         return Pair.create(result, includedFilePaths);
@@ -388,15 +390,15 @@ public class ProvidenceConfigParser {
                                                                               ProvidenceConfigContext context,
                                                                               PMessageBuilder<M, F> builder,
                                                                               M parent,
-                                                                              File file)
+                                                                              Path file)
             throws IOException {
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
             Token token = tokenizer.expect("extension object");
 
             if (parent != null) {
-                throw new TokenizerException(token, "Config in '" + file.getName() + "' has both defined parent and inherits from")
+                throw new TokenizerException(token, "Config in '" + file.getFileName().toString() + "' has both defined parent and inherits from")
                         .setLine(tokenizer.getLine())
-                        .setFile(file.getName());
+                        .setFile(file.getFileName().toString());
             }
 
             if (token.isReferenceIdentifier()) {
@@ -1002,12 +1004,74 @@ public class ProvidenceConfigParser {
             INCLUDE
     );
 
-    public static File canonicalFileLocation(@Nonnull File file) throws IOException {
-        File parent = file.getAbsoluteFile()
-                          .getParentFile()
-                          .getCanonicalFile()
-                          .getAbsoluteFile();
-        return new File(parent, file.getName());
+    public static Path canonicalFileLocation(@Nonnull Path file) throws IOException {
+        if (!file.isAbsolute()) {
+            file = file.toAbsolutePath();
+        }
+        if (file.getParent() == null) {
+            throw new ProvidenceConfigException("Trying to read root directory");
+        }
+        Path dir = readCanonicalPath(file.getParent());
+        return dir.resolve(file.getFileName().toString());
+    }
+
+    /**
+     * To circumvent the problem that java cached file metadata, including symlink
+     * targets, we need to make canonical paths ourselves. This includes resolving
+     * symlinks and relative path resolution (../..).<br>
+     * <br>
+     * This will read all the file meta each time and not use any of the java file
+     * meta caching, so will probably be a little slower. This should not be a
+     * problem as these files should not be read too often.
+     *
+     * @param path The path to make canonical path of.
+     * @return The resolved canonical path.
+     * @throws IOException If unable to read the path.
+     */
+    private static Path readCanonicalPath(Path path) throws IOException {
+        if (!path.isAbsolute()) {
+            path = path.toAbsolutePath();
+        }
+        if (path.toString().equals(File.separator)) {
+            return path;
+        }
+
+        String fileName = path.getFileName().toString();
+
+        // resolve ".." relative to the top of the path.
+        int parents = 0;
+        while ("..".equals(fileName)) {
+            path = path.getParent();
+            if (path == null || path.getFileName() == null) {
+                throw new IOException("Parent of root does not exist!");
+            }
+            fileName = path.getFileName().toString();
+            ++parents;
+        }
+        while (parents-- > 0) {
+            path = path.getParent();
+            if (path == null) {
+                throw new IOException("Parent of root does not exist!");
+            }
+            if (path.getFileName() == null) {
+                return path;
+            }
+            fileName = path.getFileName().toString();
+        }
+
+        if (path.getParent() != null) {
+            Path parent = readCanonicalPath(path.getParent());
+            path = parent.resolve(fileName);
+
+            if (Files.isSymbolicLink(path)) {
+                path = Files.readSymbolicLink(path);
+                if (!path.isAbsolute()) {
+                    path = readCanonicalPath(parent.resolve(path));
+                }
+            }
+        }
+
+        return path;
     }
 
     /**
@@ -1019,11 +1083,11 @@ public class ProvidenceConfigParser {
      * @throws FileNotFoundException When the file is not found.
      * @throws IOException When unable to make canonical path.
      */
-    static File resolveFile(File reference, String path) throws IOException {
+    static Path resolveFile(Path reference, String path) throws IOException {
         if (reference == null) {
-            File file = canonicalFileLocation(new File(path));
-            if (file.exists()) {
-                if (file.getCanonicalFile().isFile()) {
+            Path file = canonicalFileLocation(Paths.get(path));
+            if (Files.exists(file)) {
+                if (Files.isRegularFile(file)) {
                     return file;
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
@@ -1036,15 +1100,14 @@ public class ProvidenceConfigParser {
             // not from symlink location, in case of sym-linked files.
             // this way include references are always consistent, but
             // files can be referenced via symlinks if needed.
-            reference = reference.getCanonicalFile()
-                                 .getAbsoluteFile();
-            if (!reference.isDirectory()) {
-                reference = reference.getParentFile();
+            reference = readCanonicalPath(reference);
+            if (!Files.isDirectory(reference)) {
+                reference = reference.getParent();
             }
-            File file = canonicalFileLocation(new File(reference, path));
+            Path file = canonicalFileLocation(reference.resolve(path));
 
-            if (file.exists()) {
-                if (file.isFile()) {
+            if (Files.exists(file)) {
+                if (Files.isRegularFile(file)) {
                     return file;
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");

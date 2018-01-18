@@ -133,7 +133,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
 
     @Nonnull
     private Message loadConfig(@Nullable Message parent) throws ProvidenceConfigException {
-        Pair<Message, Set<String>> tmp = configParser.parseConfig(configFile, parent);
+        Pair<Message, Set<String>> tmp = configParser.parseConfig(configFile.toPath(), parent);
         if (fileWatcher != null) {
             synchronized (this) {
                 if (!tmp.second.equals(includedFiles)) {
