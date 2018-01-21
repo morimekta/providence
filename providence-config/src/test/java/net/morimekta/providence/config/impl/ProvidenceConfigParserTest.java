@@ -105,7 +105,15 @@ public class ProvidenceConfigParserTest {
             config.parseConfig(file.toPath(), null);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
-            assertEquals("No such enum value LAST for config.Value.", e.getMessage());
+            assertEquals("No such enum value 'LAST' for config.Value.", e.getMessage());
+        }
+
+        file = copyResourceTo("/net/morimekta/providence/config/files/unknown_enum_value2.cfg", temp.getRoot());
+        try {
+            config.parseConfig(file.toPath(), null);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertEquals("No such enum value 'second' for config.Value, did you mean 'SECOND'?", e.getMessage());
         }
     }
 

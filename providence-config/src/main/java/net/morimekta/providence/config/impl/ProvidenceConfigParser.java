@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.config.impl;
 
+import com.google.common.collect.ImmutableSet;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -39,8 +40,6 @@ import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Pair;
 import net.morimekta.util.io.Utf8StreamReader;
-
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -689,7 +688,7 @@ public class ProvidenceConfigParser {
                     builder.clear(field.getId());
                     context.setReference(reference, null);
                 } else {
-                    Object value = parseFieldValue(token, tokenizer, context, field.getDescriptor());
+                    Object value = parseFieldValue(token, tokenizer, context, field.getDescriptor(), strict);
                     builder.set(field.getId(), context.setReference(reference, value));
                 }
             }
@@ -707,14 +706,22 @@ public class ProvidenceConfigParser {
                               Map builder) throws IOException {
         Token next = tokenizer.expect("map key or end");
         while (!next.isSymbol(Token.kMessageEnd)) {
-            Object key = parseFieldValue(next, tokenizer, context, descriptor.keyDescriptor());
+            Object key = parseFieldValue(next, tokenizer, context, descriptor.keyDescriptor(), true);
             tokenizer.expectSymbol("map key value sep", Token.kKeyValueSep);
             next = tokenizer.expect("map value");
             if (UNDEFINED.equals(next.asString())) {
                 builder.remove(key);
             } else {
-                Object value = parseFieldValue(next, tokenizer, context, descriptor.itemDescriptor());
-                builder.put(key, value);
+                Object value;
+                if (context.containsReference(next.asString())) {
+                    value = context.getReference(next.asString(), next, tokenizer);
+                } else {
+                    value = parseFieldValue(next, tokenizer, context, descriptor.itemDescriptor(), strict);
+                }
+
+                if (value != null) {
+                    builder.put(key, value);
+                }
             }
             // maps do *not* require separator, but allows ',' separator, and separator after last.
             next = tokenizer.expect("map key, end or sep");
@@ -730,7 +737,8 @@ public class ProvidenceConfigParser {
     private Object parseFieldValue(Token next,
                                    Tokenizer tokenizer,
                                    ProvidenceConfigContext context,
-                                   PDescriptor descriptor) throws IOException {
+                                   PDescriptor descriptor,
+                                   boolean requireEnumValue) throws IOException {
         try {
             switch (descriptor.getType()) {
                 case BOOL:
@@ -798,11 +806,12 @@ public class ProvidenceConfigParser {
                 case ENUM: {
                     PEnumDescriptor ed = (PEnumDescriptor) descriptor;
                     PEnumValue value;
+                    String name = next.asString();
                     if (next.isInteger()) {
                         value = ed.findById((int) next.parseInteger());
                     } else if (next.isIdentifier()) {
-                        value = ed.findByName(next.asString());
-                        if (value == null && context.containsReference(next.asString())) {
+                        value = ed.findByName(name);
+                        if (value == null && context.containsReference(name)) {
                             value = resolve(context, next, tokenizer, ed);
                         }
                     } else if (next.isReferenceIdentifier()) {
@@ -810,9 +819,26 @@ public class ProvidenceConfigParser {
                     } else {
                         break;
                     }
-                    if (value == null && strict) {
-                        throw new TokenizerException(next, "No such enum value %s for %s.",
-                                                     next.asString(),
+                    if (value == null && (strict || requireEnumValue)) {
+                        PEnumValue option = null;
+                        if (next.isIdentifier()) {
+                            for (PEnumValue o : ed.getValues()) {
+                                if (o.getName().equalsIgnoreCase(name)) {
+                                    option = o;
+                                    break;
+                                }
+                            }
+                        }
+                        if (option != null) {
+                            throw new TokenizerException(next, "No such enum value '%s' for %s, did you mean '%s'?",
+                                                         name,
+                                                         ed.getQualifiedName(),
+                                                         option.getName())
+                                    .setLine(tokenizer.getLine());
+                        }
+
+                        throw new TokenizerException(next, "No such enum value '%s' for %s.",
+                                                     name,
                                                      ed.getQualifiedName())
                                 .setLine(tokenizer.getLine());
                     }
@@ -851,7 +877,10 @@ public class ProvidenceConfigParser {
 
                         next = tokenizer.expect("set value or end");
                         while (!next.isSymbol(Token.kListEnd)) {
-                            value.add(parseFieldValue(next, tokenizer, context, ct.itemDescriptor()));
+                            Object item = parseFieldValue(next, tokenizer, context, ct.itemDescriptor(), strict);
+                            if (item != null) {
+                                value.add(item);
+                            }
                             // sets require separator, and allows separator after last.
                             if (tokenizer.expectSymbol("set separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
                                 break;
@@ -875,7 +904,10 @@ public class ProvidenceConfigParser {
 
                         next = tokenizer.expect("list value or end");
                         while (!next.isSymbol(Token.kListEnd)) {
-                            builder.add(parseFieldValue(next, tokenizer, context, ct.itemDescriptor()));
+                            Object item = parseFieldValue(next, tokenizer, context, ct.itemDescriptor(), strict);
+                            if (item != null) {
+                                builder.add(item);
+                            }
                             // lists require separator, and allows separator after last.
                             if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
                                 break;
