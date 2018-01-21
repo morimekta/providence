@@ -249,14 +249,18 @@ public class PrettySerializer extends Serializer {
         Tokenizer tokenizer = new Tokenizer(input);
         Token first = tokenizer.peek("start of message");
 
-        if (first.isQualifiedIdentifier() &&
-            first.asString().equals(descriptor.getQualifiedName())) {
-            tokenizer.next();  // skip the name
-            tokenizer.expectSymbol("message start", Token.kMessageStart);
-        } else if (first.isSymbol(Token.kMessageStart)) {
+        if (first.isSymbol(Token.kMessageStart)) {
             tokenizer.next();
+        } else if (first.isQualifiedIdentifier()) {
+            if (first.asString().equals(descriptor.getQualifiedName())) {
+                tokenizer.next();  // skip the name
+                tokenizer.expectSymbol("message start after qualifier", Token.kMessageStart);
+            } else {
+                throw tokenizer.failure(first, "Expected qualifier " + descriptor.getQualifiedName() +
+                                               " or message start, Got '" + first.asString() + "'");
+            }
         } else {
-            throw tokenizer.failure(first, "Expected message start, Got '" + first.asString() + "'");
+            throw tokenizer.failure(first, "Expected message start or qualifier, Got '" + first.asString() + "'");
         }
         return readMessage(tokenizer, descriptor, false);
     }

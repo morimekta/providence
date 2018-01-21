@@ -134,8 +134,49 @@ public class PrettySerializerTest {
     }
 
     @Test
+    public void testConfig_fails() throws IOException {
+        assertConfigFailure("foo",
+                            "Expected message start or qualifier, Got 'foo'",
+                            "Error on line 1, pos 1: Expected message start or qualifier, Got 'foo'\n" +
+                            "foo\n" +
+                            "^^^");
+        assertConfigFailure("calculator.Operation foo",
+                            "Expected message start after qualifier ('{'): but found 'foo'",
+                            "Error on line 1, pos 24: Expected message start after qualifier ('{'): but found 'foo'\n" +
+                            "calculator.Operation foo\n" +
+                            "-----------------------^");
+        assertConfigFailure("calculator.Operand {",
+                            "Expected qualifier calculator.Operation or message start, Got 'calculator.Operand'",
+                            "Error on line 1, pos 1: Expected qualifier calculator.Operation or message start, Got 'calculator.Operand'\n" +
+                            "calculator.Operand {\n" +
+                            "^^^^^^^^^^^^^^^^^^");
+        assertConfigFailure("{\n" +
+                            "  1 = 123\n" +
+                            "}\n",
+                            "Expected field name, got '1'",
+                            "Error on line 2, pos 3: Expected field name, got '1'\n" +
+                            "  1 = 123\n" +
+                            "--^");
+    }
+
+    private void assertConfigFailure(String content,
+                                     String message,
+                                     String output) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(
+                content.getBytes(StandardCharsets.UTF_8));
+        PrettySerializer serializer = new PrettySerializer().config();
+
+        try {
+            serializer.deserialize(in, Operation.kDescriptor);
+            throw new AssertionError("no exception");
+        } catch (SerializerException e) {
+            assertThat(e.getMessage(), is(message));
+            assertThat(e.asString(), is(output));
+        }
+    }
+
+    @Test
     public void testService_fails() throws IOException {
-        SerializerException e;
         assertServiceFailure("foo",
                              "No such call type foo",
                              "Error on line 1, pos 1: No such call type foo\n" +
