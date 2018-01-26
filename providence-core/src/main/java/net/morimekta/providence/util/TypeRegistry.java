@@ -20,8 +20,13 @@
  */
 package net.morimekta.providence.util;
 
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
@@ -61,6 +66,52 @@ public interface TypeRegistry {
         }
         return getDeclaredType(parts[1], parts[0]);
     }
+
+    /**
+     * These extra casts needs to be there, otherwise we'd get this error:
+     * incompatible types: inference variable T has incompatible upper bounds
+     *
+     * <pre>{@code
+     * net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
+     * net.morimekta.providence.descriptor.PEnumDescriptor
+     * }</pre>
+     *
+     * TODO: Figure out a way to fix the generic cast.
+     *
+     * @param typeName The type name.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return The message type descriptor.
+     */
+    @Nonnull
+    @SuppressWarnings("unchecked")
+    default <M extends PMessage<M, F>, F extends PField>
+    PMessageDescriptor<M, F> getMessageType(@Nonnull String typeName) {
+        return (PMessageDescriptor) (Object) getDeclaredType(typeName);
+    }
+
+    /**
+     * These extra casts needs to be there, otherwise we'd get this error:
+     * incompatible types: inference variable T has incompatible upper bounds
+     *
+     * <pre>{@code
+     * net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
+     * net.morimekta.providence.descriptor.PEnumDescriptor
+     * }</pre>
+     *
+     * TODO: Figure out a way to fix the generic cast.
+     *
+     * @param typeName The type name.
+     * @param <E> The enum value type.
+     * @return The enum type descriptor.
+     */
+    @Nonnull
+    @SuppressWarnings("unchecked")
+    default <E extends PEnumValue<E>>
+    PEnumDescriptor<E> getEnumType(@Nonnull String typeName) {
+        return (PEnumDescriptor) (Object) getDeclaredType(typeName);
+    }
+
 
     /**
      * Get a service definition from the name and program context.

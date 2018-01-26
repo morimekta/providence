@@ -1,8 +1,8 @@
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.test.providence.core.calculator.Calculator;
 import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
 
 import org.junit.Before;
@@ -73,8 +73,10 @@ public class SimpleTypeRegistryTest {
 
     @Test
     public void testGetDeclaredType() {
-        assertThat((PDeclaredDescriptor) registry.getDeclaredType("number.I"),
+        assertThat(registry.getMessageType("number.I"),
                    is(sameInstance(Imaginary.kDescriptor)));
+        assertThat(registry.getEnumType("calculator.Operator"),
+                   is(sameInstance(Operator.kDescriptor)));
 
         try {
             registry.getDeclaredType("FakeNews");

@@ -325,12 +325,7 @@ public class ProvidenceConfigParser {
             String id = token.asString();
             int l = id.lastIndexOf(Token.kIdentifierSep);
             try {
-                // These extra casts needs to be there, otherwise we'd get this error:
-                // incompatible types: inference variable T has incompatible upper bounds
-                // net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
-                // net.morimekta.providence.descriptor.PEnumDescriptor
-                // TODO: Figure out a way to fix the generic cast.
-                PEnumDescriptor ed = (PEnumDescriptor) (Object) registry.getDeclaredType(id.substring(0, l));
+                PEnumDescriptor ed = registry.getEnumType(id.substring(0, l));
                 PEnumValue val = ed.findByName(id.substring(l + 1));
                 if (val == null && strict) {
                     throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
@@ -355,12 +350,7 @@ public class ProvidenceConfigParser {
             // Message type.
             PMessageDescriptor descriptor;
             try {
-                // These extra casts needs to be there, otherwise we'd get this error:
-                // incompatible types: inference variable T has incompatible upper bounds
-                // net.morimekta.providence.descriptor.PDeclaredDescriptor<net.morimekta.providence.descriptor.PEnumDescriptor>,
-                // net.morimekta.providence.descriptor.PEnumDescriptor
-                // TODO: Figure out a way to fix the generic cast.
-                descriptor = (PMessageDescriptor) (Object) registry.getDeclaredType(token.asString());
+                descriptor = registry.getMessageType(token.asString());
             } catch (IllegalArgumentException e) {
                 // Unknown declared type. Fail if:
                 // - strict mode: all types must be known.
