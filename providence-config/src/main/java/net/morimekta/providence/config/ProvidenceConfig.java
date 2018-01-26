@@ -36,7 +36,7 @@ import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static net.morimekta.providence.config.impl.ProvidenceConfigParser.canonicalFileLocation;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.canonicalFileLocation;
 
 /**
  * Providence config loader. This loads providence configs.

@@ -57,7 +57,7 @@ class ProvidenceConfigContext {
 
     String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
         String reference = token.asString();
-        if (ProvidenceConfigParser.RESERVED_WORDS.contains(reference)) {
+        if (ProvidenceConfigUtil.RESERVED_WORDS.contains(reference)) {
             throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine());
         }
 

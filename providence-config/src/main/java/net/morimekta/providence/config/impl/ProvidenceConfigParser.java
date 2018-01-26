@@ -26,6 +26,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.config.impl.ProvidenceConfigUtil.Stage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -48,9 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +61,21 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.AS;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.DEF;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.DEFINE_REFERENCE;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.FALSE;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.IDENTIFIER_SEP;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.INCLUDE;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.RESERVED_WORDS;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.TRUE;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.UNDEFINED;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.canonicalFileLocation;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.consumeValue;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.nextNotLineSep;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.readCanonicalPath;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.resolveFile;
 
 /**
  * This parser parses config files. The class in itself should be stateless, so
@@ -70,15 +83,6 @@ import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
  * in order to simplify testing.
  */
 public class ProvidenceConfigParser {
-    /**
-     * Simple stage separation. The content *must* come in this order.
-     */
-    private enum Stage {
-        INCLUDES,
-        DEFINES,
-        MESSAGE
-    }
-
     /**
      * Create a providence config parser instance.
      *
@@ -101,28 +105,27 @@ public class ProvidenceConfigParser {
      * @throws ProvidenceConfigException If parsing failed.
      */
     @Nonnull
-    <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> parseConfig(@Nonnull Path configFile, @Nullable M parent) throws ProvidenceConfigException {
+    <M extends PMessage<M, F>, F extends PField> Pair<M, Set<String>> parseConfig(@Nonnull Path configFile, @Nullable M parent)
+            throws ProvidenceConfigException {
         try {
             configFile = canonicalFileLocation(configFile);
         } catch (IOException e) {
-            throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile)
-                    .setFile(configFile.getFileName().toString());
+            throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile).setFile(configFile.getFileName()
+                                                                                                                    .toString());
         }
         Pair<M, Set<String>> result = checkAndParseInternal(configFile, parent);
         if (result == null) {
-            throw new ProvidenceConfigException("No config: " + configFile.toString())
-                    .setFile(configFile.getFileName().toString());
+            throw new ProvidenceConfigException("No config: " + configFile.toString()).setFile(configFile.getFileName()
+                                                                                                         .toString());
         }
         return result;
     }
 
     // --- private
 
-    private <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> checkAndParseInternal(@Nonnull Path configFile,
-                                               @Nullable M parent,
-                                               String... includeStack) throws ProvidenceConfigException {
+    private <M extends PMessage<M, F>, F extends PField> Pair<M, Set<String>> checkAndParseInternal(@Nonnull Path configFile,
+                                                                                                    @Nullable M parent,
+                                                                                                    String... includeStack) throws ProvidenceConfigException {
         try {
             // So we map actual loaded files by the absolute canonical location.
             String canonicalFile = readCanonicalPath(configFile).toString();
@@ -131,11 +134,11 @@ public class ProvidenceConfigParser {
 
             if (Arrays.binarySearch(includeStack, canonicalFile) >= 0) {
                 stackList.add(canonicalFile);
-                throw new ProvidenceConfigException("Circular includes detected: " +
-                                                    String.join(" -> ",
-                                                                stackList.stream()
-                                                                         .map(p -> new File(p).getName())
-                                                                         .collect(Collectors.toList())));
+                throw new ProvidenceConfigException("Circular includes detected: " + String.join(
+                        " -> ",
+                        stackList.stream()
+                                 .map(p -> new File(p).getName())
+                                 .collect(Collectors.toList())));
             }
 
             stackList.add(canonicalFile);
@@ -145,27 +148,29 @@ public class ProvidenceConfigParser {
             if (e instanceof ProvidenceConfigException) {
                 ProvidenceConfigException pce = (ProvidenceConfigException) e;
                 if (pce.getFile() == null) {
-                    pce.setFile(configFile.getFileName().toString());
+                    pce.setFile(configFile.getFileName()
+                                          .toString());
                 }
                 throw pce;
             }
             if (e instanceof TokenizerException) {
                 TokenizerException te = (TokenizerException) e;
                 if (te.getFile() == null) {
-                    te.setFile(configFile.getFileName().toString());
+                    te.setFile(configFile.getFileName()
+                                         .toString());
                 }
                 throw new ProvidenceConfigException(te);
             }
-            throw new ProvidenceConfigException(e, e.getMessage())
-                    .setFile(configFile.getFileName().toString());
+            throw new ProvidenceConfigException(e, e.getMessage()).setFile(configFile.getFileName()
+                                                                                     .toString());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private <M extends PMessage<M, F>, F extends PField>
-    Pair<M, Set<String>> parseConfigRecursively(@Nonnull Path file,
-                                                M parent,
-                                                String[] stack) throws IOException {
+    <M extends PMessage<M, F>, F extends PField> Pair<M, Set<String>> parseConfigRecursively(@Nonnull Path file,
+                                                                                             M parent,
+                                                                                             String[] stack)
+            throws IOException {
         Tokenizer tokenizer;
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file.toFile()))) {
             // Non-enclosed content, meaning we should read the whole file immediately.
@@ -189,7 +194,8 @@ public class ProvidenceConfigParser {
             } else if (INCLUDE.equals(token.asString())) {
                 // if include && stage == INCLUDES --> INCLUDES
                 if (lastStage != Stage.INCLUDES) {
-                    throw new TokenizerException(token, "Include added after defines or message. Only one def block allowed.")
+                    throw new TokenizerException(token,
+                                                 "Include added after defines or message. Only one def block allowed.")
                             .setLine(tokenizer.getLine());
                 }
                 token = tokenizer.expectLiteral("file to be included");
@@ -212,7 +218,9 @@ public class ProvidenceConfigParser {
                 }
                 token = tokenizer.expectIdentifier("the token 'as'");
                 if (!AS.equals(token.asString())) {
-                    throw new TokenizerException(token, "Expected token 'as' after included file \"%s\".", includedFilePath)
+                    throw new TokenizerException(token,
+                                                 "Expected token 'as' after included file \"%s\".",
+                                                 includedFilePath)
                             .setLine(tokenizer.getLine());
                 }
                 token = tokenizer.expectIdentifier("Include alias");
@@ -242,8 +250,8 @@ public class ProvidenceConfigParser {
                     // - top of the stack. This is the config requested by the user. It should fail
                     //   even in non-strict mode.
                     if (strict || stack.length == 1) {
-                        throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
-                                tokenizer.getLine());
+                        throw new TokenizerException(token, "Unknown declared type: %s", token.asString())
+                                .setLine(tokenizer.getLine());
                     }
                     return null;
                 }
@@ -266,7 +274,7 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    private void parseDefinitions(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
+    void parseDefinitions(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
         Token token = tokenizer.expect("defines group start or identifier");
         if (token.isIdentifier()) {
             String name = context.initReference(token, tokenizer);
@@ -276,8 +284,8 @@ public class ProvidenceConfigParser {
             token = tokenizer.expect("define or end");
             while (!token.isSymbol(Token.kMessageEnd)) {
                 if (!token.isIdentifier()) {
-                    throw new TokenizerException(token, "Token '%s' is not valid reference name.", token.asString()).setLine(
-                            tokenizer.getLine());
+                    throw new TokenizerException(token, "Token '%s' is not valid reference name.", token.asString())
+                            .setLine(tokenizer.getLine());
                 }
                 String name = context.initReference(token, tokenizer);
                 tokenizer.expectSymbol("def value sep", Token.kFieldValueSep);
@@ -285,13 +293,13 @@ public class ProvidenceConfigParser {
                 token = tokenizer.expect("next define or end");
             }
         } else {
-            throw new TokenizerException(token, "Unexpected token after def: '%s'", token.asString()).setLine(
-                    tokenizer.getLine());
+            throw new TokenizerException(token, "Unexpected token after def: '%s'", token.asString())
+                    .setLine(tokenizer.getLine());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Object parseDefinitionValue(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
+    Object parseDefinitionValue(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
         Token token = tokenizer.expect("Start of def value");
 
         if (token.isReal()) {
@@ -340,6 +348,7 @@ public class ProvidenceConfigParser {
             } catch (ClassCastException e) {
                 // Not an enum.
                 throw new TokenizerException(token, "Identifier " + id + " does not reference an enum, from " + token.asString())
+
                         .setLine(tokenizer.getLine());
             }
         } else if (token.isQualifiedIdentifier()) {
@@ -356,8 +365,8 @@ public class ProvidenceConfigParser {
                 // Unknown declared type. Fail if:
                 // - strict mode: all types must be known.
                 if (strict) {
-                    throw new TokenizerException(token, "Unknown declared type: %s", token.asString()).setLine(
-                            tokenizer.getLine());
+                    throw new TokenizerException(token, "Unknown declared type: %s", token.asString())
+                            .setLine(tokenizer.getLine());
                 }
                 consumeValue(context, tokenizer, token);
                 return null;
@@ -389,8 +398,7 @@ public class ProvidenceConfigParser {
                                                                               ProvidenceConfigContext context,
                                                                               PMessageBuilder<M, F> builder,
                                                                               M parent,
-                                                                              Path file)
-            throws IOException {
+                                                                              Path file) throws IOException {
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
             Token token = tokenizer.expect("extension object");
 
@@ -412,8 +420,8 @@ public class ProvidenceConfigParser {
                 }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
-                throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected reference identifier")
-                        .setLine(tokenizer.getLine());
+                throw new TokenizerException(token,
+                                             "Unexpected token " + token.asString() + ", expected reference identifier").setLine(tokenizer.getLine());
             }
         } else if (parent != null) {
             if (!builder.descriptor().equals(parent.descriptor())) {
@@ -427,97 +435,11 @@ public class ProvidenceConfigParser {
         return parseMessage(tokenizer, context, builder);
     }
 
-    private void consumeValue(@Nonnull ProvidenceConfigContext context,
-                              @Nonnull Tokenizer tokenizer,
-                              @Nonnull Token token) throws IOException {
-        if (UNDEFINED.equals(token.asString())) {
-            // ignore undefined.
-            return;
-        } else if (token.isReferenceIdentifier()) {
-            if (!tokenizer.peek("message start").isSymbol(Token.kMessageStart)) {
-                // just a reference.
-                return;
-            }
-            // reference + message.
-            token = tokenizer.expect("start of message");
-        }
-
-        if (token.isSymbol(Token.kMessageStart)) {
-            // message or map.
-            token = tokenizer.expect("map or message first entry");
-
-            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
-                // assume map.
-                while (!token.isSymbol(Token.kMessageEnd)) {
-                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
-                        throw new TokenizerException(token, "Invalid map key: " + token.asString())
-                                .setLine(tokenizer.getLine());
-                    }
-                    consumeValue(context, tokenizer, token);
-                    tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
-                    consumeValue(context, tokenizer, tokenizer.expect("map value"));
-
-                    // maps do *not* require separator, but allows ',' separator, and separator after last.
-                    token = tokenizer.expect("map key, end or sep");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("map key or end");
-                    }
-                }
-            } else {
-                // assume message.
-                while (!token.isSymbol(Token.kMessageEnd)) {
-                    if (!token.isIdentifier()) {
-                        throw new TokenizerException(token, "Invalid field name: " + token.asString())
-                                .setLine(tokenizer.getLine());
-                    }
-                    if (tokenizer.peek().isSymbol(DEFINE_REFERENCE)) {
-                        tokenizer.next();
-                        Token ref = tokenizer.expectIdentifier("reference name");
-                        if (strict) {
-                            throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
-                        }
-                        context.setReference(
-                                context.initReference(ref, tokenizer),
-                                null);
-                    }
-
-                    if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
-                        // direct inheritance of message field.
-                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
-                    } else {
-                        tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
-                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
-                    }
-                    token = nextNotLineSep(tokenizer, "message field or end");
-                }
-            }
-        } else if (token.isSymbol(Token.kListStart)) {
-            token = tokenizer.expect("list value or end");
-            while (!token.isSymbol(Token.kListEnd)) {
-                consumeValue(context, tokenizer, token);
-                // lists and sets require list separator (,), and allows trailing separator.
-                if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
-                    break;
-                }
-                token = tokenizer.expect("list value or end");
-            }
-        } else if (token.asString().equals(Token.HEX)) {
-            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
-            tokenizer.readBinary(Token.kParamsEnd);
-        } else if (!(token.isReal() ||  // number (double)
-                     token.isInteger() ||  // number (int)
-                     token.isStringLiteral() ||  // string literal
-                     token.isIdentifier())) {  // enum value reference.
-            throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
-                    .setLine(tokenizer.getLine());
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private <M extends PMessage<M, F>, F extends PField> M parseMessage(@Nonnull Tokenizer tokenizer,
-                                                                        @Nonnull ProvidenceConfigContext context,
-                                                                        @Nonnull PMessageBuilder<M, F> builder)
-            throws IOException {
+    <M extends PMessage<M, F>, F extends PField>
+    M parseMessage(@Nonnull Tokenizer tokenizer,
+                   @Nonnull ProvidenceConfigContext context,
+                   @Nonnull PMessageBuilder<M, F> builder) throws IOException {
         PMessageDescriptor<M, F> descriptor = builder.descriptor();
 
         Token token = tokenizer.expect("object end or field");
@@ -558,18 +480,19 @@ public class ProvidenceConfigParser {
             if (field.getType() == PType.MESSAGE) {
                 // go recursive with optional
                 String reference = null;
-                char symbol = tokenizer.expectSymbol(
-                        "Message assigner or start",
-                        Token.kFieldValueSep,
-                        Token.kMessageStart,
-                        DEFINE_REFERENCE);
+                char symbol = tokenizer.expectSymbol("Message assigner or start",
+                                                     Token.kFieldValueSep,
+                                                     Token.kMessageStart,
+                                                     DEFINE_REFERENCE);
                 if (symbol == DEFINE_REFERENCE) {
                     Token ref = tokenizer.expectIdentifier("reference name");
                     if (strict) {
                         throw tokenizer.failure(ref, "Reusable objects are not allowed in strict mode.");
                     }
                     reference = context.initReference(ref, tokenizer);
-                    symbol = tokenizer.expectSymbol("Message assigner or start after " + reference, Token.kFieldValueSep, Token.kMessageStart);
+                    symbol = tokenizer.expectSymbol("Message assigner or start after " + reference,
+                                                    Token.kFieldValueSep,
+                                                    Token.kMessageStart);
                 }
 
                 PMessageBuilder bld;
@@ -669,7 +592,7 @@ public class ProvidenceConfigParser {
                     throw new TokenizerException(token, "Expected map start, but got '%s'", token.asString())
                             .setLine(tokenizer.getLine());
                 }
-                Map map =  parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue);
+                Map map = parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue);
                 builder.set(field.getId(), context.setReference(reference, map));
             } else {
                 String reference = null;
@@ -700,10 +623,10 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Map parseMapValue(Tokenizer tokenizer,
-                              ProvidenceConfigContext context,
-                              PMap descriptor,
-                              Map builder) throws IOException {
+    Map parseMapValue(Tokenizer tokenizer,
+                             ProvidenceConfigContext context,
+                             PMap descriptor,
+                             Map builder) throws IOException {
         Token next = tokenizer.expect("map key or end");
         while (!next.isSymbol(Token.kMessageEnd)) {
             Object key = parseFieldValue(next, tokenizer, context, descriptor.keyDescriptor(), true);
@@ -734,11 +657,11 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Object parseFieldValue(Token next,
-                                   Tokenizer tokenizer,
-                                   ProvidenceConfigContext context,
-                                   PDescriptor descriptor,
-                                   boolean requireEnumValue) throws IOException {
+    Object parseFieldValue(Token next,
+                           Tokenizer tokenizer,
+                           ProvidenceConfigContext context,
+                           PDescriptor descriptor,
+                           boolean requireEnumValue) throws IOException {
         try {
             switch (descriptor.getType()) {
                 case BOOL:
@@ -858,8 +781,7 @@ public class ProvidenceConfigParser {
                             // Make sure the reference is to a map.
                             resolved = resolve(context, next, tokenizer, descriptor);
                         } catch (ClassCastException e) {
-                            throw new TokenizerException(next, "Reference %s is not a map field ", next.asString())
-                                    .setLine(tokenizer.getLine());
+                            throw new TokenizerException(next, "Reference %s is not a map field ", next.asString()).setLine(tokenizer.getLine());
                         }
                         return resolved;
                     } else if (next.isSymbol(Token.kMessageStart)) {
@@ -924,29 +846,16 @@ public class ProvidenceConfigParser {
                 }
             }
         } catch (ProvidenceConfigException e) {
-            throw new TokenizerException(next, e.getMessage())
-                    .setLine(tokenizer.getLine());
+            throw new TokenizerException(next, e.getMessage()).setLine(tokenizer.getLine());
         }
 
         throw new TokenizerException(next, "Unhandled value \"%s\" for type %s",
                                      next.asString(),
-                                     descriptor.getType())
-                .setLine(tokenizer.getLine());
-    }
-
-    private Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
-        if (tokenizer.peek().isSymbol(Token.kLineSep1) ||
-            tokenizer.peek().isSymbol(Token.kLineSep2)) {
-            tokenizer.expect(message);
-        }
-        return tokenizer.expect(message);
+                                     descriptor.getType()).setLine(tokenizer.getLine());
     }
 
     @Nonnull
-    private <V> V resolveRequired(ProvidenceConfigContext context,
-                                  Token token,
-                                  Tokenizer tokenizer,
-                                  PDescriptor descriptor) throws TokenizerException {
+    private static <V> V resolveRequired(ProvidenceConfigContext context, Token token, Tokenizer tokenizer, PDescriptor descriptor) throws TokenizerException {
         V result = resolve(context, token, tokenizer, descriptor);
         if (result == null) {
             throw new TokenizerException("Nu");
@@ -964,10 +873,7 @@ public class ProvidenceConfigParser {
      * @return The value at the given key, or exception if not found.
      */
     @SuppressWarnings("unchecked")
-    private <V> V resolve(ProvidenceConfigContext context,
-                          Token token,
-                          Tokenizer tokenizer,
-                          PDescriptor descriptor) throws TokenizerException {
+    static <V> V resolve(ProvidenceConfigContext context, Token token, Tokenizer tokenizer, PDescriptor descriptor) throws TokenizerException {
         Object value = resolveAny(context, token, tokenizer);
         if (value == null) {
             return null;
@@ -975,7 +881,7 @@ public class ProvidenceConfigParser {
         return (V) asType(descriptor, value);
     }
 
-    private Object resolveAny(ProvidenceConfigContext context, Token token, Tokenizer tokenizer)
+    private static Object resolveAny(ProvidenceConfigContext context, Token token, Tokenizer tokenizer)
             throws TokenizerException {
         String key = token.asString();
 
@@ -996,14 +902,12 @@ public class ProvidenceConfigParser {
             try {
                 return ProvidenceConfigUtil.getInMessage((PMessage) value, subKey, null);
             } catch (ProvidenceConfigException e) {
-                throw new TokenizerException(token, e.getMessage())
-                        .setLine(tokenizer.getLine())
-                        .initCause(e);
+                throw new TokenizerException(token, e.getMessage()).setLine(tokenizer.getLine())
+                                                                   .initCause(e);
             }
         }
         return value;
     }
-
 
     /**
      * Type registry for looking up the base config types.
@@ -1014,137 +918,4 @@ public class ProvidenceConfigParser {
      * If config should be parsed strictly.
      */
     private final boolean strict;
-
-    // --- static
-
-    private static final String IDENTIFIER_SEP = ".";
-    private static final char DEFINE_REFERENCE = '&';
-
-    private static final String FALSE     = "false";
-    private static final String TRUE      = "true";
-    private static final String DEF       = "def";
-    public static final  String UNDEFINED = "undefined";
-    private static final String INCLUDE   = "include";
-    private static final String AS        = "as";
-
-    static final Set<String> RESERVED_WORDS = ImmutableSet.of(
-            TRUE,
-            FALSE,
-            UNDEFINED,
-            DEF,
-            AS,
-            INCLUDE
-    );
-
-    public static Path canonicalFileLocation(@Nonnull Path file) throws IOException {
-        if (!file.isAbsolute()) {
-            file = file.toAbsolutePath();
-        }
-        if (file.getParent() == null) {
-            throw new ProvidenceConfigException("Trying to read root directory");
-        }
-        Path dir = readCanonicalPath(file.getParent());
-        return dir.resolve(file.getFileName().toString());
-    }
-
-    /**
-     * To circumvent the problem that java cached file metadata, including symlink
-     * targets, we need to make canonical paths ourselves. This includes resolving
-     * symlinks and relative path resolution (../..).<br>
-     * <br>
-     * This will read all the file meta each time and not use any of the java file
-     * meta caching, so will probably be a little slower. This should not be a
-     * problem as these files should not be read too often.
-     *
-     * @param path The path to make canonical path of.
-     * @return The resolved canonical path.
-     * @throws IOException If unable to read the path.
-     */
-    private static Path readCanonicalPath(Path path) throws IOException {
-        if (!path.isAbsolute()) {
-            path = path.toAbsolutePath();
-        }
-        if (path.toString().equals(File.separator)) {
-            return path;
-        }
-
-        String fileName = path.getFileName().toString();
-
-        // resolve ".." relative to the top of the path.
-        int parents = 0;
-        while ("..".equals(fileName)) {
-            path = path.getParent();
-            if (path == null || path.getFileName() == null) {
-                throw new IOException("Parent of root does not exist!");
-            }
-            fileName = path.getFileName().toString();
-            ++parents;
-        }
-        while (parents-- > 0) {
-            path = path.getParent();
-            if (path == null) {
-                throw new IOException("Parent of root does not exist!");
-            }
-            if (path.getFileName() == null) {
-                return path;
-            }
-            fileName = path.getFileName().toString();
-        }
-
-        if (path.getParent() != null) {
-            Path parent = readCanonicalPath(path.getParent());
-            path = parent.resolve(fileName);
-
-            if (Files.isSymbolicLink(path)) {
-                path = Files.readSymbolicLink(path);
-                if (!path.isAbsolute()) {
-                    path = readCanonicalPath(parent.resolve(path));
-                }
-            }
-        }
-
-        return path;
-    }
-
-    /**
-     * Resolve a file path within the source roots.
-     *
-     * @param reference A file or directory reference
-     * @param path The file reference to resolve.
-     * @return The resolved file.
-     * @throws FileNotFoundException When the file is not found.
-     * @throws IOException When unable to make canonical path.
-     */
-    static Path resolveFile(Path reference, String path) throws IOException {
-        if (reference == null) {
-            Path file = canonicalFileLocation(Paths.get(path));
-            if (Files.exists(file)) {
-                if (Files.isRegularFile(file)) {
-                    return file;
-                }
-                throw new FileNotFoundException(path + " is a directory, expected file");
-            }
-            throw new FileNotFoundException("File " + path + " not found");
-        } else if (path.startsWith("/")) {
-            throw new FileNotFoundException("Absolute path includes not allowed: " + path);
-        } else {
-            // Referenced files are referenced from the real file,
-            // not from symlink location, in case of sym-linked files.
-            // this way include references are always consistent, but
-            // files can be referenced via symlinks if needed.
-            reference = readCanonicalPath(reference);
-            if (!Files.isDirectory(reference)) {
-                reference = reference.getParent();
-            }
-            Path file = canonicalFileLocation(reference.resolve(path));
-
-            if (Files.exists(file)) {
-                if (Files.isRegularFile(file)) {
-                    return file;
-                }
-                throw new FileNotFoundException(path + " is a directory, expected file");
-            }
-            throw new FileNotFoundException("Included file " + path + " not found");
-        }
-    }
 }

@@ -48,7 +48,28 @@ public class ProvidenceConfigException extends TokenizerException {
         setFile(cause.getFile());
     }
 
+    @Override
     public ProvidenceConfigException setFile(String file) {
         return (ProvidenceConfigException) super.setFile(file);
+    }
+
+    @Override
+    public ProvidenceConfigException setLength(int len) {
+        return (ProvidenceConfigException) super.setLength(len);
+    }
+
+    @Override
+    public ProvidenceConfigException setLine(String line) {
+        return (ProvidenceConfigException) super.setLine(line);
+    }
+
+    @Override
+    public ProvidenceConfigException setLineNo(int lineNo) {
+        return (ProvidenceConfigException) super.setLineNo(lineNo);
+    }
+
+    @Override
+    public ProvidenceConfigException setLinePos(int linePos) {
+        return (ProvidenceConfigException) super.setLinePos(linePos);
     }
 }

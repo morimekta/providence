@@ -15,11 +15,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 
-import static net.morimekta.providence.config.impl.ProvidenceConfigParser.resolveFile;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
@@ -284,52 +282,6 @@ public class ProvidenceConfigParserTest {
             fail("No exception on fail: " + message);
         } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is(message));
-        }
-    }
-
-    @Test
-    public void testResolveFile() throws IOException {
-        File test = temp.newFolder("test");
-        File other = temp.newFolder("other");
-
-        File f1_1 = new File(test, "test.cfg");
-        File f1_2 = new File(test, "same.cfg");
-        File f2_1 = new File(other, "other.cfg");
-        File f2_2 = temp.newFile("third.cfg");
-
-        writeContentTo("a", f1_1);
-        writeContentTo("a", f1_2);
-        writeContentTo("a", f2_1);
-
-        assertEquals(f1_1.getCanonicalFile().toPath(), resolveFile(null, temp.getRoot() + "/test/test.cfg").toAbsolutePath());
-        assertEquals(f1_2.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "same.cfg").toAbsolutePath());
-        assertEquals(f2_1.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "../other/other.cfg").toAbsolutePath());
-        assertEquals(f2_2.getCanonicalFile().toPath(), resolveFile(f1_1.toPath(), "../third.cfg").toAbsolutePath());
-
-        assertFileNotResolved(f1_1, "../", "../ is a directory, expected file");
-        assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
-        assertFileNotResolved(f1_1, "fourth.cfg", "Included file fourth.cfg not found");
-        assertFileNotResolved(f1_1, "/fourth.cfg", "Absolute path includes not allowed: /fourth.cfg");
-        assertFileNotResolved(f1_1, "other/fourth.cfg", "Included file other/fourth.cfg not found");
-        assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
-        assertFileNotResolved(f1_1, "other", "Included file other not found");
-        assertFileNotResolved(f1_1, "../../../../../../../../other", "Included file ../../../../../../../../other not found");
-
-        assertFileNotResolved(null, "../", "../ is a directory, expected file");
-        assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found");
-        assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found");
-        assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found");
-        assertFileNotResolved(null, "other/fourth.cfg", "File other/fourth.cfg not found");
-        assertFileNotResolved(null, "../other", "File ../other not found");
-        assertFileNotResolved(null, "other", "File other not found");
-    }
-
-    private void assertFileNotResolved(File ref, String file, String message) throws IOException {
-        try {
-            resolveFile(ref == null ? null : ref.toPath(), file);
-            fail("no exception on unresolved file");
-        } catch (FileNotFoundException e) {
-            assertEquals(message, e.getMessage());
         }
     }
 

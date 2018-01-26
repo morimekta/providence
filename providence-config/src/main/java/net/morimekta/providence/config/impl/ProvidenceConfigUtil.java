@@ -33,11 +33,25 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Tokenizer;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
 
+import com.google.common.collect.ImmutableSet;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NotLinkException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -47,12 +61,46 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
+
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Utilities for helping with providence config handling.
  */
-class ProvidenceConfigUtil {
+public class ProvidenceConfigUtil {
+    /**
+     * Simple stage separation. The content *must* come in this order.
+     */
+    enum Stage {
+        INCLUDES,
+        DEFINES,
+        MESSAGE
+    }
+
+    static final String IDENTIFIER_SEP = ".";
+    static final char DEFINE_REFERENCE = '&';
+
+    static final        String FALSE     = "false";
+    static final        String TRUE      = "true";
+    static final        String DEF       = "def";
+    public static final String UNDEFINED = "undefined";
+    static final        String INCLUDE   = "include";
+    static final        String AS        = "as";
+
+    static final Set<String> RESERVED_WORDS = ImmutableSet.of(
+            TRUE,
+            FALSE,
+            UNDEFINED,
+            DEF,
+            AS,
+            INCLUDE
+    );
+
     /**
      * Look up a key in the message structure. If the key is not found, return null.
      *
@@ -420,4 +468,213 @@ class ProvidenceConfigUtil {
         throw new ProvidenceConfigException(
                 "Unable to convert " + value.getClass().getSimpleName() + " to a collection");
     }
+
+    static void consumeValue(@Nonnull ProvidenceConfigContext context,
+                             @Nonnull Tokenizer tokenizer,
+                             @Nonnull Token token) throws IOException {
+        if (UNDEFINED.equals(token.asString())) {
+            // ignore undefined.
+            return;
+        } else if (token.isReferenceIdentifier()) {
+            if (!tokenizer.peek("message start").isSymbol(Token.kMessageStart)) {
+                // just a reference.
+                return;
+            }
+            // reference + message.
+            token = tokenizer.expect("start of message");
+        }
+
+        if (token.isSymbol(Token.kMessageStart)) {
+            // message or map.
+            token = tokenizer.expect("map or message first entry");
+
+            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
+                // assume map.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
+                        throw new TokenizerException(token, "Invalid map key: " + token.asString())
+                                .setLine(tokenizer.getLine());
+                    }
+                    consumeValue(context, tokenizer, token);
+                    tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
+                    consumeValue(context, tokenizer, tokenizer.expect("map value"));
+
+                    // maps do *not* require separator, but allows ',' separator, and separator after last.
+                    token = tokenizer.expect("map key, end or sep");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("map key or end");
+                    }
+                }
+            } else {
+                // assume message.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (!token.isIdentifier()) {
+                        throw new TokenizerException(token, "Invalid field name: " + token.asString())
+                                .setLine(tokenizer.getLine());
+                    }
+                    if (tokenizer.peek().isSymbol(DEFINE_REFERENCE)) {
+                        tokenizer.next();
+                        Token ref = tokenizer.expectIdentifier("reference name");
+                        context.setReference(
+                                context.initReference(ref, tokenizer),
+                                null);
+                    }
+
+                    if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
+                        // direct inheritance of message field.
+                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
+                    } else {
+                        tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
+                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
+                    }
+                    token = nextNotLineSep(tokenizer, "message field or end");
+                }
+            }
+        } else if (token.isSymbol(Token.kListStart)) {
+            token = tokenizer.expect("list value or end");
+            while (!token.isSymbol(Token.kListEnd)) {
+                consumeValue(context, tokenizer, token);
+                // lists and sets require list separator (,), and allows trailing separator.
+                if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
+                    break;
+                }
+                token = tokenizer.expect("list value or end");
+            }
+        } else if (token.asString().equals(Token.HEX)) {
+            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
+            tokenizer.readBinary(Token.kParamsEnd);
+        } else if (!(token.isReal() ||  // number (double)
+                     token.isInteger() ||  // number (int)
+                     token.isStringLiteral() ||  // string literal
+                     token.isIdentifier())) {  // enum value reference.
+            throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
+                    .setLine(tokenizer.getLine());
+        }
+    }
+
+    static Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
+        if (tokenizer.peek().isSymbol(Token.kLineSep1) ||
+            tokenizer.peek().isSymbol(Token.kLineSep2)) {
+            tokenizer.expect(message);
+        }
+        return tokenizer.expect(message);
+    }
+
+    public static Path canonicalFileLocation(@Nonnull Path file) throws IOException {
+        if (!file.isAbsolute()) {
+            file = file.toAbsolutePath();
+        }
+        if (file.getParent() == null) {
+            throw new ProvidenceConfigException("Trying to read root directory");
+        }
+        Path dir = readCanonicalPath(file.getParent());
+        return dir.resolve(file.getFileName().toString());
+    }
+
+    /**
+     * Read and parse the path to its absolute canonical path.
+     * <p>
+     * To circumvent the problem that java cached file metadata, including symlink
+     * targets, we need to read canonical paths directly. This includes resolving
+     * symlinks and relative path resolution (../..).<br>
+     * <p>
+     * This will read all the file meta each time and not use any of the java file
+     * meta caching, so will probably be a little slower. So should not be used
+     * repeatedly or too often.
+     * <p>
+     * TODO(morimekta): Use utils.FileUtil method.
+     *
+     * @param path The path to make canonical path of.
+     * @return The resolved canonical path.
+     * @throws IOException If unable to read the path.
+     */
+    static Path readCanonicalPath(Path path) throws IOException {
+        if (!path.isAbsolute()) {
+            path = path.toAbsolutePath();
+        }
+        if (path.toString().equals(File.separator)) {
+            return path;
+        }
+
+        String fileName = path.getFileName().toString();
+        if (".".equals(fileName)) {
+            path = path.getParent();
+            fileName = path.getFileName().toString();
+        }
+
+        // resolve ".." relative to the top of the path.
+        int parents = 0;
+        while ("..".equals(fileName)) {
+            path = path.getParent();
+            if (path == null || path.getFileName() == null) {
+                throw new IOException("Parent of root does not exist!");
+            }
+            fileName = path.getFileName().toString();
+            ++parents;
+        }
+        while (parents-- > 0) {
+            path = path.getParent();
+            if (path == null || path.getFileName() == null) {
+                throw new IOException("Parent of root does not exist!");
+            }
+            fileName = path.getFileName().toString();
+        }
+
+        if (path.getParent() != null) {
+            Path parent = readCanonicalPath(path.getParent());
+            path = parent.resolve(fileName);
+
+            if (Files.isSymbolicLink(path)) {
+                path = Files.readSymbolicLink(path);
+                if (!path.isAbsolute()) {
+                    path = readCanonicalPath(parent.resolve(path));
+                }
+            }
+        }
+
+        return path;
+    }
+
+    /**
+     * Resolve a file path within the source roots.
+     *
+     * @param reference A file or directory reference
+     * @param path The file reference to resolve.
+     * @return The resolved file.
+     * @throws FileNotFoundException When the file is not found.
+     * @throws IOException When unable to make canonical path.
+     */
+    static Path resolveFile(Path reference, String path) throws IOException {
+        if (reference == null) {
+            Path file = canonicalFileLocation(Paths.get(path));
+            if (Files.exists(file)) {
+                if (Files.isRegularFile(file)) {
+                    return file;
+                }
+                throw new FileNotFoundException(path + " is a directory, expected file");
+            }
+            throw new FileNotFoundException("File " + path + " not found");
+        } else if (path.startsWith("/")) {
+            throw new FileNotFoundException("Absolute path includes not allowed: " + path);
+        } else {
+            // Referenced files are referenced from the real file,
+            // not from symlink location, in case of sym-linked files.
+            // this way include references are always consistent, but
+            // files can be referenced via symlinks if needed.
+            reference = readCanonicalPath(reference);
+            if (!Files.isDirectory(reference)) {
+                reference = reference.getParent();
+            }
+            Path file = canonicalFileLocation(reference.resolve(path));
+
+            if (Files.exists(file)) {
+                if (Files.isRegularFile(file)) {
+                    return file;
+                }
+                throw new FileNotFoundException(path + " is a directory, expected file");
+            }
+            throw new FileNotFoundException("Included file " + path + " not found");
+        }
+    }
+
 }

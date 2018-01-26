@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import static net.morimekta.providence.config.impl.ProvidenceConfigParser.UNDEFINED;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.UNDEFINED;
 
 /**
  * A supplier of a providence message config based on a parent config
