@@ -10,8 +10,6 @@ import net.morimekta.test.providence.thrift.service.Request;
 import net.morimekta.test.providence.thrift.service.Response;
 import net.morimekta.test.thrift.thrift.service.MyService.Iface;
 import net.morimekta.test.thrift.thrift.service.MyService.Processor;
-
-import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
@@ -37,12 +35,12 @@ import static net.morimekta.providence.PApplicationExceptionType.UNKNOWN_METHOD;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.thrift.util.TestUtil.findFreePort;
 import static org.awaitility.Awaitility.waitAtMost;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -79,7 +77,7 @@ public class SocketClientHandlerTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         reset(impl);
     }
 
@@ -113,7 +111,7 @@ public class SocketClientHandlerTest {
     }
 
     @Test
-    public void testOnewayRequest() throws IOException, TException, Failure {
+    public void testOnewayRequest() throws IOException, TException {
         MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
 
         AtomicBoolean called = new AtomicBoolean();
@@ -130,7 +128,7 @@ public class SocketClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_exception() throws IOException, TException, Failure {
+    public void testSimpleRequest_exception() throws IOException, TException {
         when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
@@ -146,7 +144,7 @@ public class SocketClientHandlerTest {
 
     @Test
     public void testSimpleRequest_wrongMethod()
-            throws IOException, TException, DecoderException, Failure, InterruptedException {
+            throws IOException, TException, Failure, InterruptedException {
         when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
@@ -166,7 +164,7 @@ public class SocketClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_cannotConnect() throws IOException, TException, Failure, InterruptedException {
+    public void testSimpleRequest_cannotConnect() throws IOException, Failure, InterruptedException {
         Serializer serializer = new BinarySerializer();
         InetSocketAddress address = new InetSocketAddress("localhost", port - 10);
         MyService.Iface client = new MyService.Client(new SocketClientHandler(serializer, address));
@@ -175,7 +173,7 @@ public class SocketClientHandlerTest {
             client.test(new Request(null));
             fail("no exception");
         } catch (ConnectException e) {
-            assertThat(e.getMessage(), startsWith("Connection refused"));
+            assertThat(e.getMessage(), containsString("Connection refused"));
         }
 
         Thread.sleep(10L);

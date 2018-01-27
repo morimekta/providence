@@ -6,8 +6,6 @@ import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
 import net.morimekta.test.thrift.Response;
 import net.morimekta.testing.rules.ConsoleWatcher;
-
-import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
@@ -33,7 +31,7 @@ import static net.morimekta.testing.ResourceUtils.getResourceAsBytes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -88,16 +86,18 @@ public class RPCThriftSocketTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         try {
-            server.stop();
+            if (server != null) {
+                server.stop();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testSimpleRequest() throws IOException, TException {
+    public void testSimpleRequest() throws TException {
         console.setInput(getResourceAsBytes("/req1.json"));
 
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
@@ -151,7 +151,7 @@ public class RPCThriftSocketTest {
     }
 
     @Test
-    public void testSimpleRequest_exception() throws IOException, TException {
+    public void testSimpleRequest_exception() throws TException {
         console.setInput(getResourceAsBytes("/req1.json"));
 
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
@@ -181,7 +181,7 @@ public class RPCThriftSocketTest {
     }
 
     @Test
-    public void testSimpleRequest_wrongMethod() throws IOException, TException, DecoderException {
+    public void testSimpleRequest_wrongMethod() throws TException {
         byte[] tmp = ("[\n" +
                       "    \"testing\",\n" +
                       "    \"call\",\n" +
@@ -220,7 +220,7 @@ public class RPCThriftSocketTest {
     }
 
     @Test
-    public void testSimpleRequest_cannotConnect() throws IOException, TException {
+    public void testSimpleRequest_cannotConnect() throws TException {
         console.setInput(getResourceAsBytes("/req1.json"));
 
         when(impl.test(any(Request.class))).thenReturn(new Response("failure"));
@@ -235,8 +235,7 @@ public class RPCThriftSocketTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   startsWith("Unable to connect to thrift://localhost:" + (port - 10) +
-                              ": Connection refused"));
+                   startsWith("Unable to connect to thrift://localhost:" + (port - 10) + ": "));
         assertThat(exitCode, is(1));
     }
 }

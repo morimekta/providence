@@ -1,19 +1,17 @@
 package net.morimekta.providence.client;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.apache.ApacheHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.test.providence.client.Failure;
 import net.morimekta.test.providence.client.Request;
 import net.morimekta.test.providence.client.TestService;
 import net.morimekta.util.Strings;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -135,10 +134,11 @@ public class HttpClientHandlerNetworkTest {
             fail("No exception");
         } catch (SocketException ex) {
             // TODO: This should be a HttpResponseException
-            assertThat(ex.getMessage(), anyOf(
-                    containsString("Broken pipe"),
-                    is("Connection reset"),
-                    is("Software caused connection abort: socket write error")));
+            assertThat(ex.getMessage().toLowerCase(),
+                       anyOf(containsString("broken pipe"),
+                             containsString("write error"),
+                             containsString("write failed"),
+                             containsString("connection reset")));
         }
     }
 
@@ -154,7 +154,9 @@ public class HttpClientHandlerNetworkTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (HttpHostConnectException ex) {
-            assertThat(ex.getMessage(), is(startsWith("Connect to localhost:" + (port - 10) + " failed: Connection refused")));
+            assertThat(ex.getMessage(),
+                       allOf(startsWith("Connect to localhost:" + (port - 10) + " failed: "),
+                             containsString("Connection refused")));
         }
     }
 
@@ -170,7 +172,9 @@ public class HttpClientHandlerNetworkTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (HttpHostConnectException ex) {
-            assertThat(ex.getMessage(), is(startsWith("Connect to localhost:" + (port - 10) + " failed: Connection refused")));
+            assertThat(ex.getMessage(),
+                       allOf(startsWith("Connect to localhost:" + (port - 10) + " failed: "),
+                             containsString("Connection refused")));
         }
     }
 }

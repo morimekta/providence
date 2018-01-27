@@ -11,8 +11,6 @@ import net.morimekta.test.providence.thrift.service.Request;
 import net.morimekta.test.providence.thrift.service.Response;
 import net.morimekta.test.thrift.thrift.service.MyService.Iface;
 import net.morimekta.test.thrift.thrift.service.MyService.Processor;
-
-import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -41,11 +39,10 @@ import static org.awaitility.Awaitility.setDefaultPollDelay;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -63,14 +60,13 @@ public class NonblockingSocketClientHandlerTest {
     private static TNonblockingServer server;
     private static InetSocketAddress  address;
     private static Serializer         serializer;
-    private static TProtocolFactory   factory;
 
     @BeforeClass
     public static void setUpServer() throws Exception {
         setDefaultPollDelay(10, TimeUnit.MILLISECONDS);
 
         serializer = new TBinaryProtocolSerializer();
-        factory = new TBinaryProtocol.Factory();
+        TProtocolFactory factory = new TBinaryProtocol.Factory();
         port = findFreePort();
         impl = Mockito.mock(Iface.class);
 
@@ -86,9 +82,8 @@ public class NonblockingSocketClientHandlerTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         reset(impl);
-
     }
 
     @AfterClass
@@ -118,7 +113,7 @@ public class NonblockingSocketClientHandlerTest {
 
     @Test
     public void testOnewayRequest()
-            throws IOException, TException, net.morimekta.test.providence.thrift.service.Failure, InterruptedException {
+            throws IOException, TException {
         MyService.Iface client = new MyService.Client(new NonblockingSocketClientHandler(serializer, address));
 
         AtomicBoolean called = new AtomicBoolean(false);
@@ -156,7 +151,7 @@ public class NonblockingSocketClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_exception() throws IOException, TException, Failure {
+    public void testSimpleRequest_exception() throws IOException, TException {
         when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test")))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
@@ -173,7 +168,7 @@ public class NonblockingSocketClientHandlerTest {
 
     @Test
     public void testSimpleRequest_wrongMethod()
-            throws IOException, TException, DecoderException, Failure {
+            throws IOException, TException, Failure {
         when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
                 .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
@@ -191,7 +186,7 @@ public class NonblockingSocketClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_cannotConnect() throws IOException, TException, Failure {
+    public void testSimpleRequest_cannotConnect() throws IOException, Failure {
         Serializer serializer = new BinarySerializer();
         InetSocketAddress address = new InetSocketAddress("localhost", port - 10);
         MyService.Iface client = new MyService.Client(new NonblockingSocketClientHandler(serializer, address));
@@ -199,7 +194,8 @@ public class NonblockingSocketClientHandlerTest {
             client.test(Request.builder().setText("test").build());
             fail("no exception");
         } catch (ConnectException e) {
-            assertThat(e.getMessage(), startsWith("Connection refused"));
+            // The exception message is entirely localized, so it's impossible to reliably match against.
+            // assertThat(e.getMessage(), startsWith("Connection refused"));
         }
 
         verifyZeroInteractions(impl);

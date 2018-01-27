@@ -8,8 +8,6 @@ import net.morimekta.test.providence.MyService;
 import net.morimekta.test.providence.Request;
 import net.morimekta.test.providence.Response;
 import net.morimekta.testing.rules.ConsoleWatcher;
-
-import org.apache.commons.codec.DecoderException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -30,11 +28,13 @@ import static net.morimekta.providence.tools.rpc.internal.TestNetUtil.getExposed
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.getResourceAsBytes;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -99,7 +99,7 @@ public class RPCProvidenceHttpTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         try {
             server.stop();
         } catch (Exception e) {
@@ -212,7 +212,7 @@ public class RPCProvidenceHttpTest {
 
 
     @Test
-    public void testSimpleRequest_wrongMethod() throws IOException, DecoderException, Failure {
+    public void testSimpleRequest_wrongMethod() throws IOException, Failure {
         byte[] tmp = ("[\n" +
                       "    \"testing\",\n" +
                       "    \"call\",\n" +
@@ -266,9 +266,10 @@ public class RPCProvidenceHttpTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   startsWith("Unable to connect to http://localhost:" + (port - 10) +
-                              ": Connect to localhost:" + (port - 10) +
-                              " failed: Connection refused"));
+                   allOf(startsWith("Unable to connect to http://localhost:" + (port - 10) +
+                                    ": Connect to localhost:" + (port - 10) +
+                                    " failed: "),
+                         containsString("Connection refused")));
         assertThat(exitCode, is(1));
     }
 }
