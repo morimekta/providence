@@ -88,12 +88,7 @@ public class ProvidenceConfig implements ConfigResolver {
     ConfigSupplier<M, F> resolveConfig(@Nonnull File configFile,
                                        @Nullable ConfigSupplier<M, F> parentConfig)
             throws ProvidenceConfigException {
-        Path configPath;
-        try {
-            configPath = canonicalFileLocation(configFile.toPath());
-        } catch (IOException e) {
-            throw new ProvidenceConfigException(e, e.getMessage());
-        }
+        Path configPath = canonicalFileLocation(configFile.toPath());
 
         String path = null;
         if (parentConfig == null) {

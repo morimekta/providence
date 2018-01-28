@@ -20,7 +20,8 @@
  */
 package net.morimekta.providence.config.impl;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -41,33 +42,23 @@ import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
 
-import com.google.common.collect.ImmutableSet;
-
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NotLinkException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Utilities for helping with providence config handling.
@@ -432,7 +423,7 @@ public class ProvidenceConfigUtil {
     @SuppressWarnings("unchecked")
     static <T> Collection<T> asCollection(Object value, PDescriptor itemType) throws ProvidenceConfigException {
         if (value instanceof Collection) {
-            List<T> out = new ArrayList<>();
+            Collection<T> out = new ArrayList<>();
             for (Object item : (Collection) value) {
                 out.add((T) asType(itemType, item));
             }
@@ -472,26 +463,43 @@ public class ProvidenceConfigUtil {
     static void consumeValue(@Nonnull ProvidenceConfigContext context,
                              @Nonnull Tokenizer tokenizer,
                              @Nonnull Token token) throws IOException {
+        boolean isMessage = false;
+
         if (UNDEFINED.equals(token.asString())) {
             // ignore undefined.
             return;
+        } else if (token.asString().equals(Token.B64)) {
+            tokenizer.expectSymbol("b64 body start", Token.kParamsStart);
+            tokenizer.readBinary(Token.kParamsEnd);
+        } else if (token.asString().equals(Token.HEX)) {
+            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
+            tokenizer.readBinary(Token.kParamsEnd);
         } else if (token.isReferenceIdentifier()) {
             if (!tokenizer.peek("message start").isSymbol(Token.kMessageStart)) {
                 // just a reference.
                 return;
             }
             // reference + message.
+            isMessage = true;
             token = tokenizer.expect("start of message");
         }
 
         if (token.isSymbol(Token.kMessageStart)) {
             // message or map.
             token = tokenizer.expect("map or message first entry");
+            if (token.isSymbol(Token.kMessageEnd)) {
+                return;
+            }
 
-            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
+            Token firstSep = tokenizer.peek("First separator");
+
+            if (!isMessage &&
+                !firstSep.isSymbol(Token.kFieldValueSep) &&
+                !firstSep.isSymbol(Token.kMessageStart) &&
+                !firstSep.isSymbol(DEFINE_REFERENCE)) {
                 // assume map.
                 while (!token.isSymbol(Token.kMessageEnd)) {
-                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
+                    if (!token.isIdentifier() && token.isReferenceIdentifier()) {
                         throw new TokenizerException(token, "Invalid map key: " + token.asString())
                                 .setLine(tokenizer.getLine());
                     }
@@ -500,10 +508,7 @@ public class ProvidenceConfigUtil {
                     consumeValue(context, tokenizer, tokenizer.expect("map value"));
 
                     // maps do *not* require separator, but allows ',' separator, and separator after last.
-                    token = tokenizer.expect("map key, end or sep");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("map key or end");
-                    }
+                    token = nextNotLineSep(tokenizer, "map key, sep or end");
                 }
             } else {
                 // assume message.
@@ -512,20 +517,23 @@ public class ProvidenceConfigUtil {
                         throw new TokenizerException(token, "Invalid field name: " + token.asString())
                                 .setLine(tokenizer.getLine());
                     }
-                    if (tokenizer.peek().isSymbol(DEFINE_REFERENCE)) {
-                        tokenizer.next();
-                        Token ref = tokenizer.expectIdentifier("reference name");
+                    token = tokenizer.expect("field value sep");
+                    if (token.isSymbol(DEFINE_REFERENCE)) {
+                        token = tokenizer.expectIdentifier("reference name");
                         context.setReference(
-                                context.initReference(ref, tokenizer),
+                                context.initReference(token, tokenizer),
                                 null);
+                        token = tokenizer.expect("field value sep");
                     }
 
-                    if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
+                    if (token.isSymbol(Token.kMessageStart)) {
                         // direct inheritance of message field.
-                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
+                        consumeValue(context, tokenizer, token);
+                    } else if (token.isSymbol(Token.kFieldValueSep)) {
+                        consumeValue(context, tokenizer, tokenizer.expect("field value"));
                     } else {
-                        tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
-                        consumeValue(context, tokenizer, tokenizer.expect("start of message"));
+                        throw new TokenizerException(token, "Unknown field value sep: " + token.asString())
+                                .setLine(tokenizer.getLine());
                     }
                     token = nextNotLineSep(tokenizer, "message field or end");
                 }
@@ -540,16 +548,7 @@ public class ProvidenceConfigUtil {
                 }
                 token = tokenizer.expect("list value or end");
             }
-        } else if (token.asString().equals(Token.HEX)) {
-            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
-            tokenizer.readBinary(Token.kParamsEnd);
-        } else if (!(token.isReal() ||  // number (double)
-                     token.isInteger() ||  // number (int)
-                     token.isStringLiteral() ||  // string literal
-                     token.isIdentifier())) {  // enum value reference.
-            throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
-                    .setLine(tokenizer.getLine());
-        }
+       }
     }
 
     static Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
@@ -560,15 +559,19 @@ public class ProvidenceConfigUtil {
         return tokenizer.expect(message);
     }
 
-    public static Path canonicalFileLocation(@Nonnull Path file) throws IOException {
+    public static Path canonicalFileLocation(@Nonnull Path file) throws ProvidenceConfigException {
         if (!file.isAbsolute()) {
             file = file.toAbsolutePath();
         }
         if (file.getParent() == null) {
             throw new ProvidenceConfigException("Trying to read root directory");
         }
-        Path dir = readCanonicalPath(file.getParent());
-        return dir.resolve(file.getFileName().toString());
+        try {
+            Path dir = readCanonicalPath(file.getParent());
+            return dir.resolve(file.getFileName().toString());
+        } catch (IOException e) {
+            throw new ProvidenceConfigException(e, e.getMessage());
+        }
     }
 
     /**
@@ -588,6 +591,7 @@ public class ProvidenceConfigUtil {
      * @return The resolved canonical path.
      * @throws IOException If unable to read the path.
      */
+    @VisibleForTesting
     static Path readCanonicalPath(Path path) throws IOException {
         if (!path.isAbsolute()) {
             path = path.toAbsolutePath();
@@ -677,4 +681,5 @@ public class ProvidenceConfigUtil {
         }
     }
 
+    private ProvidenceConfigUtil() {}
 }

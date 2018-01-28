@@ -1,48 +1,86 @@
 package net.morimekta.providence.config.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
+import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Tokenizer;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util.SimpleTypeRegistry;
+import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.ServicePort;
+import net.morimekta.test.providence.config.Value;
+import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asBoolean;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asCollection;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asDouble;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asInteger;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asLong;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asMap;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asString;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.canonicalFileLocation;
+import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.consumeValue;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.readCanonicalPath;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.resolveFile;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 /**
  * Testing for the providence config utils.
@@ -116,6 +154,91 @@ public class ProvidenceConfigUtilTest {
             fail("No exception");
         } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is("Field 'name' is not of message type in config.Service"));
+        }
+    }
+
+    @Test
+    public void testAsType() throws ProvidenceConfigException {
+        // null value.
+        assertThat(asType(PPrimitive.STRING, null), is(nullValue()));
+
+        // ENUM
+        assertThat(asType(Value.kDescriptor, Value.SECOND), is(Value.SECOND));
+        assertThat(asType(Value.kDescriptor, 2), is(Value.SECOND));
+        assertThat(asType(Value.kDescriptor, "SECOND"), is(Value.SECOND));
+        assertThat(asType(Value.kDescriptor, (Numeric) () -> 2), is(Value.SECOND));
+
+        try {
+            asType(Value.kDescriptor, Value.kDescriptor);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(),
+                       is("Unable to cast _Descriptor to enum config.Value"));
+        }
+        try {
+            asType(Value.kDescriptor, PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to cast PApplicationExceptionType to enum config.Value"));
+        }
+
+        // MESSAGE
+        Service service = Service.builder().build();
+        Database db = Database.builder().build();
+        assertThat(asType(Service.kDescriptor, service), is(service));
+
+        try {
+            asType(Service.kDescriptor, db);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(),
+                       is("Message type mismatch: config.Database is not compatible with config.Service"));
+        }
+
+        try {
+            asType(Service.kDescriptor, "foo");
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(),
+                       is("String is not compatible with message config.Service"));
+        }
+
+        // BINARY
+        assertThat(asType(PPrimitive.BINARY, Binary.fromHexString("abcd")),
+                   is(Binary.fromHexString("abcd")));
+        assertThat(asType(PPrimitive.BINARY, "AAAA"),
+                   is(Binary.fromBase64("AAAA")));
+        try {
+            asType(PPrimitive.BINARY, 123);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(),
+                       is("Integer is not compatible with binary"));
+        }
+
+        // LIST
+        assertThat(asType(PList.provider(PPrimitive.STRING.provider()).descriptor(),
+                          ImmutableList.of(1, 2)),
+                   is(ImmutableList.of("1", "2")));
+
+        // SET
+        assertThat(new ArrayList((Collection) asType(PSet.sortedProvider(PPrimitive.I16.provider()).descriptor(),
+                                                     ImmutableList.of("3", "4", "2", "1"))),
+                   is(ImmutableList.of((short) 1, (short) 2, (short) 3, (short) 4)));
+        // MAP
+        Map<String,String> map = (Map) asType(PMap.sortedProvider(PPrimitive.STRING.provider(),
+                                                                  PPrimitive.STRING.provider()).descriptor(),
+                                              ImmutableMap.of(1, 2, 3, 4));
+        assertThat(map, is(instanceOf(ImmutableSortedMap.class)));
+        assertThat(map, is(ImmutableMap.of("1", "2", "3", "4")));
+
+        // General Failure
+        try {
+            asType(PPrimitive.VOID, "true");
+            fail("no exception");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage(),
+                       is("Unhandled field type: void"));
         }
     }
 
@@ -214,6 +337,7 @@ public class ProvidenceConfigUtilTest {
         assertThat(asLong(true), is(1L));
         assertThat(asLong("55"), is(55L));
         assertThat(asLong("0x55"), is(85L));
+        assertThat(asLong("055"), is(45L));
         assertThat(asLong(new Date(1234567890000L)), is(1234567890000L));
 
         try {
@@ -281,6 +405,127 @@ public class ProvidenceConfigUtilTest {
     }
 
     @Test
+    public void testAsCollection() throws ProvidenceConfigException {
+        assertThat(asCollection(new LinkedList<>(), PPrimitive.STRING),
+                   is(instanceOf(ArrayList.class)));
+        assertThat(asCollection(ImmutableSet.of(1, 2, 3), PPrimitive.STRING),
+                   is(containsInAnyOrder("1", "2", "3")));
+
+        try {
+            asCollection("foo", PPrimitive.BOOL);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Unable to convert String to a collection"));
+        }
+    }
+
+    @Test
+    public void testAsMap() throws ProvidenceConfigException {
+        assertThat(asMap(new TreeMap<>(), PPrimitive.STRING, PPrimitive.I32),
+                   is(instanceOf(TreeMap.class)));
+        assertThat(asMap(new HashMap<>(), PPrimitive.STRING, PPrimitive.I32),
+                   is(instanceOf(LinkedHashMap.class)));
+        assertThat(asMap(ImmutableSortedMap.of(1, "2"), PPrimitive.STRING, PPrimitive.I32),
+                   is(instanceOf(TreeMap.class)));
+
+        assertThat(asMap(ImmutableMap.of(1, "2"), PPrimitive.STRING, PPrimitive.I32),
+                   is(ImmutableMap.of("1", 2)));
+
+        try {
+            asMap(ImmutableSet.of(1, 2), PPrimitive.BOOL, PPrimitive.DOUBLE);
+            fail("no exception");
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(),
+                       is("Unable to convert RegularImmutableSet to a collection"));
+        }
+    }
+
+    @Test
+    public void testConsumeValue() throws IOException {
+        validateConsume("undefined __after__", null);
+        validateConsume("not.a.ref\n__after__", null);
+
+        ProvidenceConfigContext context = mock(ProvidenceConfigContext.class);
+        when(context.getReference(eq("ref"), any(Token.class), any(Tokenizer.class)))
+                .thenReturn(true);
+        validateConsume("ref __after__", context);
+        reset(context);
+
+        validateConsume("{} __after__", null);
+        validateConsume("unknown {} __after__", null);
+
+        validateConsume("{ FIRST: SECOND } __after__", null);
+        validateConsume("{ foo = \"bar\" } __after__", null);
+        validateConsume("{ foo { bar = 12 } } __after__", null);
+        validateConsume("{ foo = 12 bar = 13 } __after__", null);
+        validateConsume("{ foo & bar = 12 ; other = bar } __after__", null);
+
+        validateConsume("[] __after__", null);
+        validateConsume("[ \"foo\", ] __after__", null);
+        validateConsume("[ \"foo\" ] __after__", null);
+
+        validateConsume("hex(abcdef) __after__", null);
+        validateConsume("b64(AbDfm_) __after__", null);
+    }
+
+    @Test
+    public void testConsumeValue_fails() throws IOException {
+        try {
+            validateConsume("{ first.Value: OOPS }", null);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(), is("Invalid map key: first.Value"));
+        }
+
+        try {
+            validateConsume("{ 12 = OOPS }", null);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(), is("Invalid field name: 12"));
+        }
+
+        try {
+            validateConsume("{ foo = bar ; other : 12 }", null);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(), is("Unknown field value sep: :"));
+        }
+
+        try {
+            validateConsume("[ 12 13 ]", null);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(),
+                       is("Expected list separator or end (one of [',', ']']): but found '13'"));
+        }
+
+        try {
+            validateConsume("[ 12; 13 ]", null);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(),
+                       is("Expected list separator or end (one of [',', ']']): but found ';'"));
+        }
+   }
+
+    private void validateConsume(String content,
+                                 ProvidenceConfigContext context) throws IOException {
+        if (context == null) {
+            context = new ProvidenceConfigContext();
+        }
+        Tokenizer tokenizer = tokenizer(content);
+        consumeValue(context, tokenizer, tokenizer.expect("consumed value"));
+        Token next = tokenizer.expect("after consuming");
+        assertThat(next, is(notNullValue()));
+        assertThat(next.asString(), is("__after__"));
+    }
+
+    private Tokenizer tokenizer(String content) {
+        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes(UTF_8));
+        return new Tokenizer(in);
+    }
+
+    @Test
     public void testResolveFile() throws IOException {
         File test = tmp.newFolder("test");
         File other = tmp.newFolder("other");
@@ -323,6 +568,15 @@ public class ProvidenceConfigUtilTest {
             fail("no exception on unresolved file");
         } catch (IOException e) {
             assertEquals(message, e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCanonicalFileLocation() throws IOException {
+        try {
+            canonicalFileLocation(Paths.get("/"));
+        } catch (ProvidenceConfigException e) {
+            assertThat(e.getMessage(), is("Trying to read root directory"));
         }
     }
 
@@ -418,4 +672,19 @@ public class ProvidenceConfigUtilTest {
         }
     }
 
+    @Test
+    public void testConstructor() throws
+                                  NoSuchMethodException,
+                                  IllegalAccessException,
+                                  InvocationTargetException,
+                                  InstantiationException {
+        Constructor<ProvidenceConfigUtil> constructor = ProvidenceConfigUtil.class.getDeclaredConstructor();
+        assertThat(constructor.isAccessible(), is(false));
+        try {
+            constructor.setAccessible(true);
+            assertThat(constructor.newInstance(), is(instanceOf(ProvidenceConfigUtil.class)));
+        } finally {
+            constructor.setAccessible(false);
+        }
+    }
 }
