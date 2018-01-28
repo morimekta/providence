@@ -39,14 +39,14 @@ import java.time.Clock;
 @VisibleForTesting
 public class TestConfigSupplier<M extends PMessage<M,F>, F extends PField> extends UpdatingConfigSupplier<M,F> {
     /**
-     * Start with no initial config. This is usually now allowed for "normal"
+     * Start with no initial config. This is usually not allowed for "normal"
      * config suppliers.
      */
     public TestConfigSupplier() {
     }
 
     /**
-     * Start with no initial config. This is usually now allowed for "normal"
+     * Start with no initial config. This is usually not allowed for "normal"
      * config suppliers.
      *
      * @param clock The clock to use for timing.
