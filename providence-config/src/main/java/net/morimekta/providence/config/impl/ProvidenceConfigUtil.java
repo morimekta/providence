@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.config.impl;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
@@ -406,7 +408,9 @@ class ProvidenceConfigUtil {
     @SuppressWarnings("unchecked")
     static <K,V> Map<K,V> asMap(Object value, PDescriptor keyType, PDescriptor itemType) throws ProvidenceConfigException {
         if (value instanceof Map) {
-            Map<K,V> out = value instanceof TreeMap ? new TreeMap<>() : new LinkedHashMap<>();
+            boolean sorted = value instanceof TreeMap ||
+                             value instanceof ImmutableSortedMap;
+            Map<K,V> out = sorted ? new TreeMap<>() : new LinkedHashMap<>();
             for (Map.Entry item : ((Map<?,?>) value).entrySet()) {
                 out.put((K) asType(keyType, item.getKey()),
                         (V) asType(itemType, item.getValue()));

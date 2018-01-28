@@ -93,7 +93,7 @@ providence config file syntax:
   in the include statements **MUST** be relative to the PWD directory of the
   including file.
 - The `defines` follow a simple 'map' syntax where the key must be a simple
-  identifier `/[_a-z][_a-zA-Z0-9]/`, and a simple value (number, string, enum,
+  identifier `/[_a-zA-Z][_a-zA-Z0-9]/`, and a simple value (number, string, enum,
   boolean). The params value may be a declared (known) enum, with the double
   qualified identifier syntax `package.Name.VALUE`.
 - The `message` is a providence message, and is declared with the qualified
