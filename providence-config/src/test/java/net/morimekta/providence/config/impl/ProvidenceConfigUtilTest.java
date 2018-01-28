@@ -206,8 +206,6 @@ public class ProvidenceConfigUtilTest {
         // BINARY
         assertThat(asType(PPrimitive.BINARY, Binary.fromHexString("abcd")),
                    is(Binary.fromHexString("abcd")));
-        assertThat(asType(PPrimitive.BINARY, "AAAA"),
-                   is(Binary.fromBase64("AAAA")));
         try {
             asType(PPrimitive.BINARY, 123);
             fail("no exception");

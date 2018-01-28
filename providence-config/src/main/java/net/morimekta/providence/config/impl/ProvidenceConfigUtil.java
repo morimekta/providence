@@ -206,8 +206,6 @@ public class ProvidenceConfigUtil {
             case BINARY:
                 if (o instanceof Binary) {
                     return o;
-                } else if (o instanceof CharSequence) {
-                    return Binary.fromBase64(o.toString());
                 } else {
                     throw new ProvidenceConfigException(o.getClass()
                                                          .getSimpleName() + " is not compatible with binary");
