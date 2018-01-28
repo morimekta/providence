@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
@@ -28,19 +27,11 @@ import net.morimekta.providence.config.impl.UpdatingConfigSupplier;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
-import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.serializer.pretty.Token;
-import net.morimekta.providence.serializer.pretty.Tokenizer;
-import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
-import java.io.CharArrayReader;
-import java.io.IOException;
 import java.time.Clock;
 import java.util.Map;
 import java.util.Properties;
@@ -182,42 +173,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                 continue;
             }
 
-            try {
-                CharArrayReader reader = new CharArrayReader(override.getValue().toCharArray());
-                Tokenizer tokenizer = new Tokenizer(reader, Tokenizer.DEFAULT_BUFFER_SIZE, true);
-                if (UNDEFINED.equals(override.getValue())) {
-                    containedBuilder.clear(field.getId());
-                } else if (field.getType() == PType.STRING) {
-                    if (tokenizer.hasNext()) {
-                        Token next = tokenizer.next();
-                        if (next.isStringLiteral()) {
-                            containedBuilder.set(field.getId(), next.decodeLiteral(strict));
-                            if (tokenizer.hasNext()) {
-                                throw new ProvidenceConfigException("Garbage after string value [%s]: '%s'",
-                                                                    override.getKey(),
-                                                                    override.getValue());
-                            }
-                            continue;
-                        }
-                    }
-                    containedBuilder.set(field.getId(), override.getValue());
-                } else {
-                    containedBuilder.set(field.getId(),
-                                         readFieldValue(tokenizer,
-                                                        tokenizer.expect("value"),
-                                                        field.getDescriptor(),
-                                                        strict));
-                    if (tokenizer.hasNext()) {
-                        throw new ProvidenceConfigException("Garbage after %s value [%s]: '%s'",
-                                                            field.getType(),
-                                                            override.getKey(),
-                                                            override.getValue());
-                    }
-                }
-            } catch (ProvidenceConfigException e) {
-                throw e;
-            } catch (IOException e) {
-                throw new ProvidenceConfigException(e.getMessage() + " [" + override.getKey() + "]", e);
+            if (UNDEFINED.equals(override.getValue())) {
+                containedBuilder.clear(field.getId());
+            } else {
+                containedBuilder.set(field.getId(), readFieldValue(override.getKey(), override.getValue(), field.getDescriptor()));
             }
         }
 
@@ -253,10 +212,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
         return builder;
     }
 
-    private static Object readFieldValue(Tokenizer tokenizer, Token token, PDescriptor descriptor, boolean strict) throws IOException {
+    private static Object readFieldValue(String key, String value, PDescriptor descriptor) throws ProvidenceConfigException {
         switch (descriptor.getType()) {
             case BOOL: {
-                switch (token.asString().toLowerCase()) {
+                switch (value.toLowerCase()) {
                     case "1":
                     case "t":
                     case "true":
@@ -270,182 +229,93 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                     case "no":
                         return Boolean.FALSE;
                 }
-                throw new TokenizerException(token, "Invalid boolean value " + token.asString())
-                        .setLine(tokenizer.getLine());
-
+                throw new ProvidenceConfigException("Invalid bool value " + value + " [" + key + "]");
             }
             case BYTE: {
-                if (token.isInteger()) {
-                    long val = token.parseInteger();
-                    if (val > Byte.MAX_VALUE || val < Byte.MIN_VALUE) {
-                        throw new TokenizerException(token, "Byte value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine());
+                try {
+                    if (value.startsWith("0x")) {
+                        return Byte.parseByte(value.substring(2), 16);
+                    } else if (value.startsWith("0")) {
+                        return Byte.parseByte(value.substring(1), 8);
                     }
-                    return (byte) val;
-                } else {
-                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
-                            .setLine(tokenizer.getLine());
+                    return Byte.parseByte(value);
+                } catch (NumberFormatException e) {
+                    throw new ProvidenceConfigException(e, "Invalid byte value " + value + " [" + key + "]");
                 }
             }
             case I16: {
-                if (token.isInteger()) {
-                    long val = token.parseInteger();
-                    if (val > Short.MAX_VALUE || val < Short.MIN_VALUE) {
-                        throw new TokenizerException(token, "Short value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine());
+                try {
+                    if (value.startsWith("0x")) {
+                        return Short.parseShort(value.substring(2), 16);
+                    } else if (value.startsWith("0")) {
+                        return Short.parseShort(value.substring(1), 8);
                     }
-                    return (short) val;
-                } else {
-                    throw new TokenizerException(token, "Invalid i16 value: " + token.asString())
-                            .setLine(tokenizer.getLine());
+                    return Short.parseShort(value);
+                } catch (NumberFormatException e) {
+                    throw new ProvidenceConfigException(e, "Invalid i16 value " + value + " [" + key + "]");
                 }
             }
             case I32: {
-                if (token.isInteger()) {
-                    long val = token.parseInteger();
-                    if (val > Integer.MAX_VALUE || val < Integer.MIN_VALUE) {
-                        throw new TokenizerException(token, "Integer value out of bounds: " + token.asString())
-                                .setLine(tokenizer.getLine());
+                try {
+                    if (value.startsWith("0x")) {
+                        return Integer.parseInt(value.substring(2), 16);
+                    } else if (value.startsWith("0")) {
+                        return Integer.parseInt(value.substring(1), 8);
                     }
-                    return (int) val;
-                } else {
-                    throw new TokenizerException(token, "Invalid i32 value: " + token.asString())
-                            .setLine(tokenizer.getLine());
+                    return Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    throw new ProvidenceConfigException(e, "Invalid i32 value " + value + " [" + key + "]");
                 }
             }
             case I64: {
-                if (token.isInteger()) {
-                    return token.parseInteger();
-                } else {
-                    throw new TokenizerException(token, "Invalid i64 value: " + token.asString())
-                            .setLine(tokenizer.getLine());
+                try {
+                    if (value.startsWith("0x")) {
+                        return Long.parseLong(value.substring(2), 16);
+                    } else if (value.startsWith("0")) {
+                        return Long.parseLong(value.substring(1), 8);
+                    }
+                    return Long.parseLong(value);
+                } catch (NumberFormatException e) {
+                    throw new ProvidenceConfigException(e, "Invalid i64 value " + value + " [" + key + "]");
                 }
             }
             case DOUBLE: {
                 try {
-                    return token.parseDouble();
-                } catch (NumberFormatException nfe) {
-                    throw new TokenizerException(token, "Invalid double value: " + token.asString())
-                            .setLine(tokenizer.getLine());
+                   return Double.parseDouble(value);
+                } catch (NumberFormatException e) {
+                    throw new ProvidenceConfigException(e, "Invalid double value " + value + " [" + key + "]");
                 }
             }
             case STRING: {
-                if (!token.isStringLiteral()) {
-                    throw new TokenizerException(token, "Expected string literal, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine());
-                }
-                return token.decodeLiteral(strict);
+                return value;
             }
             case BINARY: {
-                switch (token.asString()) {
-                    case "b64": {
-                        try {
-                            tokenizer.expectSymbol("binary content start", Token.kParamsStart);
-                            String content = tokenizer.readBinary(Token.kParamsEnd);
-                            return Binary.fromBase64(content);
-                        } catch (IllegalArgumentException e) {
-                            throw new TokenizerException(e, e.getMessage());
-                        }
+                try {
+                    if (value.startsWith("hex(") && value.endsWith(")")) {
+                        return Binary.fromHexString(value.substring(4, value.length() - 1));
+                    } else if (value.startsWith("b64(") && value.endsWith(")")) {
+                        return Binary.fromBase64(value.substring(4, value.length() - 1));
                     }
-                    case "hex": {
-                        try {
-                            tokenizer.expectSymbol("binary content start", Token.kParamsStart);
-                            String content = tokenizer.readBinary(Token.kParamsEnd);
-                            return Binary.fromHexString(content);
-                        } catch (NumberFormatException e) {
-                            throw new TokenizerException(e, "Invalid hex value: " + e.getMessage());
-                        }
-                    }
-                    default:
-                        throw new TokenizerException(token, "Unrecognized binary format " + token.asString())
-                                .setLine(tokenizer.getLine());
+                    throw new ProvidenceConfigException("Missing binary format " + value + " [" + key + "]");
+               } catch (IllegalArgumentException e) {
+                    throw new ProvidenceConfigException(e, "Invalid " + value.substring(0, 3) +
+                                                           " binary value " + value + " [" + key + "]");
                 }
             }
             case ENUM: {
-                PEnumBuilder b = ((PEnumDescriptor) descriptor).builder();
-                b.setByName(token.asString());
-                if (strict && !b.valid()) {
-                    throw new TokenizerException(token, "No such " + descriptor.getQualifiedName() + " value " + token.asString())
-                            .setLine(tokenizer.getLine());
-                }
-                return b.build();
-            }
-            case MESSAGE: {
-                // TODO: Parse messages?
-                throw new TokenizerException(token, "Message overrides not allowed")
-                        .setLine(tokenizer.getLine());
-            }
-            case MAP: {
-                if (!token.isSymbol(Token.kMessageStart)) {
-                    throw new TokenizerException(token, "Expected map start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine());
-                }
-                @SuppressWarnings("unchecked")
-                PMap<Object, Object> pMap = (PMap) descriptor;
-                PDescriptor kDesc = pMap.keyDescriptor();
-                PDescriptor iDesc = pMap.itemDescriptor();
-
-                PMap.Builder<Object, Object> builder = pMap.builder();
-
-                token = tokenizer.expect("list end or value");
-                while (!token.isSymbol(Token.kMessageEnd)) {
-                    Object key = readFieldValue(tokenizer, token, kDesc, strict);
-                    tokenizer.expectSymbol("map kv sep", Token.kKeyValueSep);
-                    Object value = readFieldValue(tokenizer, tokenizer.expect("map value"), iDesc, strict);
-                    builder.put(key, value);
-                    token = tokenizer.expect("map sep, end or value");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("map end or value");
+                PEnumDescriptor ed = (PEnumDescriptor) descriptor;
+                try {
+                    if (Strings.isInteger(value)) {
+                        return ed.valueForId(Integer.parseInt(value));
+                    } else {
+                        return ed.valueForName(value);
                     }
+                } catch (IllegalArgumentException e) {
+                    throw new ProvidenceConfigException("No " + ed.getQualifiedName() + " value for '" + value + "' [" + key + "]");
                 }
-                return builder.build();
-            }
-            case LIST: {
-                if (!token.isSymbol(Token.kListStart)) {
-                    throw new TokenizerException(token, "Expected list start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine());
-                }
-                @SuppressWarnings("unchecked")
-                PList<Object> pList = (PList) descriptor;
-                PDescriptor iDesc = pList.itemDescriptor();
-
-                PList.Builder<Object> builder = pList.builder();
-
-                token = tokenizer.expect("list end or value");
-                while (!token.isSymbol(Token.kListEnd)) {
-                    builder.add(readFieldValue(tokenizer, token, iDesc, strict));
-                    token = tokenizer.expect("list sep, end or value");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("list end or value");
-                    }
-                }
-
-                return builder.build();
-            }
-            case SET: {
-                if (!token.isSymbol(Token.kListStart)) {
-                    throw new TokenizerException(token, "Expected set start, got '%s'", token.asString())
-                            .setLine(tokenizer.getLine());
-                }
-                @SuppressWarnings("unchecked")
-                PSet<Object> pList = (PSet) descriptor;
-                PDescriptor iDesc = pList.itemDescriptor();
-
-                PSet.Builder<Object> builder = pList.builder();
-
-                token = tokenizer.expect("set end or value");
-                while (!token.isSymbol(Token.kListEnd)) {
-                    builder.add(readFieldValue(tokenizer, token, iDesc, strict));
-                    token = tokenizer.expect("set sep, end or value");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("set end or value");
-                    }
-                }
-
-                return builder.build();
             }
             default: {
-                throw new IllegalStateException("Unhandled field type: " + descriptor.getType());
+                throw new ProvidenceConfigException("Overrides not allowed on " + descriptor.getType() + " fields [" + key + "]");
             }
         }
     }

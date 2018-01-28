@@ -220,9 +220,9 @@ public class ProvidenceConfigUtilTest {
                    is(ImmutableList.of("1", "2")));
 
         // SET
-        assertThat(new ArrayList((Collection) asType(PSet.sortedProvider(PPrimitive.I16.provider()).descriptor(),
-                                                     ImmutableList.of("3", "4", "2", "1"))),
-                   is(ImmutableList.of((short) 1, (short) 2, (short) 3, (short) 4)));
+        assertThat(new ArrayList((Collection) asType(PSet.sortedProvider(PPrimitive.STRING.provider()).descriptor(),
+                                                     ImmutableList.of(3, 4, 2, 1))),
+                   is(ImmutableList.of("1", "2", "3", "4")));
         // MAP
         Map<String,String> map = (Map) asType(PMap.sortedProvider(PPrimitive.STRING.provider(),
                                                                   PPrimitive.STRING.provider()).descriptor(),
@@ -242,11 +242,9 @@ public class ProvidenceConfigUtilTest {
 
     @Test
     public void testAsBoolean() throws ProvidenceConfigException {
-        assertThat(asBoolean("true"), is(true));
         assertThat(asBoolean(true), is(true));
         assertThat(asBoolean(1L), is(true));
         assertThat(asBoolean((byte) 0), is(false));
-        assertThat(asBoolean(new StringBuilder("F")), is(false));
         try {
             asBoolean(new Object());
             fail("no exception");
@@ -257,7 +255,7 @@ public class ProvidenceConfigUtilTest {
             asBoolean("foo");
             fail("no exception");
         } catch (ProvidenceConfigException e) {
-            assertThat(e.getMessage(), is("Unable to parse the string \"foo\" to boolean"));
+            assertThat(e.getMessage(), is("Unable to convert String to a boolean"));
         }
         try {
             asBoolean(111);
@@ -277,28 +275,18 @@ public class ProvidenceConfigUtilTest {
     public void testAsInteger() throws ProvidenceConfigException {
         assertThat(asInteger(2,
                              Integer.MIN_VALUE, Integer.MAX_VALUE), is(2));
-        assertThat(asInteger("1234",
-                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(1234));
-        assertThat(asInteger("0xff",
-                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(0xff));
-        assertThat(asInteger("0777",
-                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(511));
         assertThat(asInteger((Numeric) () -> 111,
-                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(111));
-        assertThat(asInteger(new StringBuilder("111"),
                              Integer.MIN_VALUE, Integer.MAX_VALUE), is(111));
         assertThat(asInteger(false,
                              Integer.MIN_VALUE, Integer.MAX_VALUE), is(0));
-        assertThat(asInteger(new Date(1234567890000L),
-                             Integer.MIN_VALUE, Integer.MAX_VALUE), is(1234567890));
         assertThat(asInteger(12345.0,
                              Integer.MIN_VALUE, Integer.MAX_VALUE), is(12345));
 
         try {
-            asInteger(new StringBuilder("foo"), Integer.MIN_VALUE, Integer.MAX_VALUE);
+            asInteger("foo", Integer.MIN_VALUE, Integer.MAX_VALUE);
             fail("no exception");
         } catch (ProvidenceConfigException e) {
-            assertThat(e.getMessage(), is("Unable to parse string \"foo\" to an int"));
+            assertThat(e.getMessage(), is("Unable to convert String to an int"));
         }
         try {
             asInteger(1234567890123456789L, Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -333,10 +321,6 @@ public class ProvidenceConfigUtilTest {
         assertThat(asLong((Numeric) () -> 55), is(55L));
         assertThat(asLong(false), is(0L));
         assertThat(asLong(true), is(1L));
-        assertThat(asLong("55"), is(55L));
-        assertThat(asLong("0x55"), is(85L));
-        assertThat(asLong("055"), is(45L));
-        assertThat(asLong(new Date(1234567890000L)), is(1234567890000L));
 
         try {
             asLong(2.2);
@@ -348,7 +332,7 @@ public class ProvidenceConfigUtilTest {
             asLong("foo");
             fail("no exception");
         } catch (ProvidenceConfigException e) {
-            assertThat(e.getMessage(), is("Unable to parse string \"foo\" to a long"));
+            assertThat(e.getMessage(), is("Unable to convert String to a long"));
         }
         try {
             asLong(new Object());
@@ -363,14 +347,12 @@ public class ProvidenceConfigUtilTest {
         assertThat(asDouble(5.5f), is(5.5));
         assertThat(asDouble((byte) 5), is(5.0));
         assertThat(asDouble((Numeric) () -> 55), is(55.0));
-        assertThat(asDouble("55"), is(55.0));
-        assertThat(asDouble("55.5"), is(55.5));
 
         try {
             asDouble("foo");
             fail("no exception");
         } catch (ProvidenceConfigException e) {
-            assertThat(e.getMessage(), is("Unable to parse string \"foo\" to a double"));
+            assertThat(e.getMessage(), is("Unable to convert String to a double"));
         }
         try {
             asDouble(new Object());
@@ -423,10 +405,10 @@ public class ProvidenceConfigUtilTest {
                    is(instanceOf(TreeMap.class)));
         assertThat(asMap(new HashMap<>(), PPrimitive.STRING, PPrimitive.I32),
                    is(instanceOf(LinkedHashMap.class)));
-        assertThat(asMap(ImmutableSortedMap.of(1, "2"), PPrimitive.STRING, PPrimitive.I32),
+        assertThat(asMap(ImmutableSortedMap.of(1, (short) 2), PPrimitive.STRING, PPrimitive.I32),
                    is(instanceOf(TreeMap.class)));
 
-        assertThat(asMap(ImmutableMap.of(1, "2"), PPrimitive.STRING, PPrimitive.I32),
+        assertThat(asMap(ImmutableMap.of(1, 2.0), PPrimitive.STRING, PPrimitive.I32),
                    is(ImmutableMap.of("1", 2)));
 
         try {

@@ -250,25 +250,6 @@ public class ProvidenceConfigUtil {
             if (l == 0L) return false;
             if (l == 1L) return true;
             throw new ProvidenceConfigException("Unable to convert number " + l + " to boolean");
-        } else if (value instanceof CharSequence) {
-            switch (value.toString().toLowerCase()) {
-                case "0":
-                case "n":
-                case "f":
-                case "no":
-                case "false":
-                    return false;
-                case "1":
-                case "y":
-                case "t":
-                case "yes":
-                case "true":
-                    return true;
-                default:
-                    throw new ProvidenceConfigException(String.format(
-                            "Unable to parse the string \"%s\" to boolean",
-                            Strings.escape(value.toString())));
-            }
         }
         throw new ProvidenceConfigException("Unable to convert " + value.getClass().getSimpleName() + " to a boolean");
     }
@@ -295,24 +276,7 @@ public class ProvidenceConfigUtil {
             return validateInRange("Numeric", ((Numeric) value).asInteger(), min, max);
         } else if (value instanceof Boolean) {
             return ((Boolean) value) ? 1 : 0;
-        } else if (value instanceof CharSequence) {
-            try {
-                String s = value.toString();
-                if (s.startsWith("0x")) {
-                    return validateInRange("String", Integer.parseInt(s.substring(2), 16), min, max);
-                } else if (s.startsWith("0")) {
-                    return validateInRange("String", Integer.parseInt(s, 8), min, max);
-                }
-                return validateInRange("String", Integer.parseInt(value.toString()), min, max);
-            } catch (NumberFormatException nfe) {
-                throw new ProvidenceConfigException(
-                        "Unable to parse string \"" + Strings.escape(value.toString()) +
-                        "\" to an int", nfe);
-            }
-        } else if (value instanceof Date) {
-            // Convert date timestamp to seconds since epoch.
-            return validateInRange("Date", (((Date) value).getTime() / 1000), min, max);
-        }
+       }
         throw new ProvidenceConfigException("Unable to convert " + value.getClass().getSimpleName() + " to an int");
     }
 
@@ -345,23 +309,7 @@ public class ProvidenceConfigUtil {
             return ((Numeric) value).asInteger();
         } else if (value instanceof Boolean) {
             return ((Boolean) value) ? 1L : 0L;
-        } else if (value instanceof CharSequence) {
-            try {
-                String s = value.toString();
-                if (s.startsWith("0x")) {
-                    return Long.parseLong(s.substring(2), 16);
-                } else if (s.startsWith("0")) {
-                    return Long.parseLong(s, 8);
-                }
-                return Long.parseLong(s);
-            } catch (NumberFormatException nfe) {
-                throw new ProvidenceConfigException("Unable to parse string \"" + Strings.escape(value.toString()) +
-                                                    "\" to a long", nfe);
-            }
-        } else if (value instanceof Date) {
-            // Return date timestamp in milliseconds.
-            return ((Date) value).getTime();
-        }
+       }
         throw new ProvidenceConfigException("Unable to convert " + value.getClass().getSimpleName() + " to a long");
     }
 
@@ -377,13 +325,6 @@ public class ProvidenceConfigUtil {
             return ((Number) value).doubleValue();
         } else if (value instanceof Numeric) {
             return ((Numeric) value).asInteger();
-        } else if (value instanceof CharSequence) {
-            try {
-                return Double.parseDouble(value.toString());
-            } catch (NumberFormatException nfe) {
-                throw new ProvidenceConfigException("Unable to parse string \"" + Strings.escape(value.toString()) +
-                                                    "\" to a double", nfe);
-            }
         }
         throw new ProvidenceConfigException(
                 "Unable to convert " + value.getClass().getSimpleName() + " to a double");
