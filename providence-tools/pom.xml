@@ -231,6 +231,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
+                    <skipIfEmpty>true</skipIfEmpty>
                 </configuration>
             </plugin>
             <plugin>
