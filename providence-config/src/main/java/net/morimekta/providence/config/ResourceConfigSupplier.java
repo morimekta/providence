@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.JsonSerializerException;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
@@ -97,6 +98,7 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
                                         .toLowerCase();
             Serializer serializer;
             switch (suffix) {
+                case ".jsn":
                 case ".json":
                     serializer = new JsonSerializer();
                     break;
@@ -126,10 +128,10 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
                 return serializer.deserialize(in, descriptor);
             } catch (TokenizerException te) {
                 throw new ProvidenceConfigException(te);
-            } catch (SerializerException se) {
+            } catch (JsonSerializerException se) {
                 throw new ProvidenceConfigException(se);
             } catch (IOException e) {
-                throw  new ProvidenceConfigException(e, "Unknown serializer exception: " + e.getMessage());
+                throw new ProvidenceConfigException(e, "Unknown serializer exception: " + e.getMessage());
             }
         } catch (ProvidenceConfigException pce) {
             pce.setFile(fileName);

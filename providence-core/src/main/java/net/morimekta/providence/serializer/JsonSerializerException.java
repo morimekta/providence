@@ -26,6 +26,8 @@ import net.morimekta.util.json.JsonException;
 
 import com.google.common.base.MoreObjects;
 
+import javax.annotation.Nonnull;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -34,10 +36,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class JsonSerializerException extends SerializerException {
     private final static long serialVersionUID = 1493883783445793582L;
 
-    public JsonSerializerException(JsonException e) {
+    public JsonSerializerException(@Nonnull JsonException e) {
         super(e, e.getMessage());
     }
 
+    @Nonnull
     @Override
     public synchronized JsonException getCause() {
         return (JsonException) super.getCause();

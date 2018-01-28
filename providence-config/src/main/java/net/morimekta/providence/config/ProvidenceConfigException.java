@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.JsonSerializerException;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 /**
@@ -37,15 +37,23 @@ public class ProvidenceConfigException extends TokenizerException {
         super(cause, format, args);
     }
 
-    public ProvidenceConfigException(SerializerException cause) {
-        super(cause.getMessage());
+    public ProvidenceConfigException(JsonSerializerException cause) {
+        super(cause, cause.getMessage());
+        setLength(cause.getLen());
+        setLine(cause.getLine());
+        setLineNo(cause.getLineNo());
+        setLinePos(cause.getLinePos());
         setExceptionType(cause.getExceptionType());
-        initCause(cause);
     }
 
     public ProvidenceConfigException(TokenizerException cause) {
-        super(cause, null);
+        super(cause, cause.getMessage());
+        setLength(cause.getLength());
+        setLine(cause.getLine());
+        setLineNo(cause.getLineNo());
+        setLinePos(cause.getLinePos());
         setFile(cause.getFile());
+        setExceptionType(cause.getExceptionType());
     }
 
     @Override
