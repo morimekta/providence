@@ -23,7 +23,7 @@ dependencies {
 The providence plugin can also easily be configured, e.g. for handling a multi-
 project IDL based thrift repository, you can set up input and includes separately.
 Input files are the thrift programs that will be generated code for, and includes
-will we available at compile time, but not generated for.
+will be available at compile time, but not generated for.
 
 ```groovy
 providence {
@@ -47,5 +47,5 @@ providence {
 
 #### Source Code
 
-The gradle plugin is placed in [it's own](https://github.com/morimekta/providence-gradle-plugin)
+The gradle plugin is placed in [its own](https://github.com/morimekta/providence-gradle-plugin)
 repository as it itself uses the gradle build system (not maven as here).

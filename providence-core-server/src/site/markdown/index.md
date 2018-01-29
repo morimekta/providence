@@ -3,12 +3,12 @@ Providence Core : Server
 
 Code for handling the server side of client-server communication. It contains
 the actual server implementations, and helpers to make working with the
-providence services more powerful. Since some of this require a fair bit of
+providence services more powerful. Since some of this requires a fair bit of
 dependencies it is kept separate from the rest of providence.
 
 The servlets are designed to be easy to use with any javax servlet system (j2ee,
 jetty etc), example setup of a providence servlet (where `MyServlet` is the
-thrift defined service, and `MySerlvetImpl` is the implementation of the
+thrift defined service, and `MyServletImpl` is the implementation of the
 interface):
 
 ```java
@@ -35,7 +35,7 @@ class MyServer {
 The class to note here is the `ProvidenceServlet`. The processor servlet is
 designed to handle two different cases, the "standard" thrift way where the
 internal implementation of the service is insulated from the transport layer,
-and a "web servlet" variant, where each HTTP request generate a new processor
+and a "web servlet" variant, where each HTTP request generates a new processor
 instance using the `ProcessorProvider` interface. This way the providence
 servlet can react to out-of-bound context information, e.g. results from
 Geo IP filtering, HTTP authorization, etc. E.g.:
@@ -66,7 +66,7 @@ public class MyServer {
  * Set up your servlet implementation like this. It is important to use the
  * constructor to be able to keep the instance of the HttpServletRequest. It
  * is also possible to do more of the work in the makeProcessor call below
- * instead of in the constructor, and rather pass processed arguments,injected
+ * instead of in the constructor, and rather pass processed arguments, injected
  * systems etc.
  */
 public class MyServletImpl implements MyServlet.IFace {

@@ -32,9 +32,8 @@ service MyService {
 
 ## Generated Classes
 
-For each service there is generated a single `Service` class. The service class
-itself actually have no functionality, but contains a number of inner classes
-that do.
+For each service a single `Service` class is generated. The service class
+itself has no functionality, but contains a number of inner classes that do.
 
 - **[IFace]**: An interface that defines what the service is. This has a 1-to-1
   mapping in methods to the declared service methods.
@@ -77,23 +76,23 @@ class MyService {
 }
 ```
 
-Note that the `PProcessor` interface extends the `PServiceCall` method, so the
-rather useless construct `IFace iface ? new Client(new Processor(new MyServiceImpl()))`
-is a valid java. If you find yourself getting this construct for some reason:
-*try to get the implementation instance directly instead*.
+Note that the `PProcessor` interface extends `PServiceCallHandler`, so it is
+possible but unhelpful to wrap an implementation in a Client/Processor pair,
+like `IFace iface = new Client(new Processor(new MyServiceImpl()));`, which is
+largely equivalent to just `Iface iface = new MyServiceImpl();`.
 
 ### Implicit Handling
 
 #### Service Interface
 
-The service is declare initially as a simple interface which mimics the service declaration
+The service is initially declared as a simple interface which mimics the service declaration
 from the thrift file, and then logic is added around that. E.g. the
 the `ApplicationException` and `IOException` exceptions are added in the
 `java` client implementations.
 
 ### Service calls
 
-Service calls is a way to handle a request and a response so that the actual
+Service calls are a way to handle a request and a response so that the actual
 code can work with a service as if it was "just an implementation" of the generated
 interface. The call is defined by a 'call type (id)', grouped as request or response.
 
@@ -193,11 +192,11 @@ struct Service.call_request {
 }
 ```
 
-For the response, there is generated a virtual struct containing the
-response on `success`, using the field ID 0 (which should not be allowed
-to be declared, and will not be used by the non-declared auto-IDs for the
-exceptions), and one field for each declared exception. E.g. the example
-above will generate this response message definition:
+For the response, a virtual struct is generated containing the response on
+`success`, using the field ID 0 (which should not be allowed to be declared,
+and will not be used by the non-declared auto-IDs for the exceptions), and one
+field for each declared exception. E.g. the example above will generate this
+response message definition:
 
 ```thrift
 union Service.call_response {

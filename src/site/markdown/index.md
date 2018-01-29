@@ -17,13 +17,13 @@ there is a binary code generator available
 [here](https://github.com/morimekta/providence/releases) (check for the version of
 providence that you want to use).
 
-Note that you always need to add dependency to `providence-core` of the appropriate
-version for it to work.
+Note that you always need to add a dependency to `providence-core` of the
+appropriate version for it to work.
 
 ### Maven
 
 In maven the setup is simply to add a directory `src/main/providence` or
-`src/test/providence` there thrift files go, and add the `providence-maven-plugin`
+`src/test/providence` where thrift files go, and add the `providence-maven-plugin`
 and the core library to the `pom.xml` file like this:
 
 ```xml
@@ -62,7 +62,7 @@ Now the generated providence files should be available in your project.
 ### Gradle
 
 When using `gradle` as build engine, you can use the `providence-gradle-plugin`,
-which can be added with the lines. The thrift files goes to the same location as
+which can be added with the lines below. The thrift files goes to the same location as
 with maven: `src/main/providence` or `src/test/providence`.
 
 ```groovy
@@ -142,16 +142,16 @@ commands (I recommend `openjdk8-jdk`), and `maven` (3.3). Then check out
 mvn clean verify install
 ```
 
-There are also a `Makefile` for updating pre-compiled providence files, and
+There is also a `Makefile` for updating pre-compiled providence files, and
 a `thrift.gradle` file that helps with updating pre-compiled thrift files.
-These needs `make` and `gradle` installed to work (no gradle wrapper here).
+These need `make` and `gradle` installed to work (no gradle wrapper here).
 
 ## Terms and Definitions
 
 Throughout the providence documentation I use a number of terms that
 easily can be confused.
 
-- **[thrift]**: A system of converting files that follow the `thirft` IDL
+- **[thrift]**: A system of converting files that follow the `thrift` IDL
   specification found [here](https://thrift.apache.org/docs/idl) to some form of
   code or data. I currently know of 5 `thrift` systems, other than `providence`:
     - [Apache Thrift](https://thrift.apache.org): The "main" thrift implementation
