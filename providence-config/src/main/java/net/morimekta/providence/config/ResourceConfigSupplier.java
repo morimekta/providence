@@ -27,9 +27,9 @@ import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.JsonSerializerException;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Clock;
@@ -88,44 +88,44 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
         if (lastDot < 1) {
             throw new ProvidenceConfigException("No file ending, or no resource file name: " + resourceName);
         }
-        int lastSlash = resourceName.lastIndexOf("/");
-        String fileName = resourceName;
+        int    lastSlash = resourceName.lastIndexOf("/");
+        String fileName  = resourceName;
         if (lastSlash >= 0) {
             fileName = resourceName.substring(lastSlash + 1);
         }
-        try {
-            String suffix = resourceName.substring(lastDot)
-                                        .toLowerCase();
-            Serializer serializer;
-            switch (suffix) {
-                case ".jsn":
-                case ".json":
-                    serializer = new JsonSerializer();
-                    break;
-                case ".cfg":
-                case ".cnf":
-                case ".config":
-                case ".pvd":
-                case ".providence":
-                    serializer = new PrettySerializer().config();
-                    break;
-                // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
-                default:
-                    throw new ProvidenceConfigException(String.format("Unrecognized resource config type: %s (%s)",
-                                                                      suffix,
-                                                                      resourceName));
-            }
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-            InputStream in = classLoader.getResourceAsStream(resourceName);
+        String suffix = resourceName.substring(lastDot)
+                                    .toLowerCase();
+        Serializer serializer;
+        switch (suffix) {
+            case ".jsn":
+            case ".json":
+                serializer = new JsonSerializer();
+                break;
+            case ".cfg":
+            case ".cnf":
+            case ".config":
+            case ".pvd":
+            case ".providence":
+                serializer = new PrettySerializer().config();
+                break;
+            // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
+            default:
+                throw new ProvidenceConfigException(String.format("Unrecognized resource config type: %s (%s)",
+                                                                  suffix,
+                                                                  resourceName));
+        }
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream in          = classLoader.getResourceAsStream(resourceName);
+        if (in == null) {
+            in = ResourceConfigSupplier.class.getResourceAsStream(resourceName);
             if (in == null) {
-                in = ResourceConfigSupplier.class.getResourceAsStream(resourceName);
-                if (in == null) {
-                    throw new ProvidenceConfigException("No such config resource: " + resourceName);
-                }
+                throw new ProvidenceConfigException("No such config resource: " + resourceName);
             }
+        }
 
-            try {
-                return serializer.deserialize(in, descriptor);
+        try {
+            try (InputStream bin = new BufferedInputStream(in)) {
+                return serializer.deserialize(bin, descriptor);
             } catch (TokenizerException te) {
                 throw new ProvidenceConfigException(te);
             } catch (JsonSerializerException se) {
