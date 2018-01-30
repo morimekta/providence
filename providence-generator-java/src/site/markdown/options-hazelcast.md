@@ -112,7 +112,7 @@ Validation is in place for this to be printed as errors if you provide the
 `hazelcast_portable=true` to the code generator without providing the required
 fields.
 
-If you don't provide any annotation in a trhift file, no builderSupplier will be created
+If you don't provide any annotation in a thrift file, no builderSupplier will be created
 for that file even though you provide the `hazelcast_portable=true` flag.
 
 ## Limitations

@@ -2,10 +2,10 @@ Providence Core : Jackson
 =========================
 
 Code for handling extra types used in providence to help with jackson
-serialization and deserlialization. It is really only needed to be
-able to handle the `Binary` class from`net.morimekta.utils:ui-utils`.
+serialization and deserialization. It is really only needed to handle the
+`Binary` class from `net.morimekta.utils:ui-utils`.
 
-In order to use enable the extra classes to be serialized, include
+In order to enable the extra classes to be serialized, include
 the `providence-core-jackson` module, and call:
 
 ```java

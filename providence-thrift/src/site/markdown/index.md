@@ -15,9 +15,9 @@ and the `compact` protocol. The `TBinaryProtocolSerializer` generates
 the same binary as the `BinarySerizlier`, but since it is wrapped and
 reflective is way slower. The available serializers are:
 
-* **TBinaryProtocolSerilizer**: The default thrift binary format. Same
-  as the `BinarySerizlier` format.
-* **TCompactProtocolSerilizer**: The thrift 'compact' binary protocol.
+* **TBinaryProtocolSerializer**: The default thrift binary format. Same
+  as the `BinarySerializer` format.
+* **TCompactProtocolSerializer**: The thrift 'compact' binary protocol.
   This protocol is similar to `binary` but uses zigzag numeric encoding
   to save space.
 * **TJsonProtocolSerializer**: The thrift-JSON protocol format. This is

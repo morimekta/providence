@@ -1,16 +1,15 @@
 Providence Utils : Config
 =========================
 
-Providence config is a special config format for generating
-providence message objects. The reason for having a specific
-config format in this way is to solve the "structured + modular"
-problem. If you're not familiar here is a short wrap-up.
+Providence config is a special config format for generating providence message
+objects. The reason to have a special config format is to solve the "structured
++ modular" problem. If you're not familiar here is a short wrap-up.
 
 #### The Problem of Strongly Typed Structured Config
 
 When choosing a config language (or config markup language), you
-need to consider what you use the config for. But what we would really
-like have four main properties:
+need to consider what you use the config for. But we would like to have four
+main properties:
 
 1. `schema-defined`: The config has a strict schema that can be used to
    validate it, e.g. in testing pipelines. But the schema needs to be at least
@@ -22,18 +21,17 @@ like have four main properties:
    each should just produce a DBI instance, that is an example of a good use
    for structured config: Each has a part of the config that is internally
    identical configuring that DB connection.
-3. `type-safe`: The code that use the config should be type-safe, so at
-   compile-time, I know if the value I look at is an integer or a string. This
-   is also a way to always refer to config values that are defined in the schema
-   at all time.
-4. `modular`: The config must support to be be split into multiple files, that
-   can be combined or merged into a single "config" without messing up the
-   "type" something in the config is. The modular part has two variants; include
+3. `type-safe`: The code that uses the config should be type-safe, so I know at
+   compile-time if the value I look at is an integer or a string. This is also
+   a way to ensure that config values must be defined in the schema before use.
+4. `modular`: The config must support being split into multiple files that
+   can be combined or merged into a single "config" while respecting the
+   "type" of the config items. The modular part has two variants; include
    and extend. Included config is something that is included as a part of the
    parsed config, and extended config is modifications on the same structure.
 
-In addition we want to avoid a couple of dogmas that makes it difficult to
-follow what goes on with the config: `arithmetics` and `scripting`. If you
+In addition we want to avoid a couple of misfeatures that make it difficult to
+follow what is going on with the config: `arithmetics` and `scripting`. If you
 need logic to generate your config, you should do that in a proper programming
 or scripting language, and not bake it into the config itself. But if you
 really need scripting, you should use `java`, `groovy` or similar.
@@ -42,7 +40,7 @@ really need scripting, you should use `java`, `groovy` or similar.
   of Google (see
   [here](http://alexandria.tue.nl/extra1/afstversl/wsk-i/bokharouss2008.pdf)
   for example), which gives full arithmetic and scripting control to the
-  config writer, which in turns had a tendency of making the config files
+  config writer, which in turn had a tendency to make the config files
   almost unreadable and a pretty unpopular task of managing.
 
 If you want to have a schema-defined, structured, type-safe config, you can
@@ -56,21 +54,21 @@ And here lies the whole reason for `providence-config`.
 If you want to have a config that is type-safe both in the written config file
 input to the parser, to the code that uses that config, using a model builder
 like providence should be a no-brainer. But when the config is this strictly
-defined, making it truly modular becomes a non-trivial problem: We simply don't
-want to have a single central definition of "the config", but be able to
-build up the config for each application by modules used by the various parts
-that it contains: it's libraries and local code.
+defined, making it truly modular becomes a non-trivial problem: We don't want
+to simply have a single central definition of "the config", but to build up the
+config for each application by modules used by the various parts that it
+contains: its libraries and local code.
 
 This is the `providence` project, so guess what, it is the base definition.
-And since providence support modular schema definitions, it's config system
+And since providence supports modular schema definitions, its config system
 needs to support modularity of the config in the same way.
 
 ### Config compatibility
 
-Providence is by it's very definition backward compatible, and if reading in
+Providence is by its very definition backward compatible, and if reading in
 non-strict modes, it is also *forward* compatible. Forward compatible means that
 you can add new fields and references, and update the config files with content
-from those fields without breaking older users fo the same config files.
+from those fields without breaking older users of the same config files.
 
 ## Config file Syntax
 
@@ -90,7 +88,7 @@ providence config file syntax:
 - The `includes` section is a set of recursively included config files.  Each
   file is given an `alias`. E.g. `include "other.cfg" as o` will make the 'o'
   reference point to the content of the "other.cfg" config.  Files referenced
-  in the include statements **MUST** be relative to the PWD directory of the
+  in the include statements **MUST** be relative to the directory of the
   including file.
 - The `defines` follow a simple 'map' syntax where the key must be a simple
   identifier `/[_a-zA-Z][_a-zA-Z0-9]/`, and a simple value (number, string, enum,
@@ -201,7 +199,7 @@ class Loader {
 
 ### Includes
 
-Files referenced in the include statements must be relative to the PWD directory
+Files referenced in the include statements must be relative to the directory
 of the including file.
 
 ## Advanced Usage

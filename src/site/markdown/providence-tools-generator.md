@@ -11,7 +11,7 @@ See `pvdgen --help` for more detailed info about the available options.
 
 ## Developing Generator Modules
 
-See [providence-js](https://github.com/morimekta/providence-js) for example of
+See [providence-js](https://github.com/morimekta/providence-js) for an example of
 how to add a simple external generator. Note that because of the tie-in with the
 contained descriptions and the type registries the generators may be pretty
 dependent on the providence version installed.

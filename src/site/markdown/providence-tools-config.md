@@ -9,7 +9,7 @@ the config written before deployed, we have a "config helper tool", or `pvdcfg`.
 
 The tool have three main functions:
 
-- `pvdcfg print`: Parse and compile the target config and print it out to standard out.
+- `pvdcfg print`: Parse and compile the target config and print it out to standard output.
 
     ```sh
     $ pvdcfg -I providence/ print resources/my_service.cfg
@@ -24,7 +24,7 @@ The tool have three main functions:
     ```
 
 - `pvdcfg params`: Show a list of params that can be used to augment the config, and in
-  which config file its defined.
+  which config files they are defined.
   
     ```sh
     $ pvdcfg -I providence/ params resources/my_service.cfg

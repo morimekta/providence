@@ -7,7 +7,7 @@ providence, and comparing providence messages.
 ### Comparing And Matching
 
 There are 3 notable hamcrest matchers added in the testing library. These are
-available throu static methods on `ProvidenceMatchers`:
+available through static methods on `ProvidenceMatchers`:
 
 * `equalToMessage(expected)`: Checks if two messages is equal. This is
   essentially the same as `equals(value)`, but with different output on
@@ -25,7 +25,7 @@ available throu static methods on `ProvidenceMatchers`:
     ```
 
 * `hasFieldValueThat(path, matcher)`: Uses the same depth checking as
-  `hasVieldValue`, but also takes a matcher to match against the actual
+  `hasFieldValue`, but also takes a matcher to match against the actual
   value. So these would be equivalent, but one with better failure output:
     ```java
     assertThat(msg.getMyField().getOtherField(), startsWith("boo."));

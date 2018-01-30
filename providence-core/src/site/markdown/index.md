@@ -38,7 +38,7 @@ methods, and the more notable:
   but handy to have in order to quickly make messages by merging two of the
   same type.
 
-The `PMessageBuilkder` has a bit more features to be noted. These are added
+The `PMessageBuilder` has a bit more features to be noted. These are added
 mainly in order to facilitate "smarter" ways or handling updates and
 changes.
 
@@ -80,11 +80,11 @@ Serialization and deserialization of providence models are done through the
   descriptor is needed. It should return the number of bytes written.
 * `T deserialize(InputStream is, PDescriptor<T> t)`: Read an object of type T
   with the descriptor t from the input stream. The object does not have to be a
-  Message, ant serializable type should work.
+  Message, any serializable type should work.
 
 The available serializers are as follows:
 
-* **BinarySerializer**: A native providence version of the thrift's
+* **BinarySerializer**: A native providence version of thrift's
   **TBinaryProtocol** binary format. It should generate the same serialized
   data as TBinaryProtocol, and be able to parse data back from the same. It is
   the default serializer in the `pvdrpc` tool. See
@@ -106,7 +106,7 @@ The available serializers are as follows:
 
 Often when using serializers a system may need to be able to select a fitting
 serializer for the current task. This is done with the `SerializerProvider`
-interface, which simply let's a service get a serializer based on a media
+interface, which simply lets a service get a serializer based on a media
 type string.
 
 ### A Note on Strictness
@@ -118,7 +118,7 @@ the parser or generator can be when reading and writing the messages. In essence
   `apache thrift` will be accepted. Meaning:
     - If a `required` field in a message is missing, reading it will fail. E.g.
       validation failure.
-    - If a map key, or set value cannot be resolved, it will be 'null' and fail
+    - If a map key or set value cannot be resolved, it will be 'null' and fail
       reading. This is mostly only applicable to enums reading an unknown value.
 - Otherwise the failures above will be handled as:
     - `required` fields are handled as if they were `optional_in_required_out`,
@@ -134,13 +134,12 @@ the parser or generator can be when reading and writing the messages. In essence
       utf-8 entities, too large (or small) number for parsed `i*` types, etc.
 
 Writing a message should only fail if writing to the stream fails. A message
-usually *cannot* contain an invalid value. This is a result or how the
-message builder works, which in practice (if the user calls `build()` on the
-builder, it makes a valid message instance regardless).
+usually *cannot* contain an invalid value, since fields are validated on
+construction by the builder.
 
 ### Example use of Serialization.
 
-In the simplest form, serializers are used plainly on inout and output
+In the simplest form, serializers are used plainly on input and output
 streams.
 
 ```java
@@ -162,9 +161,10 @@ class Example {
 ## Message I/O
 
 Since using the Serializers require knowing more about the source of and how to
-handle multiple message in one etc, there is added a MessageIO library. The
-interface is mostly a simplification of use of the Serializers, making specialized
-`MessageReader` and `MessageWriter` classes.
+handle multiple message in one etc, there is a MessageIO library that
+simplifies some common tasks. The interface is mostly a simplification of use
+of the Serializers, making specialized `MessageReader` and `MessageWriter`
+classes.
 
 - `IOMessageReader` and `IOMessageWriter` are simply wrappers around input stream
   and output stream that handles streaming multiple messages, with optional
