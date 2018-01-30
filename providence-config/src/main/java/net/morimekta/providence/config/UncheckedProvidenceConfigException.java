@@ -32,15 +32,6 @@ public class UncheckedProvidenceConfigException extends RuntimeException impleme
     }
 
     @Override
-    public UncheckedProvidenceConfigException initCause(Throwable cause) {
-        if (!(cause instanceof ProvidenceConfigException)) {
-            throw new IllegalArgumentException("Exception " + cause.getClass().getName() + " is not a config exception");
-        }
-        super.initCause(cause);
-        return this;
-    }
-
-    @Override
     public ProvidenceConfigException getCause() {
         return (ProvidenceConfigException) super.getCause();
     }
