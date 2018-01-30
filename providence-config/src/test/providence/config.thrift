@@ -52,6 +52,7 @@ struct RefConfig1 {
     13: optional map<Value,ServicePort> map_value;
 
     20: optional map<i32,Value> simple_map;
+    21: optional map<i32,map<i32,i32>> complex_map;
 }
 
 // different name, so we can have it 'unknown'.

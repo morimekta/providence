@@ -20,16 +20,16 @@
  */
 package net.morimekta.providence.config.impl;
 
+import com.google.common.collect.ImmutableSet;
 import net.morimekta.providence.config.ConfigListener;
 import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.config.util.TestConfigSupplier;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
-
-import com.google.common.collect.ImmutableSet;
 import org.awaitility.Duration;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,6 +57,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -248,5 +249,42 @@ public class ProvidenceConfigSupplierTest {
 
         assertThat(serviceConfig.getName(), is("other"));
         assertThat(serviceConfig.getHttp().getPort(), is((short) 80));
+    }
+
+    @Test
+    public void testParentConfigUpdatesPropagaing() throws IOException {
+        TestConfigSupplier<Database, Database._Field> parent = new TestConfigSupplier<>(Database.builder()
+                                                                                                .setUri("foo")
+                                                                                                .build());
+        File bar = writeContentTo("config.Database { driver = \"bar\" }", tmp.newFile("bar.config"));
+        SimpleTypeRegistry registry = new SimpleTypeRegistry();
+        registry.registerRecursively(Database.kDescriptor);
+        parser = new ProvidenceConfigParser(registry, false);
+        ProvidenceConfigSupplier<Database,Database._Field> config = new ProvidenceConfigSupplier<>(bar, parent, watcher, parser, clock);
+
+        assertThat(config.get(), is(Database.builder()
+                                            .setUri("foo")
+                                            .setDriver("bar")
+                                            .build()));
+
+        ConfigListener<Database,Database._Field> listener = mock(ConfigListener.class);
+        config.addListener(listener);
+
+        parent.testUpdate(Database.builder()
+                                  .setUri("fish")
+                                  .build());
+
+        verify(listener).onConfigChange(Database.builder()
+                                                .setUri("fish")
+                                                .setDriver("bar")
+                                                .build());
+        reset(listener);
+
+        config.removeListener(listener);
+
+        parent.testUpdate(Database.builder()
+                                  .build());
+
+        verifyZeroInteractions(listener);
     }
 }

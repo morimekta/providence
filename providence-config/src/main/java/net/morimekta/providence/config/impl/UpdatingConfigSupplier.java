@@ -47,13 +47,6 @@ public abstract class UpdatingConfigSupplier<M extends PMessage<M,F>, F extends 
 
     /**
      * Initialize supplier with empty config.
-     */
-    protected UpdatingConfigSupplier() {
-        this(Clock.systemUTC());
-    }
-
-    /**
-     * Initialize supplier with empty config.
      *
      * @param clock The clock to use in timing config loads.
      */

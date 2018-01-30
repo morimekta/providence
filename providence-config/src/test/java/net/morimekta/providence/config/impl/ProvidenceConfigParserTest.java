@@ -1,23 +1,32 @@
 package net.morimekta.providence.config.impl;
 
+import com.google.common.collect.ImmutableMap;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.ProvidenceConfigException;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.SimpleTypeRegistry;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.RefConfig1;
+import net.morimekta.test.providence.config.RefConfig2;
 import net.morimekta.test.providence.config.RefMerge;
 import net.morimekta.test.providence.config.Service;
+import net.morimekta.test.providence.config.ServicePort;
 import net.morimekta.test.providence.config.Value;
+import net.morimekta.util.Binary;
 import net.morimekta.util.Pair;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
@@ -214,67 +223,72 @@ public class ProvidenceConfigParserTest {
     public void testInternalReferenceFails() throws IOException {
         writeContentTo("config.Database {}\n", temp.newFile("db.cfg"));
 
-        assertReferenceFails("include \"db.cfg\" as db\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & db {\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to reassign include alias 'db' to reference.");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {}\n" +
-                             "  ref1_1 & first {}\n" +
-                             "}\n",
-                             "Trying to reassign reference 'first', original at line 3");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & def {\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to assign reference id 'def', which is reserved.");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    msg_value & first {}\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    msg_value = first\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to reference 'first' while it's being defined, original at line 3");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    msg_value = second\n" +
-                             "  }\n" +
-                             "}\n",
-                             "No such reference 'second'");
+        assertConfigFails("include \"db.cfg\" as db\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & db {\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to reassign include alias 'db' to reference.");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {}\n" +
+                          "  ref1_1 & first {}\n" +
+                          "}\n",
+                          "Trying to reassign reference 'first', original at line 3");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & def {\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to assign reference id 'def', which is reserved.");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {\n" +
+                          "    msg_value & first {}\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to reassign reference 'first' while calculating it's value, original at line 3");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {\n" +
+                          "    msg_value = first\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to reference 'first' while it's being defined, original at line 3");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {\n" +
+                          "    msg_value = second\n" +
+                          "  }\n" +
+                          "}\n",
+                          "No such reference 'second'");
 
         // --- with unknown / consumed values
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    unk & first = {\n" +
-                             "    }\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
-        assertReferenceFails("\n" +
-                             "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    unk = {\n" +
-                             "      val & first = \"str\"\n" +
-                             "    }\n" +
-                             "  }\n" +
-                             "}\n",
-                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {\n" +
+                          "    unk & first = {\n" +
+                          "    }\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to reassign reference 'first' while calculating it's value, original at line 3");
+        assertConfigFails("\n" +
+                          "config.RefMerge {\n" +
+                          "  ref1 & first {\n" +
+                          "    unk = {\n" +
+                          "      val & first = \"str\"\n" +
+                          "    }\n" +
+                          "  }\n" +
+                          "}\n",
+                          "Trying to reassign reference 'first' while calculating it's value, original at line 3");
     }
 
-    private void assertReferenceFails(String cfg, String message) throws IOException {
+    @Test
+    public void testConfigFails() {
+        // ...
+    }
+
+    private void assertConfigFails(String cfg, String message) throws IOException {
         try {
             File a = writeContentTo(cfg, temp.newFile());
             ProvidenceConfigParser config = new ProvidenceConfigParser(registry, false);
@@ -283,6 +297,80 @@ public class ProvidenceConfigParserTest {
         } catch (ProvidenceConfigException e) {
             assertThat(e.getMessage(), is(message));
         }
+    }
+
+    @Test
+    public void testGoodConfig() throws IOException {
+        assertGoodConfig("config.RefConfig1 {\n" +
+                         "  bool_value = true\n" +
+                         "  byte_value = 123\n" +
+                         "  i32_value = 12345678\n" +
+                         "  i64_value = 12345678901234\n" +
+                         "  double_value = 123.123\n" +
+                         "  bin_value = hex(01020304)\n" +
+                         "  enum_value = 1\n" +
+                         "  msg_value = {\n" +
+                         "    uri = \"dodo\"" +
+                         "  }\n" +
+                         "  map_value = {\n" +
+                         "    FIRST: { port = 1234 }" +
+                         "  }" +
+                         "  complex_map = {\n" +
+                         "    10: { 12: 15 }" +
+                         "  }\n" +
+                         "  list_value = [ \"foo\", \"bar\", ]\n" +
+                         "  set_value = [ 1, 3, 13 ]" +
+                         "}", RefConfig1.builder()
+                                        .setBoolValue(true)
+                                        .setByteValue((byte) 123)
+                                        .setI32Value(12345678)
+                                        .setI64Value(12345678901234L)
+                                        .setDoubleValue(123.123)
+                                        .setBinValue(Binary.fromHexString("01020304"))
+                                        .setEnumValue(Value.FIRST)
+                                        .setMsgValue(Database.builder()
+                                                             .setUri("dodo")
+                                                             .build())
+                                        .putInMapValue(Value.FIRST, ServicePort.builder()
+                                                                               .setPort((short) 1234)
+                                                                               .build())
+                                        .putInComplexMap(
+                                                10, ImmutableMap.of(12, 15))
+                                        .addToListValue("foo", "bar")
+                                        .addToSetValue((short) 1, (short) 3, (short) 13)
+                                        .build(), null);
+        assertGoodConfig("def {\n" +
+                         "  ref2 = config.RefConfig1 {\n" +
+                         "    enum_value = FIRST\n" +
+                         "    map_value = {\n" +
+                         "      SECOND: { port = 4040 }\n" +
+                         "    }\n" +
+                         "  }\n" +
+                         "}\n" +
+                         "\n" +
+                         "config.RefConfig2 {\n" +
+                         "  enum_value = ref2.enum_value\n" +
+                         "  map_value = ref2.map_value\n" +
+                         "" +
+                         "}\n",
+                         RefConfig2.builder()
+                                   .setStrValue("keepsake")
+                                   .setEnumValue(Value.FIRST)
+                                   .putInMapValue(Value.SECOND, ServicePort.builder().setPort((short) 4040).build())
+                                   .build(),
+                         RefConfig2.builder()
+                                   .setStrValue("keepsake")
+                                   .build());
+    }
+
+    private <M extends PMessage<M, F>, F extends PField>void assertGoodConfig(@Nonnull String config,
+                                                                              @Nonnull M expected,
+                                                                              @Nullable M parent)
+            throws IOException {
+        File a = writeContentTo(config, temp.newFile());
+        ProvidenceConfigParser parser = new ProvidenceConfigParser(registry, false);
+        M result = parser.parseConfig(a.toPath(), parent).first;
+        assertThat(result, is(equalToMessage(expected)));
     }
 
     @Test

@@ -183,6 +183,7 @@ public class OverrideConfigSupplierTest {
                                                                                                  .clearListValue()
                                                                                                  .clearSetValue()
                                                                                                  .clearSimpleMap()
+                                                                                                 .clearComplexMap()
                                                                                                  .build());
         OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
                 ref,
@@ -226,6 +227,7 @@ public class OverrideConfigSupplierTest {
                                                                                                  .clearSetValue()
                                                                                                  .clearSimpleMap()
                                                                                                  .clearDoubleValue()
+                                                                                                 .clearComplexMap()
                                                                                                  .build());
         OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
                 ref,
