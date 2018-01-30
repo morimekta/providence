@@ -1,5 +1,6 @@
 package net.morimekta.providence.thrift.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
@@ -9,8 +10,6 @@ import net.morimekta.test.providence.thrift.service.MyService.Processor;
 import net.morimekta.test.providence.thrift.service.Request;
 import net.morimekta.test.providence.thrift.service.Response;
 import net.morimekta.test.thrift.thrift.service.MyService.Client;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -48,7 +47,7 @@ public class SocketServerTest {
 
     @BeforeClass
     public static void setUpClass() {
-        setDefaultPollDelay(2, TimeUnit.MILLISECONDS);
+        setDefaultPollDelay(20, TimeUnit.MILLISECONDS);
 
         impl = mock(Iface.class);
         instrumentation = mock(ServiceCallInstrumentation.class);
@@ -77,7 +76,7 @@ public class SocketServerTest {
     }
 
     @Test
-    public void testSimple() throws IOException, TException, Failure, InterruptedException {
+    public void testSimple() throws IOException, TException, Failure {
         try (TSocket socket = new TSocket("localhost", port)) {
             socket.open();
             TProtocol protocol = new TBinaryProtocol(socket);
@@ -99,7 +98,7 @@ public class SocketServerTest {
                                      .setText("Really!")
                                      .build());
 
-            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+            waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
@@ -107,7 +106,7 @@ public class SocketServerTest {
     }
 
     @Test
-    public void testOneway() throws IOException, TException, Failure, InterruptedException {
+    public void testOneway() throws IOException, TException {
         try (TSocket socket = new TSocket("localhost", port)) {
             socket.open();
             TProtocol protocol = new TBinaryProtocol(socket);
@@ -121,7 +120,7 @@ public class SocketServerTest {
 
             client.ping();
 
-            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+            waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(impl).ping();
             verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
@@ -130,7 +129,7 @@ public class SocketServerTest {
     }
 
     @Test
-    public void testMultiple() throws IOException, TException, Failure, InterruptedException {
+    public void testMultiple() throws IOException, TException, Failure {
         try (TSocket socket = new TSocket("localhost", port)) {
             socket.open();
             TProtocol protocol = new TBinaryProtocol(socket);
@@ -173,7 +172,7 @@ public class SocketServerTest {
                                      .setText("Doh!")
                                      .build());
 
-            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+            waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
             verifyNoMoreInteractions(impl, instrumentation);
@@ -181,7 +180,7 @@ public class SocketServerTest {
     }
 
     @Test
-    public void testException() throws TException, IOException, Failure, InterruptedException {
+    public void testException() throws TException, IOException, Failure {
         try (TSocket socket = new TSocket("localhost", port)) {
             socket.open();
             TProtocol protocol = new TBinaryProtocol(socket);
@@ -202,7 +201,7 @@ public class SocketServerTest {
                 assertThat(e.getText(), is("Noooo!"));
             }
 
-            waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+            waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
 
             verify(impl).test(Request.builder()
                                      .setText("O'Really???")
