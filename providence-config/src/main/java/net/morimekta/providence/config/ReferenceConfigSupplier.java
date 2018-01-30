@@ -73,16 +73,16 @@ public class ReferenceConfigSupplier<
     public ReferenceConfigSupplier(String referencePath, ConfigSupplier<ParentMessage, ParentField> parent, Clock clock)
             throws ProvidenceConfigException {
         super(clock);
-        listener = c -> {
+        this.parent = parent;
+        this.referencePath = referencePath;
+        this.listener = updated -> {
             try {
-                set(getReference(c));
+                set(getReference(updated));
             } catch (ProvidenceConfigException e) {
                 throw new UncheckedProvidenceConfigException(e);
             }
         };
         parent.addListener(listener);
-        this.parent = parent;
-        this.referencePath = referencePath;
         set(getReference(parent.get()));
     }
 

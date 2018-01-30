@@ -25,6 +25,24 @@ public class ReferenceConfigSupplierTest {
 
         assertThat(ref.get(), is(notNullValue()));
         assertThat(ref.get().getPort(), is((short) 1234));
+
+        parent.testUpdate(Service.builder()
+                                 .setAdmin(ServicePort.builder()
+                                                      .setPort((short) 4321)
+                                                      .build())
+                                 .build());
+
+        assertThat(ref.get(), is(notNullValue()));
+        assertThat(ref.get().getPort(), is((short) 4321));
+
+        parent.testUpdate(Service.builder()
+                                 .setHttp(ServicePort.builder()
+                                                     .setPort((short) 8080)
+                                                     .build())
+                                 .build());
+
+        assertThat(ref.get(), is(notNullValue()));
+        assertThat(ref.get().getPort(), is((short) 4321));  // not updated as that failed.
     }
 
     @Test

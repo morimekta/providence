@@ -20,11 +20,10 @@
  */
 package net.morimekta.providence.config.util;
 
+import com.google.common.annotations.VisibleForTesting;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.impl.UpdatingConfigSupplier;
 import net.morimekta.providence.descriptor.PField;
-
-import com.google.common.annotations.VisibleForTesting;
 
 import javax.annotation.Nonnull;
 import java.time.Clock;
@@ -39,20 +38,12 @@ import java.time.Clock;
 @VisibleForTesting
 public class TestConfigSupplier<M extends PMessage<M,F>, F extends PField> extends UpdatingConfigSupplier<M,F> {
     /**
-     * Start with no initial config. This is usually not allowed for "normal"
-     * config suppliers.
-     */
-    public TestConfigSupplier() {
-    }
-
-    /**
-     * Start with no initial config. This is usually not allowed for "normal"
-     * config suppliers.
+     * Start with an initial config value.
      *
-     * @param clock The clock to use for timing.
+     * @param initialConfig The initial config value.
      */
-    public TestConfigSupplier(@Nonnull Clock clock) {
-        super(clock);
+    public TestConfigSupplier(@Nonnull M initialConfig) {
+        this(Clock.systemUTC(), initialConfig);
     }
 
     /**
@@ -63,15 +54,6 @@ public class TestConfigSupplier<M extends PMessage<M,F>, F extends PField> exten
      */
     public TestConfigSupplier(@Nonnull Clock clock, @Nonnull M initialConfig) {
         super(clock);
-        set(initialConfig);
-    }
-
-    /**
-     * Start with an initial config value.
-     *
-     * @param initialConfig The initial config value.
-     */
-    public TestConfigSupplier(@Nonnull M initialConfig) {
         set(initialConfig);
     }
 

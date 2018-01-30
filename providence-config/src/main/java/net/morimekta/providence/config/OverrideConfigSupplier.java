@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.config;
 
+import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
@@ -121,12 +122,14 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
                                   boolean strict)
             throws ProvidenceConfigException {
         super(clock);
-        synchronized (this) {
+        this.overrides = ImmutableMap.copyOf(overrides);
+        synchronized (this.overrides) {
             this.parent = parent;
-            this.overrides = overrides;
             this.listener = updated -> {
                 try {
-                    set(buildOverrideConfig(updated, overrides, strict));
+                    synchronized (OverrideConfigSupplier.this.overrides) {
+                        set(buildOverrideConfig(updated, OverrideConfigSupplier.this.overrides, strict));
+                    }
                 } catch (ProvidenceConfigException e) {
                     throw new UncheckedProvidenceConfigException(e);
                 }
@@ -143,7 +146,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
 
     @Override
     public String getName() {
-        return String.format("OverrideConfig{[%s]}", Strings.join(", ", overrides.keySet()));
+        return "OverrideConfig";
     }
 
     private static <Message extends PMessage<Message, Field>, Field extends PField>

@@ -64,13 +64,25 @@ public class OverrideConfigSupplierTest {
     @SuppressWarnings("unchecked")
     public void setUp() {
         clock = new FakeClock();
-        base = new TestConfigSupplier<>(clock);
-        base.testUpdate(Database.builder()
+        base = new TestConfigSupplier<>(clock, Database.builder()
                                 .setUri("http://hostname:9057/path")
                                 .setDriver("driver")
                                 .setCredentials(new Credentials("username",
                                                             "complicated password that no one guesses"))
                                 .build());
+    }
+
+    @Test
+    public void testBasic() throws ProvidenceConfigException {
+        OverrideConfigSupplier<Database, Database._Field> supplier = new OverrideConfigSupplier<>(
+                clock,
+                base, ImmutableMap.of(
+                        "credentials.password", "password",
+                        "uri", "undefined"),
+                true);
+
+        assertThat(supplier.toString(), is("OverrideConfig{[credentials.password, uri], parent=TestConfig}"));
+        assertThat(supplier.getName(), is("OverrideConfig"));
     }
 
     @Test
@@ -199,6 +211,45 @@ public class OverrideConfigSupplierTest {
                           .setEnumValue(Value.SECOND)
                           .setBinValue(Binary.fromHexString("01020304"))
                           .setStr2Value("This is also a string")
+                          .build())));
+    }
+
+    @Test
+    public void testOverrideEveryType_others() throws IOException {
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(generator.generate(RefConfig1.kDescriptor)
+                                                                                                 .mutate()
+                                                                                                 .clearMsgValue()
+                                                                                                 .clearMapValue()
+                                                                                                 .clearStrValue()
+                                                                                                 .clearStr2Value()
+                                                                                                 .clearListValue()
+                                                                                                 .clearSetValue()
+                                                                                                 .clearSimpleMap()
+                                                                                                 .clearDoubleValue()
+                                                                                                 .build());
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
+                ImmutableMap.<String,String>builder()
+                            .put("bool_value", "false")
+                            .put("byte_value", "0x30")
+                            .put("i16_value", "0x4321")
+                            .put("i32_value", "0x9876321")
+                            .put("i64_value", "0x987654098765")
+                            .put("enum_value", "1")
+                            .put("bin_value", "b64(AbCdEf)")
+                            .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setBoolValue(false)
+                          .setByteValue((byte) 48)
+                          .setI16Value((short) 17185)
+                          .setI32Value(159867681)
+                          .setI64Value(167633983473509L)
+                          .setEnumValue(Value.FIRST)
+                          .setBinValue(Binary.fromBase64("AbCdEf"))
                           .build())));
     }
 
