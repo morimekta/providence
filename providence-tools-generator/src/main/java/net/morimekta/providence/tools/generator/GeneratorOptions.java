@@ -223,7 +223,7 @@ public class GeneratorOptions extends CommonOptions {
 
     public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {
         net.morimekta.providence.generator.GeneratorOptions generatorOptions = new net.morimekta.providence.generator.GeneratorOptions();
-        generatorOptions.generator_program_name = "pvdc";
+        generatorOptions.generator_program_name = "pvdgen";
         generatorOptions.program_version = Utils.getVersionString();
 
         try {
