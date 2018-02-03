@@ -3,7 +3,6 @@ package net.morimekta.providence.tools.config;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -12,16 +11,17 @@ import static org.junit.Assert.assertThat;
 /**
  * Test the providence converter (pvd) command.
  */
-public class ConfigPrintTest extends ConfigTestBase {
+public class ConfigResolveTest extends ConfigTestBase {
     @Test
-    public void testPrint_simple() throws IOException {
+    public void testPrint_simple() {
         standardConfig();
 
         sut.run(
                 "--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
-                "print",
-                configRoot.getAbsolutePath() + "/prod.cfg");
+                "resolve",
+                configRoot.getAbsolutePath() + "/base_service.cfg",
+                configRoot.getAbsolutePath() + "/prod_service.cfg");
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is("config.Service {\n" +
@@ -35,7 +35,7 @@ public class ConfigPrintTest extends ConfigTestBase {
                      "  }\n" +
                      "  db = {\n" +
                      "    uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
-                     "    driver = \"org.mysql.Driver\"\n" +
+                     "    driver = \"org.h2.Driver\"\n" +
                      "    credentials = {\n" +
                      "      username = \"dbuser\"\n" +
                      "      password = \"DbP4s5w0rD\"\n" +
@@ -46,7 +46,7 @@ public class ConfigPrintTest extends ConfigTestBase {
     }
 
     @Test
-    public void testPrint_withError() throws IOException {
+    public void testPrint_withError() {
         standardConfig();
         writeContentTo(
                 "def {\n" +
@@ -67,7 +67,7 @@ public class ConfigPrintTest extends ConfigTestBase {
 
         sut.run("--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
-                "print",
+                "resolve",
                 configRoot.getAbsolutePath() + "/prod.cfg");
 
         assertThat(console.output(), is(""));

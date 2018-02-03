@@ -7,9 +7,10 @@ But using the config is not always preferrable, or trivial to utilize in it's ra
 form. So in order to transform / build the config, and in order to validate or test
 the config written before deployed, we have a "config helper tool", or `pvdcfg`.
 
-The tool have three main functions:
+The tool have two main functions:
 
-- `pvdcfg print`: Parse and compile the target config and print it out to standard output.
+- `pvdcfg resolve`: Parse and compile the target config or configs and print the end
+  result out to standard output.
 
     ```sh
     $ pvdcfg -I providence/ print resources/my_service.cfg
@@ -23,22 +24,13 @@ The tool have three main functions:
     }
     ```
 
-- `pvdcfg params`: Show a list of params that can be used to augment the config, and in
-  which config files they are defined.
-  
-    ```sh
-    $ pvdcfg -I providence/ params resources/my_service.cfg
-    http_port = 8080 (resources/my_service.cfg)
-    db_host = "localhost:1234" (resources/db.cfg)
-    ```
-
 - `pvdcfg validate`: Validate a set of config files from a base config. This is similar to
   the 'print' command, but prints nothing on success, and only the error message if the parsing
-  fails at any step.
+  fails at any step. It will only print the first error it finds.
 
     ```sh
     $ pvdcfg -I providence/ validate resources/good.cfg
-    $ pvdcfg -I providence/ validate resources/*.cfg
+    $ pvdcfg -I providence/ validate --strict resources/*.cfg
     Error in my_service.cfg line 23 position 6
         No such field 'blah' in config.Service
           blah = "nothing"

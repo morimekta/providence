@@ -7,26 +7,32 @@ import net.morimekta.providence.config.ProvidenceConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Print an overview over the available params for the config.
+ * Resolve an overview over the available params for the config.
  */
 public class Validate extends CommandBase {
-    protected File file = null;
+    private List<File> files = new ArrayList<>();
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        config.getConfig(file);
+        for (File file : files) {
+            config.getConfig(file);
+        }
     }
 
-    private void setFile(File file) {
-        this.file = file;
+    private void addFile(File file) {
+        this.files.add(file);
     }
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] validate", parent.getVersion(), "");
-        parser.add(new Argument("file", "Config file to validate", Parser.file(this::setFile), null, null, false, true, false));
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] validate",
+                                                   parent.getVersion(),
+                                                   "Verify content of config files, also checking includes");
+        parser.add(new Argument("file", "Config files to validate", Parser.file(this::addFile), null, null, true, true, false));
         return parser;
     }
 }

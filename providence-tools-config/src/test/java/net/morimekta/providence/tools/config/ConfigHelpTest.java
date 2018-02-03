@@ -1,7 +1,6 @@
 package net.morimekta.providence.tools.config;
 
 import net.morimekta.providence.tools.common.Utils;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +30,7 @@ public class ConfigHelpTest extends ConfigTestBase {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | print | validate] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | resolve | validate] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -44,8 +43,8 @@ public class ConfigHelpTest extends ConfigTestBase {
                 "Available Commands:\n" +
                 "\n" +
                 " help     : Show help for sub-commands.\n" +
-                " print    : Print the resulting config.\n" +
-                " validate : Validate the file, print an error if not valid.\n")));
+                " resolve  : Resolve the resulting config.\n" +
+                " validate : Validate the files, print error if not valid.\n")));
         assertThat(exitCode, is(0));
     }
 
@@ -56,7 +55,7 @@ public class ConfigHelpTest extends ConfigTestBase {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | print | validate] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | resolve | validate] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -69,22 +68,22 @@ public class ConfigHelpTest extends ConfigTestBase {
                 "Available Commands:\n" +
                 "\n" +
                 " help     : Show help for sub-commands.\n" +
-                " print    : Print the resulting config.\n" +
-                " validate : Validate the file, print an error if not valid.\n")));
+                " resolve  : Resolve the resulting config.\n" +
+                " validate : Validate the files, print error if not valid.\n")));
         assertThat(exitCode, is(0));
     }
 
     @Test
     public void testHelpPrint() {
-        sut.run("help", "print");
+        sut.run("help", "resolve");
 
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [...] print [-f fmt] file\n" +
+                "Usage: pvdcfg [...] resolve [-f fmt] file...\n" +
                 "\n" +
                 " --format (-f) fmt : the output format (default: pretty)\n" +
-                " file              : Config file to parse and print\n")));
+                " file              : Config files to resolve\n")));
         assertThat(exitCode, is(0));
     }
 }

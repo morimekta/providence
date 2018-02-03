@@ -12,31 +12,48 @@ import net.morimekta.providence.tools.common.formats.Format;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Print the resulting config.
+ * Resolve the resulting config.
  */
-public class Print extends CommandBase {
+public class Resolve extends CommandBase {
     private Serializer serializer = new PrettySerializer().config();
-    private File       file       = null;
+    private List<File> files      = new ArrayList<>();
 
     @Override
     @SuppressWarnings("unchecked")
     public void execute(ProvidenceConfig config) throws IOException {
-        serializer.serialize(System.out, (PMessage) config.getConfig(file));
+        if (files.isEmpty()) {
+            throw new IllegalArgumentException("No config files to resolve");
+        }
+
+        PMessage message = null;
+        for (File configFile : files) {
+            if (message == null) {
+                message = config.getConfig(configFile);
+            } else {
+                message = (PMessage) config.getConfig(configFile, message);
+            }
+        }
+
+        serializer.serialize(System.out, message);
         System.out.println();
     }
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] print", parent.getVersion(), "");
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] resolve",
+                                                   parent.getVersion(),
+                                                   "Resolve config files to final config message.");
         parser.add(new Option("--format", "f", "fmt", "the output format", this::setSerializer, "pretty"));
-        parser.add(new Argument("file", "Config file to parse and print", Parser.file(this::setFile), null, null, false, true, false));
+        parser.add(new Argument("file", "Config files to resolve", Parser.file(this::addFile), null, null, true, true, false));
         return parser;
     }
 
-    private void setFile(File file) {
-        this.file = file;
+    private void addFile(File file) {
+        this.files.add(file);
     }
 
     private void setSerializer(String name) {

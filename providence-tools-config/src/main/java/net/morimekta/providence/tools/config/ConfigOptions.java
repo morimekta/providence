@@ -30,7 +30,7 @@ import net.morimekta.console.util.STTY;
 import net.morimekta.providence.tools.common.CommonOptions;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
-import net.morimekta.providence.tools.config.cmd.Print;
+import net.morimekta.providence.tools.config.cmd.Resolve;
 import net.morimekta.providence.tools.config.cmd.Validate;
 
 import java.io.File;
@@ -64,8 +64,8 @@ public class ConfigOptions extends CommonOptions {
 
         commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, getArgumentOptions());
         commandSet.add(new SubCommand<>("help", "Show help for sub-commands.", false, () -> new Help(commandSet, parser), cmd -> cmd.parser(parser)));
-        commandSet.add(new SubCommand<>("print", "Print the resulting config.", false, Print::new, cmd -> cmd.parser(parser), "p", "pr"));
-        commandSet.add(new SubCommand<>("validate", "Validate the file, print an error if not valid.", false, Validate::new, cmd -> cmd.parser(parser)));
+        commandSet.add(new SubCommand<>("resolve", "Resolve the resulting config.", false, Resolve::new, cmd -> cmd.parser(parser), "p", "pr"));
+        commandSet.add(new SubCommand<>("validate", "Validate the files, print error if not valid.", false, Validate::new, cmd -> cmd.parser(parser)));
         parser.add(commandSet);
 
         return parser;

@@ -49,6 +49,7 @@ public class ConfigTestBase {
         String path = "/net/morimekta/providence/tools/config/";
         copyResourceTo(path + "base_service.cfg", configRoot);
         copyResourceTo(path + "prod.cfg", configRoot);
+        copyResourceTo(path + "prod_service.cfg", configRoot);
         copyResourceTo(path + "prod_db.cfg", configRoot);
         copyResourceTo(path + "stage.cfg", configRoot);
         copyResourceTo(path + "stage_db.cfg", configRoot);
