@@ -24,6 +24,7 @@ import org.eclipse.jetty.util.log.Log;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -116,6 +117,7 @@ public class ProvidenceServlet_ThriftClientTest {
     }
 
     @Test
+    @Ignore("Apache thrift client does not accept the '0: void success;' field being set.")
     public void testThriftClient_void() throws TException, IOException, Failure {
         ApacheHttpTransport transport = new ApacheHttpTransport();
         THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());

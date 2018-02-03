@@ -30,6 +30,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -53,6 +54,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -327,7 +329,31 @@ public class HttpClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_exception() throws IOException, Failure, TException {
+    @Ignore("Apache thrift server does not fill in the '0: void success;' field.")
+    public void testSimpleRequest_void() throws IOException, TException, Failure {
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint, factory(), provider, instrumentation));
+
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).voidMethod(anyInt());
+
+        client.voidMethod(5);
+
+        waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
+
+        verify(impl).voidMethod(5);
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), isNull());
+        verifyNoMoreInteractions(impl, instrumentation);
+
+        assertThat(contentTypes, is(equalTo(ImmutableList.of("application/vnd.apache.thrift.binary"))));
+    }
+
+    @Test
+    public void testSimpleRequest_exception() throws IOException, TException {
         TestService.Iface client = new TestService.Client(
                 new HttpClientHandler(this::endpoint, factory(), provider, instrumentation));
 
@@ -347,7 +373,7 @@ public class HttpClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_404_notFound() throws IOException, Failure, TException {
+    public void testSimpleRequest_404_notFound() throws IOException, Failure {
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 this::notfound, factory(), provider, instrumentation));
 

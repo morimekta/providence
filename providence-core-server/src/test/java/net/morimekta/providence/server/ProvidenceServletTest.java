@@ -1,5 +1,9 @@
 package net.morimekta.providence.server;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.InputStreamContent;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
@@ -11,11 +15,6 @@ import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
 import net.morimekta.test.providence.service.TestService;
 import net.morimekta.util.io.IOUtils;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.InputStreamContent;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.eclipse.jetty.server.Server;
@@ -42,6 +41,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -112,6 +114,49 @@ public class ProvidenceServletTest {
 
         assertNotNull(response);
         assertEquals("{text:\"response\"}", response.asString());
+        verify(impl).test(any(Request.class));
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
+        verifyNoMoreInteractions(instrumentation);
+    }
+
+    @Test
+    public void testSimpleRequest_oneway() throws IOException {
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).ping();
+
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint, factory(), provider));
+
+        client.ping();
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+
+        verify(impl).ping();
+        verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), nullable(PServiceCall.class));
+        verifyNoMoreInteractions(instrumentation);
+    }
+
+    @Test
+    // NOTE: This test would not pass when either of the client or server is
+    // Apache Thrift...
+    public void testSimpleRequest_void() throws IOException, Failure {
+        AtomicBoolean called = new AtomicBoolean();
+        doAnswer(i -> {
+            called.set(true);
+            return null;
+        }).when(impl).voidMethod(anyInt());
+
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                this::endpoint, factory(), provider));
+
+        client.voidMethod(12);
+
+        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+
+        verify(impl).voidMethod(eq(12));
         verify(instrumentation).onComplete(anyDouble(), any(PServiceCall.class), any(PServiceCall.class));
         verifyNoMoreInteractions(instrumentation);
     }

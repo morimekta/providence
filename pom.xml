@@ -101,7 +101,7 @@
         <!-- RPC tools, Client -->
         <commons.math3.version>3.6.1</commons.math3.version>
         <jetty.version>9.4.9.v20180320</jetty.version>
-        <thrift.version>0.10.0</thrift.version>
+        <thrift.version>0.11.0</thrift.version>
         <google-http.version>1.23.0</google-http.version>
         <httpcore.version>4.4.9</httpcore.version>
         <httpclient.version>4.5.5</httpclient.version>
@@ -661,6 +661,7 @@
                             <notimestamp>true</notimestamp>
                             <nodeprecatedlist>true</nodeprecatedlist>
                             <quiet>true</quiet>
+                            <excludePackageNames>*.test.*:*.it.*:*.providence.tools:*.providence.tools.*:*.providence.generator.format.*</excludePackageNames>
                             <groups>
                                 <group>
                                     <title>Providence Core</title>
