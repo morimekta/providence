@@ -1,5 +1,8 @@
 package net.morimekta.providence.client;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponseException;
+import com.google.common.collect.ImmutableList;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PMessage;
@@ -15,10 +18,6 @@ import net.morimekta.test.providence.client.Failure;
 import net.morimekta.test.providence.client.Request;
 import net.morimekta.test.providence.client.Response;
 import net.morimekta.test.providence.client.TestService;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponseException;
-import com.google.common.collect.ImmutableList;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -317,7 +316,7 @@ public class HttpClientHandlerTest {
 
         client.onewayMethod();
 
-        waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).untilTrue(called);
+        waitAtMost(Duration.TWO_HUNDRED_MILLISECONDS).untilTrue(called);
         waitAtMost(Duration.ONE_HUNDRED_MILLISECONDS).until(() -> contentTypes.size() > 0);
 
         verify(impl).onewayMethod();
