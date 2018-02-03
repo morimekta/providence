@@ -14,7 +14,6 @@
         <version>1.3.0-SNAPSHOT</version>
     </parent>
     <artifactId>providence-thrift</artifactId>
-    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
@@ -27,7 +26,19 @@
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift-protocols</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <!-- Yes, it will make an empty jar file ... -->
+                    <skipIfEmpty>false</skipIfEmpty>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
