@@ -143,6 +143,7 @@
                 <artifactId>providence-core-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-config</artifactId>
@@ -165,12 +166,28 @@
             </dependency>
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-thrift-compat</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-thrift-protocols</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-testing</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-jax-rs</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-storage-hazelcast</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -978,6 +995,8 @@
                 <!-- Utility Modules -->
                 <module>providence-testing</module>
                 <module>providence-thrift</module>
+                <module>providence-thrift-compat</module>
+                <module>providence-thrift-protocols</module>
                 <module>providence-config</module>
                 <module>providence-storage</module>
                 <module>providence-storage-hazelcast</module>
@@ -1058,6 +1077,8 @@
                 <!-- Utility Modules -->
                 <module>providence-testing</module>
                 <module>providence-thrift</module>
+                <module>providence-thrift-compat</module>
+                <module>providence-thrift-protocols</module>
                 <module>providence-config</module>
                 <module>providence-storage</module>
                 <module>providence-storage-hazelcast</module>

@@ -26,7 +26,8 @@
 
             <item href="providence-reflect/index.html"            name="Utils : Reflect" />
             <item href="providence-testing/index.html"            name="Utils : Testing" />
-            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />
+            <item href="providence-thrift-compat/index.html"      name="Utils : Thrift Compatibility" />
+            <item href="providence-thrift-protocols/index.html"   name="Utils : Thrift Protocols" />
             <item href="providence-storage/index.html"            name="Utils : Storage" />
 
             <!-- Utilities in Beta -->
