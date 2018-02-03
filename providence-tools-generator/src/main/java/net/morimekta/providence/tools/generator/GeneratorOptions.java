@@ -73,6 +73,7 @@ public class GeneratorOptions extends CommonOptions {
     protected boolean       verbose          = false;
     protected boolean       requireEnumValue = false;
     protected boolean       requireFieldId   = false;
+    protected boolean       skipIfMissingNamespace = false;
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
         ArgumentOptions opts = ArgumentOptions.defaults(tty).withMaxUsageWidth(120);
@@ -88,10 +89,15 @@ public class GeneratorOptions extends CommonOptions {
         parser.add(new Option("--out", "o", "dir", "Output directory", outputDir(this::setOut), "${PWD}"));
         parser.add(new Flag("--require-field-id", null, "Require all fields to have a defined ID", this::setRequireFieldId));
         parser.add(new Flag("--require-enum-value", null, "Require all enum values to have a defined ID", this::setRequireEnumValue));
+        parser.add(new Flag("--skip-if-missing-namespace", "N", "Skip generation for files without requested namespace", this::setSkipIfMissingNamespace));
         parser.add(new Option("--add-generator", null, "FILE", "Add extra generator .jar file", file(extraGenerators::add)));
         parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
 
         return parser;
+    }
+
+    private void setSkipIfMissingNamespace(boolean skip) {
+        this.skipIfMissingNamespace = skip;
     }
 
     public File currentJarDirectory() {

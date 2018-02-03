@@ -29,6 +29,7 @@ import net.morimekta.providence.generator.GeneratorFactory;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
+import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.tools.common.Utils;
 
 import java.io.File;
@@ -101,6 +102,11 @@ public class GeneratorMain {
             Generator generator = options.getGenerator(loader);
 
             for (File f : input) {
+                ProgramTypeRegistry registry = loader.load(f);
+                if (options.skipIfMissingNamespace && registry.getProgram().getNamespaceForLanguage(options.gen.factory.generatorName()) == null) {
+                    System.out.println("Skipping (no " + options.gen.factory.generatorName() + " namespace) " +
+                                       f.getCanonicalFile().getAbsolutePath());
+                }
                 generator.generate(loader.load(f));
             }
             generator.generateGlobal(loader.getProgramRegistry(), input);

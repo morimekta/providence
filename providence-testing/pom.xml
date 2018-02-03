@@ -169,6 +169,7 @@
                         </goals>
                         <configuration>
                             <android>true</android>
+                            <skipIfMissingNamespace>true</skipIfMissingNamespace>
                             <testInput>
                                 <includes>
                                     <include>src/test/android/**/*.thrift</include>

@@ -66,17 +66,18 @@ public class CompilerFlagsTest {
                                    "Usage: pvdgen [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" + "\n" +
                                    "Example code to run:\n" +
                                    "$ pvdgen -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" + "\n" +
-                                   " --gen (-g) generator       : Generate files for this language spec.\n" +
-                                   " --help (-h, -?) [language] : Show this help or about language.\n" +
-                                   " --verbose (-V)             : Show verbose output and error messages.\n" +
-                                   " --version (-v)             : Show program version.\n" +
-                                   " --rc FILE                  : Providence RC to use (default: ~/.pvdrc)\n" +
-                                   " --include (-I) dir         : Allow includes of files in directory\n" +
-                                   " --out (-o) dir             : Output directory (default: ${PWD})\n" +
-                                   " --require-field-id         : Require all fields to have a defined ID\n" +
-                                   " --require-enum-value       : Require all enum values to have a defined ID\n" +
-                                   " --add-generator FILE       : Add extra generator .jar file\n" +
-                                   " file                       : Files to compile.\n" +
+                                   " --gen (-g) generator          : Generate files for this language spec.\n" +
+                                   " --help (-h, -?) [language]    : Show this help or about language.\n" +
+                                   " --verbose (-V)                : Show verbose output and error messages.\n" +
+                                   " --version (-v)                : Show program version.\n" +
+                                   " --rc FILE                     : Providence RC to use (default: ~/.pvdrc)\n" +
+                                   " --include (-I) dir            : Allow includes of files in directory\n" +
+                                   " --out (-o) dir                : Output directory (default: ${PWD})\n" +
+                                   " --require-field-id            : Require all fields to have a defined ID\n" +
+                                   " --require-enum-value          : Require all enum values to have a defined ID\n" +
+                                   " --skip-if-missing-namespace (-N) : Skip generation for files without requested namespace\n" +
+                                   " --add-generator FILE          : Add extra generator .jar file\n" +
+                                   " file                          : Files to compile.\n" +
                                    "\n" +
                                    "Available generators:\n" +
                                    " - java       : Generates java (1.8+) classes.\n" +

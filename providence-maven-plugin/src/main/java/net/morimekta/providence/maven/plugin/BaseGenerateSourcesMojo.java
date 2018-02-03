@@ -20,10 +20,13 @@
  */
 package net.morimekta.providence.maven.plugin;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.GeneratorFactory;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
+import net.morimekta.providence.generator.format.java.JavaGeneratorFactory;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceDependency;
@@ -36,8 +39,6 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -180,6 +181,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     protected boolean compileOutput;
 
+    /**
+     * Skip thrift files if they are missing the java namespace.
+     */
+    @Parameter(defaultValue = "false", property = "providence.skip_if_missing_namespace")
+    protected boolean skipIfMissingNamespace;
+
     // --- After here are internals, components and maven-set params.
 
     /**
@@ -289,9 +296,19 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         generatorOptions.generator_program_name = "providence-maven-plugin";
         generatorOptions.program_version = getVersionString();
 
+        GeneratorFactory factory = new JavaGeneratorFactory();
         Generator generator = new JavaGenerator(fileManager,
                                                 generatorOptions,
                                                 javaOptions);
+
+        Path base = project.getBasedir().toPath().toAbsolutePath();
+        if (project.getParent() != null && project.getParent().getBasedir() != null) {
+            // Only replace with parent if parent is a parent directory of this.
+            Path parentBase = project.getParent().getBasedir().toPath().toAbsolutePath();
+            if (base.toString().startsWith(parentBase.toString())) {
+                base = parentBase;
+            }
+        }
 
         for (File in : inputFiles) {
             ProgramTypeRegistry registry;
@@ -312,6 +329,11 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
 
             try {
+                if (skipIfMissingNamespace && registry.getProgram().getNamespaceForLanguage(factory.generatorName()) == null) {
+                    getLog().warn("Skipping (no " +  factory.generatorName() + " namespace) " +
+                                  base.relativize(in.toPath()));
+                    continue;
+                }
                 generator.generate(registry);
             } catch (GeneratorException e) {
                 throw new MojoFailureException("Failed to generate program: " + registry.getProgram().getProgramName(), e);
