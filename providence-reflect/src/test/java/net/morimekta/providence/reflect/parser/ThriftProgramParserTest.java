@@ -732,6 +732,7 @@ public class ThriftProgramParserTest {
     @Test
     public void testParseExceptions() {
         copyResourceTo("/failure/conflicting_field_name.thrift", tmp.getRoot());
+        copyResourceTo("/failure/reserved_field_name.thrift", tmp.getRoot());
         copyResourceTo("/failure/duplicate_field_id.thrift", tmp.getRoot());
         copyResourceTo("/failure/duplicate_field_name.thrift", tmp.getRoot());
         copyResourceTo("/failure/invalid_namespace.thrift", tmp.getRoot());
@@ -746,6 +747,10 @@ public class ThriftProgramParserTest {
                         "  2: i32 separatedName;\n" +
                         "---------^^^^^^^^^^^^^",
                         "conflicting_field_name.thrift");
+        assertBadThrift("Error in reserved_field_name.thrift on line 4, pos 10: Field with reserved name: global\n" +
+                        "  1: i32 global;\n" +
+                        "---------^^^^^^",
+                        "reserved_field_name.thrift");
         assertBadThrift("Error in duplicate_field_id.thrift on line 6, pos 3: Field id 1 already exists in T\n" +
                         "  1: i32 second;\n" +
                         "--^",

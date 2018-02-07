@@ -103,6 +103,7 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
         }
 
         writer.end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 }
