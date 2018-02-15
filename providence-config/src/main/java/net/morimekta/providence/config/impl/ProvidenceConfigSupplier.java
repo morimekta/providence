@@ -27,7 +27,6 @@ import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +119,10 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
      */
     private void reload() {
         try {
+            if (!configFile.exists()) {
+                LOGGER.warn("Config file deleted " + configFile + ", keeping old config.");
+                return;
+            }
             LOGGER.trace("Config reload triggered for " + configFile);
             if (parentSupplier != null) {
                 set(loadConfig(parentSupplier.get()));
