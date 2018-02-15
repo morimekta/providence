@@ -105,6 +105,16 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                alias = "requireFieldId")
     protected boolean require_field_id;
 
+    /**
+     * Allow reserved words that would cause name problems in some thrift generated
+     * code. This allows reserved words as names, not thrift keywords. This applies
+     * to all type names (enums, messages, services, typedefs), all fields (message
+     * fields, method params, method throws), method names and const names, but not
+     * to enum values.
+     */
+    @Parameter(defaultValue = "true", property = "providence.allow_reserved_names")
+    protected boolean allow_reserved_names = true;
+
     // -----------    GENERATE OPTIONS    ----------- //
     /**
      * Adds android.os.Parcelable support. Requires android dependencies, or
@@ -267,7 +277,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         FileManager fileManager = new FileManager(outputDir);
-        ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value);
+        ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value, allow_reserved_names);
         TypeLoader loader = new TypeLoader(includes, parser);
 
         if (print_debug) {

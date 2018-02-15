@@ -75,6 +75,8 @@ public class CompilerFlagsTest {
                                    " --out (-o) dir                : Output directory (default: ${PWD})\n" +
                                    " --require-field-id            : Require all fields to have a defined ID\n" +
                                    " --require-enum-value          : Require all enum values to have a defined ID\n" +
+                                   " --allow-reserved-names        : Allow reserved words in type names (default: true)\n" +
+                                   " --no-reserved-names           : Do not allow reserved words in type names\n" +
                                    " --skip-if-missing-namespace (-N) : Skip generation for files without requested namespace\n" +
                                    " --add-generator FILE          : Add extra generator .jar file\n" +
                                    " file                          : Files to compile.\n" +
