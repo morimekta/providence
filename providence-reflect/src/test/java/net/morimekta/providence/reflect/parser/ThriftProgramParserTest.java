@@ -21,7 +21,6 @@ package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -747,8 +746,8 @@ public class ThriftProgramParserTest {
                         "  2: i32 separatedName;\n" +
                         "---------^^^^^^^^^^^^^",
                         "conflicting_field_name.thrift");
-        assertBadThrift("Error in reserved_field_name.thrift on line 4, pos 10: Field with reserved name: global\n" +
-                        "  1: i32 global;\n" +
+        assertBadThrift("Error in reserved_field_name.thrift on line 5, pos 10: Field with reserved name: string\n" +
+                        "  2: i32 string;\n" +
                         "---------^^^^^^",
                         "reserved_field_name.thrift");
         assertBadThrift("Error in duplicate_field_id.thrift on line 6, pos 3: Field id 1 already exists in T\n" +
@@ -783,11 +782,16 @@ public class ThriftProgramParserTest {
     public void testParseStrictExceptions() {
         copyResourceTo("/parser/calculator/calculator.thrift", tmp.getRoot());
         copyResourceTo("/parser/calculator/number.thrift", tmp.getRoot());
+        copyResourceTo("/failure/reserved_field_name.thrift", tmp.getRoot());
 
         assertBadStrictThrift("Error in calculator.thrift on line 14, pos 8: Missing enum value in strict declaration\n" +
                               "    ADD,\n" +
                               "-------^",
                               "calculator.thrift");
+        assertBadStrictThrift("Error in reserved_field_name.thrift on line 4, pos 10: Field with reserved name: global\n" +
+                              "  1: i32 global;\n" +
+                              "---------^^^^^^",
+                              "reserved_field_name.thrift");
     }
 
     @Test
@@ -834,7 +838,7 @@ public class ThriftProgramParserTest {
 
     private void assertBadStrictThrift(String message, String fileName) {
         try {
-            ThriftProgramParser parser = new ThriftProgramParser(true, true);
+            ThriftProgramParser parser = new ThriftProgramParser(true, true, false);
             File file = new File(tmp.getRoot(), fileName);
             parser.parse(new FileInputStream(file), file, new TreeSet<>());
             fail("No exception on bad thrift: " + fileName);

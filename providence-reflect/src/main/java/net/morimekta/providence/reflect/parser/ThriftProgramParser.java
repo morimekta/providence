@@ -96,7 +96,7 @@ public class ThriftProgramParser implements ProgramParser {
 
     public ThriftProgramParser(boolean requireFieldId,
                                boolean requireEnumValue) {
-        this(requireFieldId, requireEnumValue, false);
+        this(requireFieldId, requireEnumValue, true);
     }
 
     public ThriftProgramParser(boolean requireFieldId,
@@ -238,6 +238,12 @@ public class ThriftProgramParser implements ProgramParser {
         return program.build();
     }
 
+    private boolean allowedNameIdentifier(String name) {
+        if (Model_Constants.kThriftKeywords.contains(name)) {
+            return false;
+        } else return allowReserved || !Model_Constants.kReservedWords.contains(name);
+    }
+
     private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException {
         Token token = tokenizer.expect("const typename", t -> t.isIdentifier() || t.isQualifiedIdentifier());
         String type = parseType(tokenizer, token, includedPrograms);
@@ -279,7 +285,7 @@ public class ThriftProgramParser implements ProgramParser {
             doc_string = null;
         }
         Token identifier = tokenizer.expectIdentifier("service name");
-        if (!allowReserved && Model_Constants.kReservedWords.contains(identifier.asString())) {
+        if (!allowedNameIdentifier(identifier.asString())) {
             throw tokenizer.failure(identifier, "Service with reserved name: " + identifier.asString());
         }
         service.setName(identifier.asString());
@@ -328,7 +334,7 @@ public class ThriftProgramParser implements ProgramParser {
 
             token = tokenizer.expectIdentifier("method name");
             String name = token.asString();
-            if (!allowReserved && Model_Constants.kReservedWords.contains(name)) {
+            if (!allowedNameIdentifier(name)) {
                 throw tokenizer.failure(token, "Method with reserved name: " + name);
             }
             String normalized = Strings.camelCase("", name);
@@ -385,7 +391,7 @@ public class ThriftProgramParser implements ProgramParser {
 
                 token = tokenizer.expectIdentifier("param name");
                 name = token.asString();
-                if (!allowReserved && Model_Constants.kReservedWords.contains(name)) {
+                if (!allowedNameIdentifier(name)) {
                     throw tokenizer.failure(token, "Param with reserved name: " + name);
                 }
 
@@ -448,7 +454,7 @@ public class ThriftProgramParser implements ProgramParser {
 
                     token = tokenizer.expectIdentifier("exception name");
                     name = token.asString();
-                    if (!allowReserved && Model_Constants.kReservedWords.contains(name)) {
+                    if (!allowedNameIdentifier(name)) {
                         throw tokenizer.failure(token, "Thrown field with reserved name: " + name);
                     }
                     field.setName(name);
@@ -565,7 +571,7 @@ public class ThriftProgramParser implements ProgramParser {
         String type = parseType(tokenizer, tokenizer.expect("typename"), includedPrograms);
         Token id = tokenizer.expectIdentifier("typedef identifier");
         String name = id.asString();
-        if (!allowReserved && Model_Constants.kReservedWords.contains(name)) {
+        if (!allowedNameIdentifier(name)) {
             throw tokenizer.failure(id, "Typedef with reserved name: " + name);
         }
 
@@ -580,7 +586,7 @@ public class ThriftProgramParser implements ProgramParser {
     private EnumType parseEnum(ThriftTokenizer tokenizer, String doc_string) throws IOException {
         Token id = tokenizer.expectIdentifier("enum name");
         String enum_name = id.asString();
-        if (!allowReserved && Model_Constants.kReservedWords.contains(enum_name)) {
+        if (!allowedNameIdentifier(enum_name)) {
             throw tokenizer.failure(id, "Enum with reserved name: " + enum_name);
         }
 
@@ -606,10 +612,13 @@ public class ThriftProgramParser implements ProgramParser {
                     doc_string = tokenizer.parseDocBlock();
                 } else if (token.isIdentifier()) {
                     String value_name = token.asString();
-                    if (!allowReserved && Model_Constants.kReservedWords.contains(value_name)) {
+                    if (!allowedNameIdentifier(value_name)) {
                         throw tokenizer.failure(token, "Enum value with reserved name: " + enum_name);
                     }
                     EnumValue._Builder enum_value = EnumValue.builder();
+                    // TODO: Validate enum value name. This probably needs a different logic than
+                    // type names, field names and methods.
+
                     enum_value.setName(value_name);
                     if (doc_string != null) {
                         enum_value.setDocumentation(doc_string);
@@ -678,7 +687,7 @@ public class ThriftProgramParser implements ProgramParser {
 
         Token nameToken = tokenizer.expectIdentifier("message name identifier");
         String name = nameToken.asString();
-        if (!allowReserved && Model_Constants.kReservedWords.contains(name)) {
+        if (!allowedNameIdentifier(name)) {
             throw tokenizer.failure(nameToken, "Message with reserved name: " + name);
         }
 
@@ -754,7 +763,7 @@ public class ThriftProgramParser implements ProgramParser {
 
             nameToken = tokenizer.expectIdentifier("field name");
             String fName = nameToken.asString();
-            if (!allowReserved && Model_Constants.kReservedWords.contains(fName)) {
+            if (!allowedNameIdentifier(fName)) {
                 throw tokenizer.failure(nameToken, "Field with reserved name: " + fName);
             }
 
