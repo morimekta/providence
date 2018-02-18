@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config.impl;
 
-import com.google.common.collect.ImmutableSet;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -110,13 +109,15 @@ public class ProvidenceConfigParser {
         try {
             configFile = canonicalFileLocation(configFile);
         } catch (IOException e) {
-            throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile).setFile(configFile.getFileName()
-                                                                                                                    .toString());
+            throw new ProvidenceConfigException(e, "Unable to resolve config file " + configFile)
+                    .setFile(configFile.getFileName()
+                                       .toString());
         }
         Pair<M, Set<String>> result = checkAndParseInternal(configFile, parent);
         if (result == null) {
-            throw new ProvidenceConfigException("No config: " + configFile.toString()).setFile(configFile.getFileName()
-                                                                                                         .toString());
+            throw new ProvidenceConfigException("No config: " + configFile.toString())
+                    .setFile(configFile.getFileName()
+                                       .toString());
         }
         return result;
     }
