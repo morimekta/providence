@@ -112,8 +112,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
      * fields, method params, method throws), method names and const names, but not
      * to enum values.
      */
-    @Parameter(defaultValue = "true", property = "providence.allow_reserved_names")
-    protected boolean allow_reserved_names = true;
+    @Parameter(defaultValue = "true",
+               alias = "allow_reserved_names",
+               property = "providence.gen.allow_generally_reserved_names")
+    protected boolean allow_generally_reserved_names = true;
 
     // -----------    GENERATE OPTIONS    ----------- //
     /**
@@ -277,7 +279,8 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         FileManager fileManager = new FileManager(outputDir);
-        ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value, allow_reserved_names);
+        ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value,
+                                                       allow_generally_reserved_names);
         TypeLoader loader = new TypeLoader(includes, parser);
 
         if (print_debug) {

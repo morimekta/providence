@@ -158,7 +158,7 @@ public class PrettySerializer extends Serializer {
             builder.format("%d: ", call.getSequence());
         }
         builder.format("%s %s",
-                       call.getType().asString(),
+                       call.getType().asString().toLowerCase(),
                        call.getMethod())
                .begin(indent + indent);
 
@@ -190,7 +190,7 @@ public class PrettySerializer extends Serializer {
                 tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
                 token = tokenizer.expectIdentifier("Call Type");
             }
-            callType = PServiceCallType.findByName(token.asString());
+            callType = PServiceCallType.findByName(token.asString().toUpperCase());
             if (callType == null) {
                 throw new TokenizerException(token, "No such call type %s", token.asString())
                         .setLine(tokenizer.getLine())

@@ -88,7 +88,7 @@ public class ThriftProgramParser implements ProgramParser {
 
     private final boolean requireFieldId;
     private final boolean requireEnumValue;
-    private final boolean allowReserved;
+    private final boolean allowGenerallyReserved;
 
     public ThriftProgramParser() {
         this(false, false);
@@ -101,10 +101,10 @@ public class ThriftProgramParser implements ProgramParser {
 
     public ThriftProgramParser(boolean requireFieldId,
                                boolean requireEnumValue,
-                               boolean allowReserved) {
+                               boolean allowGenerallyReserved) {
         this.requireFieldId = requireFieldId;
         this.requireEnumValue = requireEnumValue;
-        this.allowReserved = allowReserved;
+        this.allowGenerallyReserved = allowGenerallyReserved;
     }
 
     @Override
@@ -241,7 +241,7 @@ public class ThriftProgramParser implements ProgramParser {
     private boolean allowedNameIdentifier(String name) {
         if (Model_Constants.kThriftKeywords.contains(name)) {
             return false;
-        } else return allowReserved || !Model_Constants.kReservedWords.contains(name);
+        } else return allowGenerallyReserved || !Model_Constants.kReservedWords.contains(name);
     }
 
     private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException {

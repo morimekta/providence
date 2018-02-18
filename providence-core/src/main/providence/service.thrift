@@ -8,14 +8,15 @@ namespace js morimekta.providence
  */
 enum PServiceCallType {
     /**
-     * The service method request.
+     * Normal service method call request.
      */
-    call = 1;
+    CALL = 1;
+
     /**
      * Normal method call reply. This includes declared exceptions on the
      * service method.
      */
-    reply = 2;
+    REPLY = 2;
 
     /**
      * An application exception, i.e. either a non-declared exception, or a
@@ -23,13 +24,13 @@ enum PServiceCallType {
      * such exceptions happen on the server side, it will try to send an
      * application exception back to the client.
      */
-    exception = 3;
+    EXCEPTION = 3;
 
     /**
      * A one-way call is a request that does not expect a response at all. The
      * client will return as soon as the request is sent.
      */
-    oneway = 4;
+    ONEWAY = 4;
 }
 
 /**

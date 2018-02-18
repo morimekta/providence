@@ -145,7 +145,7 @@ public class JsonSerializer extends Serializer {
         if (enumValueType == IdType.ID) {
             jsonWriter.value(call.getType().asInteger());
         } else {
-            jsonWriter.valueUnescaped(call.getType().asString());
+            jsonWriter.valueUnescaped(call.getType().asString().toLowerCase());
         }
         jsonWriter.value(call.getSequence());
 
@@ -245,7 +245,7 @@ public class JsonSerializer extends Serializer {
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.rawJsonLiteral();
-                type = PServiceCallType.findByName(typeName);
+                type = PServiceCallType.findByName(typeName.toUpperCase());
                 if (type == null) {
                     throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);

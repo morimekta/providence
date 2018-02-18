@@ -9,26 +9,26 @@ package net.morimekta.providence;
 public enum PServiceCallType
         implements net.morimekta.providence.PEnumValue<PServiceCallType> {
     /**
-     * The service method request.
+     * Normal service method call request.
      */
-    CALL(1, "call"),
+    CALL(1, "CALL"),
     /**
      * Normal method call reply. This includes declared exceptions on the
      * service method.
      */
-    REPLY(2, "reply"),
+    REPLY(2, "REPLY"),
     /**
      * An application exception, i.e. either a non-declared exception, or a
      * providence service or serialization exception. This is also happens when
      * such exceptions happen on the server side, it will try to send an
      * application exception back to the client.
      */
-    EXCEPTION(3, "exception"),
+    EXCEPTION(3, "EXCEPTION"),
     /**
      * A one-way call is a request that does not expect a response at all. The
      * client will return as soon as the request is sent.
      */
-    ONEWAY(4, "oneway"),
+    ONEWAY(4, "ONEWAY"),
     ;
 
     private final int    mId;
@@ -77,10 +77,10 @@ public enum PServiceCallType
             throw new IllegalArgumentException("Null name given");
         }
         switch (name) {
-            case "call": return PServiceCallType.CALL;
-            case "reply": return PServiceCallType.REPLY;
-            case "exception": return PServiceCallType.EXCEPTION;
-            case "oneway": return PServiceCallType.ONEWAY;
+            case "CALL": return PServiceCallType.CALL;
+            case "REPLY": return PServiceCallType.REPLY;
+            case "EXCEPTION": return PServiceCallType.EXCEPTION;
+            case "ONEWAY": return PServiceCallType.ONEWAY;
             default: return null;
         }
     }
