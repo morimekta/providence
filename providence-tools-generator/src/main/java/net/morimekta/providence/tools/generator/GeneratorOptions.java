@@ -63,18 +63,18 @@ import static net.morimekta.console.util.Parser.outputDir;
  */
 @SuppressWarnings("all")
 public class GeneratorOptions extends CommonOptions {
-    protected File          out              = new File(".");
-    protected List<File>    includes               = new ArrayList<>();
-    protected HelpSpec      help                   = null;
-    protected GeneratorSpec gen                    = null;
-    protected List<File>    files                  = new ArrayList<>();
-    protected List<File>    extraGenerators        = new ArrayList<>();
-    protected boolean       version                = false;
-    protected boolean       verbose                = false;
-    protected boolean       requireEnumValue       = false;
-    protected boolean       requireFieldId         = false;
-    protected boolean       allowReservedNames     = true;
-    protected boolean       skipIfMissingNamespace = false;
+    protected File          out                        = new File(".");
+    protected List<File>    includes                   = new ArrayList<>();
+    protected HelpSpec      help                       = null;
+    protected GeneratorSpec gen                        = null;
+    protected List<File>    files                      = new ArrayList<>();
+    protected List<File>    extraGenerators            = new ArrayList<>();
+    protected boolean       version                    = false;
+    protected boolean       verbose                    = false;
+    protected boolean       requireEnumValue           = false;
+    protected boolean       requireFieldId             = false;
+    protected boolean       allowLanguageReservedNames = true;
+    protected boolean       skipIfMissingNamespace     = false;
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
         ArgumentOptions opts = ArgumentOptions.defaults(tty).withMaxUsageWidth(120);
@@ -90,8 +90,8 @@ public class GeneratorOptions extends CommonOptions {
         parser.add(new Option("--out", "o", "dir", "Output directory", outputDir(this::setOut), "${PWD}"));
         parser.add(new Flag("--require-field-id", null, "Require all fields to have a defined ID", this::setRequireFieldId));
         parser.add(new Flag("--require-enum-value", null, "Require all enum values to have a defined ID", this::setRequireEnumValue));
-        parser.add(new Flag("--allow-reserved-names", null, "Allow reserved words in type names", this::setAllowReservedNames, true));
-        parser.add(new Flag("--no-reserved-names", null, "Do not allow reserved words in type names", b -> this.setAllowReservedNames(!b)));
+        parser.add(new Flag("--allow-language-reserved-names", null, "Allow language-reserved words in type names", this::setAllowLanguageReservedNames, true));
+        parser.add(new Flag("--no-language-reserved-names", null, "Do not allow language-reserved words in type names", b -> this.setAllowLanguageReservedNames(!b)));
         parser.add(new Flag("--skip-if-missing-namespace", "N", "Skip generation for files without requested namespace", this::setSkipIfMissingNamespace));
         parser.add(new Option("--add-generator", null, "FILE", "Add extra generator .jar file", file(extraGenerators::add)));
         parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
@@ -174,8 +174,8 @@ public class GeneratorOptions extends CommonOptions {
     private void setRequireFieldId(boolean requireFieldId) {
         this.requireFieldId = requireFieldId;
     }
-    private void setAllowReservedNames(boolean allowReservedNames) {
-        this.allowReservedNames = allowReservedNames;
+    private void setAllowLanguageReservedNames(boolean allowLanguageReservedNames) {
+        this.allowLanguageReservedNames = allowLanguageReservedNames;
     }
 
     public void setOut(File out) {
@@ -224,7 +224,7 @@ public class GeneratorOptions extends CommonOptions {
     }
 
     public ProgramParser getParser() throws ArgumentException {
-        return new ThriftProgramParser(requireFieldId, requireEnumValue, allowReservedNames);
+        return new ThriftProgramParser(requireFieldId, requireEnumValue, allowLanguageReservedNames);
     }
 
     public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException, IOException {

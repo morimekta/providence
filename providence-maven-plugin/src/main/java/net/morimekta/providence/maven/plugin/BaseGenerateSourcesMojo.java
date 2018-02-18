@@ -109,13 +109,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
      * Allow reserved words that would cause name problems in some thrift generated
      * code. This allows reserved words as names, not thrift keywords. This applies
      * to all type names (enums, messages, services, typedefs), all fields (message
-     * fields, method params, method throws), method names and const names, but not
-     * to enum values.
+     * fields, method params, method throws), method names, const names and enum
+     * values.
      */
     @Parameter(defaultValue = "true",
                alias = "allow_reserved_names",
-               property = "providence.gen.allow_generally_reserved_names")
-    protected boolean allow_generally_reserved_names = true;
+               property = "providence.gen.allow_language_reserved_names")
+    protected boolean allow_language_reserved_names = true;
 
     // -----------    GENERATE OPTIONS    ----------- //
     /**
@@ -280,7 +280,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         FileManager fileManager = new FileManager(outputDir);
         ProgramParser parser = new ThriftProgramParser(require_field_id, require_enum_value,
-                                                       allow_generally_reserved_names);
+                                                       allow_language_reserved_names);
         TypeLoader loader = new TypeLoader(includes, parser);
 
         if (print_debug) {
