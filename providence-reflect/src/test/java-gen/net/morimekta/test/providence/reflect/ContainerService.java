@@ -51,7 +51,7 @@ public class ContainerService {
             }
 
             net.morimekta.test.providence.reflect.ContainerService._load_response msg = (net.morimekta.test.providence.reflect.ContainerService._load_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case EF:
                         throw msg.getEf();

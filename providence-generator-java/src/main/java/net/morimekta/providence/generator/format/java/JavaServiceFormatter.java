@@ -243,7 +243,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                                 service.getResponseClassRef(method),
                                 service.getResponseClassRef(method));
 
-                writer.appendln("if (msg.unionField() != null) {")
+                writer.appendln("if (msg.unionFieldIsSet()) {")
                       .begin()
                       .appendln("switch (msg.unionField()) {")
                       .begin();

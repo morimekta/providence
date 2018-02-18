@@ -63,7 +63,7 @@ public class Calculator {
             }
 
             net.morimekta.test.providence.core.calculator.Calculator._calculate_response msg = (net.morimekta.test.providence.core.calculator.Calculator._calculate_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case CE:
                         throw msg.getCe();
@@ -98,7 +98,7 @@ public class Calculator {
             }
 
             net.morimekta.test.providence.core.calculator.Calculator._ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator._ping_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case SUCCESS:
                         return;

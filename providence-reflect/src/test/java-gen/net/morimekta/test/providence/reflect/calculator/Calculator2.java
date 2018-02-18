@@ -47,7 +47,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             }
 
             net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response msg = (net.morimekta.test.providence.reflect.calculator.Calculator._calculate_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case CE:
                         throw msg.getCe();
@@ -82,7 +82,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             }
 
             net.morimekta.test.providence.reflect.calculator.Calculator._ping_response msg = (net.morimekta.test.providence.reflect.calculator.Calculator._ping_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case SUCCESS:
                         return;
@@ -106,7 +106,7 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             }
 
             net.morimekta.test.providence.reflect.calculator.Calculator2._extra_response msg = (net.morimekta.test.providence.reflect.calculator.Calculator2._extra_response) resp.getMessage();
-            if (msg.unionField() != null) {
+            if (msg.unionFieldIsSet()) {
                 switch (msg.unionField()) {
                     case SUCCESS:
                         return msg.getSuccess();
