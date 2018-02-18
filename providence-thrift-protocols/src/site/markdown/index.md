@@ -1,5 +1,5 @@
-Providence Utils : Thrift
-=========================
+Providence Utils : Thrift Protocols
+===================================
 
 The providence - thrift bridge is a module to enable complete compatibility
 with `Apache Thrift`. It contains a set of serializers that wrap the thrift
@@ -32,18 +32,3 @@ reflective is way slower. The available serializers are:
   thrift protocol format. It uses bitmaps with simple order of fields to
   know what is present, and just assumes everything is formatted the
   correct way.
-
-### Service Clients
-
-Two extra service clients are added, corresponding to the `SocketServer`
-and the `NonblockingSocketServer` server implementations in `libthrift`.
-
-- `SocketClientHandler` corresponds to the thrift `SocketServer`
-  single-port single-protocol server. Except: The providence client handler
-  is thread-safe as opposed to the apache thrift client.
-- `NonblockingSocketClientHandler` corresponds to the thrift
-  `NonblockingSocketServer`, which is "designed" to be able to handle a stream
-  of requests without blocking in between on the same port. _**PS:** I believe
-  the thrift implementation fails completely, as the apache thrift client is
-  not capable of handling parallel requests due to it's sequence number
-  handling._
