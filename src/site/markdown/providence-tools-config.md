@@ -37,11 +37,5 @@ The tool have two main functions:
     ------^
     ```
 
-Included configs can be found in two ways from each file (and it's checked in this order):
-
-- Relative path from the parsed file. This includes parent directories (`..`).
-- Relative path from a config root. This does *not* allow parent directories.
-
-Note that the config's inclusion paths can *NOT* be parametrized. The only way to
-parametrize the included config is to set up the config roots or symlinks to have the
-expected files at the included locations.
+Included configs must be found using relative path from the parsed file.
+This includes parent directories (`..`). Absolute path includes are not allowed.

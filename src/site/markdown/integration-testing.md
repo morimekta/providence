@@ -53,16 +53,16 @@ java -jar it-serialization/target/it-serialization.jar --runs 50 --generate 1000
 ```
                               READ                 WRITE                  SUM              SIZE
         name        :   pvd   thr   jck  --  pvd   thr   jck   =   pvd   thr   jck  -- (ratio / size)    
-              binary:   0.97  1.00       --  0.85  1.00        =   0.91  1.00       -- ( 1.00 / 5.2 MiB)
-         fast_binary:   1.26             --  1.30              =   1.28             -- ( 0.84 / 4.3 MiB)
-      tuple_protocol:   1.65  0.97       --  1.62  0.76        =   1.64  0.87       -- ( 0.78 / 4.0 MiB)
-     binary_protocol:   1.81             --  1.94              =   1.87             -- ( 1.00 / 5.2 MiB)
-    compact_protocol:   2.04  1.21       --  1.81  0.91        =   1.93  1.06       -- ( 0.83 / 4.3 MiB)
-                json:   5.21             --  5.35              =   5.28             -- ( 1.30 / 6.7 MiB)
-          json_named:   6.08        9.51 --  5.74        1.66  =   5.91        5.59 -- ( 1.69 / 8.8 MiB)
-         json_pretty:   8.08             --  7.72              =   7.90             -- ( 2.62 / 13.6 MiB)
-              pretty:   9.21             --  6.45              =   7.83             -- ( 1.66 / 8.6 MiB)
-              config:   9.79             --  7.30              =   8.54             -- ( 2.16 / 11.2 MiB)
+              binary:   1,04  1,00       --  0,81  1,00        =   0,93  1,00       -- ( 1,00 / 5,2 MiB)
+         fast_binary:   1,38             --  1,43              =   1,40             -- ( 0,84 / 4,4 MiB)
+      tuple_protocol:   1,88  1,06       --  1,63  0,76        =   1,75  0,91       -- ( 0,78 / 4,1 MiB)
+     binary_protocol:   1,99             --  1,88              =   1,93             -- ( 1,00 / 5,2 MiB)
+    compact_protocol:   2,30  1,31       --  1,85  0,95        =   2,07  1,13       -- ( 0,83 / 4,3 MiB)
+                json:   5,89             --  5,13              =   5,51             -- ( 1,29 / 6,7 MiB)
+          json_named:   6,81       10,96 --  5,37        1,61  =   6,09        6,28 -- ( 1,69 / 8,8 MiB)
+         json_pretty:   9,14             --  7,02              =   8,08             -- ( 2,61 / 13,6 MiB)
+              pretty:  12,08             --  5,89              =   8,98             -- ( 1,66 / 8,6 MiB)
+              config:  13,34             --  6,51              =   9,93             -- ( 2,15 / 11,2 MiB)
 ```
 
 #### Many Optional Fields:
@@ -70,16 +70,16 @@ java -jar it-serialization/target/it-serialization.jar --runs 50 --generate 1000
 ```
                               READ                 WRITE                  SUM              SIZE
         name        :   pvd   thr   jck  --  pvd   thr   jck   =   pvd   thr   jck  -- (ratio / size)    
-              binary:   0.94  1.00       --  0.91  1.00        =   0.93  1.00       -- ( 1.00 / 2.5 MiB)
-         fast_binary:   1.24             --  1.50              =   1.37             -- ( 0.89 / 2.2 MiB)
-      tuple_protocol:   1.64  1.04       --  1.63  0.84        =   1.63  0.94       -- ( 0.83 / 2.0 MiB)
-     binary_protocol:   1.71             --  1.92              =   1.81             -- ( 1.00 / 2.5 MiB)
-    compact_protocol:   1.97  1.30       --  1.82  0.92        =   1.89  1.11       -- ( 0.87 / 2.1 MiB)
-                json:   5.30             --  5.95              =   5.62             -- ( 1.27 / 3.1 MiB)
-          json_named:   6.01        8.91 --  6.12        1.56  =   6.06        5.24 -- ( 1.53 / 3.8 MiB)
-         json_pretty:   7.23             --  7.50              =   7.37             -- ( 2.02 / 5.0 MiB)
-              pretty:   8.91             --  6.87              =   7.89             -- ( 1.48 / 3.6 MiB)
-              config:   9.37             --  7.45              =   8.41             -- ( 1.77 / 4.4 MiB)
+              binary:   0,90  1,00       --  0,87  1,00        =   0,89  1,00       -- ( 1,00 / 2,4 MiB)
+         fast_binary:   1,26             --  1,42              =   1,34             -- ( 0,89 / 2,2 MiB)
+      tuple_protocol:   1,65  0,97       --  1,54  0,77        =   1,60  0,87       -- ( 0,83 / 2,0 MiB)
+     binary_protocol:   1,71             --  1,78              =   1,75             -- ( 1,00 / 2,4 MiB)
+    compact_protocol:   2,00  1,24       --  1,73  1,01        =   1,87  1,12       -- ( 0,87 / 2,1 MiB)
+                json:   5,44             --  5,44              =   5,44             -- ( 1,27 / 3,1 MiB)
+          json_named:   6,32        9,19 --  5,67        1,41  =   6,00        5,30 -- ( 1,53 / 3,7 MiB)
+         json_pretty:   7,44             --  6,75              =   7,10             -- ( 2,02 / 4,9 MiB)
+              pretty:  10,26             --  5,96              =   8,11             -- ( 1,49 / 3,6 MiB)
+              config:  11,07             --  6,37              =   8,72             -- ( 1,78 / 4,3 MiB)
 ```
 
 #### Many Required Fields:
@@ -87,16 +87,16 @@ java -jar it-serialization/target/it-serialization.jar --runs 50 --generate 1000
 ```
                               READ                 WRITE                  SUM              SIZE
         name        :   pvd   thr   jck  --  pvd   thr   jck   =   pvd   thr   jck  -- (ratio / size)    
-              binary:   0.89  1.00       --  0.94  1.00        =   0.92  1.00       -- ( 1.00 / 2.5 MiB)
-         fast_binary:   1.18             --  1.59              =   1.39             -- ( 0.89 / 2.2 MiB)
-      tuple_protocol:   1.47  0.96       --  1.64  0.74        =   1.55  0.85       -- ( 0.83 / 2.0 MiB)
-     binary_protocol:   1.61             --  2.02              =   1.82             -- ( 1.00 / 2.5 MiB)
-    compact_protocol:   1.86  1.27       --  1.90  0.97        =   1.88  1.12       -- ( 0.87 / 2.1 MiB)
-                json:   5.01             --  6.25              =   5.63             -- ( 1.27 / 3.1 MiB)
-          json_named:   5.79        8.46 --  6.60        1.67  =   6.19        5.07 -- ( 1.53 / 3.8 MiB)
-         json_pretty:   6.87             --  8.09              =   7.48             -- ( 2.02 / 5.0 MiB)
-              pretty:   8.61             --  7.31              =   7.96             -- ( 1.48 / 3.6 MiB)
-              config:   8.94             --  7.89              =   8.42             -- ( 1.78 / 4.4 MiB)
+              binary:   0,92  1,00       --  0,89  1,00        =   0,90  1,00       -- ( 1,00 / 2,4 MiB)
+         fast_binary:   1,35             --  1,55              =   1,45             -- ( 0,89 / 2,2 MiB)
+      tuple_protocol:   1,60  0,88       --  1,54  0,70        =   1,57  0,79       -- ( 0,83 / 2,0 MiB)
+     binary_protocol:   1,77             --  1,93              =   1,85             -- ( 1,00 / 2,4 MiB)
+    compact_protocol:   2,11  1,31       --  1,89  1,12        =   2,00  1,21       -- ( 0,87 / 2,1 MiB)
+                json:   5,69             --  6,05              =   5,87             -- ( 1,27 / 3,1 MiB)
+          json_named:   6,43        9,52 --  6,10        1,54  =   6,27        5,53 -- ( 1,53 / 3,7 MiB)
+         json_pretty:   7,68             --  7,26              =   7,47             -- ( 2,02 / 4,9 MiB)
+              pretty:  10,64             --  6,49              =   8,57             -- ( 1,48 / 3,6 MiB)
+              config:  11,51             --  7,04              =   9,27             -- ( 1,78 / 4,4 MiB)
 ```
 
 #### Deep Structure:
@@ -104,16 +104,16 @@ java -jar it-serialization/target/it-serialization.jar --runs 50 --generate 1000
 ```
                               READ                 WRITE                  SUM              SIZE
         name        :   pvd   thr   jck  --  pvd   thr   jck   =   pvd   thr   jck  -- (ratio / size)    
-              binary:   0.86  1.00       --  0.73  1.00        =   0.79  1.00       -- ( 1.00 / 7.3 MiB)
-         fast_binary:   1.34             --  1.65              =   1.50             -- ( 0.82 / 6.0 MiB)
-      tuple_protocol:   1.96  0.89       --  2.11  0.65        =   2.04  0.77       -- ( 0.75 / 5.5 MiB)
-    compact_protocol:   2.47  1.23       --  2.40  0.86        =   2.43  1.04       -- ( 0.81 / 6.0 MiB)
-     binary_protocol:   2.31             --  2.73              =   2.52             -- ( 1.00 / 7.3 MiB)
-                json:   5.14             --  5.83              =   5.49             -- ( 1.22 / 9.0 MiB)
-          json_named:   6.22        9.55 --  6.44        1.55  =   6.33        5.55 -- ( 1.74 / 12.8 MiB)
-              pretty:  10.85             --  6.94              =   8.89             -- ( 1.71 / 12.6 MiB)
-         json_pretty:   9.62             -- 10.09              =   9.85             -- ( 3.41 / 25.0 MiB)
-              config:  11.91             --  8.56              =  10.23             -- ( 2.65 / 19.4 MiB)
+              binary:   0,91  1,00       --  0,72  1,00        =   0,81  1,00       -- ( 1,00 / 7,4 MiB)
+         fast_binary:   1,39             --  1,61              =   1,50             -- ( 0,82 / 6,0 MiB)
+      tuple_protocol:   1,96  0,90       --  1,95  0,61        =   1,96  0,75       -- ( 0,75 / 5,6 MiB)
+     binary_protocol:   2,24             --  2,44              =   2,34             -- ( 1,00 / 7,4 MiB)
+    compact_protocol:   2,56  1,22       --  2,33  0,89        =   2,45  1,05       -- ( 0,81 / 6,0 MiB)
+                json:   5,76             --  5,36              =   5,56             -- ( 1,22 / 9,0 MiB)
+          json_named:   7,14       11,85 --  5,66        1,31  =   6,40        6,58 -- ( 1,73 / 12,8 MiB)
+         json_pretty:  11,39             --  8,22              =   9,80             -- ( 3,40 / 25,1 MiB)
+              pretty:  13,80             --  6,33              =  10,07             -- ( 1,71 / 12,6 MiB)
+              config:  16,05             --  7,60              =  11,82             -- ( 2,64 / 19,5 MiB)
 ```
 
 **NOTE:** The thrift JSON protocol was removed because some weird bug keeps messing

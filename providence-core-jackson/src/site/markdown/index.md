@@ -9,8 +9,12 @@ In order to enable the extra classes to be serialized, include
 the `providence-core-jackson` module, and call:
 
 ```java
-ObjectMapper mapper = new ObjectMapper();
-ProvidenceModule.register(mapper);
+class MyModule {
+    public static final ObjectMapper MAPPER = new ObjectMapper();
+    static {
+        ProvidenceModule.register(mapper);
+    }
+}
 ```
 
 Using the object mapper after this should just work even with binary

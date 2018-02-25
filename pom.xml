@@ -99,7 +99,6 @@
         <dropwizard.version>1.2.3</dropwizard.version>
 
         <!-- RPC tools, Client -->
-        <commons.lang3.version>3.7</commons.lang3.version>
         <commons.math3.version>3.6.1</commons.math3.version>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <thrift.version>0.10.0</thrift.version>
@@ -339,11 +338,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons.math3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons.lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

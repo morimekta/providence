@@ -178,29 +178,29 @@ call would look like:
 ## JSON IDL - Data format
 
 ```
-MESSAGE     :== MESSAGE_OBJ | MESSAGE_ARR
+MESSAGE     ::= MESSAGE_OBJ | MESSAGE_ARR
 
-MESSAGE_OBJ :== '{' (FIELD-SPEC ','?)* '}'
+MESSAGE_OBJ ::= '{' (FIELD_SPEC ','?)* '}'
 
-MESSAGE_ARR :== '[' (FIELD-VALUE ','?)* ']'
+MESSAGE_ARR ::= '[' (FIELD_VALUE ','?)* ']'
 
-FIELD-SPEC  :== '"' FIELD-ID '"' ':' FIELD-VALUE
+FIELD_SPEC  ::= '"' FIELD_ID '"' ':' FIELD_VALUE
 
-FIELD-ID    :== STRING | NUMBER
+FIELD_ID    ::= STRING | NUMBER
 
-FIELD-VALUE :== '"' STRING '"' | BOOLEAN | NUMBER | LIST | MAP | MESSAGE
+FIELD_VALUE ::= '"' STRING '"' | BOOLEAN | NUMBER | LIST | MAP | MESSAGE
 
-LIST        :== '[' (VALUE ','?)* ']'
+LIST        ::= '[' ((VALUE (',' VALUE )*)? ']'
 
-MAP         :== '{' (MAP-ENTRY ','?)* '}'
+MAP         ::= '{' (MAP_ENTRY (',' MAP_ENTRY)*)? '}'
 
-MAP-ENTRY   :== MAP-KEY ':' FIELD-VALUE
+MAP_ENTRY   ::= MAP-KEY ':' FIELD-VALUE
 
-MAP-KEY     :== STRING | '"' (BOOLEAN | NUMBER) '"'
+MAP_KEY     ::= STRING | '"' (BOOLEAN | NUMBER) '"'
 
-STRING      :== CHAR*
+STRING      ::= CHAR*
 
-CHAR        :== [0x20 .. 0x7E] | [0xC1 - 0xFD] [0x81 .. 0xBF]+
+CHAR        ::= [0x20 .. 0x7E] | [0xC1 - 0xFD] [0x81 .. 0xBF]+
 
-NUMBER      :== [0-9]+ | ([0-9]+ | [0-9]* ('.' [0-9]+)) (('e' | 'E') '-'? [0-9]+)?
+NUMBER      ::= [0-9]+ | ([0-9]+ | [0-9]* ('.' [0-9]+)) (('e' | 'E') '-'? [0-9]+)?
 ```

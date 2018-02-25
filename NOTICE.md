@@ -1,23 +1,18 @@
 Providence License
 ==================
 
-The providence project is under the Apache 2.0 license, except where specifically noted otherwise. See contributor list for details.
+The providence project is under the Apache 2.0 license, except
+where specifically noted otherwise. See contributor list for details.
 
-- @tag is the github user.
-- <email@example.com> Email address, may be anonymized with '...' to stop mail sniffers.
-
-## Constributors
+## Main Constributors
 
 - [@morimekta](http://github.com/morimekta) Stein Eldar Johnsen
 
-## Exceptions
-
-- [generate_workspace.sh](generate_workspace.sh) script is MIT licensed.
-- [Base64.java](core/java/net/morimekta/util/Base64.java) is from [iharder](http://iharder.net/base64). It's placed in the public domain, so don't actually have a license.
-
 ## Copyright Notice
 
-All files in the project that does not have a copyright notice implicitly has this notice. This includes config files, code files, scripts etc.
+All files in the project that does not have a copyright notice
+implicitly has this notice. This includes config files, code
+files, scripts etc.
 
 ```text
 Copyright (c) ${YEAR}, Providence Authors
@@ -42,7 +37,24 @@ under the License.
 
 ### Other licenses
 
-The different libraries may use the same or other licenses.
+Libraries used by the release artifacts of providence with
+licenses are as follows. These will be dragged into shade
+builds if the dependency is present, among others:
 
-- `Apache-2.0` license can be found [here](http://www.apache.org/licenses/LICENSE-2.0).
-- `MIT` license can be found [here](https://opensource.org/licenses/MIT).
+* `providence-core`:
+    - `com.google.guava`: [Apache 2.0](https://github.com/google/guava/blob/master/COPYING)
+    - `net.morimekta.util`: [Apache 2.0](https://github.com/morimekta/utils/blob/master/LICENSE)
+    - `org.slf4j`: [MIT License](https://www.slf4j.org/license.html)
+* `providence-core-client`:
+    - `google-http-client`: [Apache 2.0](https://github.com/google/google-http-java-client/blob/dev/LICENSE)
+    - `org.apache.httpcomponents`: [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+* `providence-core-server`:
+    - `org.eclipse.jetty`: [Apache 2.0](https://www.eclipse.org/jetty/licenses.html)
+* `providence-core-jackson`:
+    - `com.fasterxml.jackson`: [Apache 2.0](https://github.com/FasterXML/jackson-core/blob/master/src/main/resources/META-INF/LICENSE)
+* `providence-jax-rs`:
+    - `javax.ws.rs`: [CDDL 1.1](https://github.com/jax-rs/api/blob/master/LICENSE.txt)
+* `providence-thrift-protocols`:
+    - `org.apache.thrift`: [Apache 2.0](https://github.com/apache/thrift/blob/master/LICENSE)
+* `providence-storage-hazelcast`:
+    - `com.hazelcast`: [Apache 2.0](http://docs.hazelcast.org/docs/latest-development/manual/html/License_Questions.html)
