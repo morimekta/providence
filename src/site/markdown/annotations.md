@@ -23,11 +23,11 @@ struct MyStruct {
 Or in IDL syntax:
 
 ```
-ANNOTATIONS          :== '(' ANNOTATION [ [',' ';'] ANNOTATION ]* ')'
+ANNOTATIONS          ::= '(' ANNOTATION [ [',' ';'] ANNOTATION ]* ')'
 
-ANNOTATION           :== IDENTIFIER '=' LITERAL
+ANNOTATION           ::= IDENTIFIER ('=' LITERAL)?
 
-ANNOTATED_DEFINITION :== DEFINITION ANNOTATION?
+ANNOTATED_DEFINITION ::= DEFINITION ANNOTATION?
 ```
 
 ## Annotation Specifications

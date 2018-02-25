@@ -6,7 +6,7 @@ the providence plugin, use the plugin with the **same version** as the
 providence release you are using.
 
 ```groovy
-var providence_version = '0.3.9'
+var providence_version = '1.3.1'
 
 plugins {
     id "net.morimekta.providence.gradle" version "${providence_version}"

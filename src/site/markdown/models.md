@@ -210,7 +210,7 @@ switch(union.unionField()) {
 ### Building and Mutating Messages
 
 Since the generated messages are immutable (they are never proper Java beans),
-new messages has to be built using the associated `Builder`. The builder can
+new messages has to be built using the associated `_Builder`. The builder can
 be instantiated in three ways:
 
 ```java

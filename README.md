@@ -12,3 +12,12 @@ but with some differences and limitations.
 
 See the project site at [www.morimekta.net/providence](http://www.morimekta.net/providence)
 for setup and usage instructions.
+
+### Also See
+
+Projects that are strongly related to this:
+
+- [Morimekts Utils](https://github.com/morimekta/utils)
+- [Gradle Plugin](https://github.com/morimekta/providence-gradle-plugin)
+- [IntelliJ Plugin](https://github.com/morimekta/providence-idea-plugin)
+- [JavaScript Code Generator](https://github.com/morimekta/providence-js)
