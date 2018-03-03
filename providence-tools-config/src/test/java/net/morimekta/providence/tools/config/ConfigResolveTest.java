@@ -24,7 +24,7 @@ public class ConfigResolveTest extends ConfigTestBase {
                 configRoot.getAbsolutePath() + "/prod_service.cfg");
 
         assertThat(console.error(), is(""));
-        assertThat(console.output(), is("config.Service {\n" +
+        assertThat(console.output(), is("tools_config.Service {\n" +
                      "  name = \"prod\"\n" +
                      "  http = {\n" +
                      "    port = 8080\n" +
@@ -54,7 +54,7 @@ public class ConfigResolveTest extends ConfigTestBase {
                 "    admin_port = 8088\n" +
                 "}\n" +
                 "\n" +
-                "config.Service {\n" +
+                "tools_config.Service {\n" +
                 "    http = {\n" +
                 "        port = http_porr\n" +
                 "        context = \"/app\"\n" +

@@ -9,6 +9,6 @@ struct Imaginary {
 } (java.public.constructor)
 
 const Imaginary kSqrtMinusOne = {
-  "v": 0.0,
-  "i": -1.0
+    "v": 0.0,
+    "i": -1.0
 };

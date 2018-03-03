@@ -44,7 +44,7 @@ public class ConfigTestBase {
     }
 
     void standardConfig() {
-        copyResourceTo("/config.thrift", thriftRoot);
+        copyResourceTo("/tools_config.thrift", thriftRoot);
 
         String path = "/net/morimekta/providence/tools/config/";
         copyResourceTo(path + "base_service.cfg", configRoot);
