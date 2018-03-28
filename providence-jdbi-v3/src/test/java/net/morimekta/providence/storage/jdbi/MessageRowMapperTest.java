@@ -1,0 +1,140 @@
+package net.morimekta.providence.storage.jdbi;
+
+import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
+import net.morimekta.test.providence.storage.jdbc.OptionalFields;
+import org.jdbi.v3.core.Handle;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.sql.Types;
+import java.time.Clock;
+
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.forMessage;
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toMessage;
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withType;
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BASE64_DATA;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BINARY_MESSAGE;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_DATA;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_MESSAGE;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.CLOB_MESSAGE;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_MS;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_S;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class MessageRowMapperTest {
+    @Rule
+    public TestDatabase db = new TestDatabase("/mappings.sql")
+            .dumpOnFailure("mappings.default_mappings");
+
+    @Rule
+    public SimpleGeneratorWatcher generator = SimpleGeneratorWatcher.create();
+
+    public Clock clock = Clock.systemUTC();
+
+    @Test
+    public void testDefaultMapping() {
+        generator.setFillRate(1.0)
+                 .setMaxCollectionItems(16);
+        OptionalFields expected = generator.generate(OptionalFields.kDescriptor)
+                                           .mutate()
+                                           .setId(1234)
+                                           .setTimestampS((int) clock.instant().getEpochSecond())
+                                           // Since a number of DBs (MySQL 5) stores timestamp as second, not MS.
+                                           .setTimestampMs(clock.instant().getEpochSecond() * 1000)
+                                           .build();
+        OptionalFields empty = OptionalFields.builder()
+                                             .setId(2345)
+                                             .build();
+
+        try (Handle handle = db.getDBI().open()) {
+            handle.createUpdate("INSERT INTO mappings.default_mappings (" +
+                                "  id, present, tiny, small, medium, large, real," +
+                                "  fib, name, data, message," +
+                                "  timestamp_s, timestamp_ms," +
+                                "  binary_message, blob_message, clob_message," +
+                                "  blob_data, base64_data" +
+                                ") VALUES (" +
+                                "  :e.id," +
+                                "  :e.present," +
+                                "  :e.tiny," +
+                                "  :e.small," +
+                                "  :e.medium," +
+                                "  :e.large," +
+                                "  :e.real," +
+                                "  :e.fib," +
+                                "  :e.name," +
+                                "  :e.data," +
+                                "  :e.message," +
+
+                                "  :e.timestamp_s," +
+                                "  :e.timestamp_ms," +
+                                "  :e.binary_message," +
+                                "  :e.blob_message," +
+                                "  :e.clob_message," +
+                                "  :e.blob_data," +
+                                "  :e.base64_data" +
+                                ")")
+                  .bindNamedArgumentFinder(forMessage("e", expected,
+                                                      withType(TIMESTAMP_S, Types.TIMESTAMP),
+                                                      withType(TIMESTAMP_MS, Types.TIMESTAMP),
+                                                      withType(BINARY_MESSAGE, Types.BINARY),
+                                                      withType(BLOB_MESSAGE, Types.BLOB),
+                                                      withType(CLOB_MESSAGE, Types.CLOB),
+                                                      withType(BLOB_DATA, Types.BLOB),
+                                                      withType(BASE64_DATA, Types.VARCHAR)))
+                  .execute();
+            handle.createUpdate("INSERT INTO mappings.default_mappings (" +
+                                "  id, present, tiny, small, medium, large, real," +
+                                "  fib, name, data, message," +
+                                "  timestamp_s, timestamp_ms," +
+                                "  binary_message, blob_message, clob_message," +
+                                "  blob_data, base64_data" +
+                                ") VALUES (" +
+                                "  :e.id," +
+                                "  :e.present," +
+                                "  :e.tiny," +
+                                "  :e.small," +
+                                "  :e.medium," +
+                                "  :e.large," +
+                                "  :e.real," +
+                                "  :e.fib," +
+                                "  :e.name," +
+                                "  :e.data," +
+                                "  :e.message," +
+
+                                "  :e.timestamp_s," +
+                                "  :e.timestamp_ms," +
+                                "  :e.binary_message," +
+                                "  :e.blob_message," +
+                                "  :e.clob_message," +
+                                "  :e.blob_data," +
+                                "  :e.base64_data" +
+                                ")")
+                  .bindNamedArgumentFinder(forMessage("e", empty,
+                                                      withType(TIMESTAMP_S, Types.TIMESTAMP),
+                                                      withType(TIMESTAMP_MS, Types.TIMESTAMP),
+                                                      withType(BINARY_MESSAGE, Types.BINARY),
+                                                      withType(BLOB_MESSAGE, Types.BLOB),
+                                                      withType(CLOB_MESSAGE, Types.CLOB),
+                                                      withType(BLOB_DATA, Types.BLOB),
+                                                      withType(BASE64_DATA, Types.VARCHAR)))
+                  .execute();
+
+            OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
+                                       .bind("id", expected.getId())
+                                       .map(toMessage(OptionalFields.kDescriptor))
+                                       .findFirst()
+                                       .orElseThrow(() -> new AssertionError("No content in default_mappings"));
+            OptionalFields val2 = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
+                                       .bind("id", empty.getId())
+                                       .map(toMessage(OptionalFields.kDescriptor))
+                                       .findFirst()
+                                       .orElseThrow(() -> new AssertionError("No content in default_mappings"));
+
+            assertThat(val, is(equalToMessage(expected)));
+            assertThat(val2, is(equalToMessage(empty)));
+        }
+    }
+}

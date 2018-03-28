@@ -356,6 +356,11 @@
                 <artifactId>testing-util</artifactId>
                 <version>${morimekta_utils.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-core</artifactId>
+                <version>3.1.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
@@ -994,6 +999,7 @@
                 <module>providence-config</module>
                 <module>providence-storage</module>
                 <module>providence-storage-hazelcast</module>
+                <module>providence-jdbi-v3</module>
                 <module>providence-jax-rs</module>
             </modules>
         </profile>
@@ -1076,6 +1082,7 @@
                 <module>providence-config</module>
                 <module>providence-storage</module>
                 <module>providence-storage-hazelcast</module>
+                <module>providence-jdbi-v3</module>
                 <module>providence-jax-rs</module>
 
                 <!-- CLI -->
