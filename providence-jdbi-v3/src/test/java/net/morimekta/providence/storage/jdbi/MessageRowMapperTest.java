@@ -11,6 +11,7 @@ import java.time.Clock;
 
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.forMessage;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toMessage;
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withColumn;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withType;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BASE64_DATA;
@@ -18,6 +19,7 @@ import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.B
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_DATA;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.CLOB_MESSAGE;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_MS;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_S;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,7 +33,7 @@ public class MessageRowMapperTest {
     @Rule
     public SimpleGeneratorWatcher generator = SimpleGeneratorWatcher.create();
 
-    public Clock clock = Clock.systemUTC();
+    private Clock clock = Clock.systemUTC();
 
     @Test
     public void testDefaultMapping() {
@@ -41,7 +43,7 @@ public class MessageRowMapperTest {
                                            .mutate()
                                            .setId(1234)
                                            .setTimestampS((int) clock.instant().getEpochSecond())
-                                           // Since a number of DBs (MySQL 5) stores timestamp as second, not MS.
+                                           // Since a number of DBs (MySQL <= 5.5) stores timestamp as second, not MS.
                                            .setTimestampMs(clock.instant().getEpochSecond() * 1000)
                                            .build();
         OptionalFields empty = OptionalFields.builder()
@@ -51,9 +53,9 @@ public class MessageRowMapperTest {
         try (Handle handle = db.getDBI().open()) {
             handle.createUpdate("INSERT INTO mappings.default_mappings (" +
                                 "  id, present, tiny, small, medium, large, real," +
-                                "  fib, name, data, message," +
+                                "  fib, name, data, compact," +
                                 "  timestamp_s, timestamp_ms," +
-                                "  binary_message, blob_message, clob_message," +
+                                "  binary_message, blob_message, other_message," +
                                 "  blob_data, base64_data" +
                                 ") VALUES (" +
                                 "  :e.id," +
@@ -87,9 +89,9 @@ public class MessageRowMapperTest {
                   .execute();
             handle.createUpdate("INSERT INTO mappings.default_mappings (" +
                                 "  id, present, tiny, small, medium, large, real," +
-                                "  fib, name, data, message," +
+                                "  fib, name, data, compact," +
                                 "  timestamp_s, timestamp_ms," +
-                                "  binary_message, blob_message, clob_message," +
+                                "  binary_message, blob_message, other_message," +
                                 "  blob_data, base64_data" +
                                 ") VALUES (" +
                                 "  :e.id," +
@@ -124,14 +126,18 @@ public class MessageRowMapperTest {
 
             OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
                                        .bind("id", expected.getId())
-                                       .map(toMessage(OptionalFields.kDescriptor))
+                                       .map(toMessage(OptionalFields.kDescriptor,
+                                                      withColumn("compact", MESSAGE),
+                                                      withColumn("other_message", CLOB_MESSAGE)))
                                        .findFirst()
                                        .orElseThrow(() -> new AssertionError("No content in default_mappings"));
             OptionalFields val2 = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
-                                       .bind("id", empty.getId())
-                                       .map(toMessage(OptionalFields.kDescriptor))
-                                       .findFirst()
-                                       .orElseThrow(() -> new AssertionError("No content in default_mappings"));
+                                        .bind("id", empty.getId())
+                                        .map(toMessage(OptionalFields.kDescriptor,
+                                                       withColumn("compact", MESSAGE),
+                                                       withColumn("other_message", CLOB_MESSAGE)))
+                                        .findFirst()
+                                        .orElseThrow(() -> new AssertionError("No content in default_mappings"));
 
             assertThat(val, is(equalToMessage(expected)));
             assertThat(val2, is(equalToMessage(empty)));
