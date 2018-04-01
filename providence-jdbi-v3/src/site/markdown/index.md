@@ -8,7 +8,7 @@ IDL field types and how they are stored.
 Showing thrift field type on left side and SQL column type on right side.
 
 | Thrift    | SQL        | Note                                                  |
-+-----------|------------+-------------------------------------------------------+
+|-----------|------------|-------------------------------------------------------|
 | `bool`    | `BIT`      |                                                       |
 | `byte`    | `TINYINT`  |                                                       |
 | `i16`     | `SMALLINT` |                                                       |
@@ -32,7 +32,7 @@ types will require you to specify the field to SQL type mapping when writing
 values. Reading (see `MessageRowMapper`) will work fine regardless:
 
 | Thrift    | SQL         | Note                                           |
-+-----------|-------------+------------------------------------------------+
+|-----------|-------------|------------------------------------------------|
 | `i32`     | `TIMESTAMP` | Field value as `seconds` since epoch.          |
 | `i64`     | `TIMESTAMP` | Field value as `milliseconds` since epoch.     |
 | `binary`  | `BLOB`      |                                                |

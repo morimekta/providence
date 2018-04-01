@@ -96,11 +96,11 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
     private final ImmutableList<String> columnOrder;
     private final String                valueMarkers;
 
-    MessageInserter(String queryPrefix,
-                    String querySuffix,
-                    List<String> columnOrder,
-                    Map<String, F> columnToFieldMap,
-                    Map<String, Integer> columnTypeMap) {
+    private MessageInserter(String queryPrefix,
+                            String querySuffix,
+                            List<String> columnOrder,
+                            Map<String, F> columnToFieldMap,
+                            Map<String, Integer> columnTypeMap) {
         this.queryPrefix = queryPrefix;
         this.querySuffix = querySuffix;
         this.columnOrder = ImmutableList.copyOf(columnOrder);
