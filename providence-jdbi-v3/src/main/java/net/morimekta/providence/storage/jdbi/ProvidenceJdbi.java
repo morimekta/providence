@@ -15,6 +15,56 @@ import java.util.Map;
  */
 public class ProvidenceJdbi {
     /**
+     * Bind to the given field for the message.
+     *
+     * @param message The message tp bind value from.
+     * @param field The field to bind to.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return The message field argument.
+     */
+    public static <M extends PMessage<M,F>, F extends PField>
+    MessageFieldArgument<M,F> toField(M message, F field) {
+        return new MessageFieldArgument<>(message, field);
+    }
+
+    /**
+     * Bind to the given field for the message.
+     *
+     * @param message The message tp bind value from.
+     * @param field The field to bind to.
+     * @param type The SQL type.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return The message field argument.
+     */
+    public static <M extends PMessage<M,F>, F extends PField>
+    MessageFieldArgument<M,F> toField(M message, F field, int type) {
+        return new MessageFieldArgument<>(message, field, type);
+    }
+
+    /**
+     * With all column with default types.
+     *
+     * @param <F> The message field type.
+     * @return The mapped field.
+     */
+    public static <F extends PField> MappedField<F> columnsFromAllFields() {
+        return new MappedField<>("*", null);
+    }
+
+    /**
+     * With column mapped to field using the field name.
+     *
+     * @param field Field it is mapped to.
+     * @param <F> The message field type.
+     * @return The mapped field.
+     */
+    public static <F extends PField> MappedField<F> withColumn(F field) {
+        return new MappedField<>(field.getName(), field);
+    }
+
+    /**
      * With column mapped to field.
      *
      * @param name Name of column.
@@ -117,7 +167,7 @@ public class ProvidenceJdbi {
     private static <F extends PField> Map<String,F> makeMapping(@Nonnull MappedField<F>... mappedFields) {
         HashMap<String, F> out = new HashMap<>();
         for (MappedField<F> mappedField : mappedFields) {
-            out.put(mappedField.name, mappedField.field);
+            out.put(mappedField.name.toUpperCase(), mappedField.field);
         }
         return out;
     }

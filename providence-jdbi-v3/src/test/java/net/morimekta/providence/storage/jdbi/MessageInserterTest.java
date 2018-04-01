@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.sql.Types;
 import java.time.Clock;
 
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.columnsFromAllFields;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toMessage;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withColumn;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
@@ -78,6 +79,7 @@ public class MessageInserterTest {
             OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
                                        .bind("id", expected.getId())
                                        .map(toMessage(OptionalFields.kDescriptor,
+                                                      columnsFromAllFields(),
                                                       withColumn("compact", MESSAGE),
                                                       withColumn("other_message", CLOB_MESSAGE)))
                                        .findFirst()
@@ -85,6 +87,7 @@ public class MessageInserterTest {
             OptionalFields val2 = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
                                         .bind("id", empty.getId())
                                         .map(toMessage(OptionalFields.kDescriptor,
+                                                       columnsFromAllFields(),
                                                        withColumn("compact", MESSAGE),
                                                        withColumn("other_message", CLOB_MESSAGE)))
                                         .findFirst()

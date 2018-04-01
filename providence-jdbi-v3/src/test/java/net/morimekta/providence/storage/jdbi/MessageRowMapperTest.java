@@ -9,7 +9,9 @@ import org.junit.Test;
 import java.sql.Types;
 import java.time.Clock;
 
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.columnsFromAllFields;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.forMessage;
+import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toField;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toMessage;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withColumn;
 import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withType;
@@ -19,6 +21,7 @@ import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.B
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_DATA;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.CLOB_MESSAGE;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.ID;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_MS;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_S;
@@ -70,7 +73,7 @@ public class MessageRowMapperTest {
                                 "  :e.data," +
                                 "  :e.message," +
 
-                                "  :e.timestamp_s," +
+                                "  :timestamp_s," +
                                 "  :e.timestamp_ms," +
                                 "  :e.binary_message," +
                                 "  :e.blob_message," +
@@ -78,8 +81,8 @@ public class MessageRowMapperTest {
                                 "  :e.blob_data," +
                                 "  :e.base64_data" +
                                 ")")
+                  .bind("timestamp_s", toField(expected, TIMESTAMP_S, Types.TIMESTAMP))
                   .bindNamedArgumentFinder(forMessage("e", expected,
-                                                      withType(TIMESTAMP_S, Types.TIMESTAMP),
                                                       withType(TIMESTAMP_MS, Types.TIMESTAMP),
                                                       withType(BINARY_MESSAGE, Types.BINARY),
                                                       withType(BLOB_MESSAGE, Types.BLOB),
@@ -106,7 +109,7 @@ public class MessageRowMapperTest {
                                 "  :e.data," +
                                 "  :e.message," +
 
-                                "  :e.timestamp_s," +
+                                "  :timestamp_s," +
                                 "  :e.timestamp_ms," +
                                 "  :e.binary_message," +
                                 "  :e.blob_message," +
@@ -114,8 +117,8 @@ public class MessageRowMapperTest {
                                 "  :e.blob_data," +
                                 "  :e.base64_data" +
                                 ")")
+                  .bind("timestamp_s", toField(expected, TIMESTAMP_S, Types.TIMESTAMP))
                   .bindNamedArgumentFinder(forMessage("e", empty,
-                                                      withType(TIMESTAMP_S, Types.TIMESTAMP),
                                                       withType(TIMESTAMP_MS, Types.TIMESTAMP),
                                                       withType(BINARY_MESSAGE, Types.BINARY),
                                                       withType(BLOB_MESSAGE, Types.BLOB),
@@ -125,15 +128,17 @@ public class MessageRowMapperTest {
                   .execute();
 
             OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
-                                       .bind("id", expected.getId())
+                                       .bind("id", toField(expected, ID))
                                        .map(toMessage(OptionalFields.kDescriptor,
+                                                      columnsFromAllFields(),
                                                       withColumn("compact", MESSAGE),
                                                       withColumn("other_message", CLOB_MESSAGE)))
                                        .findFirst()
                                        .orElseThrow(() -> new AssertionError("No content in default_mappings"));
             OptionalFields val2 = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
-                                        .bind("id", empty.getId())
+                                        .bind("id", toField(empty, ID))
                                         .map(toMessage(OptionalFields.kDescriptor,
+                                                       columnsFromAllFields(),
                                                        withColumn("compact", MESSAGE),
                                                        withColumn("other_message", CLOB_MESSAGE)))
                                         .findFirst()

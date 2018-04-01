@@ -34,13 +34,32 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
     private final PMessageDescriptor<M, F> descriptor;
     private final Map<String,F>            fieldNameMapping;
 
+    public MessageRowMapper(@Nonnull PMessageDescriptor<M,F> descriptor) {
+        this(descriptor, ImmutableMap.of());
+    }
+
     public MessageRowMapper(@Nonnull PMessageDescriptor<M,F> descriptor,
                             @Nonnull Map<String,F> fieldMapping) {
         Map<String, F> mappingBuilder = new HashMap<>();
-        for (F field : descriptor.getFields()) {
-            mappingBuilder.put(field.getName().toUpperCase(), field);
+        if (fieldMapping.isEmpty()) {
+            for (F field : descriptor.getFields()) {
+                mappingBuilder.put(field.getName().toUpperCase(), field);
+            }
+        } else {
+            fieldMapping.forEach((name, addField) -> {
+                if ("*".equals(name)) {
+                    for (F field : descriptor.getFields()) {
+                        String fieldName = field.getName().toUpperCase();
+                        // To avoid overwriting already specified fields.
+                        if (!mappingBuilder.containsKey(fieldName)) {
+                            mappingBuilder.put(fieldName, field);
+                        }
+                    }
+                } else {
+                    mappingBuilder.put(name.toUpperCase(), addField);
+                }
+            });
         }
-        fieldMapping.forEach((name, field) -> mappingBuilder.put(name.toUpperCase(), field));
 
         this.descriptor = descriptor;
         this.fieldNameMapping = ImmutableMap.copyOf(mappingBuilder);
