@@ -924,6 +924,10 @@
                                     <packages>net.morimekta.providence.storage*</packages>
                                 </group>
                                 <group>
+                                    <title>Providence Utils : JDBI</title>
+                                    <packages>net.morimekta.providence.jdbi*</packages>
+                                </group>
+                                <group>
                                     <title>Providence Utils : Testing</title>
                                     <packages>net.morimekta.providence.testing*</packages>
                                 </group>

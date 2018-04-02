@@ -117,7 +117,7 @@ public class MessageRowMapperTest {
                                 "  :e.blob_data," +
                                 "  :e.base64_data" +
                                 ")")
-                  .bind("timestamp_s", toField(expected, TIMESTAMP_S, Types.TIMESTAMP))
+                  .bind("timestamp_s", toField(empty, TIMESTAMP_S, Types.TIMESTAMP))
                   .bindNamedArgumentFinder(forMessage("e", empty,
                                                       withType(TIMESTAMP_MS, Types.TIMESTAMP),
                                                       withType(BINARY_MESSAGE, Types.BINARY),
