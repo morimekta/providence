@@ -104,6 +104,7 @@ all fields must be specified directly, but if not, then it is possible to
 create the inserter in mere 4 lines:
 
 ```java
+class MyInserter {
     private static final MessageInserter<MyMessage, MyMessage._Field> INSERTER =
             new MessageInserter.Builder<>("some_schema.my_message")
                     .set(MyMessage._Field.values())
