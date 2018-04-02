@@ -1,0 +1,25 @@
+<ul class="nav nav-list">
+    {% for section in site.sections %}
+        {% assign attr = section[0] %}
+        {% assign label = section[1] %}
+
+        {% for page in site.categories[attr] %}
+            {% if forloop.first %}
+                <li class="nav-header">{{ label }}</li>
+            {% endif %}
+            <li data-order="{{ page.order }}"><a href="{{ site.baseurl }}{{ page.url }}">
+                {% if page.toc_title %}
+                    {{ page.toc_title }}
+                {% else %}
+                    {{ page.title }}
+                {% endif %}
+            </a></li>
+        {% endfor %}
+    {% endfor %}
+
+    <li class="divider"></li>
+    <li class="nav-header">More Resources</li>
+    <li><a href="https://github.com/morimekta/providence/releases/latest">Latest Release</a></li>
+    <li><a href="https://www.javadoc.io/doc/net.morimekta.providence/providence">JavaDoc</a></li>
+    <li><a href="https://codecov.io/github/morimekta/providence?branch=master">Coverage</a></li>
+</ul>

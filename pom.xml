@@ -648,6 +648,70 @@
                             <goal>jar</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>aggregate-apidocs</id>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <failOnError>true</failOnError>
+                            <doclint>all</doclint>
+                            <notimestamp>true</notimestamp>
+                            <nodeprecatedlist>true</nodeprecatedlist>
+                            <quiet>true</quiet>
+                            <groups>
+                                <group>
+                                    <title>Providence Core</title>
+                                    <packages>net.morimekta.providence:net.morimekta.providence.descriptor*:net.morimekta.providence.mio*:net.morimekta.providence.serializer*:net.morimekta.providence.streams*:net.morimekta.providence.util*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Core : Client</title>
+                                    <packages>net.morimekta.providence.client*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Core : Server</title>
+                                    <packages>net.morimekta.providence.server*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Reflection</title>
+                                    <packages>net.morimekta.providence.reflect*:net.morimekta.providence.model*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Config</title>
+                                    <packages>net.morimekta.providence.config*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Storage</title>
+                                    <packages>net.morimekta.providence.storage*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : JDBI</title>
+                                    <packages>net.morimekta.providence.jdbi*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Testing</title>
+                                    <packages>net.morimekta.providence.testing*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Thrift Bridge</title>
+                                    <packages>net.morimekta.providence.thrift*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Utils : Javax.WS.RS</title>
+                                    <packages>net.morimekta.providence.jax*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Tools: Code Generators</title>
+                                    <packages>net.morimekta.providence.generator*</packages>
+                                </group>
+                                <group>
+                                    <title>Providence Tools: Maven Plugin</title>
+                                    <packages>net.morimekta.providence.maven*</packages>
+                                </group>
+                            </groups>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -662,7 +726,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
-                    <skipDeploy>true</skipDeploy>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
 
@@ -839,143 +903,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <outputDirectory>${project.build.directory}/site</outputDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>license</report>
-                            <report>project-team</report>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <!-- only need report for test (not IT) as only the tools have IT -->
-                    <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <!-- select non-aggregate reports -->
-                            <report>report</report>
-                        </reports>
-                        <configuration>
-                            <includes>
-                                <include>net/morimekta/providence/*</include>
-                                <include>net/morimekta/providence/**/*</include>
-                            </includes>
-                            <excludes>
-                                <!-- actually only for providence-core -->
-                                <exclude>**/PApplicationException*</exclude>
-                                <exclude>**/PApplicationExceptionType*</exclude>
-                                <exclude>**/PServiceCallType*</exclude>
-                                <!-- actually only for providence-reflect -->
-                                <exclude>net/morimekta/providence/model/*</exclude>
-                                <exclude>net/morimekta/providence/model/**/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>javadoc</report>
-                            <report>aggregate</report>
-                        </reports>
-                        <configuration>
-                            <failOnError>true</failOnError>
-                            <additionalparam>-Xdoclint:all</additionalparam>
-                            <notimestamp>true</notimestamp>
-                            <nodeprecatedlist>true</nodeprecatedlist>
-                            <quiet>true</quiet>
-                            <groups>
-                                <group>
-                                    <title>Providence Core</title>
-                                    <packages>net.morimekta.providence:net.morimekta.providence.descriptor*:net.morimekta.providence.mio*:net.morimekta.providence.serializer*:net.morimekta.providence.streams*:net.morimekta.providence.util*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Core : Client</title>
-                                    <packages>net.morimekta.providence.client*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Core : Server</title>
-                                    <packages>net.morimekta.providence.server*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Reflection</title>
-                                    <packages>net.morimekta.providence.reflect*:net.morimekta.providence.model*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Config</title>
-                                    <packages>net.morimekta.providence.config*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Storage</title>
-                                    <packages>net.morimekta.providence.storage*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : JDBI</title>
-                                    <packages>net.morimekta.providence.jdbi*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Testing</title>
-                                    <packages>net.morimekta.providence.testing*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Thrift Bridge</title>
-                                    <packages>net.morimekta.providence.thrift*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Javax.WS.RS</title>
-                                    <packages>net.morimekta.providence.jax*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Tools: Code Generators</title>
-                                    <packages>net.morimekta.providence.generator*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Tools: Maven Plugin</title>
-                                    <packages>net.morimekta.providence.maven*</packages>
-                                </group>
-                            </groups>
-                        </configuration>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <configuration>
-                    <aggregate>false</aggregate>
-                    <alwaysGenerateFailsafeReport>false</alwaysGenerateFailsafeReport>
-                    <alwaysGenerateSurefireReport>false</alwaysGenerateSurefireReport>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <profiles>
         <profile>
