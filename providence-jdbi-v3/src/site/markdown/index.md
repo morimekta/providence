@@ -58,10 +58,11 @@ long as none of the modification methods are called.
 ```java
 class MyInserter {
     private static final MessageInserter<MyMessage, MyMessage._Field> INSERTER =
-            new MessageInserter.Builder<>("my_message")
-                    .set(MyMessage.UUID, MyMessage.NAME)
-                    .set("content", MyMessage.VALUE, Types.VARCHAR)  // E.g. binary to string.
-                    .onDuplicateKeyUpdate(MyMessage.VALUE)
+            new MessageInserter.Builder<>("some_schema.my_message")
+                    .set(MyMessage.UUID,
+                         MyMessage.NAME)
+                    .set("content", MyMessage.VALUE, Types.VARCHAR)
+                    .onDuplicateKeyUpdate(MyMessage.VALUE, MyMessage.NAME)
                     .build();
 
     private final Jdbi dbi;
@@ -87,8 +88,9 @@ class MyInserter {
     int insert(HandleMyMessage... messages) {
         try (Handle handle = dbi.open()) {
             return new MessageInserter.Builder<MyMessage, MyMessage._Field>("my_message")
-                    .set(MyMessage.UUID, MyMessage.NAME)
-                    .set("content", MyMessage.VALUE, Types.VARCHAR)  // E.g. binary to string.
+                    .set(MyMessage.UUID,
+                         MyMessage.NAME)
+                    .set("content", MyMessage.VALUE, Types.VARCHAR)
                     .onDuplicateKeyUpdateAllExcept(MyMessage.UUID)
                     .build()
                     .execute(handle, messages);
@@ -97,11 +99,24 @@ class MyInserter {
 }
 ```
 
+Sadly, if some fields needs to be handled different from the default, then
+all fields must be specified directly, but if not, then it is possible to
+create the inserter in mere 4 lines:
+
+```java
+    private static final MessageInserter<MyMessage, MyMessage._Field> INSERTER =
+            new MessageInserter.Builder<>("some_schema.my_message")
+                    .set(MyMessage._Field.values())
+                    .onDuplicateKeyUpdateAllExcept(MyMessage.UUID)
+                    .build();
+}
+```
+
 The rules for using this is pretty simple:
 
 - All fields set must be specified before onDuplicateKey* behavior.
-- Only one of `onDuplicateKeyIgnore` and `onDuplicateKeyUpdate*`
-  methods can be called.
+- Either `onDuplicateKeyIgnore` or any of `onDuplicateKeyUpdate*`
+  methods can be called, not both.
 - `execute(...)` can be called any number of times, and is thread safe.
 
 ### MessageNamedArgumentFinder
@@ -118,8 +133,11 @@ class MyFinder {
          try (Handle handle = dbi.open()) {
              return handle.createQuery("SELECT * FROM users " +
                                        "WHERE created_ts > :e.user.created_ms")
-                          .bindNamedArgumentFinder(new MessageNamedArgumentFinder("e", entity),
-                                                   withType(User._Field.CREATED_MS, Types.TIMESTAMP))
+                          .bindNamedArgumentFinder(
+                                  new MessageNamedArgumentFinder(
+                                          "e", entity,
+                                          ImmutableMap.of(
+                                              User._Field.CREATED_MS, Types.TIMESTAMP)))
                           .map(User.class)
                           .collect(Collectors.toList());
          }
@@ -135,7 +153,7 @@ through the `ProvidenceJdbi` helper class described toward the end here.
 What the `MessageNamedArgumentFinder` actually does in the background,
 is finding a containing message, and creates a `MessageFieldArgument`
 for it. The message field argument takes care of things like how to
-encode a field value to JDBC values, or if it's truly not set.
+encode a field value to JDBC values, or if it's truly set or not.
 
 ```java
 class MyFinder {
@@ -143,16 +161,16 @@ class MyFinder {
          try (Handle handle = dbi.open()) {
              return handle.createQuery("SELECT * FROM users " +
                                        "WHERE created_ts > :created_ts")
-                          .bind("created_ts", new MessageFieldArgument(entity.getUser(),
-                                                                       User._Field.CREATED_MS,
-                                                                       Types.TIMESTAMP))
+                          .bind("created_ts",
+                                new MessageFieldArgument(entity.getUser(),
+                                                         User._Field.CREATED_MS,
+                                                         Types.TIMESTAMP))
                           .map(User.class)
                           .collect(Collectors.toList());
          }
     }
 }
 ```
-
 
 ### MessageRowMapper
 
@@ -174,13 +192,16 @@ class MyFinder {
          try (Handle handle = dbi.open()) {
              return handle.createQuery("SELECT * FROM users " +
                                        "WHERE created_ts > :created_ts")
-                          .bind("created_ts", new MessageFieldArgument(entity.getUser(),
-                                                                       User._Field.CREATED_MS,
-                                                                       Types.TIMESTAMP))
-                          .map(new MessageRowMapper<>(User.kDescriptor, ImmutableMap.of(
-                                  "*", null,  // match any column to field of same name.
-                                  "created_ts", User._Field.CREATED_MS)  // But `created_ts` maps to `created_ms` field.
-                          ))
+                          .bind("created_ts",
+                                new MessageFieldArgument(entity.getUser(),
+                                                         User._Field.CREATED_MS,
+                                                         Types.TIMESTAMP))
+                          .map(new MessageRowMapper<>(User.kDescriptor,
+                                                      ImmutableMap.of(
+                                  // match any column to field of same name.
+                                  "*", null,
+                                  // But `created_ts` maps to `created_ms` field.
+                                  "created_ts", User._Field.CREATED_MS)))
                           .collect(Collectors.toList());
          }
     }
@@ -203,9 +224,13 @@ code or writing elaborate helpers yourself (then you'd just use JDBI).
           try (Handle handle = dbi.open()) {
               return handle.createQuery("SELECT * FROM mappings.default_mappings " +
                                         "WHERE id = :id AND updated_ts > :e.updated_ms")
+                           // same as .bind("id", new MessageFieldArgument<>(user, ID))
                            .bind("id", toField(user, ID))
-                           .bindNamedArgumentFinder(toMessage("e", entity,
-                                                              withType(Enity._Field.UPDATED_MS, Types.TIMESTAMP))
+                           // same as .bindNamedArgumentFinder(
+                           //         new MessageNamedArgumentFinder<>("e", entity ...))
+                           .bindNamedArgumentFinder(toMessage(
+                                   "e", entity,
+                                   withType(Enity._Field.UPDATED_MS, Types.TIMESTAMP))
                            .map(toMessage(User.kDescriptor,
                                           columnsFromAllFields(),
                                           withColumn("created_ts", User._Field.CREATED_MS),
