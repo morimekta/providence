@@ -2,6 +2,7 @@ package net.morimekta.providence.storage.jdbi;
 
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.jdbc.OptionalFields;
+
 import org.jdbi.v3.core.Handle;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.C
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.DATA;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.FIB;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.ID;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.INT_BOOL;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.LARGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.MEDIUM;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.MESSAGE;
@@ -46,6 +48,7 @@ public class MessageInserterTest {
                     .set("other_message", CLOB_MESSAGE, Types.CLOB)
                     .set(BLOB_DATA, Types.BLOB)
                     .set(BASE64_DATA, Types.VARCHAR)
+                    .set(INT_BOOL, Types.INTEGER)
                     .onDuplicateKeyIgnore()
                     .build();
 

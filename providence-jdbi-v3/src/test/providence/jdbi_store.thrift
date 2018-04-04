@@ -56,6 +56,7 @@ struct OptionalFields {
     22: optional NormalFields  binary_message;  // VARBINARY(255)
     23: optional NormalFields  blob_message;    // BLOB
     24: optional NormalFields  clob_message;    // TEXT
-    25: optional binary        blob_data;
-    26: optional binary        base64_data;
+    25: optional binary        blob_data;       // BLOB
+    26: optional binary        base64_data;     // VARCHAR
+    27: optional bool          int_bool;        // INT
 }

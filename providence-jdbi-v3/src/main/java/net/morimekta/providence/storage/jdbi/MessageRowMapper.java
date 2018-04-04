@@ -109,7 +109,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
         PMessageBuilder<M,F> builder = descriptor.builder();
         for (int i = 1; i <= rs.getMetaData().getColumnCount(); ++i) {
             if (!tableName.isEmpty() &&
-                !rs.getMetaData().getTableName(i).equalsIgnoreCase(tableName)) {
+                !tableName.equalsIgnoreCase(rs.getMetaData().getTableName(i))) {
                 continue;
             }
 

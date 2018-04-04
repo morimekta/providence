@@ -11,6 +11,7 @@ CREATE TABLE default_mappings (
     fib INT NULL,
     compact VARCHAR(255) NULL,
 
+    int_bool INT NULL,
     timestamp_s TIMESTAMP NULL,
     timestamp_ms TIMESTAMP NULL,
     binary_message VARBINARY(255) NULL,

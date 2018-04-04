@@ -96,6 +96,24 @@ public class ProvidenceJdbi {
     }
 
     /**
+     * Bind to message using row mapper.
+     *
+     * @param tableName Table name to restrict field lookup to.
+     * @param descriptor The message descriptor.
+     * @param fieldMapping Extra field mapping.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return The row mapper.
+     */
+    @SafeVarargs
+    public static <M extends PMessage<M,F>, F extends PField>
+    MessageRowMapper<M,F> toMessage(@Nonnull String tableName,
+                                    @Nonnull PMessageDescriptor<M,F> descriptor,
+                                    @Nonnull MappedField<F>... fieldMapping) {
+        return new MessageRowMapper<>(tableName, descriptor, makeMapping(fieldMapping));
+    }
+
+    /**
      * With field mapped to SQL type.
      *
      * @param field The field to be mapped.

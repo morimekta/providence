@@ -25,6 +25,7 @@ import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.B
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BLOB_MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.CLOB_MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.ID;
+import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.INT_BOOL;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.MESSAGE;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_MS;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.TIMESTAMP_S;
@@ -69,7 +70,7 @@ public class MessageRowMapperTest {
                                 "  fib, name, data, compact," +
                                 "  timestamp_s, timestamp_ms," +
                                 "  binary_message, blob_message, other_message," +
-                                "  blob_data, base64_data" +
+                                "  blob_data, base64_data, int_bool" +
                                 ") VALUES (" +
                                 "  :e.id," +
                                 "  :e.present," +
@@ -89,7 +90,8 @@ public class MessageRowMapperTest {
                                 "  :e.blob_message," +
                                 "  :e.clob_message," +
                                 "  :e.blob_data," +
-                                "  :e.base64_data" +
+                                "  :e.base64_data," +
+                                "  :e.int_bool" +
                                 ")")
                   .bind("timestamp_s", toField(expected, TIMESTAMP_S, Types.TIMESTAMP))
                   .bindNamedArgumentFinder(forMessage("e", expected,
@@ -105,7 +107,7 @@ public class MessageRowMapperTest {
                                 "  fib, name, data, compact," +
                                 "  timestamp_s, timestamp_ms," +
                                 "  binary_message, blob_message, other_message," +
-                                "  blob_data, base64_data" +
+                                "  blob_data, base64_data, int_bool" +
                                 ") VALUES (" +
                                 "  :e.id," +
                                 "  :e.present," +
@@ -125,7 +127,8 @@ public class MessageRowMapperTest {
                                 "  :e.blob_message," +
                                 "  :e.clob_message," +
                                 "  :e.blob_data," +
-                                "  :e.base64_data" +
+                                "  :e.base64_data," +
+                                "  :e.int_bool" +
                                 ")")
                   .bind("timestamp_s", toField(empty, TIMESTAMP_S, Types.TIMESTAMP))
                   .bindNamedArgumentFinder(forMessage("e", empty,
@@ -134,12 +137,13 @@ public class MessageRowMapperTest {
                                                       withType(BLOB_MESSAGE, Types.BLOB),
                                                       withType(CLOB_MESSAGE, Types.CLOB),
                                                       withType(BLOB_DATA, Types.BLOB),
-                                                      withType(BASE64_DATA, Types.VARCHAR)))
+                                                      withType(BASE64_DATA, Types.VARCHAR),
+                                                      withType(INT_BOOL, Types.INTEGER)))
                   .execute();
 
-            OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
+            OptionalFields val = handle.createQuery("SELECT m.* FROM mappings.default_mappings m WHERE id = :id")
                                        .bind("id", toField(expected, ID))
-                                       .map(toMessage(OptionalFields.kDescriptor,
+                                       .map(toMessage("default_mappings", OptionalFields.kDescriptor,
                                                       columnsFromAllFields(),
                                                       withColumn("compact", MESSAGE),
                                                       withColumn("other_message", CLOB_MESSAGE)))
