@@ -1,6 +1,5 @@
 package net.morimekta.providence.storage.jdbi;
 
-import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
@@ -9,6 +8,8 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.util.Binary;
+
+import com.google.common.collect.ImmutableMap;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.result.ResultSetException;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -27,18 +28,55 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Map a result set to a message based on meta information and the message
+ * descriptor.
+ *
+ * @param <M> The message type.
+ * @param <F> The message field type.
+ */
 public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> implements RowMapper<M> {
-    private static final BinarySerializer BINARY = new BinarySerializer();
-    private static final JsonSerializer   JSON   = new JsonSerializer();
+    public static final String ALL_FIELDS = "*";
 
-    private final PMessageDescriptor<M, F> descriptor;
-    private final Map<String,F>            fieldNameMapping;
-
+    /**
+     * Create a message row mapper.
+     *
+     * @param descriptor Message descriptor.
+     */
     public MessageRowMapper(@Nonnull PMessageDescriptor<M,F> descriptor) {
         this(descriptor, ImmutableMap.of());
     }
 
+    /**
+     * Create a message row mapper.
+     *
+     * @param tableName The name of the table to filter fields for this mapper.
+     * @param descriptor Message descriptor.
+     */
+    public MessageRowMapper(@Nonnull String tableName, @Nonnull PMessageDescriptor<M,F> descriptor) {
+        this(tableName, descriptor, ImmutableMap.of());
+    }
+
+    /**
+     * Create a message row mapper.
+     *
+     * @param descriptor Message descriptor.
+     * @param fieldMapping The field mapping. If empty will map all fields with default names.
+     */
     public MessageRowMapper(@Nonnull PMessageDescriptor<M,F> descriptor,
+                            @Nonnull Map<String,F> fieldMapping) {
+        this("", descriptor, fieldMapping);
+    }
+
+    /**
+     * Create a message row mapper.
+     *
+     * @param tableName The name of the table to filter fields for this mapper.
+     * @param descriptor Message descriptor.
+     * @param fieldMapping The field mapping. If empty will map all fields with default names.
+     */
+    public MessageRowMapper(@Nonnull String tableName,
+                            @Nonnull PMessageDescriptor<M,F> descriptor,
                             @Nonnull Map<String,F> fieldMapping) {
         Map<String, F> mappingBuilder = new HashMap<>();
         if (fieldMapping.isEmpty()) {
@@ -47,7 +85,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
             }
         } else {
             fieldMapping.forEach((name, addField) -> {
-                if ("*".equals(name)) {
+                if (ALL_FIELDS.equals(name)) {
                     for (F field : descriptor.getFields()) {
                         String fieldName = field.getName().toUpperCase();
                         // To avoid overwriting already specified fields.
@@ -61,6 +99,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
             });
         }
 
+        this.tableName = tableName;
         this.descriptor = descriptor;
         this.fieldNameMapping = ImmutableMap.copyOf(mappingBuilder);
     }
@@ -69,6 +108,11 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
     public M map(ResultSet rs, StatementContext ctx) throws SQLException {
         PMessageBuilder<M,F> builder = descriptor.builder();
         for (int i = 1; i <= rs.getMetaData().getColumnCount(); ++i) {
+            if (!tableName.isEmpty() &&
+                !rs.getMetaData().getTableName(i).equalsIgnoreCase(tableName)) {
+                continue;
+            }
+
             String name = rs.getMetaData().getColumnLabel(i).toUpperCase();
             F field = fieldNameMapping.get(name);
             if (field != null) {
@@ -258,4 +302,11 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
         }
         return builder.build();
     }
+
+    private static final BinarySerializer BINARY = new BinarySerializer();
+    private static final JsonSerializer   JSON   = new JsonSerializer();
+
+    private final PMessageDescriptor<M, F> descriptor;
+    private final Map<String,F>            fieldNameMapping;
+    private final String                   tableName;
 }

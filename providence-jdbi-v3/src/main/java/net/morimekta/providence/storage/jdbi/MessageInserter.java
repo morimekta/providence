@@ -1,9 +1,10 @@
 package net.morimekta.providence.storage.jdbi;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Update;
 
@@ -151,22 +152,23 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             this.onDuplicateIgnore = new AtomicBoolean();
         }
 
-        public Builder<M,F> set(F... fields) {
+        @SafeVarargs
+        public final Builder<M,F> set(F... fields) {
             for (F field : fields) {
                 set(field.getName(), field, getDefaultColumnType(field));
             }
             return this;
         }
 
-        public Builder<M,F> set(String column, F field) {
+        public final Builder<M,F> set(String column, F field) {
             return set(column, field, getDefaultColumnType(field));
         }
 
-        public Builder<M,F> set(F field, int type) {
+        public final Builder<M,F> set(F field, int type) {
             return set(field.getName(), field, type);
         }
 
-        public Builder<M,F> set(String column, F field, int type) {
+        public final Builder<M,F> set(String column, F field, int type) {
             if (columnToFieldMap.containsKey(column)) {
                 throw new IllegalArgumentException("Column " + column + " already inserted");
             }
@@ -178,11 +180,12 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return this;
         }
 
-        public Builder<M,F> onDuplicateKeyUpdate(F... fields) {
+        @SafeVarargs
+        public final Builder<M,F> onDuplicateKeyUpdate(F... fields) {
             return onDuplicateKeyUpdate(ImmutableList.copyOf(fields));
         }
 
-        public Builder<M,F> onDuplicateKeyUpdate(Collection<F> fields) {
+        public final Builder<M,F> onDuplicateKeyUpdate(Collection<F> fields) {
             List<String> columns = new ArrayList<>(fields.size());
             fields.forEach(field -> {
                 AtomicBoolean found = new AtomicBoolean();
@@ -200,11 +203,12 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return onDuplicateKeyUpdate(columns.toArray(new String[0]));
         }
 
-        public Builder<M,F> onDuplicateKeyUpdateAllExcept(F... fields) {
+        @SafeVarargs
+        public final Builder<M,F> onDuplicateKeyUpdateAllExcept(F... fields) {
             return onDuplicateKeyUpdateAllExcept(ImmutableList.copyOf(fields));
         }
 
-        public Builder<M,F> onDuplicateKeyUpdateAllExcept(Collection<F> fields) {
+        public final Builder<M,F> onDuplicateKeyUpdateAllExcept(Collection<F> fields) {
             List<String> columns = new ArrayList<>(fields.size());
             fields.forEach(field -> {
                 AtomicBoolean found = new AtomicBoolean();
@@ -222,13 +226,13 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return onDuplicateKeyUpdateAllExcept(columns.toArray(new String[0]));
         }
 
-        public Builder<M,F> onDuplicateKeyUpdateAllExcept(String... exceptColumns) {
+        public final Builder<M,F> onDuplicateKeyUpdateAllExcept(String... exceptColumns) {
             TreeSet<String> columns = new TreeSet<>(columnToFieldMap.keySet());
             columns.removeAll(ImmutableList.copyOf(exceptColumns));
             return onDuplicateKeyUpdate(columns.toArray(new String[0]));
         }
 
-        public Builder<M,F> onDuplicateKeyUpdate(String... columns) {
+        public final Builder<M,F> onDuplicateKeyUpdate(String... columns) {
             if (onDuplicateIgnore.get()) {
                 throw new IllegalStateException("Duplicate key behavior already set to ignore");
             }
@@ -236,7 +240,7 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return this;
         }
 
-        public Builder<M,F> onDuplicateKeyIgnore() {
+        public final Builder<M,F> onDuplicateKeyIgnore() {
             if (onDuplicateUpdate.size() > 0) {
                 throw new IllegalStateException("Duplicate key behavior already set to update");
             }

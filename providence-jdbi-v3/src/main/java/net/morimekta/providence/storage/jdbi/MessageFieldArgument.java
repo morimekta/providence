@@ -6,6 +6,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.util.Binary;
+
 import org.jdbi.v3.core.argument.Argument;
 import org.jdbi.v3.core.result.ResultSetException;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -21,6 +22,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+/**
+ * Smart mapping of message fields to SQL bound argument. It will
+ * map the type to whichever type is default or selected (if supported)
+ * for most field types.
+ *
+ * @param <M> The message type.
+ * @param <F> The field type.
+ */
 public class MessageFieldArgument<M extends PMessage<M,F>, F extends PField> implements Argument {
     private static final BinarySerializer BINARY = new BinarySerializer();
     private static final JsonSerializer   JSON   = new JsonSerializer().named();
@@ -29,10 +38,23 @@ public class MessageFieldArgument<M extends PMessage<M,F>, F extends PField> imp
     private final F   field;
     private final int type;
 
+    /**
+     * Create a message field argument.
+     *
+     * @param message The message to get the field from.
+     * @param field The field to select.
+     */
     public MessageFieldArgument(M message, F field) {
         this(message, field, getDefaultColumnType(field));
     }
 
+    /**
+     * Create a message field argument.
+     *
+     * @param message The message to get the field from.
+     * @param field The field to select.
+     * @param type The SQL type. See {@link Types}.
+     */
     public MessageFieldArgument(M message, F field, int type) {
         this.message = message;
         this.field = field;
@@ -45,7 +67,11 @@ public class MessageFieldArgument<M extends PMessage<M,F>, F extends PField> imp
         if (message.has(field)) {
             switch (field.getType()) {
                 case BOOL: {
-                    statement.setBoolean(position, message.get(field));
+                    if (type == Types.BOOLEAN) {
+                        statement.setBoolean(position, message.get(field));
+                    } else {
+                        statement.setByte(position, message.get(field) ? (byte) 1 : (byte) 0);
+                    }
                     break;
                 }
                 case BYTE: {

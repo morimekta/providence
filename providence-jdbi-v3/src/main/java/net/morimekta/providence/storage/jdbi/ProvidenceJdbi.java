@@ -1,13 +1,16 @@
 package net.morimekta.providence.storage.jdbi;
 
-import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+
+import static net.morimekta.providence.storage.jdbi.MessageRowMapper.ALL_FIELDS;
 
 /**
  * Utility class and helper to make mappers and argument helpers for
@@ -50,7 +53,7 @@ public class ProvidenceJdbi {
      * @return The mapped field.
      */
     public static <F extends PField> MappedField<F> columnsFromAllFields() {
-        return new MappedField<>("*", null);
+        return new MappedField<>(ALL_FIELDS, null);
     }
 
     /**

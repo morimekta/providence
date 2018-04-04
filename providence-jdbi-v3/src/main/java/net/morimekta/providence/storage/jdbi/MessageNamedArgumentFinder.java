@@ -1,10 +1,11 @@
 package net.morimekta.providence.storage.jdbi;
 
-import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
+
+import com.google.common.collect.ImmutableMap;
 import org.jdbi.v3.core.argument.Argument;
 import org.jdbi.v3.core.argument.NamedArgumentFinder;
 import org.jdbi.v3.core.argument.NullArgument;
@@ -17,11 +18,30 @@ import java.util.Optional;
 
 import static net.morimekta.providence.storage.jdbi.MessageFieldArgument.getDefaultColumnType;
 
+/**
+ * A {@link NamedArgumentFinder} implementation that uses a message
+ * and finds values based on the thrift declared field names. This
+ * supports chained calls to any depth as long as each level is a
+ * single message field.
+ *
+ * @param <M> The message type.
+ * @param <F> The message field type.
+ */
 public class MessageNamedArgumentFinder<M extends PMessage<M,F>, F extends PField> implements NamedArgumentFinder {
     private final String               prefix;
     private final M                    message;
     private final Map<PField, Integer> fieldTypes;
 
+    /**
+     * Create a named argument finder.
+     *
+     * @param prefix Optional prefix name. E.g. "x" will make for lookup
+     *               tags like ":x.my_field".
+     * @param message The message to look up fields in.
+     * @param fieldTypes Overriding of default field types. This can contain
+     *                   fields for any of the contained message types, and
+     *                   will be mapped whenever the field is selected.
+     */
     public MessageNamedArgumentFinder(@Nullable String prefix,
                                       @Nonnull M message,
                                       @Nonnull Map<PField, Integer> fieldTypes) {

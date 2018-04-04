@@ -1,9 +1,10 @@
 package net.morimekta.providence.storage.jdbi;
 
+import net.morimekta.util.Binary;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import net.morimekta.util.Binary;
 import org.h2.tools.Server;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
