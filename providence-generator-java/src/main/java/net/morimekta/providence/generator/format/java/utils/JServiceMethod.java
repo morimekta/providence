@@ -26,6 +26,7 @@ import net.morimekta.providence.reflect.contained.CServiceMethod;
 import net.morimekta.util.Strings;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by morimekta on 4/24/16.
@@ -52,7 +53,7 @@ public class JServiceMethod {
     }
 
     public String constant() {
-        return Strings.c_case(method.getName()).toUpperCase();
+        return Strings.c_case(method.getName()).toUpperCase(Locale.US);
     }
 
     public String name() {

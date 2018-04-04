@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -126,7 +127,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
                 return;
             }
 
-            File target = new File(buildDir, String.format("%s-%s-%s.%s",
+            File target = new File(buildDir, String.format(Locale.US, "%s-%s-%s.%s",
                                                            project.getArtifactId(),
                                                            project.getVersion(),
                                                            classifier,

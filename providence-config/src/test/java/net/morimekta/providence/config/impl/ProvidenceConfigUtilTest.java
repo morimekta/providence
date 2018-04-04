@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -617,7 +618,8 @@ public class ProvidenceConfigUtilTest {
                 Files.createSymbolicLink(link, target);
             } else {
                 Path parent = readCanonicalPath(link.getParent());
-                Path temp   = parent.resolve(String.format("..tmp.%x", new Random().nextLong()));
+                Path temp   = parent.resolve(String.format(Locale.US,
+                                                           "..tmp.%x", new Random().nextLong()));
                 try {
                     Files.createSymbolicLink(temp, target);
                     Files.move(temp, link, ATOMIC_MOVE, REPLACE_EXISTING, NOFOLLOW_LINKS);

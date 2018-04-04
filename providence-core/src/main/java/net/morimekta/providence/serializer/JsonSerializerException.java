@@ -28,6 +28,8 @@ import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
 
+import java.util.Locale;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -90,7 +92,8 @@ public class JsonSerializerException extends SerializerException {
     @Override
     public String asString() {
         if (getLine() != null) {
-            return String.format("JSON Error%s on line %d: %s%n" +
+            return String.format(Locale.US,
+                                 "JSON Error%s on line %d: %s%n" +
                                  "%s%n" +
                                  "%s%s",
                                  getMethodName().isEmpty() ? "" : " in " + getMethodName(),
@@ -100,7 +103,7 @@ public class JsonSerializerException extends SerializerException {
                                  Strings.times("-", getLinePos() - 1),
                                  Strings.times("^", getLen()));
         } else {
-            return String.format("JSON Error: %s", getLocalizedMessage());
+            return String.format(Locale.US, "JSON Error: %s", getLocalizedMessage());
         }
     }
 }

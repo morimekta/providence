@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.util;
 
+import java.util.Locale;
+
 /**
  * Enum containing the values of the <code>container = "..."</code>
  * annotation.
@@ -31,7 +33,7 @@ public enum ThriftContainer {
 
     public static ThriftContainer forName(String id) {
         if (id == null) return DEFAULT;
-        switch (id.toLowerCase()) {
+        switch (id.toLowerCase(Locale.US)) {
             case "ordered": return ORDERED;
             case "sorted": return SORTED;
         }

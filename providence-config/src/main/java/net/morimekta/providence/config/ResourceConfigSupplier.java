@@ -33,6 +33,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Clock;
+import java.util.Locale;
 
 /**
  * A supplier to get a config (aka message) from a resource location. This is
@@ -94,7 +95,7 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
             fileName = resourceName.substring(lastSlash + 1);
         }
         String suffix = resourceName.substring(lastDot)
-                                    .toLowerCase();
+                                    .toLowerCase(Locale.US);
         Serializer serializer;
         switch (suffix) {
             case ".jsn":
@@ -110,7 +111,8 @@ public class ResourceConfigSupplier<Message extends PMessage<Message, Field>, Fi
                 break;
             // TODO: Add YAML serializer to the file options. Could be a wrapper around SnakeYAML.
             default:
-                throw new ProvidenceConfigException(String.format("Unrecognized resource config type: %s (%s)",
+                throw new ProvidenceConfigException(String.format(Locale.US,
+                                                                  "Unrecognized resource config type: %s (%s)",
                                                                   suffix,
                                                                   resourceName));
         }

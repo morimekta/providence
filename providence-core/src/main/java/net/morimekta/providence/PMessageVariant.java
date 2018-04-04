@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence;
 
+import java.util.Locale;
+
 /**
  * The definition of a thrift structure.
  */
@@ -30,6 +32,6 @@ public enum PMessageVariant {
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.US);
     }
 }

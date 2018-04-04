@@ -62,6 +62,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -148,7 +149,7 @@ public class JsonSerializer extends Serializer {
         if (enumValueType == IdType.ID) {
             jsonWriter.value(call.getType().asInteger());
         } else {
-            jsonWriter.valueUnescaped(call.getType().asString().toLowerCase());
+            jsonWriter.valueUnescaped(call.getType().asString().toLowerCase(Locale.US));
         }
         jsonWriter.value(call.getSequence());
 
@@ -254,7 +255,7 @@ public class JsonSerializer extends Serializer {
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.rawJsonLiteral();
-                type = PServiceCallType.findByName(typeName.toUpperCase());
+                type = PServiceCallType.findByName(typeName.toUpperCase(Locale.US));
                 if (type == null) {
                     throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);

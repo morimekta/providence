@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static net.morimekta.providence.jdbi.v3.MessageRowMapper.ALL_FIELDS;
@@ -188,7 +189,7 @@ public class ProvidenceJdbi {
     private static <F extends PField> Map<String,F> makeMapping(@Nonnull MappedField<F>... mappedFields) {
         HashMap<String, F> out = new HashMap<>();
         for (MappedField<F> mappedField : mappedFields) {
-            out.put(mappedField.name.toUpperCase(), mappedField.field);
+            out.put(mappedField.name.toUpperCase(Locale.US), mappedField.field);
         }
         return out;
     }

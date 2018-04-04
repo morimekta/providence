@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +44,7 @@ public class ReflectionUtils {
 
     @Nonnull
     public static String programNameFromPath(@Nonnull String filePath) {
-        String lowerCased = filePath.toLowerCase();
+        String lowerCased = filePath.toLowerCase(Locale.US);
 
         if (!lowerCased.endsWith(".providence") &&
             !lowerCased.endsWith(".thrift") &&

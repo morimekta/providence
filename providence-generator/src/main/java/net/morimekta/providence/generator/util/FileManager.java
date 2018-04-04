@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -48,7 +49,7 @@ public class FileManager {
         if (path == null || path.isEmpty()) {
             return name;
         }
-        return String.format("%s%c%s", path, File.separatorChar, name);
+        return String.format(Locale.US, "%s%c%s", path, File.separatorChar, name);
     }
 
     protected String absolutePath(String path, String name) throws IOException {

@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeSet;
@@ -172,7 +173,7 @@ public class TestDatabase extends TestWatcher implements AutoCloseable {
      * @return The JDBC URI.
      */
     private String getJdbcUri() {
-        return String.format("jdbc:h2:tcp://localhost:%d/mem:%s;MODE=MYSQL", getServerPort(), name);
+        return String.format(Locale.US, "jdbc:h2:tcp://localhost:%d/mem:%s;MODE=MYSQL", getServerPort(), name);
     }
 
     /**
@@ -192,8 +193,8 @@ public class TestDatabase extends TestWatcher implements AutoCloseable {
             Path pathToSchema = FileSystems.getDefault().getPath(schema);
             String schemaName = pathToSchema.getFileName().toString();
             schemaName = schemaName.substring(0, schemaName.indexOf("."));
-            keepSchemaHandle.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName.toUpperCase());
-            script = "USE " + schemaName.toUpperCase() + "; " + script;
+            keepSchemaHandle.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName.toUpperCase(Locale.US));
+            script = "USE " + schemaName.toUpperCase(Locale.US) + "; " + script;
             keepSchemaHandle.createScript(script).execute();
         }
     }
@@ -263,7 +264,7 @@ public class TestDatabase extends TestWatcher implements AutoCloseable {
         }
 
         try (Handle h = this.dbi.open()) {
-            List<Map<String, Object>> rs = h.createQuery("SELECT * FROM " + table.toUpperCase())
+            List<Map<String, Object>> rs = h.createQuery("SELECT * FROM " + table.toUpperCase(Locale.US))
                                             .mapToMap()
                                             .list();
 

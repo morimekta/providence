@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.Locale;
 
 /**
  * Wrap an output stream in a framed buffer writer similar to the thrift
@@ -56,7 +57,7 @@ public class FramedBufferOutputStream extends OutputStream {
     @Override
     public void write(int val) throws IOException {
         if (!buffer.hasRemaining()) {
-            throw new IOException(String.format("Frame size exceeded: 1 needed, 0 remaining, %d total",
+            throw new IOException(String.format(Locale.US, "Frame size exceeded: 1 needed, 0 remaining, %d total",
                                                 buffer.capacity()));
         }
         buffer.put((byte) val);
@@ -65,7 +66,7 @@ public class FramedBufferOutputStream extends OutputStream {
     @Override
     public void write(@Nonnull byte[] bytes) throws IOException {
         if (buffer.remaining() < bytes.length) {
-            throw new IOException(String.format("Frame size exceeded: %d needed, %d remaining, %d total",
+            throw new IOException(String.format(Locale.US, "Frame size exceeded: %d needed, %d remaining, %d total",
                                                 bytes.length, buffer.remaining(), buffer.capacity()));
         }
         buffer.put(bytes);
@@ -74,7 +75,7 @@ public class FramedBufferOutputStream extends OutputStream {
     @Override
     public void write(@Nonnull byte[] var1, int off, int len) throws IOException {
         if (buffer.remaining() < len) {
-            throw new IOException(String.format("Frame size exceeded: %d needed, %d remaining, %d total",
+            throw new IOException(String.format(Locale.US, "Frame size exceeded: %d needed, %d remaining, %d total",
                                                 len, buffer.remaining(), buffer.capacity()));
         }
         buffer.put(var1, off, len);

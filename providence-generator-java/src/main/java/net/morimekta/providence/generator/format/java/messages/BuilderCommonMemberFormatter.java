@@ -36,6 +36,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 
 import static net.morimekta.providence.PType.MESSAGE;
@@ -526,7 +527,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         comment.newline()
-               .return_(String.format("True if %s has been set.", field.name()))
+               .return_(String.format(Locale.US, "True if %s has been set.", field.name()))
                .finish();
         writer.formatln("public boolean %s() {", field.isSet())
               .begin();
@@ -550,7 +551,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         comment.newline()
-               .return_(String.format("True if %s has been modified.", field.name()))
+               .return_(String.format(Locale.US, "True if %s has been modified.", field.name()))
                .finish();
         writer.formatln("public boolean %s() {", field.isModified())
               .begin();
@@ -566,7 +567,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                         "was created.");
 
         comment.newline()
-               .return_(String.format("True if %s has been modified.", message.descriptor().getName()))
+               .return_(String.format(Locale.US, "True if %s has been modified.", message.descriptor().getName()))
                .finish();
         writer.formatln("public boolean %s() {", "isUnionModified")
               .begin();

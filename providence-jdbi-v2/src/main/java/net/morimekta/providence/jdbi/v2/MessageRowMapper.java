@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -81,20 +82,20 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
         Map<String, F> mappingBuilder = new HashMap<>();
         if (fieldMapping.isEmpty()) {
             for (F field : descriptor.getFields()) {
-                mappingBuilder.put(field.getName().toUpperCase(), field);
+                mappingBuilder.put(field.getName().toUpperCase(Locale.US), field);
             }
         } else {
             fieldMapping.forEach((name, addField) -> {
                 if (ALL_FIELDS.equals(name)) {
                     for (F field : descriptor.getFields()) {
-                        String fieldName = field.getName().toUpperCase();
+                        String fieldName = field.getName().toUpperCase(Locale.US);
                         // To avoid overwriting already specified fields.
                         if (!mappingBuilder.containsKey(fieldName)) {
                             mappingBuilder.put(fieldName, field);
                         }
                     }
                 } else {
-                    mappingBuilder.put(name.toUpperCase(), addField);
+                    mappingBuilder.put(name.toUpperCase(Locale.US), addField);
                 }
             });
         }
@@ -113,7 +114,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                 continue;
             }
 
-            String name = rs.getMetaData().getColumnLabel(i).toUpperCase();
+            String name = rs.getMetaData().getColumnLabel(i).toUpperCase(Locale.US);
             F field = fieldNameMapping.get(name);
             if (field != null) {
                 int columnType = rs.getMetaData().getColumnType(i);
