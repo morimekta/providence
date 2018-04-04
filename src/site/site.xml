@@ -38,6 +38,7 @@
 
         <menu name="Utilities in BETA" inherit="top">
 
+            <item href="providence-jdbi-v2/index.html"            name="Utils : JDBI v2 (beta)" />
             <item href="providence-jdbi-v3/index.html"            name="Utils : JDBI v3 (beta)" />
             <item href="providence-config/index.html"             name="Utils : Config (beta)" />
             <item href="providence-storage-hazelcast/index.html"  name="Utils : Storage - Hazelcast (beta)" />
