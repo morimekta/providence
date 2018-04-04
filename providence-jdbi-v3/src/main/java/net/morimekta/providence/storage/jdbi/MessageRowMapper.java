@@ -116,11 +116,19 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
             String name = rs.getMetaData().getColumnLabel(i).toUpperCase();
             F field = fieldNameMapping.get(name);
             if (field != null) {
+                int columnType = rs.getMetaData().getColumnType(i);
                 switch (field.getType()) {
                     case BOOL: {
-                        boolean b = rs.getBoolean(i);
-                        if (!rs.wasNull()) {
-                            builder.set(field, b);
+                        if (columnType == Types.BOOLEAN || columnType == Types.BIT) {
+                            boolean b = rs.getBoolean(i);
+                            if (!rs.wasNull()) {
+                                builder.set(field, b);
+                            }
+                        } else {
+                            int b = rs.getInt(i);
+                            if (!rs.wasNull()) {
+                                builder.set(field, b != 0);
+                            }
                         }
                         break;
                     }
@@ -139,7 +147,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                         break;
                     }
                     case I32: {
-                        if (rs.getMetaData().getColumnType(i) == Types.TIMESTAMP) {
+                        if (columnType == Types.TIMESTAMP) {
                             Timestamp ts = rs.getTimestamp(i);
                             if (ts != null) {
                                 builder.set(field, (int) (ts.getTime() / 1000L));
@@ -153,7 +161,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                         break;
                     }
                     case I64: {
-                        if (rs.getMetaData().getColumnType(i) == Types.TIMESTAMP) {
+                        if (columnType == Types.TIMESTAMP) {
                             Timestamp ts = rs.getTimestamp(i);
                             if (ts != null) {
                                 builder.set(field, ts.getTime());
@@ -178,7 +186,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                         break;
                     }
                     case BINARY: {
-                        switch (rs.getMetaData().getColumnType(i)) {
+                        switch (columnType) {
                             case Types.BINARY:
                             case Types.VARBINARY:
                                 byte[] ts = rs.getBytes(i);
@@ -228,7 +236,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                     case MESSAGE: {
                         try {
                             PMessageDescriptor<?,?> md = (PMessageDescriptor) field.getDescriptor();
-                            switch (rs.getMetaData().getColumnType(i)) {
+                            switch (columnType) {
                                 case Types.BINARY:
                                 case Types.VARBINARY:
                                     byte[] data = rs.getBytes(i);
@@ -240,11 +248,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                                 case Types.BLOB: {
                                     Blob blob = rs.getBlob(i);
                                     if (blob != null) {
-                                        try {
-                                            builder.set(field, BINARY.deserialize(blob.getBinaryStream(), md));
-                                        } catch (IOException e) {
-                                            throw new UncheckedIOException(e.getMessage(), e);
-                                        }
+                                        builder.set(field, BINARY.deserialize(blob.getBinaryStream(), md));
                                     }
                                     break;
                                 }
@@ -262,11 +266,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                                 case Types.CLOB: {
                                     Clob clob = rs.getClob(i);
                                     if (clob != null) {
-                                        try {
-                                            builder.set(field, JSON.deserialize(clob.getCharacterStream(), md));
-                                        } catch (IOException e) {
-                                            throw new UncheckedIOException(e.getMessage(), e);
-                                        }
+                                        builder.set(field, JSON.deserialize(clob.getCharacterStream(), md));
                                     }
                                     break;
                                 }

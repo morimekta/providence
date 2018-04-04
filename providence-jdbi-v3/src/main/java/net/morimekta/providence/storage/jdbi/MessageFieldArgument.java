@@ -67,10 +67,11 @@ public class MessageFieldArgument<M extends PMessage<M,F>, F extends PField> imp
         if (message.has(field)) {
             switch (field.getType()) {
                 case BOOL: {
-                    if (type == Types.BOOLEAN) {
-                        statement.setBoolean(position, message.get(field));
+                    boolean value = message.get(field);
+                    if (type == Types.BOOLEAN || type == Types.BIT) {
+                        statement.setBoolean(position, value);
                     } else {
-                        statement.setByte(position, message.get(field) ? (byte) 1 : (byte) 0);
+                        statement.setInt(position, value ? 1 : 0);
                     }
                     break;
                 }
