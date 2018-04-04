@@ -9,11 +9,11 @@ CREATE TABLE default_mappings (
     name VARCHAR(128) NULL,
     data BINARY(128) NULL,
     fib INT NULL,
-    compact VARCHAR(128) NULL,
+    compact VARCHAR(255) NULL,
 
     timestamp_s TIMESTAMP NULL,
     timestamp_ms TIMESTAMP NULL,
-    binary_message VARBINARY(128) NULL,
+    binary_message VARBINARY(255) NULL,
     blob_message BLOB NULL,
     other_message CLOB NULL,
     blob_data BLOB NULL,

@@ -1,7 +1,10 @@
 package net.morimekta.providence.storage.jdbi;
 
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
+import net.morimekta.test.providence.storage.jdbc.CompactFields;
+import net.morimekta.test.providence.storage.jdbc.NormalFields;
 import net.morimekta.test.providence.storage.jdbc.OptionalFields;
+
 import org.jdbi.v3.core.Handle;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +44,14 @@ public class MessageRowMapperTest {
     @Test
     public void testDefaultMapping() {
         generator.setFillRate(1.0)
-                 .setMaxCollectionItems(16);
+                 .setMaxCollectionItems(16)
+                 .withGenerator(CompactFields.kDescriptor, g -> {
+                     g.setValueGenerator(CompactFields._Field.NAME, ctx -> ctx.getFairy().textProducer().latinWord());
+                     g.setValueGenerator(CompactFields._Field.LABEL, ctx -> ctx.getFairy().textProducer().word());
+                 }).withGenerator(NormalFields.kDescriptor, g -> {
+                     g.setValueGenerator(NormalFields._Field.NAME, ctx -> ctx.getFairy().textProducer().latinWord());
+                     g.setValueGenerator(NormalFields._Field.LABEL, ctx -> ctx.getFairy().textProducer().word());
+                 });
         OptionalFields expected = generator.generate(OptionalFields.kDescriptor)
                                            .mutate()
                                            .setId(1234)
