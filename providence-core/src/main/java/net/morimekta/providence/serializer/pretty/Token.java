@@ -24,6 +24,7 @@ import net.morimekta.util.CharSlice;
 import net.morimekta.util.Strings;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -265,7 +266,7 @@ public class Token extends CharSlice {
 
     @Override
     public String toString() {
-        return String.format("Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len - 1);
+        return String.format(Locale.US, "Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len - 1);
     }
 
     public int getOffset() {

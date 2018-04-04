@@ -27,6 +27,7 @@ import net.morimekta.util.Stringable;
 import com.google.common.base.MoreObjects;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Exception on serialization or deserialization.
@@ -40,12 +41,12 @@ public class SerializerException extends IOException implements Stringable {
     private PApplicationExceptionType exceptionType;
 
     public SerializerException(String format, Object... args) {
-        super(args.length == 0 ? format : String.format(format, args));
+        super(args.length == 0 ? format : String.format(Locale.US, format, args));
         exceptionType = PApplicationExceptionType.PROTOCOL_ERROR;
     }
 
     public SerializerException(Throwable cause, String format, Object... args) {
-        super(args.length == 0 ? format : String.format(format, args), cause);
+        super(args.length == 0 ? format : String.format(Locale.US, format, args), cause);
         exceptionType = PApplicationExceptionType.PROTOCOL_ERROR;
     }
 

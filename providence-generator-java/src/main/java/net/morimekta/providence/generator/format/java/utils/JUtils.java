@@ -30,6 +30,7 @@ import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.util.Locale;
 
 /**
  * @author Stein Eldar Johnsen
@@ -135,14 +136,10 @@ public class JUtils {
      * @return THE_MACRO_CASED_NAME
      */
     public static String macroCase(String name) {
-        String result = name.replaceAll("([A-Z])", "_$1");
-        while( result.startsWith("_") ) {
-            result = result.substring(1, result.length());
-        }
-        return result.toUpperCase();
+        return Strings.c_case(name).toUpperCase(Locale.US);
     }
 
     public static String enumConst(PEnumValue value) {
-        return Strings.c_case("", value.asString()).toUpperCase();
+        return macroCase(value.asString());
     }
 }

@@ -22,15 +22,17 @@ package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.serializer.pretty.TokenizerException;
 
+import java.util.Locale;
+
 /**
  * Token specialization for the thrift parser and tokenizer.
  */
 public class ParseException extends TokenizerException {
     public ParseException(Throwable cause, String message, Object... params) {
-        super(cause, String.format(message, params));
+        super(cause, String.format(Locale.US, message, params));
     }
 
     public ParseException(String message, Object... params) {
-        super(String.format(message, params));
+        super(String.format(Locale.US, message, params));
     }
 }

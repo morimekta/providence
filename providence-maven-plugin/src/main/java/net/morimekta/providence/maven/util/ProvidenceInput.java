@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -115,13 +116,13 @@ public class ProvidenceInput {
         long h = duration.toHours();
         long m = duration.minusHours(h).toMinutes();
         if (h > 0) {
-            return String.format("%d:%02d H", h, m);
+            return String.format(Locale.US, "%d:%02d H", h, m);
         }
         long s = duration.minusHours(h).minusMinutes(m).getSeconds();
         if (m > 0) {
-            return String.format("%d:%02d min", m, s);
+            return String.format(Locale.US, "%d:%02d min", m, s);
         }
         long ms = duration.minusHours(h).minusMinutes(m).minusSeconds(s).toMillis();
-        return String.format("%d.%02d s", s, ms / 10);
+        return String.format(Locale.US, "%d.%02d s", s, ms / 10);
     }
 }

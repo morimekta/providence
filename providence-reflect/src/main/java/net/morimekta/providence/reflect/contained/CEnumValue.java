@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -127,7 +128,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
 
     @Override
     public String toString() {
-        return name.toUpperCase();
+        return name.toUpperCase(Locale.US);
     }
 
     public static class Builder extends PEnumBuilder<CEnumValue> {

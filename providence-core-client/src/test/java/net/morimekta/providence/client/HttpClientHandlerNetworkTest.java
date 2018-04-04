@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -134,7 +135,7 @@ public class HttpClientHandlerNetworkTest {
             fail("No exception");
         } catch (SocketException ex) {
             // TODO: This should be a HttpResponseException
-            assertThat(ex.getMessage().toLowerCase(),
+            assertThat(ex.getMessage().toLowerCase(Locale.US),
                        anyOf(containsString("broken pipe"),
                              containsString("write error"),
                              containsString("write failed"),

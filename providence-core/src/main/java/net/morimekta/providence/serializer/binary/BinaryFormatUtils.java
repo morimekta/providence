@@ -42,6 +42,7 @@ import net.morimekta.util.io.BigEndianBinaryWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import static net.morimekta.providence.serializer.binary.BinaryType.asString;
@@ -78,7 +79,7 @@ public class BinaryFormatUtils {
 
         @Override
         public String toString() {
-            return String.format("field(%d: %s)", id, asString(type));
+            return String.format(Locale.US, "field(%d: %s)", id, asString(type));
         }
 
         /**

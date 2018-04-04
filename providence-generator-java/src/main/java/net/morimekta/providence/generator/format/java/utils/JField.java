@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -140,7 +141,7 @@ public class JField {
     }
 
     public String fieldEnum() {
-        return c_case(field.getName()).toUpperCase();
+        return c_case(field.getName()).toUpperCase(Locale.US);
     }
 
     public String kDefault() {
@@ -211,6 +212,7 @@ public class JField {
                 String kType = helper.getFieldType(mType.keyDescriptor());
                 String iType = helper.getFieldType(mType.itemDescriptor());
                 return String.format(
+                        Locale.US,
                         "%s<%s,%s>",
                         PMap.Builder.class.getName().replace('$', '.'),
                         kType, iType);
@@ -219,6 +221,7 @@ public class JField {
                 PSet sType = (PSet) field.getDescriptor();
                 String iType = helper.getFieldType(sType.itemDescriptor());
                 return String.format(
+                        Locale.US,
                         "%s<%s>",
                         PSet.Builder.class.getName().replace('$', '.'),
                         iType);
@@ -227,6 +230,7 @@ public class JField {
                 PList lType = (PList) field.getDescriptor();
                 String iType = helper.getFieldType(lType.itemDescriptor());
                 return String.format(
+                        Locale.US,
                         "%s<%s>",
                         PList.Builder.class.getName().replace('$', '.'),
                         iType);
@@ -323,19 +327,19 @@ public class JField {
         switch (field.getType()) {
             case ENUM:
             case MESSAGE:
-                return String.format("%s.provider()", helper.getFieldType(field.getDescriptor()));
+                return String.format(Locale.US, "%s.provider()", helper.getFieldType(field.getDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) field.getDescriptor();
-                return String.format("%s.provider(%s)", PList.class.getName(), helper.getProviderName(lType.itemDescriptor()));
+                return String.format(Locale.US, "%s.provider(%s)", PList.class.getName(), helper.getProviderName(lType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) field.getDescriptor();
-                return String.format("%s.%s(%s)",
+                return String.format(Locale.US, "%s.%s(%s)",
                                      PSet.class.getName(),
                                      containerProvider,
                                      helper.getProviderName(sType.itemDescriptor()));
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) field.getDescriptor();
-                return String.format("%s.%s(%s,%s)",
+                return String.format(Locale.US, "%s.%s(%s,%s)",
                                      PMap.class.getName(),
                                      containerProvider,
                                      helper.getProviderName(mType.keyDescriptor()),
@@ -344,9 +348,9 @@ public class JField {
                 if (!(field.getDescriptor() instanceof PPrimitive)) {
                     throw new IllegalArgumentException("Unhandled type group " + field.getType());
                 }
-                return String.format("%s.%s.provider()",
+                return String.format(Locale.US, "%s.%s.provider()",
                                      PPrimitive.class.getName(),
-                                     field.getDescriptor().getName().toUpperCase());
+                                     field.getDescriptor().getName().toUpperCase(Locale.US));
         }
     }
 

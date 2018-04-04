@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -158,7 +159,7 @@ public class PrettySerializer extends Serializer {
             builder.format("%d: ", call.getSequence());
         }
         builder.format("%s %s",
-                       call.getType().asString().toLowerCase(),
+                       call.getType().asString().toLowerCase(Locale.US),
                        call.getMethod())
                .begin(indent + indent);
 
@@ -190,7 +191,7 @@ public class PrettySerializer extends Serializer {
                 tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
                 token = tokenizer.expectIdentifier("Call Type");
             }
-            callType = PServiceCallType.findByName(token.asString().toUpperCase());
+            callType = PServiceCallType.findByName(token.asString().toUpperCase(Locale.US));
             if (callType == null) {
                 throw new TokenizerException(token, "No such call type %s", token.asString())
                         .setLine(tokenizer.getLine())
@@ -311,7 +312,7 @@ public class PrettySerializer extends Serializer {
             case VOID: {
                 // Even void fields needs a value token...
                 // Allow any boolean true value that is an _identifier_. No numbers here.
-                switch (token.asString().toLowerCase()) {
+                switch (token.asString().toLowerCase(Locale.US)) {
                     case "t":
                     case "true":
                     case "y":
@@ -322,7 +323,7 @@ public class PrettySerializer extends Serializer {
                         .setLine(tokenizer.getLine());
             }
             case BOOL: {
-                switch (token.asString().toLowerCase()) {
+                switch (token.asString().toLowerCase(Locale.US)) {
                     case "1":
                     case "t":
                     case "true":

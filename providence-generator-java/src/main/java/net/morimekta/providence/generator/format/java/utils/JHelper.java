@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -163,18 +164,18 @@ public class JHelper {
                 return Binary.class.getName();
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
-                return String.format("%s<%s,%s>",
+                return String.format(Locale.US, "%s<%s,%s>",
                                      Map.class.getName(),
                                      getFieldType(mType.keyDescriptor()),
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>",
+                return String.format(Locale.US, "%s<%s>",
                                      Set.class.getName(),
                                      getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>",
+                return String.format(Locale.US, "%s<%s>",
                                      List.class.getName(),
                                      getFieldType(lType.itemDescriptor()));
             case ENUM:
@@ -205,16 +206,16 @@ public class JHelper {
                 return Binary.class.getName();
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
-                return String.format("%s<%s,%s>",
+                return String.format(Locale.US, "%s<%s,%s>",
                                      Map.class.getName(),
                                      getFieldType(mType.keyDescriptor()),
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>", Set.class.getName(), getFieldType(sType.itemDescriptor()));
+                return String.format(Locale.US, "%s<%s>", Set.class.getName(), getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>", List.class.getName(), getFieldType(lType.itemDescriptor()));
+                return String.format(Locale.US, "%s<%s>", List.class.getName(), getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
                 PDeclaredDescriptor<?> dt = (PDeclaredDescriptor<?>) type;
@@ -234,20 +235,20 @@ public class JHelper {
         switch (type.getType()) {
             case ENUM:
             case MESSAGE:
-                return String.format("%s.provider()", getFieldType(type));
+                return String.format(Locale.US, "%s.provider()", getFieldType(type));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s.provider(%s)",
+                return String.format(Locale.US, "%s.provider(%s)",
                                      PList.class.getName(),
                                      getProviderName(lType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s.provider(%s)",
+                return String.format(Locale.US, "%s.provider(%s)",
                                      PSet.class.getName(),
                                      getProviderName(sType.itemDescriptor()));
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
-                return String.format("%s.provider(%s,%s)",
+                return String.format(Locale.US, "%s.provider(%s,%s)",
                                      PMap.class.getName(),
                                      getProviderName(mType.keyDescriptor()),
                                      getProviderName(mType.itemDescriptor()));
@@ -255,9 +256,9 @@ public class JHelper {
                 if (!(type instanceof PPrimitive)) {
                     throw new IllegalArgumentException("Unhandled type group " + type.getType());
                 }
-                return String.format("%s.%s.provider()",
+                return String.format(Locale.US, "%s.%s.provider()",
                                      PPrimitive.class.getName(),
-                                     type.getName().toUpperCase());
+                                     type.getName().toUpperCase(Locale.US));
         }
     }
 }

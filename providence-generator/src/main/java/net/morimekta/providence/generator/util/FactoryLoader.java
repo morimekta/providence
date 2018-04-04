@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.jar.Manifest;
 
 public class FactoryLoader<Factory> {
@@ -46,7 +47,7 @@ public class FactoryLoader<Factory> {
         File[] files = path.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.getName().toLowerCase().endsWith(".jar")) {
+                if (file.getName().toLowerCase(Locale.US).endsWith(".jar")) {
                     out.add(file);
                 }
             }

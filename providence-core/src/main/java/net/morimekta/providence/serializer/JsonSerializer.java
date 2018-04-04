@@ -44,6 +44,8 @@ import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
+import net.morimekta.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.Utf8StreamReader;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonToken;
 import net.morimekta.util.json.JsonTokenizer;
@@ -56,8 +58,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -66,13 +71,6 @@ import static java.util.Objects.requireNonNull;
  * Compact JSON serializer. This uses the most compact type-safe JSON format
  * allowable. There are two optional variants switching the struct field ID
  * between numeric ID and field name.
- * <p>
- * There is also the strict mode. If strict is OFF:
- * - Unknown enum values will be ignored (as field missing).
- * - Message validity will be ignored.
- * If strict more is ON:
- * - Unknown enum values will fail deserialization.
- * - Message invalidity will fail deserialization.
  * <p>
  * Format is like this:
  * <pre>
@@ -124,6 +122,12 @@ public class JsonSerializer extends Serializer {
         return new JsonSerializer(readStrict, prettyPrint, fieldIdType, IdType.NAME);
     }
 
+    public <T extends PMessage<T, F>, F extends PField> void serialize(@Nonnull PrintWriter output, @Nonnull T message) throws IOException {
+        JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(new IndentedPrintWriter(output)) : new JsonWriter(output);
+        appendMessage(jsonWriter, message);
+        jsonWriter.flush();
+    }
+
     @Override
     public <T extends PMessage<T, F>, F extends PField> int serialize(@Nonnull OutputStream output, @Nonnull T message) throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
@@ -145,7 +149,7 @@ public class JsonSerializer extends Serializer {
         if (enumValueType == IdType.ID) {
             jsonWriter.value(call.getType().asInteger());
         } else {
-            jsonWriter.valueUnescaped(call.getType().asString().toLowerCase());
+            jsonWriter.valueUnescaped(call.getType().asString().toLowerCase(Locale.US));
         }
         jsonWriter.value(call.getSequence());
 
@@ -162,12 +166,18 @@ public class JsonSerializer extends Serializer {
     @SuppressWarnings("unchecked")
     public <T extends PMessage<T, TF>, TF extends PField> T deserialize(
             @Nonnull InputStream input, @Nonnull PMessageDescriptor<T, TF> type) throws IOException {
+        return deserialize(new Utf8StreamReader(input), type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(
+            @Nonnull Reader input, @Nonnull PMessageDescriptor<T, TF> type) throws IOException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input, prettyPrint ? PRETTY_READ_BUFFER_SIZE : DEFAULT_READ_BUFFER_SIZE);
             if (!tokenizer.hasNext()) {
                 throw new SerializerException("Empty json body");
             }
-            return requireNonNull((T) parseTypedValue(tokenizer.next(), tokenizer, type, false));
+            return requireNonNull((T) parseTypedValue(tokenizer.expect("Impossible"), tokenizer, type, false));
         } catch (JsonException e) {
             throw new JsonSerializerException(e);
         }
@@ -190,7 +200,7 @@ public class JsonSerializer extends Serializer {
     @Nonnull
     @Override
     public String mediaType() {
-        // Pretend "application/json" as media type if named fields are used.
+        // Use "application/json" as media type if named fields are used.
         if (fieldIdType == IdType.NAME) {
             return JSON_MEDIA_TYPE;
         }
@@ -245,7 +255,7 @@ public class JsonSerializer extends Serializer {
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.rawJsonLiteral();
-                type = PServiceCallType.findByName(typeName.toUpperCase());
+                type = PServiceCallType.findByName(typeName.toUpperCase(Locale.US));
                 if (type == null) {
                     throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);

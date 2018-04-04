@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
@@ -150,12 +151,12 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 String key = "key_" + nextId.getAndIncrement();
                 String value = "val_" + nextId.getAndIncrement();
 
-                String keyMember = String.format("%s %s",
+                String keyMember = String.format(Locale.US, "%s %s",
                                                  helper.getValueType(pMap.keyDescriptor()),
                                                  key);
-                String valueMember = String.format("%s %s",
-                                                 helper.getValueType(pMap.itemDescriptor()),
-                                                 value);
+                String valueMember = String.format(Locale.US, "%s %s",
+                                                   helper.getValueType(pMap.itemDescriptor()),
+                                                   value);
 
                 appendReadFieldValue(keyMember, null, null, pMap.keyDescriptor());
                 appendReadFieldValue(valueMember, null, null, pMap.itemDescriptor());
@@ -224,9 +225,9 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 String item = "key_" + nextId.getAndIncrement();
 
-                String itemMember = String.format("%s %s",
-                                                 helper.getValueType(pCont.itemDescriptor()),
-                                                 item);
+                String itemMember = String.format(Locale.US, "%s %s",
+                                                  helper.getValueType(pCont.itemDescriptor()),
+                                                  item);
 
                 appendReadFieldValue(itemMember, null, null, pCont.itemDescriptor());
 

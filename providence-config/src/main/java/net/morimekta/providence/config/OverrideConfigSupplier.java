@@ -34,6 +34,7 @@ import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.time.Clock;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -141,7 +142,7 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
 
     @Override
     public String toString() {
-        return String.format("OverrideConfig{[%s], parent=%s}", Strings.join(", ", overrides.keySet()), parent.getName());
+        return String.format(Locale.US, "OverrideConfig{[%s], parent=%s}", Strings.join(", ", overrides.keySet()), parent.getName());
     }
 
     @Override

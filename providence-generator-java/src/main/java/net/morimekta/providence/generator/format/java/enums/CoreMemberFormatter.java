@@ -34,6 +34,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Formatting core (providence extended) content.
@@ -48,7 +49,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
     @Override
     public Collection<String> getExtraImplements(CEnumDescriptor type) throws GeneratorException {
         return ImmutableList.of(
-                String.format("%s<%s>", PEnumValue.class.getName(), JUtils.getClassName(type))
+                String.format(Locale.US, "%s<%s>", PEnumValue.class.getName(), JUtils.getClassName(type))
         );
     }
 

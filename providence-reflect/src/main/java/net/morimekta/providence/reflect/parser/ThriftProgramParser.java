@@ -50,6 +50,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -682,7 +683,7 @@ public class ThriftProgramParser implements ProgramParser {
         }
         boolean union = variant.equals("union");
         if (!variant.equals("struct")) {
-            struct.setVariant(MessageVariant.valueForName(variant.toUpperCase()));
+            struct.setVariant(MessageVariant.valueForName(variant.toUpperCase(Locale.US)));
         }
 
         Token nameToken = tokenizer.expectIdentifier("message name identifier");
@@ -836,7 +837,7 @@ public class ThriftProgramParser implements ProgramParser {
                                                                     t -> t.isIdentifier() || t.isQualifiedIdentifier()), includedPrograms);
                 tokenizer.expectSymbol(type + " generic end", Token.kGenericEnd);
 
-                return String.format("%s<%s>", type, item);
+                return String.format(Locale.US, "%s<%s>", type, item);
             }
             case "map": {
                 tokenizer.expectSymbol(type + " generic start", Token.kGenericStart);
@@ -848,7 +849,7 @@ public class ThriftProgramParser implements ProgramParser {
                                                                     t -> t.isIdentifier() || t.isQualifiedIdentifier()), includedPrograms);
                 tokenizer.expectSymbol(type + " generic end", Token.kGenericEnd);
 
-                return String.format("%s<%s,%s>", type, key, item);
+                return String.format(Locale.US, "%s<%s,%s>", type, key, item);
             }
             default:
                 if (type.contains(".")) {

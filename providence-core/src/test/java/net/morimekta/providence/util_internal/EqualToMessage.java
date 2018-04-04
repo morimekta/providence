@@ -32,10 +32,11 @@ import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -122,7 +123,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
 
             if (!eu.unionField()
                    .equals(ac.unionField())) {
-                mismatches.add(String.format("%s to have %s, but had %s",
+                mismatches.add(String.format(Locale.US, "%s to have %s, but had %s",
                                              xPath,
                                              eu.unionField()
                                                .getName(),
@@ -138,11 +139,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
 
             if (expected.has(key) != actual.has(key)) {
                 if (!expected.has(key)) {
-                    mismatches.add(String.format("%s to be missing, but was %s",
+                    mismatches.add(String.format(Locale.US, "%s to be missing, but was %s",
                                                  fieldXPath,
                                                  toString(actual.get(field.getId()))));
                 } else if (!actual.has(key)) {
-                    mismatches.add(String.format("%s to be %s, but was missing",
+                    mismatches.add(String.format(Locale.US, "%s to be %s, but was missing",
                                                  fieldXPath,
                                                  toString(expected.get(field.getId()))));
                 }
@@ -150,25 +151,25 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                 switch (field.getType()) {
                     case MESSAGE: {
                         collectMismatches(fieldXPath,
-                                          (PMessage) expected.get(key),
-                                          (PMessage) actual.get(key),
+                                          expected.get(key),
+                                          actual.get(key),
                                           mismatches);
                         break;
                     }
                     case LIST: {
-                        collectListMismatches(fieldXPath, (List) expected.get(key), (List) actual.get(key), mismatches);
+                        collectListMismatches(fieldXPath, expected.get(key), actual.get(key), mismatches);
                         break;
                     }
                     case SET: {
-                        collectSetMismatches(fieldXPath, (Set) expected.get(key), (Set) actual.get(key), mismatches);
+                        collectSetMismatches(fieldXPath, expected.get(key), actual.get(key), mismatches);
                         break;
                     }
                     case MAP: {
-                        collectMapMismatches(fieldXPath, (Map) expected.get(key), (Map) actual.get(key), mismatches);
+                        collectMapMismatches(fieldXPath, expected.get(key), actual.get(key), mismatches);
                         break;
                     }
                     default: {
-                        mismatches.add(String.format("%s was %s, expected %s",
+                        mismatches.add(String.format(Locale.US, "%s was %s, expected %s",
                                                      fieldXPath,
                                                      toString(actual.get(field.getId())),
                                                      toString(expected.get(field.getId()))));
@@ -187,7 +188,8 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                                 .stream()
                                 .filter(key -> !expected.keySet()
                                                         .contains(key))
-                                .map(key -> String.format("found unexpected entry (%s, %s) in %s",
+                                .map(key -> String.format(Locale.US,
+                                                          "found unexpected entry (%s, %s) in %s",
                                                           toString(key),
                                                           toString(actual.get(key)),
                                                           xPath))
@@ -196,7 +198,8 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         for (Map.Entry<K,V> entry : expected.entrySet()) {
             if (!actual.keySet()
                        .contains(entry.getKey())) {
-                mismatches.add(String.format("did not find entry (%s, %s) in in %s",
+                mismatches.add(String.format(Locale.US,
+                                             "did not find entry (%s, %s) in in %s",
                                              toString(entry.getKey()),
                                              toString(expected.get(entry.getKey())),
                                              xPath));
@@ -205,16 +208,18 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                 V act = actual.get(entry.getKey());
                 if (!Objects.equals(exp, act)) {
                     // value differs.
-                    String keyedXPath = String.format("%s[%s]", xPath, toString(entry));
+                    String keyedXPath = String.format(Locale.US, "%s[%s]", xPath, toString(entry));
                     if (exp == null || act == null) {
-                        mismatches.add(String.format("%s was %s, should be %s",
+                        mismatches.add(String.format(Locale.US,
+                                                     "%s was %s, should be %s",
                                                      keyedXPath,
                                                      toString(exp),
                                                      toString(act)));
                     } else if (act instanceof PMessage) {
                         collectMismatches(keyedXPath, (PMessage) exp, (PMessage) act, mismatches);
                     } else {
-                        mismatches.add(String.format("%s was %s, should be %s",
+                        mismatches.add(String.format(Locale.US,
+                                                     "%s was %s, should be %s",
                                                      keyedXPath,
                                                      toString(act),
                                                      toString(exp)));
@@ -233,14 +238,15 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         // matches are not checked.
         mismatches.addAll(actual.stream()
                                 .filter(item -> !expected.contains(item))
-                                .map(item -> String.format("found unexpected set value %s in %s",
+                                .map(item -> String.format(Locale.US,
+                                                           "found unexpected set value %s in %s",
                                                            toString(item),
                                                            xPath))
                                 .collect(Collectors.toList()));
 
         mismatches.addAll(expected.stream()
                                   .filter(item -> !actual.contains(item))
-                                  .map(item -> String.format("did not find value %s in %s", toString(item), xPath))
+                                  .map(item -> String.format(Locale.US, "did not find value %s in %s", toString(item), xPath))
                                   .collect(Collectors.toList()));
 
     }
@@ -254,7 +260,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         boolean hasReorder = false;
         ArrayList<String> reordering = new ArrayList<>();
         for (int expectedIndex = 0; expectedIndex < expected.size(); ++expectedIndex) {
-            String indexedXPath = String.format("%s[%d]", xPath, expectedIndex);
+            String indexedXPath = String.format(Locale.US, "%s[%d]", xPath, expectedIndex);
             T expectedItem = expected.get(expectedIndex);
             handledItems.add(expectedItem);
 
@@ -278,17 +284,17 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                     if (actualItem instanceof PMessage) {
                         collectMismatches(indexedXPath, (PMessage) expectedItem, (PMessage) actualItem, mismatches);
                     } else {
-                        mismatches.add(String.format("expected %s to be %s, but was %s",
+                        mismatches.add(String.format(Locale.US, "expected %s to be %s, but was %s",
                                                      indexedXPath,
                                                      toString(expectedItem),
                                                      toString(actualItem)));
                     }
                 } else {
                     // the other item is reordered, so this is blindly inserted.
-                    mismatches.add(String.format("missing item %s in %s", toString(expectedItem), indexedXPath));
+                    mismatches.add(String.format(Locale.US, "missing item %s in %s", toString(expectedItem), indexedXPath));
                 }
             } else if (actualIndex != expectedIndex) {
-                reordering.add(String.format("%+d", actualIndex - expectedIndex));
+                reordering.add(String.format(Locale.US, "%+d", actualIndex - expectedIndex));
                 hasReorder = true;
             } else {
                 reordering.add("±0");
@@ -302,11 +308,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
             if (expected.contains(actualItem)) {
                 continue;
             }
-            String indexedXPath = String.format("%s[%d]", xPath, actualIndex);
-            mismatches.add(String.format("unexpected item %s in %s", toString(actualItem), indexedXPath));
+            String indexedXPath = String.format(Locale.US, "%s[%d]", xPath, actualIndex);
+            mismatches.add(String.format(Locale.US, "unexpected item %s in %s", toString(actualItem), indexedXPath));
         }
         if (hasReorder) {
-            mismatches.add(String.format("unexpected item ordering in %s: [%s]", xPath, Strings.join(",", reordering)));
+            mismatches.add(String.format(Locale.US, "unexpected item ordering in %s: [%s]", xPath, Strings.join(",", reordering)));
         }
 
     }
@@ -335,7 +341,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         } else if (o instanceof Binary) {
             int len = ((Binary) o).length();
             if (len > 110) {
-                return String.format("binary[%s...+%d]",
+                return String.format(Locale.US, "binary[%s...+%d]",
                                      ((Binary) o).toHexString()
                                                  .substring(0, 100),
                                      len - 50);

@@ -43,6 +43,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * @author Stein Eldar Johnsen
@@ -61,7 +62,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
     public Collection<String> getExtraImplements(JMessage<?> message) throws GeneratorException {
         ImmutableList.Builder<String> builder = ImmutableList.builder();
 
-        builder.add(String.format("%s<%s,%s._Field>",
+        builder.add(String.format(Locale.US, "%s<%s,%s._Field>",
                                   message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
                                   message.instanceType(),
                                   message.instanceType()));
@@ -249,7 +250,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
             String defValue = "null";
             if (field.field()
                      .hasDefaultValue()) {
-                defValue = String.format("new %s<>(%s)",
+                defValue = String.format(Locale.US, "new %s<>(%s)",
                                          PDefaultValueProvider.class.getName(),
                                          field.kDefault());
             }

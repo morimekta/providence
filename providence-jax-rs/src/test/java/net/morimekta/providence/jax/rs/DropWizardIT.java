@@ -28,6 +28,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import static net.morimekta.providence.jax.rs.test_web_app.TestNetUtil.factory;
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
@@ -51,7 +52,7 @@ public class DropWizardIT {
                 ConfigOverride.config("server.applicationConnectors[0].port", "0"));
 
     private String uri(String service) {
-        return String.format("http://localhost:%d/%s", drop_wizard.getLocalPort(), service);
+        return String.format(Locale.US, "http://localhost:%d/%s", drop_wizard.getLocalPort(), service);
     }
 
     @Test

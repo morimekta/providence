@@ -27,6 +27,7 @@ import net.morimekta.util.Strings;
 import com.google.common.base.MoreObjects;
 
 import java.io.File;
+import java.util.Locale;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Math.max;
@@ -146,7 +147,8 @@ public class TokenizerException extends SerializerException {
                 fileSpec = " in " + file;
             }
             if (line != null) {
-                return String.format("Error%s on line %d, pos %d: %s%n" +
+                return String.format(Locale.US,
+                                     "Error%s on line %d, pos %d: %s%n" +
                                      "%s%n" +
                                      "%s%s",
                                      fileSpec,
@@ -157,16 +159,17 @@ public class TokenizerException extends SerializerException {
                                      Strings.times("-", linePos - 1),
                                      Strings.times("^", max(1, length)));
             } else {
-                return String.format("Error%s on line %d, pos %d: %s",
+                return String.format(Locale.US,
+                                     "Error%s on line %d, pos %d: %s",
                                      fileSpec,
                                      getLineNo(),
                                      getLinePos(),
                                      getMessage());
             }
         } else if (file != null) {
-            return String.format("Error in %s: %s", file, getMessage());
+            return String.format(Locale.US, "Error in %s: %s", file, getMessage());
         } else {
-            return String.format("Error: %s", getMessage());
+            return String.format(Locale.US, "Error: %s", getMessage());
         }
     }
 
