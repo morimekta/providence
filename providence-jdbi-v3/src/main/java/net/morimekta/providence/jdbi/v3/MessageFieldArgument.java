@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v3;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;

@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v3;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
@@ -19,8 +19,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
-import static net.morimekta.providence.storage.jdbi.MessageFieldArgument.getDefaultColumnType;
 
 /**
  * Helper class to handle inserting content from messages into a table.
@@ -155,13 +153,13 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
         @SafeVarargs
         public final Builder<M,F> set(F... fields) {
             for (F field : fields) {
-                set(field.getName(), field, getDefaultColumnType(field));
+                set(field.getName(), field, MessageFieldArgument.getDefaultColumnType(field));
             }
             return this;
         }
 
         public final Builder<M,F> set(String column, F field) {
-            return set(column, field, getDefaultColumnType(field));
+            return set(column, field, MessageFieldArgument.getDefaultColumnType(field));
         }
 
         public final Builder<M,F> set(F field, int type) {

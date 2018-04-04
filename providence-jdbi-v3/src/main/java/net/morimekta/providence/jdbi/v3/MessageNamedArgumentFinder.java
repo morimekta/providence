@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v3;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 
-import static net.morimekta.providence.storage.jdbi.MessageFieldArgument.getDefaultColumnType;
+import static net.morimekta.providence.jdbi.v3.MessageFieldArgument.getDefaultColumnType;
 
 /**
  * A {@link NamedArgumentFinder} implementation that uses a message

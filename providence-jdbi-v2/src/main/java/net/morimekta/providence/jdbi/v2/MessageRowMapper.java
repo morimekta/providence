@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v2;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -10,9 +10,8 @@ import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableMap;
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.result.ResultSetException;
-import org.jdbi.v3.core.statement.StatementContext;
+import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -22,6 +21,7 @@ import java.io.UncheckedIOException;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -35,7 +35,7 @@ import java.util.Map;
  * @param <M> The message type.
  * @param <F> The message field type.
  */
-public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> implements RowMapper<M> {
+public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> implements ResultSetMapper<M> {
     public static final String ALL_FIELDS = "*";
 
     /**
@@ -105,7 +105,7 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
     }
 
     @Override
-    public M map(ResultSet rs, StatementContext ctx) throws SQLException {
+    public M map(int idx, ResultSet rs, StatementContext ctx) throws SQLException {
         PMessageBuilder<M,F> builder = descriptor.builder();
         for (int i = 1; i <= rs.getMetaData().getColumnCount(); ++i) {
             if (!tableName.isEmpty() &&
@@ -217,11 +217,10 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                             case Types.NULL:
                                 break;
                             default:
-                                throw new ResultSetException("Unknown column type " + rs.getMetaData().getColumnTypeName(i) +
-                                                             " for " + descriptor.getType().toString() +
-                                                             " field " + name + " in " +
-                                                             descriptor.getQualifiedName(),
-                                                             null, ctx);
+                                throw new SQLDataException("Unknown column type " + rs.getMetaData().getColumnTypeName(i) +
+                                                           " for " + descriptor.getType().toString() +
+                                                           " field " + name + " in " +
+                                                           descriptor.getQualifiedName());
                         }
                         break;
                     }
@@ -273,11 +272,10 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                                 case Types.NULL:
                                     break;
                                 default:
-                                    throw new ResultSetException("Unknown column type " + rs.getMetaData().getColumnTypeName(i) +
-                                                                 " for " + descriptor.getType().toString() +
-                                                                 " field " + name + " in " +
-                                                                 descriptor.getQualifiedName(),
-                                                                 null, ctx);
+                                    throw new SQLDataException("Unknown column type " + rs.getMetaData().getColumnTypeName(i) +
+                                                               " for " + descriptor.getType().toString() +
+                                                               " field " + name + " in " +
+                                                               descriptor.getQualifiedName());
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e.getMessage(), e);
@@ -291,11 +289,10 @@ public class MessageRowMapper<M extends PMessage<M,F>, F extends PField> impleme
                     }
                     case VOID:
                     default: {
-                        throw new ResultSetException("Unhandled column of type " + rs.getMetaData().getColumnTypeName(i) +
-                                                     " for " + descriptor.getType().toString() +
-                                                     " field " + name + " in " +
-                                                     descriptor.getQualifiedName(),
-                                                     null, ctx);
+                        throw new SQLDataException("Unhandled column of type " + rs.getMetaData().getColumnTypeName(i) +
+                                                   " for " + descriptor.getType().toString() +
+                                                   " field " + name + " in " +
+                                                   descriptor.getQualifiedName());
                     }
                 }
             }

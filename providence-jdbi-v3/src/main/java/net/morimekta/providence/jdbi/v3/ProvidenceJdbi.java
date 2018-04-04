@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v3;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.morimekta.providence.storage.jdbi.MessageRowMapper.ALL_FIELDS;
+import static net.morimekta.providence.jdbi.v3.MessageRowMapper.ALL_FIELDS;
 
 /**
  * Utility class and helper to make mappers and argument helpers for

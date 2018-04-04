@@ -1,4 +1,4 @@
-package net.morimekta.providence.storage.jdbi;
+package net.morimekta.providence.jdbi.v3;
 
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
 import net.morimekta.test.providence.storage.jdbc.OptionalFields;
@@ -10,9 +10,9 @@ import org.junit.Test;
 import java.sql.Types;
 import java.time.Clock;
 
-import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.columnsFromAllFields;
-import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.toMessage;
-import static net.morimekta.providence.storage.jdbi.ProvidenceJdbi.withColumn;
+import static net.morimekta.providence.jdbi.v3.ProvidenceJdbi.columnsFromAllFields;
+import static net.morimekta.providence.jdbi.v3.ProvidenceJdbi.toMessage;
+import static net.morimekta.providence.jdbi.v3.ProvidenceJdbi.withColumn;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BASE64_DATA;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BINARY_MESSAGE;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 
 public class MessageInserterTest {
     private static final MessageInserter<OptionalFields, OptionalFields._Field> INSERTER =
-            new MessageInserter.Builder<OptionalFields, OptionalFields._Field>("mappings.default_mappings")
+            new MessageInserter.Builder<OptionalFields, OptionalFields._Field>("mappings_v3.default_mappings")
                     .set(ID, PRESENT, TINY, SMALL, MEDIUM, LARGE, REAL, NAME, DATA, FIB)
                     .set("compact", MESSAGE)
                     .set(TIMESTAMP_S, Types.TIMESTAMP)
@@ -53,8 +53,8 @@ public class MessageInserterTest {
                     .build();
 
     @Rule
-    public TestDatabase db = new TestDatabase("/mappings.sql")
-            .dumpOnFailure("mappings.default_mappings");
+    public TestDatabase db = new TestDatabase("/mappings_v3.sql")
+            .dumpOnFailure("mappings_v3.default_mappings");
 
     @Rule
     public SimpleGeneratorWatcher generator = SimpleGeneratorWatcher.create();
@@ -79,7 +79,7 @@ public class MessageInserterTest {
         try (Handle handle = db.getDBI().open()) {
             INSERTER.execute(handle, expected, empty);
 
-            OptionalFields val = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
+            OptionalFields val = handle.createQuery("SELECT * FROM mappings_v3.default_mappings WHERE id = :id")
                                        .bind("id", expected.getId())
                                        .map(toMessage(OptionalFields.kDescriptor,
                                                       columnsFromAllFields(),
@@ -87,7 +87,7 @@ public class MessageInserterTest {
                                                       withColumn("other_message", CLOB_MESSAGE)))
                                        .findFirst()
                                        .orElseThrow(() -> new AssertionError("No content in default_mappings"));
-            OptionalFields val2 = handle.createQuery("SELECT * FROM mappings.default_mappings WHERE id = :id")
+            OptionalFields val2 = handle.createQuery("SELECT * FROM mappings_v3.default_mappings WHERE id = :id")
                                         .bind("id", empty.getId())
                                         .map(toMessage(OptionalFields.kDescriptor,
                                                        columnsFromAllFields(),
