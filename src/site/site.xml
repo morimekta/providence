@@ -33,6 +33,7 @@
             <item href="providence-thrift-compat/index.html"      name="Utils : Thrift Compatibility" />
             <item href="providence-thrift-protocols/index.html"   name="Utils : Thrift Protocols" />
             <item href="providence-storage/index.html"            name="Utils : Storage" />
+            <item href="providence-config/index.html"             name="Utils : Config" />
 
         </menu>
 
@@ -40,7 +41,6 @@
 
             <item href="providence-jdbi-v2/index.html"            name="Utils : JDBI v2 (beta)" />
             <item href="providence-jdbi-v3/index.html"            name="Utils : JDBI v3 (beta)" />
-            <item href="providence-config/index.html"             name="Utils : Config (beta)" />
             <item href="providence-storage-hazelcast/index.html"  name="Utils : Storage - Hazelcast (beta)" />
             <item href="providence-jax-rs/index.html"             name="Utils : Javax-Ws-Rs (beta)" />
 

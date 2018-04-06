@@ -25,8 +25,6 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
 
-import com.google.common.annotations.Beta;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
