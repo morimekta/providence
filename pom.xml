@@ -75,6 +75,7 @@
 
         <additionalparam>-Xdoclint:all</additionalparam>
         <skipTests>false</skipTests>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
         <!-- Arg lines not specified, set by jacoco plugin -->
         <!-- surefireArgLine -->
         <!-- failsafeArgLine -->
@@ -627,11 +628,63 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <skip>${maven.javadoc.skip}</skip>
                     <failOnError>true</failOnError>
                     <doclint>all</doclint>
                     <notimestamp>true</notimestamp>
                     <nodeprecatedlist>true</nodeprecatedlist>
                     <quiet>true</quiet>
+                    <excludePackageNames>*.test.*:*.it.*:*.providence.tools:*.providence.tools.*:*.providence.generator.format.*</excludePackageNames>
+                    <groups>
+                        <group>
+                            <title>Providence Core</title>
+                            <packages>net.morimekta.providence:net.morimekta.providence.descriptor*:net.morimekta.providence.mio*:net.morimekta.providence.serializer*:net.morimekta.providence.streams*:net.morimekta.providence.util*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Core : Client</title>
+                            <packages>net.morimekta.providence.client*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Core : Server</title>
+                            <packages>net.morimekta.providence.server*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Reflection</title>
+                            <packages>net.morimekta.providence.reflect*:net.morimekta.providence.model*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Config</title>
+                            <packages>net.morimekta.providence.config*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Storage</title>
+                            <packages>net.morimekta.providence.storage*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : JDBI</title>
+                            <packages>net.morimekta.providence.jdbi*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Testing</title>
+                            <packages>net.morimekta.providence.testing*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Thrift Bridge</title>
+                            <packages>net.morimekta.providence.thrift*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Utils : Javax.WS.RS</title>
+                            <packages>net.morimekta.providence.jax*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Tools: Code Generators</title>
+                            <packages>net.morimekta.providence.generator*</packages>
+                        </group>
+                        <group>
+                            <title>Providence Tools: Maven Plugin</title>
+                            <packages>net.morimekta.providence.maven*</packages>
+                        </group>
+                    </groups>
                 </configuration>
                 <executions>
                     <execution>
@@ -647,72 +700,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>aggregate-apidocs</id>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <attach>true</attach>
-                            <failOnError>true</failOnError>
-                            <doclint>all</doclint>
-                            <notimestamp>true</notimestamp>
-                            <nodeprecatedlist>true</nodeprecatedlist>
-                            <quiet>true</quiet>
-                            <excludePackageNames>*.test.*:*.it.*:*.providence.tools:*.providence.tools.*:*.providence.generator.format.*</excludePackageNames>
-                            <groups>
-                                <group>
-                                    <title>Providence Core</title>
-                                    <packages>net.morimekta.providence:net.morimekta.providence.descriptor*:net.morimekta.providence.mio*:net.morimekta.providence.serializer*:net.morimekta.providence.streams*:net.morimekta.providence.util*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Core : Client</title>
-                                    <packages>net.morimekta.providence.client*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Core : Server</title>
-                                    <packages>net.morimekta.providence.server*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Reflection</title>
-                                    <packages>net.morimekta.providence.reflect*:net.morimekta.providence.model*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Config</title>
-                                    <packages>net.morimekta.providence.config*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Storage</title>
-                                    <packages>net.morimekta.providence.storage*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : JDBI</title>
-                                    <packages>net.morimekta.providence.jdbi*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Testing</title>
-                                    <packages>net.morimekta.providence.testing*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Thrift Bridge</title>
-                                    <packages>net.morimekta.providence.thrift*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Utils : Javax.WS.RS</title>
-                                    <packages>net.morimekta.providence.jax*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Tools: Code Generators</title>
-                                    <packages>net.morimekta.providence.generator*</packages>
-                                </group>
-                                <group>
-                                    <title>Providence Tools: Maven Plugin</title>
-                                    <packages>net.morimekta.providence.maven*</packages>
-                                </group>
-                            </groups>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -995,6 +982,26 @@
                 <module>it-hazelcast</module>
             </modules>
         </profile>
+        <profile>
+            <id>doc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>aggregate-apidocs</id>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>all</id>
@@ -1057,6 +1064,19 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>aggregate-apidocs</id>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>

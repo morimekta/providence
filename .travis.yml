@@ -6,7 +6,7 @@ jdk:
 branches:
   only:
     - master
-script: "mvn verify -Plib,cli,it"
+script: "mvn verify -Plib,cli,it,doc"
 before_install:
   - sudo apt-get -y install rpm
   - unset _JAVA_OPTIONS
