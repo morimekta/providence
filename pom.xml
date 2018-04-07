@@ -653,6 +653,7 @@
                         <goals>
                             <goal>aggregate-jar</goal>
                         </goals>
+                        <inherited>false</inherited>
                         <configuration>
                             <attach>true</attach>
                             <failOnError>true</failOnError>
