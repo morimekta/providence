@@ -63,6 +63,8 @@ Two other variants exists, which is controlled by the `container` annotations.
 * `java.exception.class` Which exception class to inherit from. This must be the
   full class path of an exception. Note that whether it is an exception is not
   checked in the generator, it is plainly trusted as the exception class.
+  The exception *must* have a constructor with a single string argument which
+  sets the exception message.
 * `java.service.methods.throws` Which replaces the declared exceptions with the
   given exception class on the **service interface only**. Also note that:
     - The property is **not** inherited, and only applies to the methods declared on
@@ -85,6 +87,6 @@ Two other variants exists, which is controlled by the `container` annotations.
   is different for each language, it is handled in annotation, and should e.g.
   generate `@Deprecated` annotations in java.
 - `json.compact = ""`: Enables the use of the compact syntax in the
-  [json serializer](serializer-json.html).
+  [json serializer](../dev/serializer-json.html).
 
 

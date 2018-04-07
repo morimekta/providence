@@ -12,8 +12,8 @@ the generated code, except for some special cases. It handles the descriptors,
 base classes for the models and model builder themselves and common utilities
 for working with the model classes. There are interfaces for using the
 services, but not the implementations for working with them, see
-[providence-core-client](../providence-core-client/index.html) and
-[providence-core-server](../providence-core-server/index.html) modules for more
+[providence-core-client](providence-core-client.html) and
+[providence-core-server](providence-core-server.html) modules for more
 on using the services.
 
 **PS:** *Note that for the most part, the user should not need to worry about
@@ -21,7 +21,7 @@ these libraries, with some exceptions.*
 
 ## Base Classes And Utilities
 
-As described in [providence models](../models.html), there are generated
+As described in [providence models](../pvd/models.html), there are generated
 methods for getting each field from the structures, and how to build it. But
 as providence is built to be self-reflective / self-describing, these same
 classes need more generic methods to be able to build and read the model
@@ -94,18 +94,18 @@ The available serializers are as follows:
   **TBinaryProtocol** binary format. It should generate the same serialized
   data as TBinaryProtocol, and be able to parse data back from the same. It is
   the default serializer in the `pvdrpc` tool. See
-  [binary serializer spec](../serializer-binary.html) for details.
+  [binary serializer spec](../dev/serializer-binary.html) for details.
 * **FastBinarySerializer**: A compact and efficient serialization format. The
   serializer is designed to have a balance of computational and data
-  efficiency. See [fast binary serializer spec](../serializer-fast-binary.html)
+  efficiency. See [fast binary serializer spec](../dev/serializer-fast-binary.html)
   for details.
 * **JsonSerializer**: A general purpose JSON serializer. This should be able
   to read most generic JSON formats into providence structs that match with
   name to field type mapping. See
-  [json serializer spec](../serializer-json.html) for details.
+  [json serializer spec](../dev/serializer-json.html) for details.
 * **PrettySerializer**: A serializer format for making and reading a pure human
   readable format. The format is also used in the providence config, but with
-  some extra features. See [providence-config](../providence-config/index.html)
+  some extra features. See [providence-config](../util/providence-config.html)
   for details on the pretty config format.
 
 ### Serializer Providers
@@ -203,4 +203,5 @@ mostly just wrappers around the two `MessageReader` & `MessageWriter` implementa
 ### Storage
 
 If you need a simple data storage layer for providence messages, take a look at
-the [providence-storage](../providence-storage/index.html) module.
+the [storage](../util/providence-storage.html) module, or for use
+with DBI see [JDBI v2 or v3](../beta/providence-jdbi.html) modules.

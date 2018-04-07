@@ -34,7 +34,7 @@ See details on [annotations](annotations.html) for more.
 Apache Thrift supports a couple of special "namespace" declarations, e.g.
 `php_namespace` and `xsi_namespace`. They have been deprecated in thrift,
 but are entirely removed from providence, so the keywords are not recognized
-at all.
+at all, and will fail parsing of the thrift file.
 
 ## Circular Containment
 
@@ -75,6 +75,23 @@ struct Operation {
 This makes model structures like the calculator possible. Since the model
 objects are immutable and created with builders, it is not possible to create
 a circular instance containment.
+
+## Void methods in services
+
+Since Apache Thrift v0.11.0, using void return type in methods between
+Providence and Apache Thrift stopped working. This is because Apache Thrift
+decided to remove the implicit `0: void success` field from the generated
+response message and recently even started failing if the field was present.
+
+IMHO This is bad protocol design as it creates a false success scenario on
+a service method call if an exception is added to the call, and the server
+side is updated, but the client is not. If the server throw the new exception
+the exception is ignored when parsing the response, and the client believes
+the call was a success because there was no exception set.
+
+Because of this, this change in Apache Thrift has **not** been ported to
+providence. You should change your service calls to use a known return
+type instead of void if this problem is encountered.
 
 ## Naming Conflicts
 

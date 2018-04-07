@@ -65,13 +65,13 @@ logical shift (not keeping the sign bit).
 
 ## Service Calls
 
-Service calls are encoded as a fixed 5-tuple of:
+Service calls are encoded as a fixed 4-tuple of:
 
 1. base-128 varint of (method name length << 3 | call type). The call type
    will determine the content of the message field.
 2. method name data (utf-8 encoded, of length from `1.`).
-4. base-128 varint sequence number.
-5. The method wrapper message or exception.
+3. base-128 varint sequence number.
+4. The method wrapper message or exception.
 
 ## Message Encoding
 
