@@ -23,6 +23,18 @@ code {
     color: inherit;
 }
 
+a img.ext {
+    height: .8em;
+    margin-top: .1em;
+    float: right;
+}
+
+a img.nav_badge {
+    height: 1em;
+    margin-top: .1em;
+    float: right;
+}
+
 #header {
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
