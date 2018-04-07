@@ -80,7 +80,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
+ * mvn net.morimekta.providence:providence-maven-plugin:1.3.1:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     private static final String TEST = "test";
