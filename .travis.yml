@@ -6,6 +6,7 @@ jdk:
 branches:
   only:
     - master
+    - develop
 script: "mvn verify -Plib,cli,it,doc"
 before_install:
   - sudo apt-get -y install rpm
