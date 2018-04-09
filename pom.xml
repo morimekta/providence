@@ -649,6 +649,10 @@
                             <packages>net.morimekta.providence.server*</packages>
                         </group>
                         <group>
+                            <title>Providence Core : Jackson</title>
+                            <packages>net.morimekta.providence.jackson*</packages>
+                        </group>
+                        <group>
                             <title>Providence Utils : Reflection</title>
                             <packages>net.morimekta.providence.reflect*:net.morimekta.providence.model*</packages>
                         </group>
