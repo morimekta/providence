@@ -166,7 +166,7 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         cache.invalidateAll();
         keyset.clear();
     }

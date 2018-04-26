@@ -18,7 +18,7 @@ public interface ReadOnlyStore<K, V> {
      * Look up a set of keys from the storage.
      *
      * @param keys The keys to look up.
-     * @return Immutable map of all the found key value pairs. Values not found should not
+     * @return Map of all the found key value pairs. Values not found should not
      *         have an entry in the result map (no key -&gt; null mapping).
      */
     @Nonnull

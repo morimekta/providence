@@ -170,7 +170,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         cache.invalidateAll();
         keyset.clear();
     }

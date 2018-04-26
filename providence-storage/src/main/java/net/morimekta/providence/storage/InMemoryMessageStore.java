@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Simple in-memory storage of providence messages. Uses a local hash map for
- * storing the instances. The store is thread safe through using reentrand
+ * storing the instances. The store is thread safe through using re-entrant
  * read-write mutex handling, so reading can happen in parallel.
  */
 public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> implements MessageStore<K,M,F> {

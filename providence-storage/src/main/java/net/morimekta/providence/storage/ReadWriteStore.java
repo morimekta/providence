@@ -35,7 +35,7 @@ public interface ReadWriteStore<K, V> extends ReadOnlyStore<K, V> {
     /**
      * @param key The key to put message at.
      * @param value The value to put.
-     * @return Replaced value if any.
+     * @return Replaced value if any, otherwise null.
      */
     @Nullable
     default V put(@Nonnull K key, @Nonnull V value) {
@@ -46,7 +46,7 @@ public interface ReadWriteStore<K, V> extends ReadOnlyStore<K, V> {
      * Remove the key value pair from the store.
      *
      * @param key The key to remove.
-     * @return The message removed if any, otherwise null.
+     * @return The value removed if any, otherwise null.
      */
     @Nullable
     default V remove(@Nonnull K key) {

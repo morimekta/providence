@@ -58,14 +58,19 @@ public class DefaultFileManager<K> implements FileManager<K> {
     @Override
     public Collection<K> initialKeySet() {
         HashSet<K> set = new HashSet<>();
-        for (String file : directory.list()) {
-            if (new File(directory, file).isFile()) {
-                try {
-                    set.add(keyParser.apply(file));
-                } catch (Exception e) {
-                    throw new IllegalStateException("Unable to get key from file: " + file, e);
+        String[] list = directory.list();
+        if (list != null) {
+            for (String file : list) {
+                if (new File(directory, file).isFile()) {
+                    try {
+                        set.add(keyParser.apply(file));
+                    } catch (Exception e) {
+                        throw new IllegalStateException("Unable to get key from file: " + file, e);
+                    }
                 }
             }
+        } else {
+            throw new IllegalStateException("Storage directory no longer a directory.");
         }
         return set;
     }
