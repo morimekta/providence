@@ -30,9 +30,7 @@ import net.morimekta.test.providence.config.Value;
 import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.Binary;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -78,10 +76,11 @@ public class OverrideConfigSupplierTest {
                 clock,
                 base, ImmutableMap.of(
                         "credentials.password", "password",
-                        "uri", "undefined"),
+                        "uri", "undefined",
+                        "max_connections", "0"),
                 true);
 
-        assertThat(supplier.toString(), is("OverrideConfig{[credentials.password, uri], parent=TestConfig}"));
+        assertThat(supplier.toString(), is("OverrideConfig{[credentials.password, uri, max_connections], parent=TestConfig}"));
         assertThat(supplier.getName(), is("OverrideConfig"));
     }
 
@@ -124,7 +123,7 @@ public class OverrideConfigSupplierTest {
     }
 
     @Test
-    public void testFailures() throws IOException {
+    public void testFailures() {
         try {
             new OverrideConfigSupplier<>(
                     clock,
@@ -212,6 +211,100 @@ public class OverrideConfigSupplierTest {
                           .setEnumValue(Value.SECOND)
                           .setBinValue(Binary.fromHexString("01020304"))
                           .setStr2Value("This is also a string")
+                          .build())));
+    }
+
+    @Test
+    public void testOverrideEveryType_numZero() throws IOException {
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(RefConfig1.builder().build());
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
+                ImmutableMap.<String,String>builder()
+                        .put("byte_value", "0")
+                        .put("i16_value", "0")
+                        .put("i32_value", "0")
+                        .put("i64_value", "0")
+                        .put("double_value", "0")
+                        .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setByteValue((byte) 0)
+                          .setI16Value((short) 0)
+                          .setI32Value(0)
+                          .setI64Value(0)
+                          .setDoubleValue(0)
+                          .build())));
+    }
+
+    @Test
+    public void testOverrideEveryType_numHex() throws IOException {
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(RefConfig1.builder().build());
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
+                ImmutableMap.<String,String>builder()
+                        .put("byte_value", "0xff")
+                        .put("i16_value", "0xffff")
+                        .put("i32_value", "0xffffffff")
+                        .put("i64_value", "0xffffffffffffffff")
+                        .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setByteValue((byte) 0xff)
+                          .setI16Value((short) 0xffff)
+                          .setI32Value(0xffffffff)
+                          .setI64Value(0xffffffffffffffffL)
+                          .build())));
+    }
+
+    @Test
+    public void testOverrideEveryType_numOctal() throws IOException {
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(RefConfig1.builder().build());
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
+                ImmutableMap.<String,String>builder()
+                        .put("byte_value", "077")
+                        .put("i16_value", "077")
+                        .put("i32_value", "077")
+                        .put("i64_value", "077")
+                        .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setByteValue((byte) 63)
+                          .setI16Value((short) 63)
+                          .setI32Value(63)
+                          .setI64Value(63)
+                          .build())));
+    }
+
+    @Test
+    public void testOverrideEveryType_numNegative() throws IOException {
+        TestConfigSupplier<RefConfig1,RefConfig1._Field> ref = new TestConfigSupplier<>(RefConfig1.builder().build());
+        OverrideConfigSupplier<RefConfig1,RefConfig1._Field> supplier = new OverrideConfigSupplier<>(
+                ref,
+                ImmutableMap.<String,String>builder()
+                        .put("byte_value", "-77")
+                        .put("i16_value", "-77")
+                        .put("i32_value", "-77")
+                        .put("i64_value", "-77")
+                        .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setByteValue((byte) -77)
+                          .setI16Value((short) -77)
+                          .setI32Value(-77)
+                          .setI64Value(-77)
                           .build())));
     }
 

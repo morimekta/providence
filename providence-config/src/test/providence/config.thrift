@@ -16,6 +16,7 @@ struct Database {
     2: optional string driver;
     3: optional Credentials credentials;
     4: optional Value value;
+    5: optional i32 max_connections;
 }
 
 struct ServicePort {

@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config;
 
-import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
@@ -31,6 +30,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
+
+import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import java.time.Clock;
@@ -237,8 +238,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             }
             case BYTE: {
                 try {
-                    if (value.startsWith("0x")) {
-                        return Byte.parseByte(value.substring(2), 16);
+                    if (value.equals("0")) {
+                        return (byte) 0;
+                    } else if (value.startsWith("0x")) {
+                        return (byte) Integer.parseUnsignedInt(value.substring(2), 16);
                     } else if (value.startsWith("0")) {
                         return Byte.parseByte(value.substring(1), 8);
                     }
@@ -249,8 +252,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             }
             case I16: {
                 try {
-                    if (value.startsWith("0x")) {
-                        return Short.parseShort(value.substring(2), 16);
+                    if (value.equals("0")) {
+                        return (short) 0;
+                    } else if (value.startsWith("0x")) {
+                        return (short) Integer.parseUnsignedInt(value.substring(2), 16);
                     } else if (value.startsWith("0")) {
                         return Short.parseShort(value.substring(1), 8);
                     }
@@ -261,8 +266,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             }
             case I32: {
                 try {
-                    if (value.startsWith("0x")) {
-                        return Integer.parseInt(value.substring(2), 16);
+                    if (value.equals("0")) {
+                        return 0;
+                    } else if (value.startsWith("0x")) {
+                        return Integer.parseUnsignedInt(value.substring(2), 16);
                     } else if (value.startsWith("0")) {
                         return Integer.parseInt(value.substring(1), 8);
                     }
@@ -273,8 +280,10 @@ public class OverrideConfigSupplier<Message extends PMessage<Message, Field>, Fi
             }
             case I64: {
                 try {
-                    if (value.startsWith("0x")) {
-                        return Long.parseLong(value.substring(2), 16);
+                    if (value.equals("0")) {
+                        return 0L;
+                    } else if (value.startsWith("0x")) {
+                        return Long.parseUnsignedLong(value.substring(2), 16);
                     } else if (value.startsWith("0")) {
                         return Long.parseLong(value.substring(1), 8);
                     }
