@@ -56,7 +56,7 @@ public class OverrideConfigSupplierTest {
     @Rule
     public SimpleGeneratorWatcher generator = GeneratorWatcher.create();
 
-    Clock clock;
+    private Clock clock;
 
     @Before
     @SuppressWarnings("unchecked")
