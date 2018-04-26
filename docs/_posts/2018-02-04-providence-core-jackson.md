@@ -9,7 +9,7 @@ order: 4
 
 Code for handling extra types used in providence to help with jackson
 serialization and deserialization. It is really only needed to handle the
-`Binary` class from `net.morimekta.utils:ui-utils`.
+`Binary` class from `net.morimekta.utils:io-utils`.
 
 In order to enable the extra classes to be serialized, include
 the `providence-core-jackson` module, and call:
@@ -18,7 +18,7 @@ the `providence-core-jackson` module, and call:
 class MyModule {
     public static final ObjectMapper MAPPER = new ObjectMapper();
     static {
-        ProvidenceModule.register(mapper);
+        ProvidenceModule.register(MAPPER);
     }
 }
 ```
