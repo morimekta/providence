@@ -36,8 +36,6 @@ public class DirectoryMessageListStoreTest extends TestBase {
                 OptionalFields.kDescriptor,
                 new PrettySerializer().config())) {
             assertConformity(store);
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
     }
 
@@ -59,8 +57,6 @@ public class DirectoryMessageListStoreTest extends TestBase {
                 OptionalFields.kDescriptor,
                 new PrettySerializer().config())) {
             store.putAll(source);
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
 
         try (DirectoryMessageListStore<UUID, OptionalFields, OptionalFields._Field> store = new DirectoryMessageListStore<>(
@@ -128,8 +124,6 @@ public class DirectoryMessageListStoreTest extends TestBase {
             assertThat(otherBuilder, hasSize(1));
             assertThat(otherBuilder.get(0)
                                    .build(), is(equalToMessage(builder.build())));
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
     }
 }

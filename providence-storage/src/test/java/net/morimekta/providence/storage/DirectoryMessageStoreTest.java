@@ -34,8 +34,6 @@ public class DirectoryMessageStoreTest extends TestBase {
                 OptionalFields.kDescriptor,
                 new PrettySerializer().config())) {
             assertConformity(store);
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
     }
 
@@ -54,8 +52,6 @@ public class DirectoryMessageStoreTest extends TestBase {
                 Containers.kDescriptor,
                 new PrettySerializer().config())) {
             store.putAll(source);
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
 
         Thread.sleep(1);
@@ -87,8 +83,6 @@ public class DirectoryMessageStoreTest extends TestBase {
                 assertThat(store.containsKey(k), is(false));
                 assertThat(store.get(k), is(nullValue()));
             }
-        } catch (IOException e) {
-            fail(e.getMessage());
         }
     }
 }
