@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config.impl;
 
-import com.google.common.collect.ImmutableSet;
 import net.morimekta.providence.config.ConfigListener;
 import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.config.util.TestConfigSupplier;
@@ -30,6 +29,8 @@ import net.morimekta.test.providence.config.Service;
 import net.morimekta.testing.time.FakeClock;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
+
+import com.google.common.collect.ImmutableSet;
 import org.awaitility.Duration;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,6 +51,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doNothing;
@@ -92,7 +94,7 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
@@ -102,13 +104,12 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file.toPath(), null);
-        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
-        verify(watcher, atLeast(1)).startWatching(any(File.class));
+        verify(watcher, atLeast(1)).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
 
@@ -133,7 +134,7 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
@@ -143,13 +144,12 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file.toPath(), null);
-        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
-        verify(watcher, atMost(4)).startWatching(file);
+        verify(watcher, atMost(5)).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
 
         watcherCapture.getValue().onFileUpdate(file);
 
@@ -169,12 +169,12 @@ public class ProvidenceConfigSupplierTest {
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
         ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
         assertThat(supplier.get(), is(first));
-        verify(watcher).weakAddWatcher(any(FileWatcher.Watcher.class));
+        verify(watcher).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
         reset(parser, watcher);
         when(parser.parseConfig(file.toPath(), null)).thenThrow(new ProvidenceConfigException("test"));
 

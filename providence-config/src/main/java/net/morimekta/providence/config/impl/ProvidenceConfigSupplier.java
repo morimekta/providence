@@ -27,6 +27,7 @@ import net.morimekta.providence.config.ProvidenceConfigException;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.FileWatcher;
 import net.morimekta.util.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,15 +73,12 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
 
         synchronized (this) {
             if (fileWatcher != null) {
-                fileWatcher.startWatching(configFile);
-                // TODO: Make the file watcher hold weak references.
-                // This may cause long term memory leaks.
                 fileListener = file -> {
                     if (configFile.equals(file) || includedFiles.contains(file.toString())) {
                         reload();
                     }
                 };
-                fileWatcher.weakAddWatcher(fileListener);
+                fileWatcher.weakAddWatcher(configFile, fileListener);
             } else {
                 fileListener = null;
             }
@@ -143,7 +141,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
                     includedFiles.clear();
                     includedFiles.addAll(tmp.second);
                     for (String included : includedFiles) {
-                        fileWatcher.startWatching(new File(included));
+                        fileWatcher.weakAddWatcher(new File(included), fileListener);
                     }
                 }
             }
