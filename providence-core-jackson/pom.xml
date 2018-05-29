@@ -20,10 +20,6 @@
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-testing</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -50,6 +46,11 @@
         </dependency>
 
         <!-- Test dependencies -->
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
