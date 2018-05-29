@@ -42,13 +42,13 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.type.ArrayType;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 
@@ -59,10 +59,16 @@ import static net.morimekta.providence.generator.format.java.messages.CoreOverri
 public class JacksonMessageFormatter implements MessageMemberFormatter {
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
+    private final AtomicInteger       atomicInteger;
 
     public JacksonMessageFormatter(IndentedPrintWriter writer, JHelper helper) {
+        this.atomicInteger = new AtomicInteger();
         this.writer = writer;
         this.helper = helper;
+    }
+
+    private String tmp(String name) {
+        return name + atomicInteger.incrementAndGet();
     }
 
     public void appendClassAnnotations(JMessage<?> message) {
@@ -78,90 +84,52 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
         appendJacksonSerializer(message);
     }
 
-    private void appendReadValue(JField field) throws GeneratorException {
-        switch (field.type()) {
+    private void appendJsonType(String varName, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case MAP: {
-                PMap mType = (PMap) field.field()
-                                         .getDescriptor();
-                PDescriptor kType = mType.keyDescriptor();
-                writer.formatln("%s kType = ctxt.getTypeFactory().constructSimpleType(%s.class, null);",
-                                JavaType.class.getName(),
-                                helper.getFieldType(kType));
+                String kType = tmp("k");
+                String vType = tmp("v");
 
-                PDescriptor iType = mType.itemDescriptor();
-                if (iType instanceof PMap) {
-                    PMap imType = (PMap) iType;
-                    PDescriptor ikType = imType.keyDescriptor();
-                    PDescriptor iiType = imType.itemDescriptor();
-                    if (iiType instanceof PContainer) {
-                        throw new GeneratorException("Too many levels of containers: " + field.toString());
-                    }
-
-                    // double level of container...
-                    writer.formatln("%s iType = ctxt.getTypeFactory().constructMapType(%s.class, %s.class, %s.class);",
-                                    MapType.class.getName(),
-                                    HashMap.class.getName(),
-                                    helper.getFieldType(ikType),
-                                    helper.getFieldType(iiType));
-                } else if (iType instanceof PContainer) {
-                    PContainer icType = (PContainer) iType;
-                    PDescriptor iiType = icType.itemDescriptor();
-                    if (iiType instanceof PContainer) {
-                        throw new GeneratorException("Too many levels of containers: " + field.toString());
-                    }
-
-                    // double level of container...
-                    writer.formatln("%s iType = ctxt.getTypeFactory().constructArrayType(%s.class);",
-                                    MapType.class.getName(),
-                                    helper.getFieldType(iiType));
-                } else {
-                    writer.formatln("%s iType = ctxt.getTypeFactory().constructSimpleType(%s.class, null);",
-                                    JavaType.class.getName(),
-                                    helper.getFieldType(iType));
-                }
-                writer.formatln("%s type = ctxt.getTypeFactory().constructMapType(%s.class, kType, iType);",
+                PMap map = (PMap) descriptor;
+                appendJsonType(kType, map.keyDescriptor());
+                appendJsonType(vType, map.itemDescriptor());
+                writer.formatln("%s %s = ctxt.getTypeFactory().constructMapType(%s.class, %s, %s);",
                                 MapType.class.getName(),
-                                HashMap.class.getName());
-                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
+                                varName,
+                                LinkedHashMap.class.getName(),
+                                kType, vType);
                 break;
             }
+            case LIST:
+            case SET: {
+                String iType = tmp("i");
+                PContainer container = (PContainer) descriptor;
+                appendJsonType(iType, container.itemDescriptor());
+                writer.formatln("%s %s = ctxt.getTypeFactory().constructCollectionType(%s.class, %s);",
+                                CollectionType.class.getName(),
+                                varName,
+                                ArrayList.class.getName(),
+                                iType);
+                break;
+            }
+            default: {
+                writer.formatln("%s %s = ctxt.getTypeFactory().constructSimpleType(%s.class, null);",
+                                JavaType.class.getName(),
+                                varName,
+                                helper.getFieldType(descriptor));
+                break;
+            }
+        }
+    }
+
+    private void appendReadValue(JField field) throws GeneratorException {
+        switch (field.type()) {
+            case MAP:
             case SET:
             case LIST: {
-                PContainer cType = (PContainer) field.field()
-                                                     .getDescriptor();
-                PDescriptor iType = cType.itemDescriptor();
-                if (iType instanceof PMap) {
-                    PMap imType = (PMap) iType;
-                    PDescriptor ikType = imType.keyDescriptor();
-                    PDescriptor iiType = imType.itemDescriptor();
-                    // double level of container...
-                    writer.formatln(
-                            "%s itype = ctxt.getTypeFactory().constructMapType(%s.class, %s.class, %s.class);",
-                            MapType.class.getName(),
-                            LinkedHashMap.class.getName(),
-                            helper.getFieldType(ikType),
-                            helper.getFieldType(iiType));
-                    writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(itype);",
-                                    ArrayType.class.getName(),
-                                    helper.getFieldType(iType));
-                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
-                } else if (iType instanceof PContainer) {
-                    PContainer icType = (PContainer) iType;
-                    PDescriptor iiType = icType.itemDescriptor();
-                    // double level of container...
-                    writer.formatln("%s itype = ctxt.getTypeFactory().constructArrayType(%s.class);",
-                                    ArrayType.class.getName(),
-                                    helper.getFieldType(iiType));
-                    writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(itype);",
-                                    ArrayType.class.getName(),
-                                    helper.getFieldType(iType));
-                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
-                } else {
-                    writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(%s.class);",
-                                    ArrayType.class.getName(),
-                                    helper.getFieldType(iType));
-                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
-                }
+                String cType = tmp("c");
+                appendJsonType(cType, field.field().getDescriptor());
+                writer.formatln("builder.%s(ctxt.readValue(jp, %s));", field.setter(), cType);
                 break;
             }
             case BINARY:
@@ -178,7 +146,6 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                                 field.instanceType());
                 break;
         }
-
     }
 
     private void appendWriteValue(JField field) {
