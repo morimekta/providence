@@ -167,3 +167,6 @@ struct Containers {
     56: optional DefaultValues defaultValues;
 }
 
+service TestService {
+    void testWithVoid(1: optional string str)
+}

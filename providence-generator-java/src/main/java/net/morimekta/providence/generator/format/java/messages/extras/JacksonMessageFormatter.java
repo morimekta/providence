@@ -140,6 +140,13 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                                 field.setter(),
                                 field.instanceType());
                 break;
+            case VOID:
+                writer.formatln("ctxt.readValue(jp, Boolean.class);",
+                                field.instanceType());
+                writer.formatln("builder.%s();",
+                                field.setter());
+
+                break;
             default:
                 writer.formatln("builder.%s(ctxt.readValue(jp, %s.TYPE));",
                                 field.setter(),
