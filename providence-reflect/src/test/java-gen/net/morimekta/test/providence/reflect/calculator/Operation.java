@@ -38,6 +38,14 @@ public class Operation
         return mOperator;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operator> optionalOperator() {
+        return java.util.Optional.ofNullable(mOperator);
+    }
+
     public int numOperands() {
         return mOperands != null ? mOperands.size() : 0;
     }
@@ -51,6 +59,14 @@ public class Operation
      */
     public java.util.List<net.morimekta.test.providence.reflect.calculator.Operand> getOperands() {
         return mOperands;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.test.providence.reflect.calculator.Operand>> optionalOperands() {
+        return java.util.Optional.ofNullable(mOperands);
     }
 
     @Override

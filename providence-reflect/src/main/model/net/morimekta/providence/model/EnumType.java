@@ -59,6 +59,14 @@ public class EnumType
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasName() {
         return true;
     }
@@ -100,6 +108,14 @@ public class EnumType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
     }
 
     @Override

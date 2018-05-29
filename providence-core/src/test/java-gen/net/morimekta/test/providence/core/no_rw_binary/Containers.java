@@ -233,6 +233,16 @@ public class Containers
         return mBooleanList;
     }
 
+    /**
+     * all types as list&lt;x&gt;.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Boolean>> optionalBooleanList() {
+        return java.util.Optional.ofNullable(mBooleanList);
+    }
+
     public int numByteList() {
         return mByteList != null ? mByteList.size() : 0;
     }
@@ -246,6 +256,14 @@ public class Containers
      */
     public java.util.List<Byte> getByteList() {
         return mByteList;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Byte>> optionalByteList() {
+        return java.util.Optional.ofNullable(mByteList);
     }
 
     public int numShortList() {
@@ -263,6 +281,14 @@ public class Containers
         return mShortList;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Short>> optionalShortList() {
+        return java.util.Optional.ofNullable(mShortList);
+    }
+
     public int numIntegerList() {
         return mIntegerList != null ? mIntegerList.size() : 0;
     }
@@ -276,6 +302,14 @@ public class Containers
      */
     public java.util.List<Integer> getIntegerList() {
         return mIntegerList;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Integer>> optionalIntegerList() {
+        return java.util.Optional.ofNullable(mIntegerList);
     }
 
     public int numLongList() {
@@ -293,6 +327,14 @@ public class Containers
         return mLongList;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Long>> optionalLongList() {
+        return java.util.Optional.ofNullable(mLongList);
+    }
+
     public int numDoubleList() {
         return mDoubleList != null ? mDoubleList.size() : 0;
     }
@@ -306,6 +348,14 @@ public class Containers
      */
     public java.util.List<Double> getDoubleList() {
         return mDoubleList;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<Double>> optionalDoubleList() {
+        return java.util.Optional.ofNullable(mDoubleList);
     }
 
     public int numStringList() {
@@ -323,6 +373,14 @@ public class Containers
         return mStringList;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<String>> optionalStringList() {
+        return java.util.Optional.ofNullable(mStringList);
+    }
+
     public int numBinaryList() {
         return mBinaryList != null ? mBinaryList.size() : 0;
     }
@@ -336,6 +394,14 @@ public class Containers
      */
     public java.util.List<net.morimekta.util.Binary> getBinaryList() {
         return mBinaryList;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.util.Binary>> optionalBinaryList() {
+        return java.util.Optional.ofNullable(mBinaryList);
     }
 
     public int numBooleanSet() {
@@ -355,6 +421,16 @@ public class Containers
         return mBooleanSet;
     }
 
+    /**
+     * all types as set&lt;x&gt;.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Boolean>> optionalBooleanSet() {
+        return java.util.Optional.ofNullable(mBooleanSet);
+    }
+
     public int numByteSet() {
         return mByteSet != null ? mByteSet.size() : 0;
     }
@@ -368,6 +444,14 @@ public class Containers
      */
     public java.util.Set<Byte> getByteSet() {
         return mByteSet;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Byte>> optionalByteSet() {
+        return java.util.Optional.ofNullable(mByteSet);
     }
 
     public int numShortSet() {
@@ -385,6 +469,14 @@ public class Containers
         return mShortSet;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Short>> optionalShortSet() {
+        return java.util.Optional.ofNullable(mShortSet);
+    }
+
     public int numIntegerSet() {
         return mIntegerSet != null ? mIntegerSet.size() : 0;
     }
@@ -398,6 +490,14 @@ public class Containers
      */
     public java.util.Set<Integer> getIntegerSet() {
         return mIntegerSet;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Integer>> optionalIntegerSet() {
+        return java.util.Optional.ofNullable(mIntegerSet);
     }
 
     public int numLongSet() {
@@ -415,6 +515,14 @@ public class Containers
         return mLongSet;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Long>> optionalLongSet() {
+        return java.util.Optional.ofNullable(mLongSet);
+    }
+
     public int numDoubleSet() {
         return mDoubleSet != null ? mDoubleSet.size() : 0;
     }
@@ -428,6 +536,14 @@ public class Containers
      */
     public java.util.Set<Double> getDoubleSet() {
         return mDoubleSet;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<Double>> optionalDoubleSet() {
+        return java.util.Optional.ofNullable(mDoubleSet);
     }
 
     public int numStringSet() {
@@ -445,6 +561,14 @@ public class Containers
         return mStringSet;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<String>> optionalStringSet() {
+        return java.util.Optional.ofNullable(mStringSet);
+    }
+
     public int numBinarySet() {
         return mBinarySet != null ? mBinarySet.size() : 0;
     }
@@ -458,6 +582,14 @@ public class Containers
      */
     public java.util.Set<net.morimekta.util.Binary> getBinarySet() {
         return mBinarySet;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<net.morimekta.util.Binary>> optionalBinarySet() {
+        return java.util.Optional.ofNullable(mBinarySet);
     }
 
     public int numBooleanMap() {
@@ -477,6 +609,16 @@ public class Containers
         return mBooleanMap;
     }
 
+    /**
+     * all types as map&lt;x,x&gt;.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Boolean,Boolean>> optionalBooleanMap() {
+        return java.util.Optional.ofNullable(mBooleanMap);
+    }
+
     public int numByteMap() {
         return mByteMap != null ? mByteMap.size() : 0;
     }
@@ -490,6 +632,14 @@ public class Containers
      */
     public java.util.Map<Byte,Byte> getByteMap() {
         return mByteMap;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Byte,Byte>> optionalByteMap() {
+        return java.util.Optional.ofNullable(mByteMap);
     }
 
     public int numShortMap() {
@@ -507,6 +657,14 @@ public class Containers
         return mShortMap;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Short,Short>> optionalShortMap() {
+        return java.util.Optional.ofNullable(mShortMap);
+    }
+
     public int numIntegerMap() {
         return mIntegerMap != null ? mIntegerMap.size() : 0;
     }
@@ -520,6 +678,14 @@ public class Containers
      */
     public java.util.Map<Integer,Integer> getIntegerMap() {
         return mIntegerMap;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Integer,Integer>> optionalIntegerMap() {
+        return java.util.Optional.ofNullable(mIntegerMap);
     }
 
     public int numLongMap() {
@@ -537,6 +703,14 @@ public class Containers
         return mLongMap;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Long,Long>> optionalLongMap() {
+        return java.util.Optional.ofNullable(mLongMap);
+    }
+
     public int numDoubleMap() {
         return mDoubleMap != null ? mDoubleMap.size() : 0;
     }
@@ -550,6 +724,14 @@ public class Containers
      */
     public java.util.Map<Double,Double> getDoubleMap() {
         return mDoubleMap;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<Double,Double>> optionalDoubleMap() {
+        return java.util.Optional.ofNullable(mDoubleMap);
     }
 
     public int numStringMap() {
@@ -567,6 +749,14 @@ public class Containers
         return mStringMap;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalStringMap() {
+        return java.util.Optional.ofNullable(mStringMap);
+    }
+
     public int numBinaryMap() {
         return mBinaryMap != null ? mBinaryMap.size() : 0;
     }
@@ -580,6 +770,14 @@ public class Containers
      */
     public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> getBinaryMap() {
         return mBinaryMap;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary>> optionalBinaryMap() {
+        return java.util.Optional.ofNullable(mBinaryMap);
     }
 
     public int numEnumList() {
@@ -599,6 +797,16 @@ public class Containers
         return mEnumList;
     }
 
+    /**
+     * Using enum as key and value in containers.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.test.providence.core.no_rw_binary.Value>> optionalEnumList() {
+        return java.util.Optional.ofNullable(mEnumList);
+    }
+
     public int numEnumSet() {
         return mEnumSet != null ? mEnumSet.size() : 0;
     }
@@ -614,6 +822,14 @@ public class Containers
         return mEnumSet;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<net.morimekta.test.providence.core.no_rw_binary.Value>> optionalEnumSet() {
+        return java.util.Optional.ofNullable(mEnumSet);
+    }
+
     public int numEnumMap() {
         return mEnumMap != null ? mEnumMap.size() : 0;
     }
@@ -627,6 +843,14 @@ public class Containers
      */
     public java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value> getEnumMap() {
         return mEnumMap;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<net.morimekta.test.providence.core.no_rw_binary.Value,net.morimekta.test.providence.core.no_rw_binary.Value>> optionalEnumMap() {
+        return java.util.Optional.ofNullable(mEnumMap);
     }
 
     public int numMessageList() {
@@ -646,6 +870,16 @@ public class Containers
         return mMessageList;
     }
 
+    /**
+     * Using struct as key and value in containers.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.test.providence.core.no_rw_binary.DefaultFields>> optionalMessageList() {
+        return java.util.Optional.ofNullable(mMessageList);
+    }
+
     public int numMessageSet() {
         return mMessageSet != null ? mMessageSet.size() : 0;
     }
@@ -659,6 +893,14 @@ public class Containers
      */
     public java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> getMessageSet() {
         return mMessageSet;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Set<net.morimekta.test.providence.core.no_rw_binary.DefaultFields>> optionalMessageSet() {
+        return java.util.Optional.ofNullable(mMessageSet);
     }
 
     public int numMessageMap() {
@@ -676,6 +918,14 @@ public class Containers
         return mMessageMap;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,net.morimekta.test.providence.core.no_rw_binary.DefaultFields>> optionalMessageMap() {
+        return java.util.Optional.ofNullable(mMessageMap);
+    }
+
     public int numMessageKeyMap() {
         return mMessageKeyMap != null ? mMessageKeyMap.size() : 0;
     }
@@ -691,6 +941,14 @@ public class Containers
         return mMessageKeyMap;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<net.morimekta.test.providence.core.no_rw_binary.CompactFields,String>> optionalMessageKeyMap() {
+        return java.util.Optional.ofNullable(mMessageKeyMap);
+    }
+
     public boolean hasRequiredFields() {
         return mRequiredFields != null;
     }
@@ -700,6 +958,14 @@ public class Containers
      */
     public net.morimekta.test.providence.core.no_rw_binary.RequiredFields getRequiredFields() {
         return mRequiredFields;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.RequiredFields> optionalRequiredFields() {
+        return java.util.Optional.ofNullable(mRequiredFields);
     }
 
     public boolean hasDefaultFields() {
@@ -713,6 +979,14 @@ public class Containers
         return mDefaultFields;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.DefaultFields> optionalDefaultFields() {
+        return java.util.Optional.ofNullable(mDefaultFields);
+    }
+
     public boolean hasOptionalFields() {
         return mOptionalFields != null;
     }
@@ -722,6 +996,14 @@ public class Containers
      */
     public net.morimekta.test.providence.core.no_rw_binary.OptionalFields getOptionalFields() {
         return mOptionalFields;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.OptionalFields> optionalOptionalFields() {
+        return java.util.Optional.ofNullable(mOptionalFields);
     }
 
     public boolean hasUnionFields() {
@@ -735,6 +1017,14 @@ public class Containers
         return mUnionFields;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.UnionFields> optionalUnionFields() {
+        return java.util.Optional.ofNullable(mUnionFields);
+    }
+
     public boolean hasExceptionFields() {
         return mExceptionFields != null;
     }
@@ -746,6 +1036,14 @@ public class Containers
         return mExceptionFields;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.ExceptionFields> optionalExceptionFields() {
+        return java.util.Optional.ofNullable(mExceptionFields);
+    }
+
     public boolean hasDefaultValues() {
         return mDefaultValues != null;
     }
@@ -755,6 +1053,14 @@ public class Containers
      */
     public net.morimekta.test.providence.core.no_rw_binary.DefaultValues getDefaultValues() {
         return mDefaultValues;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.DefaultValues> optionalDefaultValues() {
+        return java.util.Optional.ofNullable(mDefaultValues);
     }
 
     @Override

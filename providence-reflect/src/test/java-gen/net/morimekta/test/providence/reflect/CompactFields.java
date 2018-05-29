@@ -79,6 +79,14 @@ public class CompactFields
         return mLabel;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalLabel() {
+        return java.util.Optional.ofNullable(mLabel);
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {

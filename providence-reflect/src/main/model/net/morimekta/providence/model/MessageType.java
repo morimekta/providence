@@ -62,6 +62,14 @@ public class MessageType
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasVariant() {
         return mVariant != null;
     }
@@ -71,6 +79,14 @@ public class MessageType
      */
     public net.morimekta.providence.model.MessageVariant getVariant() {
         return hasVariant() ? mVariant : kDefaultVariant;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.MessageVariant> optionalVariant() {
+        return java.util.Optional.ofNullable(mVariant);
     }
 
     public boolean hasName() {
@@ -114,6 +130,14 @@ public class MessageType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
     }
 
     @Override

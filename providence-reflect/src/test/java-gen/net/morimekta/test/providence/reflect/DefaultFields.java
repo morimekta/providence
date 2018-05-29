@@ -157,6 +157,14 @@ public class DefaultFields
         return mEnumValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.Value> optionalEnumValue() {
+        return java.util.Optional.ofNullable(mEnumValue);
+    }
+
     public boolean hasCompactValue() {
         return mCompactValue != null;
     }
@@ -166,6 +174,14 @@ public class DefaultFields
      */
     public net.morimekta.test.providence.reflect.CompactFields getCompactValue() {
         return mCompactValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.CompactFields> optionalCompactValue() {
+        return java.util.Optional.ofNullable(mCompactValue);
     }
 
     @Override

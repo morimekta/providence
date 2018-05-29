@@ -52,6 +52,14 @@ public class EnumValue
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasName() {
         return true;
     }
@@ -75,6 +83,14 @@ public class EnumValue
         return hasId() ? mId : kDefaultId;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalId() {
+        return hasId() ? java.util.OptionalInt.of(mId) : java.util.OptionalInt.empty();
+    }
+
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
@@ -88,6 +104,14 @@ public class EnumValue
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
     }
 
     @Override

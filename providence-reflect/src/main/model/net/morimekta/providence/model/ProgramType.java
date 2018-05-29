@@ -67,6 +67,16 @@ public class ProgramType
         return mDocumentation;
     }
 
+    /**
+     * Program documentation must come before the first statement of the header.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasProgramName() {
         return true;
     }
@@ -98,6 +108,18 @@ public class ProgramType
      */
     public java.util.List<String> getIncludes() {
         return mIncludes;
+    }
+
+    /**
+     * List of included thrift files. Same as from the actual thrift file.
+     * <p>
+     * include &quot;&lt;program&gt;.thrift&quot;
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<String>> optionalIncludes() {
+        return java.util.Optional.ofNullable(mIncludes);
     }
 
     public int numNamespaces() {

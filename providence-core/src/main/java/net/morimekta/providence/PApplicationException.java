@@ -53,6 +53,16 @@ public class PApplicationException
         return mMessage;
     }
 
+    /**
+     * Exception message.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalMessage() {
+        return java.util.Optional.ofNullable(mMessage);
+    }
+
     public boolean hasId() {
         return mId != null;
     }
@@ -64,6 +74,16 @@ public class PApplicationException
      */
     public net.morimekta.providence.PApplicationExceptionType getId() {
         return hasId() ? mId : kDefaultId;
+    }
+
+    /**
+     * The application exception type.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.PApplicationExceptionType> optionalId() {
+        return java.util.Optional.ofNullable(mId);
     }
 
     @Override

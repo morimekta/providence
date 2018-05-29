@@ -291,6 +291,14 @@ public class Calculator {
             return mOp;
         }
 
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operation> optionalOp() {
+            return java.util.Optional.ofNullable(mOp);
+        }
+
         @Override
         public boolean has(int key) {
             switch(key) {
@@ -882,6 +890,14 @@ public class Calculator {
             return mSuccess;
         }
 
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operand> optionalSuccess() {
+            return java.util.Optional.ofNullable(mSuccess);
+        }
+
         public boolean hasCe() {
             return tUnionField == _Field.CE && mCe != null;
         }
@@ -891,6 +907,14 @@ public class Calculator {
          */
         public net.morimekta.test.providence.reflect.calculator.CalculateException getCe() {
             return mCe;
+        }
+
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.calculator.CalculateException> optionalCe() {
+            return java.util.Optional.ofNullable(mCe);
         }
 
         @Override

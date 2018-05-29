@@ -79,6 +79,14 @@ public class FieldType
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasId() {
         return true;
     }
@@ -99,6 +107,14 @@ public class FieldType
      */
     public net.morimekta.providence.model.FieldRequirement getRequirement() {
         return hasRequirement() ? mRequirement : kDefaultRequirement;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FieldRequirement> optionalRequirement() {
+        return java.util.Optional.ofNullable(mRequirement);
     }
 
     public boolean hasType() {
@@ -136,6 +152,14 @@ public class FieldType
         return mDefaultValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDefaultValue() {
+        return java.util.Optional.ofNullable(mDefaultValue);
+    }
+
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
@@ -149,6 +173,14 @@ public class FieldType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
     }
 
     public boolean hasStartLineNo() {
@@ -166,6 +198,18 @@ public class FieldType
         return hasStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
     }
 
+    /**
+     * Note the start of the default value in the parsed thrift file, this
+     * can be used for making more accurate exception / parse data from the
+     * const parser.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalStartLineNo() {
+        return hasStartLineNo() ? java.util.OptionalInt.of(mStartLineNo) : java.util.OptionalInt.empty();
+    }
+
     public boolean hasStartLinePos() {
         return mStartLinePos != null;
     }
@@ -175,6 +219,14 @@ public class FieldType
      */
     public int getStartLinePos() {
         return hasStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalStartLinePos() {
+        return hasStartLinePos() ? java.util.OptionalInt.of(mStartLinePos) : java.util.OptionalInt.empty();
     }
 
     @Override

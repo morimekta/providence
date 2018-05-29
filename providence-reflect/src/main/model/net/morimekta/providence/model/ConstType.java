@@ -69,6 +69,14 @@ public class ConstType
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasType() {
         return true;
     }
@@ -120,6 +128,14 @@ public class ConstType
         return mAnnotations;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
+    }
+
     public boolean hasStartLineNo() {
         return mStartLineNo != null;
     }
@@ -134,6 +150,17 @@ public class ConstType
         return hasStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
     }
 
+    /**
+     * Note the start of the const in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalStartLineNo() {
+        return hasStartLineNo() ? java.util.OptionalInt.of(mStartLineNo) : java.util.OptionalInt.empty();
+    }
+
     public boolean hasStartLinePos() {
         return mStartLinePos != null;
     }
@@ -143,6 +170,14 @@ public class ConstType
      */
     public int getStartLinePos() {
         return hasStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalStartLinePos() {
+        return hasStartLinePos() ? java.util.OptionalInt.of(mStartLinePos) : java.util.OptionalInt.empty();
     }
 
     @Override

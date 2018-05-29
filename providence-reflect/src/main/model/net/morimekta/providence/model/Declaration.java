@@ -137,6 +137,14 @@ public class Declaration
         return mDeclEnum;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.EnumType> optionalDeclEnum() {
+        return java.util.Optional.ofNullable(mDeclEnum);
+    }
+
     public boolean hasDeclTypedef() {
         return tUnionField == _Field.DECL_TYPEDEF && mDeclTypedef != null;
     }
@@ -146,6 +154,14 @@ public class Declaration
      */
     public net.morimekta.providence.model.TypedefType getDeclTypedef() {
         return mDeclTypedef;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.TypedefType> optionalDeclTypedef() {
+        return java.util.Optional.ofNullable(mDeclTypedef);
     }
 
     public boolean hasDeclStruct() {
@@ -159,6 +175,14 @@ public class Declaration
         return mDeclStruct;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.MessageType> optionalDeclStruct() {
+        return java.util.Optional.ofNullable(mDeclStruct);
+    }
+
     public boolean hasDeclService() {
         return tUnionField == _Field.DECL_SERVICE && mDeclService != null;
     }
@@ -170,6 +194,14 @@ public class Declaration
         return mDeclService;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.ServiceType> optionalDeclService() {
+        return java.util.Optional.ofNullable(mDeclService);
+    }
+
     public boolean hasDeclConst() {
         return tUnionField == _Field.DECL_CONST && mDeclConst != null;
     }
@@ -179,6 +211,14 @@ public class Declaration
      */
     public net.morimekta.providence.model.ConstType getDeclConst() {
         return mDeclConst;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.ConstType> optionalDeclConst() {
+        return java.util.Optional.ofNullable(mDeclConst);
     }
 
     @Override

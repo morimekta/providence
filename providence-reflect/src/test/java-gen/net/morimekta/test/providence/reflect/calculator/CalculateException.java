@@ -55,6 +55,14 @@ public class CalculateException
         return mOperation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operation> optionalOperation() {
+        return java.util.Optional.ofNullable(mOperation);
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {

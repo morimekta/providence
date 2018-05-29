@@ -708,6 +708,14 @@ public class Calculator2 extends net.morimekta.test.providence.reflect.calculato
             return mSuccess;
         }
 
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<String> optionalSuccess() {
+            return java.util.Optional.ofNullable(mSuccess);
+        }
+
         @Override
         public boolean has(int key) {
             switch(key) {

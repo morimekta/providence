@@ -57,6 +57,14 @@ public class OptionalFields
         return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<Boolean> optionalBooleanValue() {
+        return java.util.Optional.ofNullable(mBooleanValue);
+    }
+
     public boolean hasByteValue() {
         return mByteValue != null;
     }
@@ -66,6 +74,14 @@ public class OptionalFields
      */
     public byte getByteValue() {
         return hasByteValue() ? mByteValue : kDefaultByteValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<Byte> optionalByteValue() {
+        return java.util.Optional.ofNullable(mByteValue);
     }
 
     public boolean hasShortValue() {
@@ -79,6 +95,14 @@ public class OptionalFields
         return hasShortValue() ? mShortValue : kDefaultShortValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<Short> optionalShortValue() {
+        return java.util.Optional.ofNullable(mShortValue);
+    }
+
     public boolean hasIntegerValue() {
         return mIntegerValue != null;
     }
@@ -88,6 +112,14 @@ public class OptionalFields
      */
     public int getIntegerValue() {
         return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalInt optionalIntegerValue() {
+        return hasIntegerValue() ? java.util.OptionalInt.of(mIntegerValue) : java.util.OptionalInt.empty();
     }
 
     public boolean hasLongValue() {
@@ -101,6 +133,14 @@ public class OptionalFields
         return hasLongValue() ? mLongValue : kDefaultLongValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalLong optionalLongValue() {
+        return hasLongValue() ? java.util.OptionalLong.of(mLongValue) : java.util.OptionalLong.empty();
+    }
+
     public boolean hasDoubleValue() {
         return mDoubleValue != null;
     }
@@ -110,6 +150,14 @@ public class OptionalFields
      */
     public double getDoubleValue() {
         return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalDouble optionalDoubleValue() {
+        return hasDoubleValue() ? java.util.OptionalDouble.of(mDoubleValue) : java.util.OptionalDouble.empty();
     }
 
     public boolean hasStringValue() {
@@ -123,6 +171,14 @@ public class OptionalFields
         return mStringValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalStringValue() {
+        return java.util.Optional.ofNullable(mStringValue);
+    }
+
     public boolean hasBinaryValue() {
         return mBinaryValue != null;
     }
@@ -132,6 +188,14 @@ public class OptionalFields
      */
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.util.Binary> optionalBinaryValue() {
+        return java.util.Optional.ofNullable(mBinaryValue);
     }
 
     public boolean hasEnumValue() {
@@ -145,6 +209,14 @@ public class OptionalFields
         return mEnumValue;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.Value> optionalEnumValue() {
+        return java.util.Optional.ofNullable(mEnumValue);
+    }
+
     public boolean hasCompactValue() {
         return mCompactValue != null;
     }
@@ -154,6 +226,14 @@ public class OptionalFields
      */
     public net.morimekta.test.providence.reflect.CompactFields getCompactValue() {
         return mCompactValue;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.CompactFields> optionalCompactValue() {
+        return java.util.Optional.ofNullable(mCompactValue);
     }
 
     @Override

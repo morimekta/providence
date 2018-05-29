@@ -225,6 +225,14 @@ public class ContainerService {
             return mC;
         }
 
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.Containers> optionalC() {
+            return java.util.Optional.ofNullable(mC);
+        }
+
         @Override
         public boolean has(int key) {
             switch(key) {
@@ -816,6 +824,14 @@ public class ContainerService {
             return mSuccess;
         }
 
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.CompactFields> optionalSuccess() {
+            return java.util.Optional.ofNullable(mSuccess);
+        }
+
         public boolean hasEf() {
             return tUnionField == _Field.EF && mEf != null;
         }
@@ -825,6 +841,14 @@ public class ContainerService {
          */
         public net.morimekta.test.providence.reflect.ExceptionFields getEf() {
             return mEf;
+        }
+
+        /**
+         * @return Optional field value
+         */
+        @javax.annotation.Nonnull
+        public java.util.Optional<net.morimekta.test.providence.reflect.ExceptionFields> optionalEf() {
+            return java.util.Optional.ofNullable(mEf);
         }
 
         @Override

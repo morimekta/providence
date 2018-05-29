@@ -68,6 +68,14 @@ public class FunctionType
         return mDocumentation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalDocumentation() {
+        return java.util.Optional.ofNullable(mDocumentation);
+    }
+
     public boolean hasOneWay() {
         return mOneWay != null;
     }
@@ -79,6 +87,14 @@ public class FunctionType
         return hasOneWay() ? mOneWay : kDefaultOneWay;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<Boolean> optionalOneWay() {
+        return java.util.Optional.ofNullable(mOneWay);
+    }
+
     public boolean hasReturnType() {
         return mReturnType != null;
     }
@@ -88,6 +104,14 @@ public class FunctionType
      */
     public String getReturnType() {
         return mReturnType;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalReturnType() {
+        return java.util.Optional.ofNullable(mReturnType);
     }
 
     public boolean hasName() {
@@ -133,6 +157,14 @@ public class FunctionType
         return mExceptions;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.providence.model.FieldType>> optionalExceptions() {
+        return java.util.Optional.ofNullable(mExceptions);
+    }
+
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
@@ -146,6 +178,14 @@ public class FunctionType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
+        return java.util.Optional.ofNullable(mAnnotations);
     }
 
     @Override

@@ -86,6 +86,14 @@ public class Operand
         return mOperation;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operation> optionalOperation() {
+        return java.util.Optional.ofNullable(mOperation);
+    }
+
     public boolean hasNumber() {
         return tUnionField == _Field.NUMBER && mNumber != null;
     }
@@ -97,6 +105,14 @@ public class Operand
         return hasNumber() ? mNumber : kDefaultNumber;
     }
 
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.OptionalDouble optionalNumber() {
+        return hasNumber() ? java.util.OptionalDouble.of(mNumber) : java.util.OptionalDouble.empty();
+    }
+
     public boolean hasImaginary() {
         return tUnionField == _Field.IMAGINARY && mImaginary != null;
     }
@@ -106,6 +122,14 @@ public class Operand
      */
     public net.morimekta.test.providence.reflect.number.Imaginary getImaginary() {
         return mImaginary;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.test.providence.reflect.number.Imaginary> optionalImaginary() {
+        return java.util.Optional.ofNullable(mImaginary);
     }
 
     @Override
