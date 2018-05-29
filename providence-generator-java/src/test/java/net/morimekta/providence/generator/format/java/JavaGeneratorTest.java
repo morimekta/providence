@@ -77,20 +77,6 @@ public class JavaGeneratorTest {
     }
 
     @Test
-    public void testGenerate_android() throws GeneratorException, IOException {
-        defaultSources();
-
-        JavaOptions options = new JavaOptions();
-        options.android = true;
-        for (CProgram program : programs) {
-            Generator generator = new JavaGenerator(fileManager,
-                                                    generatorOptions,
-                                                    options);
-            generator.generate(programRegistry.registryForPath(program.getProgramFilePath()));
-        }
-    }
-
-    @Test
     public void testGenerate_jackson() throws GeneratorException, IOException {
         defaultSources();
 

@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.jackson
+namespace java net.morimekta.test.providence.jackson.client
 
 struct Request {
     1: optional binary the_binary;

@@ -92,19 +92,6 @@ struct DefaultFields {
     10: CompactFields compactValue;
 }
 
-struct AutoIdFields {
-    bool booleanValue;
-    byte byteValue,
-    i16 shortValue
-    i32 integerValue;
-    i64 longValue,
-    double doubleValue
-    string stringValue;
-    binary binaryValue,
-    Value enumValue;
-    CompactFields compactValue;
-}
-
 union UnionFields {
     1: bool booleanValue;
     2: byte byteValue,
@@ -186,6 +173,8 @@ struct Containers {
     41: optional list<DefaultFields> messageList;
     42: optional set<DefaultFields> messageSet;
     43: optional map<string,DefaultFields> messageMap;
+    44: optional map<Value,list<CompactFields>> mapOfList;
+    45: optional map<Value,map<i32,CompactFields>> mapOfIntMap;
 
     51: optional RequiredFields requiredFields;
     52: optional DefaultFields defaultFields;
@@ -199,3 +188,16 @@ struct Containers {
     62: optional map<i8,list<i32>> map_i8_list_i32;
 }
 
+/** Last, not really supported by idea plugin */
+struct AutoIdFields {
+  bool booleanValue;
+  byte byteValue,
+  i16 shortValue
+  i32 integerValue;
+  i64 longValue,
+  double doubleValue
+  string stringValue;
+  binary binaryValue,
+  Value enumValue;
+  CompactFields compactValue;
+}

@@ -29,7 +29,6 @@ import net.morimekta.providence.generator.format.java.messages.CommonBuilderForm
 import net.morimekta.providence.generator.format.java.messages.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
-import net.morimekta.providence.generator.format.java.messages.extras.AndroidMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryReaderBuilderFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinarySerializableFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryWriterFormatter;
@@ -87,9 +86,6 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
                   .add(new CommonOverridesFormatter(writer))
                   .add(new BinarySerializableFormatter(writer, helper));
 
-        if (javaOptions.android) {
-            formatters.add(new AndroidMessageFormatter(writer));
-        }
         if (javaOptions.jackson) {
             formatters.add(new JacksonMessageFormatter(writer, helper));
         }

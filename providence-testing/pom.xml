@@ -21,11 +21,6 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core-jackson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
             <scope>test</scope>
         </dependency>
@@ -41,10 +36,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>net.morimekta.utils</groupId>
-            <artifactId>android-util</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -62,18 +53,6 @@
             <artifactId>hamcrest-library</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
@@ -85,11 +64,6 @@
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>testing-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
@@ -139,70 +113,15 @@
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
+                    <generated_annotation_version>true</generated_annotation_version>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>generate-jackson-sources-for-test</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <jackson>true</jackson>
-                            <rw_binary>false</rw_binary>
-                            <testInput>
-                                <includes>
-                                    <include>src/test/jackson/**/*.thrift</include>
-                                </includes>
-                                <excludes>
-                                    <exclude>src/test/jackson/excluded.thrift</exclude>
-                                </excludes>
-                            </testInput>
-                            <testOutput>target/generated-test-sources/jackson</testOutput>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-android-sources-for-test</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <android>true</android>
-                            <skipIfMissingNamespace>true</skipIfMissingNamespace>
-                            <testInput>
-                                <includes>
-                                    <include>src/test/android/**/*.thrift</include>
-                                </includes>
-                            </testInput>
-                            <testOutput>target/generated-test-sources/android</testOutput>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-hazelcast-sources-for-test</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <hazelcast_portable>true</hazelcast_portable>
-                            <testInput>
-                                <includes>
-                                    <include>src/test/hazelcast/**/*.thrift</include>
-                                </includes>
-                            </testInput>
-                            <testOutput>target/generated-test-sources/hazelcast</testOutput>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>generate-sources-for-test</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
-                        <configuration>
-                            <generated_annotation_version>true</generated_annotation_version>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -218,9 +137,6 @@
                         <phase>verify</phase>
                         <configuration>
                             <sourcepath>
-                                ${project.build.directory}/generated-test-sources/android:
-                                ${project.build.directory}/generated-test-sources/hazelcast:
-                                ${project.build.directory}/generated-test-sources/jackson:
                                 ${project.build.directory}/generated-test-sources/providence
                             </sourcepath>
                             <outputDirectory>${project.build.directory}/ignore-docs</outputDirectory>

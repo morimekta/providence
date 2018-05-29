@@ -21,7 +21,6 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
     @Override
     public void printGeneratorOptionsHelp(PrintStream out) {
-        out.println(" - android             : Add android parcelable interface to model classes.");
         out.println(" - jackson             : Add jackson 2 annotations to model classes.");
         out.println(" - no_rw_binary        : Skip adding the binary RW methods to generated code. [Default on]");
         out.println(" - hazelcast_portable  : Add hazelcast portable to annotated model classes, and add portable\n" +
@@ -36,9 +35,6 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         JavaOptions options = new JavaOptions();
         for (String opt : optionNames) {
             switch (opt) {
-                case "android":
-                    options.android = true;
-                    break;
                 case "jackson":
                     options.jackson = true;
                     break;

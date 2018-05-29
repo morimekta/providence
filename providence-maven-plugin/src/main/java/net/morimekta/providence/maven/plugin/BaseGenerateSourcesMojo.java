@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.maven.plugin;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorFactory;
@@ -39,6 +38,8 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -118,14 +119,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean allow_language_reserved_names = true;
 
     // -----------    GENERATE OPTIONS    ----------- //
-    /**
-     * Adds android.os.Parcelable support. Requires android dependencies, or
-     * can use <code>net.morimekta.utils:android-util</code> for testing.
-     */
-    @Parameter(defaultValue = "false",
-               property = "providence.gen.android")
-    protected boolean android;
-
     /**
      * If set to true will add jackson 2 annotations to messages and enums.
      * Required additional dependency on jackson 2 extra libraries:
@@ -299,7 +292,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         JavaOptions javaOptions = new JavaOptions();
-        javaOptions.android = android;
         javaOptions.jackson = jackson;
         javaOptions.rw_binary = rw_binary;
         javaOptions.hazelcast_portable = hazelcast_portable;

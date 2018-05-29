@@ -25,11 +25,6 @@ package net.morimekta.providence.generator.format.java;
  */
 public class JavaOptions {
     /**
-     * Add android parcelable support.
-     */
-    public boolean android = false;
-
-    /**
      * Add jackson serializers and deserializers.
      */
     public boolean jackson = false;

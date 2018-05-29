@@ -8,9 +8,8 @@ import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.PrettySerializer;
-import net.morimekta.test.android.CompactFields;
+import net.morimekta.test.providence.testing.CompactFields;
 import net.morimekta.testing.rules.ConsoleWatcher;
-import net.morimekta.util.ExtraStreams;
 
 import io.codearte.jfairy.Fairy;
 import org.junit.Rule;
@@ -203,7 +202,7 @@ public class GeneratorWatcherTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("android.CompactFields {\n" +
+                   is("providence.CompactFields {\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
@@ -241,12 +240,12 @@ public class GeneratorWatcherTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("android.CompactFields {\n" +
+                   is("providence.CompactFields {\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
                       "}\n" +
-                      "android.CompactFields {\n" +
+                      "providence.CompactFields {\n" +
                       "  name = \"villa2\"\n" +
                       "  id = 125\n" +
                       "  label = \"Brus med smak\"\n" +

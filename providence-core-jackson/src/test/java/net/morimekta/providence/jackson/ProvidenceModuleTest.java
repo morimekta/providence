@@ -1,6 +1,6 @@
 package net.morimekta.providence.jackson;
 
-import net.morimekta.test.providence.jackson.Request;
+import net.morimekta.test.providence.jackson.client.Request;
 import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

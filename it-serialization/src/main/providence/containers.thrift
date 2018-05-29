@@ -37,6 +37,8 @@ struct ManyContainers {
     31: optional list<common.Value> enumList;
     32: optional set<common.Value> enumSet;
     33: optional map<common.Value,common.Value> enumMap;
+    34: optional map<common.Value,list<common.CompactFields>> mapOfList;
+    35: optional map<common.Value,map<i32, common.CompactFields>> mapOfIntMap;
 
     // Using struct as key and value in containers.
     41: optional list<common.DefaultFields> messageList;

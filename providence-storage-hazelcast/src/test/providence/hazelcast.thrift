@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.hazelcast
+namespace java net.morimekta.test.providence.hazelcast
 
 const i32 FACTORY_ID = 1;
 

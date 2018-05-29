@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.jackson
+namespace java net.morimekta.test.providence.jackson
 
 enum Value {
    FIRST = 1,
@@ -156,6 +156,8 @@ struct Containers {
     41: optional list<DefaultFields> messageList;
     42: optional set<DefaultFields> messageSet;
     43: optional map<string,DefaultFields> messageMap;
+    44: optional map<i32,list<i32>> mapOfList;
+    45: optional map<string,map<Value,CompactFields>> mapOfMap;
 
     51: optional RequiredFields requiredFields;
     52: optional DefaultFields defaultFields;

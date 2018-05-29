@@ -1,10 +1,10 @@
-package net.morimekta.providence.gentests;
+package net.morimekta.providence.storage.hazelcast;
 
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorWatcher;
-import net.morimekta.test.hazelcast.Hazelcast_Factory;
-import net.morimekta.test.hazelcast.OptionalFields;
-import net.morimekta.test.hazelcast.OptionalListFields;
+import net.morimekta.test.providence.hazelcast.Hazelcast_Factory;
+import net.morimekta.test.providence.hazelcast.OptionalFields;
+import net.morimekta.test.providence.hazelcast.OptionalListFields;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Hazelcast serialization and deserialization tests.
  */
-public class HazelcastIT {
+public class GeneratedHazelcastTest {
     private static final boolean IGNORE_HAZELCAST = false;
 
     private static HazelcastInstance instance1;

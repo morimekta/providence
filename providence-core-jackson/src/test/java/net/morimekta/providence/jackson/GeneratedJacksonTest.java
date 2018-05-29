@@ -1,18 +1,19 @@
-package net.morimekta.providence.gentests;
+package net.morimekta.providence.jackson;
 
-import net.morimekta.providence.jackson.ProvidenceModule;
 import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.testing.ProvidenceMatchers;
 import net.morimekta.providence.testing.generator.GeneratorWatcher;
 import net.morimekta.providence.testing.generator.SimpleGeneratorBase;
 import net.morimekta.providence.testing.generator.SimpleGeneratorContext;
-import net.morimekta.test.jackson.CompactFields;
-import net.morimekta.test.jackson.Containers;
-import net.morimekta.test.jackson.OptionalFields;
-import net.morimekta.test.jackson.UnionFields;
-import net.morimekta.test.jackson.Value;
+import net.morimekta.test.providence.jackson.CompactFields;
+import net.morimekta.test.providence.jackson.Containers;
+import net.morimekta.test.providence.jackson.OptionalFields;
+import net.morimekta.test.providence.jackson.UnionFields;
+import net.morimekta.test.providence.jackson.Value;
 import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,15 +27,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
  * Jackson serialization and seserialization testing.
  */
-public class JacksonTest {
+public class GeneratedJacksonTest {
     @Rule
     public GeneratorWatcher<SimpleGeneratorBase,SimpleGeneratorContext> generator =
             GeneratorWatcher.create();
@@ -177,12 +176,12 @@ public class JacksonTest {
             out.reset();
             compact.serialize(out, containers);
             Containers res = mapper.readValue(out.toByteArray(), Containers.class);
-            assertThat(res, is(equalToMessage(containers)));
+            assertThat(res, CoreMatchers.is(ProvidenceMatchers.equalToMessage(containers)));
 
             out.reset();
             pretty.serialize(out, containers);
             res = mapper.readValue(out.toByteArray(), Containers.class);
-            assertThat(res, is(equalToMessage(containers)));
+            assertThat(res, CoreMatchers.is(ProvidenceMatchers.equalToMessage(containers)));
         }
     }
 
@@ -210,6 +209,6 @@ public class JacksonTest {
 
         OptionalFields actual = (OptionalFields) in.readObject();
 
-        assertThat(actual, is(equalToMessage(original)));
+        assertThat(actual, CoreMatchers.is(ProvidenceMatchers.equalToMessage(original)));
     }
 }
