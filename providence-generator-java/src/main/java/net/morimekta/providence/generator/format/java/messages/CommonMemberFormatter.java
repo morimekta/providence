@@ -40,6 +40,9 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import javax.annotation.Generated;
 import javax.annotation.concurrent.Immutable;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -122,6 +125,8 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendFieldGetters(JMessage<?> message) throws GeneratorException {
         for (JField field : message.declaredOrderFields()) {
+            // -------- PRESENCE --------
+
             if (message.isUnion()) {
                 if (field.container()) {
                     writer.formatln("public int %s() {", field.counter())
@@ -172,40 +177,118 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 }
             }
 
+            // -------- GETTER --------
+
             if (field.isVoid()) {
                 // Void fields have no value.
                 continue;
             }
 
-            BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-            if (field.hasComment()) {
-                comment.comment(field.comment())
-                       .newline();
-            }
-            comment.return_("The field value");
-            if (JAnnotation.isDeprecated(field)) {
-                String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
-                if (reason != null && reason.trim().length() > 0) {
-                    comment.deprecated_(reason);
+            {
+                BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    comment.comment(field.comment())
+                           .newline();
                 }
+                comment.return_("The field value");
+                if (JAnnotation.isDeprecated(field)) {
+                    String reason = field.field()
+                                         .getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                    if (reason != null && reason.trim()
+                                                .length() > 0) {
+                        comment.deprecated_(reason);
+                    }
+                }
+                comment.finish();
+                if (JAnnotation.isDeprecated(field)) {
+                    writer.appendln(JAnnotation.DEPRECATED);
+                }
+                if (field.alwaysPresent() && !field.isPrimitiveJavaValue()) {
+                    writer.appendln(JAnnotation.NON_NULL);
+                }
+                writer.formatln("public %s %s() {", field.valueType(), field.getter());
+                if ((field.isPrimitiveJavaValue() || field.field()
+                                                          .hasDefaultValue()) && !field.alwaysPresent()) {
+                    writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
+                } else {
+                    writer.formatln("    return %s;", field.member());
+                }
+                writer.appendln('}')
+                      .newline();
             }
-            comment.finish();
-            if (JAnnotation.isDeprecated(field)) {
-                writer.appendln(JAnnotation.DEPRECATED);
-            }
-            if (field.alwaysPresent() && !field.isPrimitiveJavaValue()) {
+
+            // -------- OPTIONAL --------
+
+            if (!field.alwaysPresent()) {
+                BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    comment.comment(field.comment())
+                           .newline();
+                }
+                comment.return_("Optional field value");
+                if (JAnnotation.isDeprecated(field)) {
+                    String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                    if (reason != null && reason.trim().length() > 0) {
+                        comment.deprecated_(reason);
+                    }
+                }
+                comment.finish();
+                if (JAnnotation.isDeprecated(field)) {
+                    writer.appendln(JAnnotation.DEPRECATED);
+                }
                 writer.appendln(JAnnotation.NON_NULL);
+                switch (field.type()) {
+                    case I32: {
+                        writer.formatln("public %s %s() {",
+                                        OptionalInt.class.getName(),
+                                        field.optional());
+                        writer.formatln("    return %s() ? %s.of(%s) : %s.empty();",
+                                        field.presence(),
+                                        OptionalInt.class.getName(),
+                                        field.member(),
+                                        OptionalInt.class.getName());
+                        writer.appendln('}');
+                        break;
+                    }
+                    case I64: {
+                        writer.formatln("public %s %s() {",
+                                        OptionalLong.class.getName(),
+                                        field.optional());
+                        writer.formatln("    return %s() ? %s.of(%s) : %s.empty();",
+                                        field.presence(),
+                                        OptionalLong.class.getName(),
+                                        field.member(),
+                                        OptionalLong.class.getName());
+                        writer.appendln('}');
+                        break;
+                    }
+                    case DOUBLE: {
+                        writer.formatln("public %s %s() {",
+                                        OptionalDouble.class.getName(),
+                                        field.optional());
+                        writer.formatln("    return %s() ? %s.of(%s) : %s.empty();",
+                                        field.presence(),
+                                        OptionalDouble.class.getName(),
+                                        field.member(),
+                                        OptionalDouble.class.getName());
+                        writer.appendln('}');
+                        break;
+                    }
+                    default: {
+                        writer.formatln("public %s<%s> %s() {",
+                                        Optional.class.getName(),
+                                        field.fieldType(),
+                                        field.optional());
+                        writer.formatln("    return %s.ofNullable(%s);",
+                                        Optional.class.getName(),
+                                        field.member());
+                        writer.appendln('}');
+                        break;
+                    }
+                }
+
+                writer.newline();
             }
-            writer.formatln("public %s %s() {", field.valueType(), field.getter());
-            if ((field.isPrimitiveJavaValue() ||
-                 field.field().hasDefaultValue()) &&
-                !field.alwaysPresent()) {
-                writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
-            } else {
-                writer.formatln("    return %s;", field.member());
-            }
-            writer.appendln('}')
-                  .newline();
         }
     }
 

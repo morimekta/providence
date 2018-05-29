@@ -116,6 +116,10 @@ public class JField {
         return camelCase("get", field.getName());
     }
 
+    public String optional() {
+        return camelCase("optional", field.getName());
+    }
+
     public String presence() {
         return camelCase("has", field.getName());
     }
