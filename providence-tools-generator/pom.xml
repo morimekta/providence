@@ -11,7 +11,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>1.5.2</version>
+        <version>1.5.3-SNAPSHOT</version>
     </parent>
     <artifactId>providence-tools-generator</artifactId>
 
