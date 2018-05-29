@@ -82,6 +82,9 @@ Two other variants exists, which is controlled by the `container` annotations.
 
 ### Other
 
+- `message.field`: Which field should be used for exception messages.
+  This will default to `"message"`, and will fail silently using the default exception
+  message based on `toString()` if the field is not found.
 - `deprecated = "<message>"`: Will mark the associated methods, service or class as
   being deprecated (should not be used). Since the syntax for deprecating a class
   is different for each language, it is handled in annotation, and should e.g.

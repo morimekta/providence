@@ -14,7 +14,8 @@ struct Response {
 
 exception Failure {
     1: string text;
-} (java.exception.class = "net.morimekta.providence.testing.util.TestException")
+} (java.exception.class = "net.morimekta.providence.testing.util.TestException",
+   message.field = "text")
 
 exception Failure2 {
     1: string text;

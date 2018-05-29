@@ -37,6 +37,8 @@ import net.morimekta.test.providence.testing.UnionFields;
 import net.morimekta.test.providence.testing.Value;
 import net.morimekta.test.providence.testing.calculator.Calculator;
 import net.morimekta.test.providence.testing.math.OtherCalculator;
+import net.morimekta.test.providence.testing.service.Failure;
+import net.morimekta.test.providence.testing.service.Failure2;
 import net.morimekta.test.providence.testing.service.Request;
 import net.morimekta.util.Binary;
 
@@ -139,33 +141,43 @@ public class ProvidenceTest {
 
         assertThat(of.hasBooleanValue(), is(false));
         assertThat(of.isBooleanValue(), is(false));
+        assertThat(of.optionalBooleanValue().isPresent(), is(false));
 
         assertThat(of.hasByteValue(), is(false));
         assertThat(of.getByteValue(), is((byte) 0));
+        assertThat(of.optionalByteValue().isPresent(), is(false));
 
         assertThat(of.hasShortValue(), is(false));
         assertThat(of.getShortValue(), is((short) 0));
+        assertThat(of.optionalShortValue().isPresent(), is(false));
 
         assertThat(of.hasIntegerValue(), is(false));
         assertThat(of.getIntegerValue(), is(0));
+        assertThat(of.optionalIntegerValue().isPresent(), is(false));
 
         assertThat(of.hasLongValue(), is(false));
         assertThat(of.getLongValue(), is(0L));
+        assertThat(of.optionalLongValue().isPresent(), is(false));
 
         assertThat(of.hasDoubleValue(), is(false));
         assertThat(of.getDoubleValue(), is(0.0));
+        assertThat(of.optionalDoubleValue().isPresent(), is(false));
 
         assertThat(of.hasStringValue(), is(false));
         assertThat(of.getStringValue(), is(nullValue()));
+        assertThat(of.optionalStringValue().isPresent(), is(false));
 
         assertThat(of.hasBinaryValue(), is(false));
         assertThat(of.getBinaryValue(), is(nullValue()));
+        assertThat(of.optionalBinaryValue().isPresent(), is(false));
 
         assertThat(of.hasEnumValue(), is(false));
         assertThat(of.getEnumValue(), is(nullValue()));
+        assertThat(of.optionalEnumValue().isPresent(), is(false));
 
         assertThat(of.hasCompactValue(), is(false));
         assertThat(of.getCompactValue(), is(nullValue()));
+        assertThat(of.optionalCompactValue().isPresent(), is(false));
     }
 
     @Test
@@ -380,5 +392,18 @@ public class ProvidenceTest {
         assertThat(actual, is(equalToMessage(original)));
         assertThat(actual.getCause(), is(originalCause));
         assertThat(actual.getStackTrace(), is(original.getStackTrace()));
+    }
+
+    @Test
+    public void testExceptions() {
+        Failure failure = Failure.builder().setText("message").build();
+
+        assertThat(failure.getMessage(), is("message"));
+        assertThat(failure.toString(), is("service.Failure{text:\"message\"}"));
+
+        Failure2 f2 = Failure2.builder().setText("message").build();
+
+        assertThat(f2.getMessage(), is("{text:\"message\"}"));
+        assertThat(f2.toString(), is("service.Failure2{text:\"message\"}"));
     }
 }

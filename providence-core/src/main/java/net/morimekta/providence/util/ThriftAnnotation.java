@@ -58,6 +58,15 @@ public enum ThriftAnnotation {
     JSON_COMPACT("json.compact"),
 
     /**
+     * Specify which field to use for the exception message. The default is
+     * to use the 'message' field, and if neither is set, then a toString
+     * variant will be used as the message.
+     * <p>
+     * <code>message.field = "field_name"</code>
+     */
+    MESSAGE_FIELD("message.field"),
+
+    /**
      * Add extra interfaces to a struct. Not allowed on unions or exceptions.
      *
      * The interface methods must either match the methods implemented by the

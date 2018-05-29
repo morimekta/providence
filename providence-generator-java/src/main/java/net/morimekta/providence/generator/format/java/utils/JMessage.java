@@ -35,6 +35,7 @@ import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
 import net.morimekta.providence.util.ThriftAnnotation;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -174,7 +175,19 @@ public class JMessage<T extends CMessage<T>> {
      * @return Optional message field.
      */
     public Optional<JField> exceptionMessageField() {
-        return numericalOrderFields().stream().filter(f -> f.name().equals("message") && f.type() == PType.STRING).findFirst();
+        String fieldName = getExceptionMessageFieldName();
+        return numericalOrderFields().stream()
+                                     .filter(f -> f.name().equals(fieldName) && f.type() == PType.STRING)
+                                     .findFirst();
+    }
+
+    @Nonnull
+    public String getExceptionMessageFieldName() {
+        String fieldName = getAnnotationValue(ThriftAnnotation.MESSAGE_FIELD);
+        if (fieldName == null) {
+            fieldName = "message";
+        }
+        return fieldName;
     }
 
     /**
