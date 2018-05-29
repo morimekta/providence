@@ -1,6 +1,8 @@
 package net.morimekta.providence.util;
 
+import net.morimekta.test.providence.core.CompactFields;
 import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.DefaultFields;
 import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
@@ -206,6 +208,24 @@ public class ProvidenceHelperTest {
                 "    }\n" +
                 "  ]\n" +
                 "}", Operation.kDescriptor));
+    }
+
+    @Test
+    public void testOptionalInMessage() {
+        DefaultFields defaultFields = DefaultFields
+                .builder()
+                .setCompactValue(CompactFields.builder()
+                                              .setId(1234)
+                                              .setLabel("bar")
+                                              .build())
+                .build();
+
+        String label = ProvidenceHelper
+                .<String>optionalInMessage(defaultFields,
+                                           DefaultFields._Field.COMPACT_VALUE,
+                                           CompactFields._Field.LABEL).orElseThrow(() -> new AssertionError(
+                "No label"));
+        assertThat(label, is("bar"));
     }
 
     @Test
