@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.HashSet;
@@ -54,7 +55,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     private final Set<String>                    includedFiles;
     private final FileWatcher                    fileWatcher;
     private final ConfigListener<Message, Field> configListener;
-    private final FileWatcher.Watcher            fileListener;
+    private final FileWatcher.Listener           fileListener;
     private final ConfigSupplier<Message, Field> parentSupplier;
 
     public ProvidenceConfigSupplier(@Nonnull File configFile,
@@ -74,11 +75,11 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
         synchronized (this) {
             if (fileWatcher != null) {
                 fileListener = file -> {
-                    if (configFile.equals(file) || includedFiles.contains(file.toString())) {
+                    if (configFile.toPath().equals(file) || includedFiles.contains(file.toString())) {
                         reload();
                     }
                 };
-                fileWatcher.weakAddWatcher(configFile, fileListener);
+                fileWatcher.weakAddWatcher(configFile.toPath(), fileListener);
             } else {
                 fileListener = null;
             }
@@ -141,7 +142,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
                     includedFiles.clear();
                     includedFiles.addAll(tmp.second);
                     for (String included : includedFiles) {
-                        fileWatcher.weakAddWatcher(new File(included), fileListener);
+                        fileWatcher.weakAddWatcher(Paths.get(included), fileListener);
                     }
                 }
             }

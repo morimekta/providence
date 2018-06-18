@@ -20,9 +20,6 @@
  */
 package net.morimekta.providence.config.impl;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
@@ -40,7 +37,10 @@ import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
-import net.morimekta.util.Strings;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
 
 import javax.annotation.Nonnull;
 import java.io.File;

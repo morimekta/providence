@@ -144,7 +144,7 @@ public class ProvidenceConfigParser {
 
             stackList.add(canonicalFile);
 
-            return parseConfigRecursively(configFile, parent, stackList.toArray(new String[stackList.size()]));
+            return parseConfigRecursively(configFile, parent, stackList.toArray(new String[0]));
         } catch (IOException e) {
             if (e instanceof ProvidenceConfigException) {
                 ProvidenceConfigException pce = (ProvidenceConfigException) e;
@@ -168,9 +168,9 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    <M extends PMessage<M, F>, F extends PField> Pair<M, Set<String>> parseConfigRecursively(@Nonnull Path file,
-                                                                                             M parent,
-                                                                                             String[] stack)
+    private <M extends PMessage<M, F>, F extends PField> Pair<M, Set<String>> parseConfigRecursively(@Nonnull Path file,
+                                                                                                     M parent,
+                                                                                                     String[] stack)
             throws IOException {
         Tokenizer tokenizer;
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file.toFile()))) {
@@ -275,7 +275,7 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    void parseDefinitions(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
+    private void parseDefinitions(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
         Token token = tokenizer.expect("defines group start or identifier");
         if (token.isIdentifier()) {
             String name = context.initReference(token, tokenizer);
@@ -300,7 +300,7 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    Object parseDefinitionValue(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
+    private Object parseDefinitionValue(ProvidenceConfigContext context, Tokenizer tokenizer) throws IOException {
         Token token = tokenizer.expect("Start of def value");
 
         if (token.isReal()) {
@@ -427,7 +427,7 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    <M extends PMessage<M, F>, F extends PField>
+    private <M extends PMessage<M, F>, F extends PField>
     M parseMessage(@Nonnull Tokenizer tokenizer,
                    @Nonnull ProvidenceConfigContext context,
                    @Nonnull PMessageBuilder<M, F> builder) throws IOException {
@@ -614,10 +614,10 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    Map parseMapValue(Tokenizer tokenizer,
-                             ProvidenceConfigContext context,
-                             PMap descriptor,
-                             Map builder) throws IOException {
+    private Map parseMapValue(Tokenizer tokenizer,
+                              ProvidenceConfigContext context,
+                              PMap descriptor,
+                              Map builder) throws IOException {
         Token next = tokenizer.expect("map key or end");
         while (!next.isSymbol(Token.kMessageEnd)) {
             Object key = parseFieldValue(next, tokenizer, context, descriptor.keyDescriptor(), true);
@@ -648,11 +648,11 @@ public class ProvidenceConfigParser {
     }
 
     @SuppressWarnings("unchecked")
-    Object parseFieldValue(Token next,
-                           Tokenizer tokenizer,
-                           ProvidenceConfigContext context,
-                           PDescriptor descriptor,
-                           boolean requireEnumValue) throws IOException {
+    private Object parseFieldValue(Token next,
+                                   Tokenizer tokenizer,
+                                   ProvidenceConfigContext context,
+                                   PDescriptor descriptor,
+                                   boolean requireEnumValue) throws IOException {
         try {
             switch (descriptor.getType()) {
                 case BOOL:
@@ -864,7 +864,10 @@ public class ProvidenceConfigParser {
      * @return The value at the given key, or exception if not found.
      */
     @SuppressWarnings("unchecked")
-    static <V> V resolve(ProvidenceConfigContext context, Token token, Tokenizer tokenizer, PDescriptor descriptor) throws TokenizerException {
+    private static <V> V resolve(ProvidenceConfigContext context,
+                                 Token token,
+                                 Tokenizer tokenizer,
+                                 PDescriptor descriptor) throws TokenizerException {
         Object value = resolveAny(context, token, tokenizer);
         if (value == null) {
             return null;

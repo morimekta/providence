@@ -93,8 +93,8 @@ public class ProvidenceConfigSupplierTest {
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
-        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
+        ArgumentCaptor<FileWatcher.Listener> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Listener.class);
+        doNothing().when(watcher).weakAddWatcher(eq(file.toPath()), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
@@ -104,14 +104,14 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file.toPath(), null);
-        verify(watcher, atLeast(1)).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
+        verify(watcher, atLeast(1)).weakAddWatcher(eq(file.toPath()), any(FileWatcher.Listener.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file.toPath()), watcherCapture.capture());
 
-        watcherCapture.getValue().onFileUpdate(file);
+        watcherCapture.getValue().onPathUpdate(file.toPath());
 
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
@@ -133,8 +133,8 @@ public class ProvidenceConfigSupplierTest {
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
-        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
+        ArgumentCaptor<FileWatcher.Listener> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Listener.class);
+        doNothing().when(watcher).weakAddWatcher(eq(file.toPath()), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
@@ -144,14 +144,14 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
 
         verify(parser).parseConfig(file.toPath(), null);
-        verify(watcher, atMost(5)).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
+        verify(watcher, atMost(5)).weakAddWatcher(eq(file.toPath()), any(FileWatcher.Listener.class));
         verifyNoMoreInteractions(watcher, parser);
 
         reset(parser, watcher);
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(second, ImmutableSet.of(file.toString())));
-        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
+        doNothing().when(watcher).weakAddWatcher(eq(file.toPath()), watcherCapture.capture());
 
-        watcherCapture.getValue().onFileUpdate(file);
+        watcherCapture.getValue().onPathUpdate(file.toPath());
 
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
@@ -168,17 +168,17 @@ public class ProvidenceConfigSupplierTest {
         File file = tmp.newFile().getAbsoluteFile().getCanonicalFile();
 
         when((Pair) parser.parseConfig(file.toPath(), null)).thenReturn(Pair.create(first, ImmutableSet.of(file.toString())));
-        ArgumentCaptor<FileWatcher.Watcher> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Watcher.class);
-        doNothing().when(watcher).weakAddWatcher(eq(file), watcherCapture.capture());
+        ArgumentCaptor<FileWatcher.Listener> watcherCapture = ArgumentCaptor.forClass(FileWatcher.Listener.class);
+        doNothing().when(watcher).weakAddWatcher(eq(file.toPath()), watcherCapture.capture());
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, null, watcher, parser, clock);
         assertThat(supplier.get(), is(first));
-        verify(watcher).weakAddWatcher(eq(file), any(FileWatcher.Watcher.class));
+        verify(watcher).weakAddWatcher(eq(file.toPath()), any(FileWatcher.Listener.class));
         reset(parser, watcher);
         when(parser.parseConfig(file.toPath(), null)).thenThrow(new ProvidenceConfigException("test"));
 
-        watcherCapture.getValue().onFileUpdate(file);
+        watcherCapture.getValue().onPathUpdate(file.toPath());
 
         verify(parser).parseConfig(file.toPath(), null);
         verifyNoMoreInteractions(parser);
