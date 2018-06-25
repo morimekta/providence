@@ -12,6 +12,10 @@ exception Failure {
     1: string text;
 } (java.public.constructor)
 
+exception OtherFailure {
+    1: string other;
+}
+
 service BaseTestService {
     oneway void ping();
 
