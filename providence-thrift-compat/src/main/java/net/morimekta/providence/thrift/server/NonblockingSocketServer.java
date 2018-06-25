@@ -18,7 +18,6 @@
  */
 package net.morimekta.providence.thrift.server;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PProcessor;
@@ -30,6 +29,8 @@ import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.ByteBufferInputStream;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,8 +86,7 @@ public class NonblockingSocketServer implements AutoCloseable {
             if (port < 0) {
                 throw new IllegalArgumentException();
             }
-            this.bindAddress = new InetSocketAddress(port);
-            return this;
+            return withBindAddress(new InetSocketAddress(port));
         }
 
         public Builder withBindAddress(@Nonnull InetSocketAddress bindAddress) {

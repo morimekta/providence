@@ -83,18 +83,26 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
     private volatile FramedBufferOutputStream out;
 
     public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address) {
-        this(serializer, address, (d, c, r) -> {}, 10000, 10000);
+        this(serializer, address, (d, c, r) -> {});
     }
 
     public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address, ServiceCallInstrumentation instrumentation) {
-        this(serializer, address, instrumentation, 10000, 10000);
+        this(serializer,
+             address,
+             instrumentation,
+             10000,
+             10000);
     }
 
     public NonblockingSocketClientHandler(Serializer serializer,
                                           SocketAddress address,
                                           int connect_timeout,
                                           int read_timeout ) {
-        this(serializer, address, (d, c, r) -> {}, connect_timeout, read_timeout);
+        this(serializer,
+             address,
+             (d, c, r) -> {},
+             connect_timeout,
+             read_timeout);
     }
 
     public NonblockingSocketClientHandler(Serializer serializer,
@@ -102,7 +110,12 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
                                           ServiceCallInstrumentation instrumentation,
                                           int connect_timeout,
                                           int read_timeout) {
-        this(serializer, address, instrumentation, connect_timeout, read_timeout, connect_timeout + 2 * read_timeout);
+        this(serializer,
+             address,
+             instrumentation,
+             connect_timeout,
+             read_timeout,
+             connect_timeout + 2 * read_timeout);
     }
 
     public NonblockingSocketClientHandler(Serializer serializer,

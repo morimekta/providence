@@ -18,7 +18,6 @@
  */
 package net.morimekta.providence.thrift.server;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.mio.IOMessageReader;
@@ -28,6 +27,8 @@ import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.server.DefaultProcessorHandler;
 import net.morimekta.providence.server.WrappedProcessor;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +68,6 @@ public class SocketServer implements AutoCloseable {
         public Builder(@Nonnull PProcessor processor) {
             this.processor = processor;
             this.bindAddress = new InetSocketAddress(0);
-            this.workerThreadFactory = new ThreadFactoryBuilder()
-                    .setNameFormat("providence-server-%d")
-                    .setDaemon(false)
-                    .build();
             this.serializer = new BinarySerializer();
         }
 
@@ -78,8 +75,7 @@ public class SocketServer implements AutoCloseable {
             if (port < 0) {
                 throw new IllegalArgumentException();
             }
-            this.bindAddress = new InetSocketAddress(port);
-            return this;
+            return withBindAddress(new InetSocketAddress(port));
         }
 
         public Builder withBindAddress(@Nonnull InetSocketAddress bindAddress) {
@@ -128,6 +124,13 @@ public class SocketServer implements AutoCloseable {
         }
 
         public SocketServer start() {
+            if (workerThreadFactory == null) {
+                this.workerThreadFactory = new ThreadFactoryBuilder()
+                        .setNameFormat("providence-server-%d")
+                        .setDaemon(false)
+                        .build();
+            }
+
             return new SocketServer(this);
         }
 
