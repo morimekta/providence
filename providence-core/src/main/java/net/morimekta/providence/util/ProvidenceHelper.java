@@ -21,6 +21,7 @@
 package net.morimekta.providence.util;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Convenience methods for handling providence messages.
  */
 public class ProvidenceHelper {
+    @SuppressWarnings("unchecked")
+    public static <M extends PMessage<M, F>, F extends PField, B extends PMessageBuilder<M,F>>
+    B getTargetModifications(M source, M target) {
+        B builder = (B) target.mutate();
+        for (F field : source.descriptor().getFields()) {
+            if (source.has(field) != target.has(field) ||
+                !Objects.equals(source.get(field), target.get(field))) {
+                builder.set(field, target.get(field));
+            }
+        }
+        return builder;
+    }
+
     @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message fromJsonResource(String path,

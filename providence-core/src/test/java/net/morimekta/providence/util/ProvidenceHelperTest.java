@@ -3,10 +3,12 @@ package net.morimekta.providence.util;
 import net.morimekta.test.providence.core.CompactFields;
 import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.DefaultFields;
+import net.morimekta.test.providence.core.OptionalFields;
 import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
+import net.morimekta.util.Binary;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +19,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.getTargetModifications;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -26,6 +32,31 @@ import static org.junit.Assert.assertThat;
  * Tests for reading json resources.
  */
 public class ProvidenceHelperTest {
+    @Test
+    public void testGetTargetModifications() {
+        OptionalFields._Builder b1 = getTargetModifications(OptionalFields.builder().build(),
+                                                            OptionalFields.builder().build());
+        assertThat(b1.modifiedFields(), is(empty()));
+
+        OptionalFields source = OptionalFields.builder()
+                                              .setBinaryValue(Binary.fromBase64("abcd"))
+                                              .setStringValue("old")
+                                              .setIntegerValue(321)
+                                              .build();
+        OptionalFields target = OptionalFields.builder()
+                                              .setStringValue("new")
+                                              .setLongValue(1234L)
+                                              .setIntegerValue(321)
+                                              .build();
+
+        OptionalFields._Builder b2 = getTargetModifications(source, target);
+        assertThat(b2.modifiedFields(), hasItems(OptionalFields._Field.BINARY_VALUE,
+                                                 OptionalFields._Field.STRING_VALUE,
+                                                 OptionalFields._Field.LONG_VALUE));
+        assertThat(b2.modifiedFields(), hasSize(3));
+        assertThat(b2.build(), is(target));
+    }
+
     @Test
     public void testFromJsonResource_compact() throws IOException {
         Operation op = net.morimekta.providence.util.ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
