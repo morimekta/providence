@@ -5,7 +5,6 @@ import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.descriptor.PField;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.morimekta.providence.storage.MessageStoreUtils.mutateAll;
@@ -13,7 +12,7 @@ import static net.morimekta.providence.storage.MessageStoreUtils.mutateAll;
 /**
  * Interface for searching a store for a specific search S.
  *
- * @param <Q> Search param, be it single string or struct or union with search parameters.
+ * @param <Q> Search query param, be it single string or struct or union with search parameters.
  * @param <M> PMessage that we search for.
  * @param <F> PField of M.
  */
@@ -24,10 +23,10 @@ public interface MessageSearcher<Q, M extends PMessage<M, F>, F extends PField> 
      * to the returned builders will not be reflected onto the store.
      *
      * @param query The key to look up.
-     * @param <B>    The builder type.
+     * @param <B>   The builder type.
      * @return List of builders that matches query Q.
      */
-    @Nullable
+    @Nonnull
     @SuppressWarnings("unchecked")
     default <B extends PMessageBuilder<M, F>>
     List<B> searchBuilders(@Nonnull Q query) {

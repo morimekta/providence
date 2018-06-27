@@ -13,9 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
-/**
- * TBD
- */
 public class MessageSearcherTest extends TestBase {
 
     @Test
