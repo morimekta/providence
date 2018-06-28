@@ -74,7 +74,19 @@ public abstract class ProvidenceHttpServlet<
      * @return The status code to be used.
      */
     protected int statusCodeForException(@Nonnull Throwable exception) {
-        return 500;
+        if (exception instanceof PApplicationException) {
+            PApplicationException e = (PApplicationException) exception;
+            if (e.getId() == PApplicationExceptionType.INVALID_PROTOCOL ||
+                e.getId() == PApplicationExceptionType.PROTOCOL_ERROR ||
+                e.getId() == PApplicationExceptionType.BAD_SEQUENCE_ID ||
+                e.getId() == PApplicationExceptionType.INVALID_MESSAGE_TYPE) {
+                return HttpServletResponse.SC_BAD_REQUEST;
+            }
+            if (e.getId() == PApplicationExceptionType.UNKNOWN_METHOD) {
+                return HttpServletResponse.SC_NOT_FOUND;
+            }
+        }
+        return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
     @Override
@@ -131,7 +143,7 @@ public abstract class ProvidenceHttpServlet<
                                                             .setId(PApplicationExceptionType.INVALID_PROTOCOL)
                                                             .setMessage(e.getMessage())
                                                             .build();
-            resp.setStatus(400);
+            resp.setStatus(statusCodeForException(ex));
             resp.setContentType(responseSerializer.mediaType());
             responseSerializer.serialize(resp.getOutputStream(), ex);
             return;
@@ -153,7 +165,7 @@ public abstract class ProvidenceHttpServlet<
             return;
         }
 
-        resp.setStatus(200);
+        resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(responseSerializer.mediaType());
         responseSerializer.serialize(resp.getOutputStream(), response);
     }
