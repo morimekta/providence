@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
@@ -41,7 +43,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * an in-memory key index, a message cache, and stores message lists
  * to individual files in a single directly.
  * <p>
- * Note that the directory store is parallel compatible between
+ * Note that the directory store is <b>not</b> parallel compatible between
  * instances, as all of them would be able to read, write etc all
  * the files all the time.
  * <p>
@@ -62,6 +64,14 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
                                      @Nonnull Function<String, K> keyParser,
                                      @Nonnull PMessageDescriptor<M,F> descriptor,
                                      @Nonnull Serializer serializer) {
+        this(directory.toPath(), keyBuilder, keyParser, descriptor, serializer);
+    }
+
+    public DirectoryMessageListStore(@Nonnull Path directory,
+                                     @Nonnull Function<K, String> keyBuilder,
+                                     @Nonnull Function<String, K> keyParser,
+                                     @Nonnull PMessageDescriptor<M,F> descriptor,
+                                     @Nonnull Serializer serializer) {
         this(new DefaultFileManager<>(directory, keyBuilder, keyParser), descriptor, serializer);
     }
 
@@ -73,8 +83,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
         this.keyset = new HashSet<>(manager.initialKeySet());
         this.descriptor = descriptor;
         this.serializer = serializer;
-        this.cache = CacheBuilder.newBuilder()
-                                 .build();
+        this.cache = CacheBuilder.newBuilder().build();
     }
 
     @Override
@@ -127,8 +136,8 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
         return mutex.lockForWriting(() -> {
             Map<K, List<M>> out = new HashMap<>();
             for (K key : keys) {
-                File file = manager.getFileFor(key);
-                if (file.exists()) {
+                Path file = manager.getFileFor(key);
+                if (Files.exists(file)) {
                     try {
                         out.put(key, cache.get(key, () -> read(key)));
                     } catch (ExecutionException e) {
@@ -136,7 +145,9 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
                         // At least it was present.
                         out.put(key, new ArrayList<>());
                     } finally {
-                        file.delete();
+                        try {
+                            Files.deleteIfExists(file);
+                        } catch (IOException ignore) {}
                     }
                     cache.invalidate(key);
                     keyset.remove(key);
@@ -148,7 +159,7 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
 
     private List<M> read(K key) throws IOException {
         try {
-            return MessageStreams.file(manager.getFileFor(key), serializer, descriptor)
+            return MessageStreams.file(manager.getFileFor(key).toFile(), serializer, descriptor)
                                  .collect(Collectors.toList());
         } catch (UncheckedIOException e) {
             throw new IOException("Unable to read " + key.toString(), e.getCause());
@@ -156,17 +167,15 @@ public class DirectoryMessageListStore<K, M extends PMessage<M,F>, F extends PFi
     }
 
     private void write(K key, List<M> message) throws IOException {
-        File tmp = manager.tmpFileFor(key);
-        File file = manager.getFileFor(key);
-        if (tmp.exists() && !tmp.delete()) {
-            throw new IOException("Unable to delete old tmp file: " + tmp.getAbsolutePath());
-        }
+        Path tmp = manager.tmpFileFor(key);
+        Path file = manager.getFileFor(key);
+        Files.deleteIfExists(tmp);
         try {
-            message.stream().collect(MessageCollectors.toFile(tmp, serializer));
+            message.stream().collect(MessageCollectors.toPath(tmp, serializer));
         } catch (UncheckedIOException e) {
             throw new IOException("Unable to write " + key.toString(), e.getCause());
         }
-        Files.move(tmp.toPath(), file.toPath(), REPLACE_EXISTING);
+        Files.move(tmp, file, REPLACE_EXISTING, ATOMIC_MOVE);
     }
 
     @Override

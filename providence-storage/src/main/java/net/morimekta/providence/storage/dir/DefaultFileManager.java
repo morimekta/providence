@@ -1,9 +1,14 @@
 package net.morimekta.providence.storage.dir;
 
+import net.morimekta.util.FileUtil;
+
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Function;
@@ -19,23 +24,23 @@ import java.util.function.Function;
 public class DefaultFileManager<K> implements FileManager<K> {
     private static final String TMP_DIR = ".tmp";
 
-    private final File                directory;
-    private final File                tempDir;
+    private final Path                directory;
+    private final Path                tempDir;
     private final Function<String, K> keyParser;
     private final Function<K, String> keyBuilder;
 
-    public DefaultFileManager(@Nonnull File directory,
+    public DefaultFileManager(@Nonnull Path directory,
                               @Nonnull Function<K, String> keyBuilder,
                               @Nonnull Function<String, K> keyParser) {
         try {
-            if (!directory.isDirectory()) {
+            if (!Files.isDirectory(directory)) {
                 throw new IllegalArgumentException("Not a directory: " + directory.toString());
             }
-            this.directory = directory.getCanonicalFile();
-            this.tempDir = new File(directory, TMP_DIR);
-            if (!tempDir.exists() && !tempDir.mkdirs()) {
-                throw new IllegalStateException("Unable to create temp directory: " + tempDir.toString());
-            } else if (!tempDir.isDirectory()) {
+            this.directory = FileUtil.readCanonicalPath(directory);
+            this.tempDir = this.directory.resolve(TMP_DIR);
+            if (!Files.exists(tempDir)) {
+                Files.createDirectories(tempDir);
+            } else if (!Files.isDirectory(tempDir)) {
                 throw new IllegalStateException("File blocking temp directory: " + tempDir.toString());
             }
             this.keyBuilder = keyBuilder;
@@ -46,37 +51,41 @@ public class DefaultFileManager<K> implements FileManager<K> {
     }
 
     @Override
-    public File getFileFor(@Nonnull K key) {
-        return new File(directory, validateKey(keyBuilder.apply(key)));
+    public Path getFileFor(@Nonnull K key) {
+        return directory.resolve(validateKey(keyBuilder.apply(key)));
     }
 
     @Override
-    public File tmpFileFor(@Nonnull K key) {
-        return new File(tempDir, validateKey(keyBuilder.apply(key)));
+    public Path tmpFileFor(@Nonnull K key) {
+        return tempDir.resolve(validateKey(keyBuilder.apply(key)));
     }
 
     @Override
     public Collection<K> initialKeySet() {
         HashSet<K> set = new HashSet<>();
-        String[] list = directory.list();
-        if (list != null) {
-            for (String file : list) {
-                if (new File(directory, file).isFile()) {
-                    try {
-                        set.add(keyParser.apply(file));
-                    } catch (Exception e) {
-                        throw new IllegalStateException("Unable to get key from file: " + file, e);
-                    }
-                }
-            }
-        } else {
-            throw new IllegalStateException("Storage directory no longer a directory.");
+        try {
+            Files.list(directory)
+                 .forEach(file -> {
+                     if (Files.isRegularFile(file)) {
+                         try {
+                             set.add(keyParser.apply(file.getFileName().toString()));
+                         } catch (Exception e) {
+                             throw new IllegalStateException("Unable to get key from file: " + file, e);
+                         }
+                     }
+                 });
+        } catch (IOException e) {
+            throw new IllegalStateException("Storage directory no longer a directory.", e);
         }
+
         return set;
     }
 
     private String validateKey(String key) {
-        // TODO: Make true file-name validation.
+        key = Normalizer.normalize(key, Normalizer.Form.NFKC);
+        if (key.startsWith(".")) {
+            throw new IllegalArgumentException("Special file char in start of key " + key);
+        }
         if (key.contains(File.separator)) {
             throw new IllegalArgumentException("Path name separator in key " + key);
         }

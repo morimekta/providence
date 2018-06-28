@@ -19,10 +19,12 @@ import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +34,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
@@ -39,7 +42,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * an in-memory key index, a message cache, and stores messages
  * to individual files in a single directly.
  * <p>
- * Note that the directory store is parallel compatible between
+ * Note that the directory store is <b>not</b> parallel compatible between
  * instances, as all of them would be able to read, write etc all
  * the files all the time.
  * <p>
@@ -56,6 +59,14 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     private final Cache<K, M>              cache;
 
     public DirectoryMessageStore(@Nonnull File directory,
+                                 @Nonnull Function<K, String> keyBuilder,
+                                 @Nonnull Function<String, K> keyParser,
+                                 @Nonnull PMessageDescriptor<M,F> descriptor,
+                                 @Nonnull Serializer serializer) {
+        this(directory.toPath(), keyBuilder, keyParser, descriptor, serializer);
+    }
+
+    public DirectoryMessageStore(@Nonnull Path directory,
                                  @Nonnull Function<K, String> keyBuilder,
                                  @Nonnull Function<String, K> keyParser,
                                  @Nonnull PMessageDescriptor<M,F> descriptor,
@@ -124,8 +135,8 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
         return mutex.lockForWriting(() -> {
             Map<K,M> out = new HashMap<>();
             for (K key : keys) {
-                File file = manager.getFileFor(key);
-                if (file.exists()) {
+                Path file = manager.getFileFor(key);
+                if (Files.exists(file)) {
                     try {
                         out.put(key, cache.get(key, () -> read(key)));
                     } catch (ExecutionException e) {
@@ -133,7 +144,9 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
                         // At least it was present.
                         out.put(key, descriptor.builder().build());
                     } finally {
-                        file.delete();
+                        try {
+                            Files.deleteIfExists(file);
+                        } catch (IOException ignore) {}
                     }
                     cache.invalidate(key);
                     keyset.remove(key);
@@ -144,25 +157,28 @@ public class DirectoryMessageStore<K, M extends PMessage<M,F>, F extends PField>
     }
 
     private M read(K key) throws IOException {
-        try (FileInputStream fis = new FileInputStream(manager.getFileFor(key));
+        try (FileInputStream fis = new FileInputStream(manager.getFileFor(key).toFile());
              BufferedInputStream bis = new BufferedInputStream(fis)) {
             return serializer.deserialize(bis, descriptor);
+        } catch (FileNotFoundException fnf) {
+            return null;
         } catch (IOException e) {
             throw new IOException("Unable to read " + key.toString(), e);
         }
     }
 
     private void write(K key, M message) throws IOException {
-        File tmp = manager.tmpFileFor(key);
-        File file = manager.getFileFor(key);
-        try (FileOutputStream fos = new FileOutputStream(tmp, false);
+        Path tmp = manager.tmpFileFor(key);
+        Path file = manager.getFileFor(key);
+
+        try (FileOutputStream fos = new FileOutputStream(tmp.toFile(), false);
              BufferedOutputStream bos = new BufferedOutputStream(fos)) {
             serializer.serialize(bos, message);
             bos.flush();
         } catch (IOException e) {
             throw new IOException("Unable to write " + key.toString(), e);
         }
-        Files.move(tmp.toPath(), file.toPath(), REPLACE_EXISTING);
+        Files.move(tmp, file, REPLACE_EXISTING, ATOMIC_MOVE);
     }
 
     @Override
