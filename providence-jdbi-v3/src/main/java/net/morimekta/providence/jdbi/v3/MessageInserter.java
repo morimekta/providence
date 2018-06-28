@@ -110,7 +110,8 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
                                              .collect(Collectors.joining(",")) + ")";
     }
 
-    public int execute(Handle handle, M... items) {
+    @SafeVarargs
+    public final int execute(Handle handle, M... items) {
         return execute(handle, ImmutableList.copyOf(items));
     }
 
