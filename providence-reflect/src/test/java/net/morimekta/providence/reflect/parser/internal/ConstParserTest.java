@@ -34,6 +34,16 @@ public class ConstParserTest {
         registry = new SimpleTypeRegistry();
         registry.registerRecursively(Operation.kDescriptor);
         registry.registerRecursively(Containers.kDescriptor);
+        registry.registerConstant("foo", "calculator", 44);
+        registry.registerConstant("bar", "calculator", "value");
+    }
+
+    @Test
+    public void testConstReferences() throws IOException {
+        assertThat(parse("test", "string", "calculator.bar"),
+                   is("value"));
+        assertThat(parse("test", "i32", "calculator.foo"),
+                   is(44));
     }
 
     @Test
@@ -113,7 +123,7 @@ public class ConstParserTest {
         assertThat(parse("providence", "OptionalFields",
                          "{\n" +
                          "  # shell comment\n" +
-                         "  'byteValue': 44\n" +
+                         "  'byteValue': calculator.foo\n" +
                          "  /*\n" +
                          "   * Java block comment.\n" +
                          "   */\n" +

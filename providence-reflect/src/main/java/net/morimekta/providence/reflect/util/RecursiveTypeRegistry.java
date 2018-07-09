@@ -5,6 +5,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.util.BaseTypeRegistry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,12 +21,14 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
     private final Map<String, PDeclaredDescriptor<?>> declaredTypes;
     private final Map<String, PService>               services;
     private final Map<String, RecursiveTypeRegistry>  includes;
+    private final Map<String, Object>                 constants;
 
     public RecursiveTypeRegistry(@Nonnull String localProgramContext) {
         this.localProgramContext = localProgramContext;
         this.declaredTypes       = new LinkedHashMap<>();
         this.services            = new HashMap<>();
         this.includes            = new HashMap<>();
+        this.constants           = new HashMap<>();
     }
 
     public String getLocalProgramContext() {
@@ -95,6 +98,27 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
                 "No such program \"" + program + "\" known for type \"" + typeName + "\"");
     }
 
+    @Nullable
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getConstantValue(@Nonnull String constReference, @Nonnull String programContext) {
+        if (!constReference.contains(".")) {
+            constReference = programContext + "." + constReference;
+        }
+
+        String program = constReference.replaceAll("\\..*", "");
+        String name = constReference.replaceAll(".*\\.", "");
+
+        if (localProgramContext.equals(program)) {
+            return (T) constants.get(name);
+        }
+        if (includes.containsKey(program)) {
+            return includes.get(program).getConstantValue(name, program);
+        }
+
+        return null;
+    }
+
     @Nonnull
     @Override
     public PService getService(String serviceName, String programContext) {
@@ -113,6 +137,27 @@ public class RecursiveTypeRegistry extends BaseTypeRegistry {
             return includes.get(program).getService(name, program);
         }
         throw new IllegalArgumentException("No such program \"" + program + "\" known for service \"" + serviceName + "\"");
+    }
+
+    @Override
+    public void registerConstant(@Nonnull String identifier, @Nonnull String program, @Nonnull Object value) {
+        String origIdentifier = identifier;
+        if (identifier.contains(".")) {
+            String[] parts = identifier.split("[.]");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Invalid const identifier");
+            }
+            identifier = parts[1];
+            program = parts[0];
+        }
+
+        if (localProgramContext.equals(program)) {
+            constants.put(identifier, value);
+        } else if (includes.containsKey(program)) {
+            includes.get(program).registerConstant(identifier, program, value);
+        } else {
+            throw new IllegalArgumentException("No such include \"" + program + "\" for const " + origIdentifier + " in " + localProgramContext);
+        }
     }
 
     @Override

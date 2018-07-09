@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PService;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -41,11 +42,13 @@ public class SimpleTypeRegistry extends BaseTypeRegistry {
     private final Map<String, PDeclaredDescriptor<?>> declaredTypes;
     private final Map<String, PService>               services;
     private final Set<String>                         knownPrograms;
+    private final Map<String, Object>                 constants;
 
     public SimpleTypeRegistry() {
         this.declaredTypes = new LinkedHashMap<>();
         this.services      = new HashMap<>();
         this.knownPrograms = new HashSet<>();
+        this.constants     = new HashMap<>();
     }
 
     @Nonnull
@@ -70,6 +73,16 @@ public class SimpleTypeRegistry extends BaseTypeRegistry {
         }
     }
 
+    @Nullable
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getConstantValue(@Nonnull String constReference, @Nonnull String programContext) {
+        if (!constReference.contains(".")) {
+            constReference = programContext + "." + constReference;
+        }
+        return (T) constants.get(constReference);
+    }
+
     @Nonnull
     @Override
     public PService getService(String serviceName, String programContext) {
@@ -86,6 +99,16 @@ public class SimpleTypeRegistry extends BaseTypeRegistry {
         } else {
             throw new IllegalArgumentException("No such program \"" + program + "\" known for service \"" + serviceName + "\"");
         }
+    }
+
+    @Override
+    public void registerConstant(@Nonnull String identifier, @Nonnull String program, @Nonnull Object value) {
+        if (identifier.contains(".")) {
+            throw new IllegalArgumentException("Bad const identifier syntax");
+        }
+        String name = program + "." + identifier;
+        constants.put(name, value);
+        knownPrograms.add(program);
     }
 
     @Override

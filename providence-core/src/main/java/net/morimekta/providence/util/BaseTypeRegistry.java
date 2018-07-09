@@ -54,10 +54,10 @@ public abstract class BaseTypeRegistry implements WritableTypeRegistry {
 
     @Override
     public void registerTypedef(@Nonnull String identifier,
-                                @Nonnull String programContext,
+                                @Nonnull String program,
                                 @Nonnull String target) {
-        typedefs.put(qualifiedNameFromIdAndContext(identifier, programContext),
-                     finalTypename(target, programContext));
+        typedefs.put(qualifiedNameFromIdAndContext(identifier, program),
+                     finalTypename(target, program));
     }
 
     @Nonnull

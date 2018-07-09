@@ -35,12 +35,23 @@ public interface WritableTypeRegistry extends TypeRegistry {
      * Registers a typedef definition.
      *
      * @param identifier The typedef name (the alias) to put.
-     * @param context The package context of the typedef.
+     * @param program The program context of the typedef.
      * @param target The qualified name that the name represents.
      */
     void registerTypedef(@Nonnull String identifier,
-                         @Nonnull String context,
+                         @Nonnull String program,
                          @Nonnull String target);
+
+    /**
+     * Register a constant value.
+     *
+     * @param identifier The constant identifier name.
+     * @param program The program context for the constant.
+     * @param value The parsed value.
+     */
+    void registerConstant(@Nonnull String identifier,
+                          @Nonnull String program,
+                          @Nonnull Object value);
 
     /**
      * Services are not handled as "declared types", so they need to be registered

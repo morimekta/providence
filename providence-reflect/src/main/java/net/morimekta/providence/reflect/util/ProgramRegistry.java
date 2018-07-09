@@ -31,6 +31,7 @@ import net.morimekta.providence.util.TypeRegistry;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -111,6 +112,13 @@ public class ProgramRegistry implements TypeRegistry {
                                                                 @Nonnull String programContext) {
         return handle(typeName, programContext, false,
                       p -> p.getDeclaredType(typeName, programContext));
+    }
+
+    @Nullable
+    @Override
+    public <T> T getConstantValue(@Nonnull String constReference, @Nonnull String programContext) {
+        return handle(constReference, programContext, false,
+                      p -> p.getConstantValue(constReference, programContext));
     }
 
     @Nonnull

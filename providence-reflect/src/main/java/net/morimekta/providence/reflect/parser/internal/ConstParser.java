@@ -37,6 +37,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.Utf8StreamReader;
 import net.morimekta.util.json.JsonException;
@@ -193,6 +194,90 @@ public class ConstParser {
 
     private Object parseTypedValue(Token token, ThriftTokenizer tokenizer, PDescriptor valueType, boolean allowNull)
             throws IOException {
+        if (token.isIdentifier() || token.isQualifiedIdentifier()) {
+            Object val = registry.getConstantValue(token.asString(), programContext);
+            if (val != null) {
+                switch (valueType.getType()) {
+                    case BOOL:
+                        if (val instanceof Number) {
+                            return ((Number) val).longValue() != 0L;
+                        } else if (val instanceof Boolean) {
+                            return val;
+                        }
+                        break;
+                    case BYTE:
+                        if (val instanceof Number) {
+                            return ((Number) val).byteValue();
+                        }
+                        break;
+                    case I16:
+                        if (val instanceof Number) {
+                            return ((Number) val).shortValue();
+                        }
+                        break;
+                    case I32:
+                        if (val instanceof Number) {
+                            return ((Number) val).intValue();
+                        } else if (val instanceof PEnumValue) {
+                            return ((PEnumValue) val).asInteger();
+                        }
+                        break;
+                    case I64:
+                        if (val instanceof Number) {
+                            return ((Number) val).byteValue();
+                        } else if (val instanceof PEnumValue) {
+                            return (long) ((PEnumValue) val).asInteger();
+                        }
+                        break;
+                    case DOUBLE:
+                        if (val instanceof Number) {
+                            return ((Number) val).doubleValue();
+                        }
+                        break;
+                    case STRING:
+                        if (val instanceof Stringable) {
+                            return ((Stringable) val).asString();
+                        }
+                        return val.toString();
+                    case BINARY:
+                        if (val instanceof Binary) {
+                            return val;
+                        }
+                        break;
+                    case ENUM:
+                        if (val instanceof PEnumValue) {
+                            // TODO: Check that it is the correct enum or convert.
+                            return val;
+                        } else if (val instanceof Number) {
+                            if (!(val instanceof Double)) {
+                                int i = ((Number) val).intValue();
+                                PEnumDescriptor ed = (PEnumDescriptor) valueType;
+                                PEnumValue ev = ed.findById(i);
+                                if (ev != null) {
+                                    return ev;
+                                }
+                            }
+                        } else if (val instanceof CharSequence) {
+                            PEnumDescriptor ed = (PEnumDescriptor) valueType;
+                            PEnumValue ev = ed.findByName(val.toString());
+                            if (ev != null) {
+                                return ev;
+                            }
+                        }
+                        break;
+                    case MESSAGE:
+                    case LIST:
+                    case MAP:
+                    case SET:
+                        // TODO: Type check these too.
+                        return val;
+                }
+                throw new IllegalArgumentException("Bad constant reference type: " + valueType +
+                                                   " cannot be assigned to " + val.getClass().getSimpleName() + " " +
+                                                   val.toString());
+            }
+        }
+
         switch (valueType.getType()) {
             case BOOL:
                 if (token.isIdentifier()) {
@@ -411,6 +496,15 @@ public class ConstParser {
                     Object key;
                     if (token.isStringLiteral()) {
                         key = parsePrimitiveKey(token.decodeLiteral(true), token, tokenizer, keyType);
+                    } else if (token.isIdentifier() || token.isQualifiedIdentifier()) {
+                        key = registry.getConstantValue(token.asString(), programContext);
+                        if (key == null) {
+                            if (keyType.getType().equals(PType.STRING) ||
+                                keyType.getType().equals(PType.BINARY)) {
+                                throw tokenizer.failure(token, "Expected string literal for string key");
+                            }
+                            key = parsePrimitiveKey(token.asString(), token, tokenizer, keyType);
+                        }
                     } else {
                         if (keyType.getType().equals(PType.STRING) ||
                             keyType.getType().equals(PType.BINARY)) {

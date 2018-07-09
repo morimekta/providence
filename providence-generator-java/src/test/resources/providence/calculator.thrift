@@ -65,3 +65,9 @@ const set<Operator> kComplexOperands = [
     Operator.MULTIPLY,
     Operator.DIVIDE
 ];
+
+const string kValue = "constant value";
+
+const map<string,i32> kMap = {
+    kValue : 12
+};

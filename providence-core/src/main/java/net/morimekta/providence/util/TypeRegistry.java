@@ -31,6 +31,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -48,6 +49,19 @@ public interface TypeRegistry {
     @Nonnull
     <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String typeName,
                                                          @Nonnull String programContext);
+
+    /**
+     * This is to check to find a constant given the const name and program context. This will
+     * return null if the constant does not exist.
+     *
+     * @param constReference The reference to the constant.
+     * @param programContext The current program context.
+     * @return The const value or null.
+     * @param <T> The returned value type.
+     */
+    @Nullable
+    <T> T getConstantValue(@Nonnull String constReference,
+                           @Nonnull String programContext);
 
     /**
      * Get a declared type by its qualified type name.
