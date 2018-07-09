@@ -168,7 +168,9 @@ public class ProgramConverter {
                 }
                 case DECL_CONST: {
                     ConstType constant = decl.getDeclConst();
-                    constants.add(makeConst(registry, program.getProgramName(), constant));
+                    CConst cv = makeConst(registry, program.getProgramName(), constant);
+                    constants.add(cv);
+                    registry.registerConstant(cv.getName(), program.getProgramName(), cv.getDefaultValue());
                     break;
                 }
                 case DECL_TYPEDEF: {

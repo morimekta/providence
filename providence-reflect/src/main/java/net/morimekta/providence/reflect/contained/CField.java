@@ -106,6 +106,8 @@ public class CField implements PField, CAnnotatedDescriptor {
     public Object getDefaultValue() {
         try {
             return defaultValue != null ? defaultValue.get() : null;
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parse default value " + getName(), e);
         }

@@ -91,6 +91,8 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
                 writer.append(';')
                       .end();
 
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
                 throw new GeneratorException("Unable to generate constant " + program.getProgramName() + "." + c.getName(),
                                              e);
