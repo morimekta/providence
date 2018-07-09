@@ -230,12 +230,13 @@ public class CFieldTest {
                                   PRequirement.DEFAULT,
                                   "name",
                                   PPrimitive.I32.provider(),
-                                  () -> {throw new IllegalArgumentException();},
+                                  () -> {throw new IllegalArgumentException("Unable to parse default value name");},
                                   ImmutableMap.of("annot", "ation"));
         try {
             fieldDefault.getDefaultValue();
             fail("no exception");
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             assertThat(e.getMessage(), is("Unable to parse default value name"));
         }
     }

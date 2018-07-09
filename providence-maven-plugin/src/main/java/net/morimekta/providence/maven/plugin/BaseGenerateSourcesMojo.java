@@ -334,9 +334,9 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
 
             try {
-                if (skipIfMissingNamespace && registry.getProgram().getNamespaceForLanguage(factory.generatorName()) == null) {
-                    getLog().warn("Skipping (no " +  factory.generatorName() + " namespace) " +
-                                  base.relativize(in.toPath()));
+                if (skipIfMissingNamespace &&
+                    registry.getProgram().getNamespaceForLanguage(factory.generatorName()) == null) {
+                    getLog().warn("Skipping (no " + factory.generatorName() + " namespace) " + base.relativize(in.toPath()));
                     continue;
                 }
                 generator.generate(registry);
