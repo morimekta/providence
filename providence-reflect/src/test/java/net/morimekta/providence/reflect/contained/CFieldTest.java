@@ -236,7 +236,6 @@ public class CFieldTest {
             fieldDefault.getDefaultValue();
             fail("no exception");
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             assertThat(e.getMessage(), is("Unable to parse default value name"));
         }
     }
