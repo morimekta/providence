@@ -83,8 +83,8 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
             try {
                 String name = c.getName();
 
-                writer.formatln("public static final %s %s =", helper.getValueType(c.getDescriptor()), name)
-                      .begin("        ");
+                writer.formatln("public static final %s %s = ", helper.getValueType(c.getDescriptor()), name)
+                      .begin();
 
                 value.appendTypedValue(c.getDefaultValue(), c.getDescriptor());
 
