@@ -83,18 +83,13 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
             try {
                 String name = c.getName();
 
-                writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
-                      .appendln("static {")
-                      .begin()
-                      .formatln("%s = ", name)
-                      .begin();
+                writer.formatln("public static final %s %s =", helper.getValueType(c.getDescriptor()), name)
+                      .begin("        ");
 
                 value.appendTypedValue(c.getDefaultValue(), c.getDescriptor());
 
                 writer.append(';')
-                      .end()
-                      .end()
-                      .appendln('}');
+                      .end();
 
             } catch (Exception e) {
                 throw new GeneratorException("Unable to generate constant " + program.getProgramName() + "." + c.getName(),
