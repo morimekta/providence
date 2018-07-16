@@ -1,3 +1,4 @@
 ignore:
   - "**/it-*/**/*"
   - "**/providence-tools-*/**/*"
+  - "**/providence-generator-java/**/*"
