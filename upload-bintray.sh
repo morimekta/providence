@@ -39,6 +39,48 @@ curl -T providence-tools/target/providence-${pvd_version}_all.deb \
      -umorimekta:${BINTRAY_API_KEY} \
      https://api.bintray.com/content/morimekta/debian-ppa/providence/${pvd_version}/providence-${pvd_version}_all.deb;deb_distribution=stable;deb_component=main;deb_architecture=all
 
+curl -T providence-tools/target/rpm/providence/RPMS/noarch/providence-${pvd_version}-1.noarch.rpm \
+     -umorimekta:${BINTRAY_API_KEY} \
+     https://api.bintray.com/content/morimekta/yum-repo/providence/${pvd_version}/providence-${pvd_version}-1.noarch.rpm
+
 echo
-echo Now go to https://bintray.com/morimekta/debian-ppa/providence and publish the new file.
+echo "Now go to:"
+echo " - https://bintray.com/morimekta/debian-ppa/providence"
+echo " - https://bintray.com/morimekta/yum-repo/providence"
+echo "and publish the new files."
+echo
+
+SHA256SUM=$(curl -sL https://github.com/morimekta/providence/releases/download/v${pvd_version}/providence-tools-${pvd_version}.tar.gz --output - | \
+            sha256sum | \
+            sed 's/ .*//')
+
+if [[ -f "../homebrew-tools/Formula/providence.rb" ]]
+then
+
+cat <<EOF > ../homebrew-tools/Formula/providence.rb
+class Providence < Formula
+    desc "Providence Tools"
+    homepage "http://www.morimekta.net/providence"
+    version "${pvd_version}"
+    url "https://github.com/morimekta/providence/releases/download/v#{version}/providence-tools-#{version}.tar.gz"
+    sha256 "${SHA256SUM}"
+
+    depends_on :java => "1.8+"
+
+    def install
+        bin.install Dir["bin/*"]
+        share.install Dir["share/*"]
+    end
+end
+EOF
+
+    echo
+    echo "And go to ../homebrew-tools and commit and push changes."
+else
+    echo
+    echo "Please go to 'homebrew-tools/Formula/providence.rb' and set:
+    echo "    version ${pvd_version}"
+    echo "    sha256 ${SHA256SUM}"
+fi
+
 echo
