@@ -11,6 +11,11 @@ but with some differences and limitations.
 
 Note that providence **requires** java >= 8.
 
+## Getting Providence CLI
+
+See [here](http://www.morimekta.net/) for instructions on how to get morimekta.net
+produces binaries / CLI.
+
 ## Developer Setup
 
 In order to compile providence itself, you need the java 8 `java` and `javac`
@@ -18,7 +23,7 @@ commands (I recommend `openjdk8-jdk`), and `maven` (3.3). Then check out
 `git@github.com:morimekta/providence.git` and build with:
 
 ```bash
-mvn clean verify install
+mvn clean install
 ```
 
 There is also a `Makefile` for updating pre-compiled providence files, and
