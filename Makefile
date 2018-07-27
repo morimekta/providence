@@ -3,17 +3,25 @@ THRIFT_VERSION := $(shell cat pom.xml | grep ".*<thrift.version>" | sed -e 's:.*
 
 compile:
 	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
+	mvn -Dprovidence.main.input=github.com/morimekta/providence \
+	    net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 
 test-compile:
 	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
-	mvn -Dprovidence.gen.rw_binary=false -Dprovidence.test.input=src/test/no_rw_binary/**/*.thrift net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	mvn -Dprovidence.gen.rw_binary=false \
+	    -Dprovidence.test.input=src/test/no_rw_binary/**/*.thrift \
+	    net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 
 models: compile
-	rm -rf providence-reflect/src/main/model/*
-	mv providence-reflect/target/generated-sources/providence/* \
-	   providence-reflect/src/main/model/
 	mv providence-core/target/generated-sources/providence/net/morimekta/providence/* \
 	   providence-core/src/main/java/net/morimekta/providence
+
+	rm   -rf idl/src/main/java-gen/*
+	mkdir -p idl/src/main/java-gen/net/morimekta/providence/model
+	mv idl/target/generated-sources/providence/net/morimekta/providence/*.java \
+	   idl/src/main/java-gen/net/morimekta/providence
+	mv idl/target/generated-sources/providence/net/morimekta/providence/model/*.java \
+	   idl/src/main/java-gen/net/morimekta/providence/model
 
 test-models: test-compile
 	rm -rf providence-core/src/test/java-gen/*

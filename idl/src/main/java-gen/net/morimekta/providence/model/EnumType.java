@@ -1,47 +1,45 @@
 package net.morimekta.providence.model;
 
 /**
- * service (extends &lt;extend&gt;)? {
- *   (&lt;method&gt; [;,]?)*
+ * enum {
+ *   (&lt;value&gt; ([;,])?)*
  * }
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
 @javax.annotation.concurrent.Immutable
-public class ServiceType
-        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
-                   Comparable<ServiceType>,
+public class EnumType
+        implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
+                   Comparable<EnumType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 789757775761432238L;
+    private final static long serialVersionUID = 8606065416995048764L;
 
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FunctionType>()
+    private final static java.util.List<net.morimekta.providence.model.EnumValue> kDefaultValues = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.EnumValue>()
                 .build();
 
     private final transient String mDocumentation;
     private final transient String mName;
-    private final transient String mExtend;
-    private final transient java.util.List<net.morimekta.providence.model.FunctionType> mMethods;
+    private final transient java.util.List<net.morimekta.providence.model.EnumValue> mValues;
     private final transient java.util.Map<String,String> mAnnotations;
 
     private volatile transient int tHashCode;
 
     // Transient object used during java deserialization.
-    private transient ServiceType tSerializeInstance;
+    private transient EnumType tSerializeInstance;
 
-    private ServiceType(_Builder builder) {
+    private EnumType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         if (builder.isSetName()) {
             mName = builder.mName;
         } else {
             mName = kDefaultName;
         }
-        mExtend = builder.mExtend;
-        if (builder.isSetMethods()) {
-            mMethods = com.google.common.collect.ImmutableList.copyOf(builder.mMethods);
+        if (builder.isSetValues()) {
+            mValues = com.google.common.collect.ImmutableList.copyOf(builder.mValues);
         } else {
-            mMethods = kDefaultMethods;
+            mValues = kDefaultValues;
         }
         if (builder.isSetAnnotations()) {
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
@@ -81,30 +79,11 @@ public class ServiceType
         return mName;
     }
 
-    public boolean hasExtend() {
-        return mExtend != null;
+    public int numValues() {
+        return mValues != null ? mValues.size() : 0;
     }
 
-    /**
-     * @return The field value
-     */
-    public String getExtend() {
-        return mExtend;
-    }
-
-    /**
-     * @return Optional field value
-     */
-    @javax.annotation.Nonnull
-    public java.util.Optional<String> optionalExtend() {
-        return java.util.Optional.ofNullable(mExtend);
-    }
-
-    public int numMethods() {
-        return mMethods != null ? mMethods.size() : 0;
-    }
-
-    public boolean hasMethods() {
+    public boolean hasValues() {
         return true;
     }
 
@@ -112,8 +91,8 @@ public class ServiceType
      * @return The field value
      */
     @javax.annotation.Nonnull
-    public java.util.List<net.morimekta.providence.model.FunctionType> getMethods() {
-        return mMethods;
+    public java.util.List<net.morimekta.providence.model.EnumValue> getValues() {
+        return mValues;
     }
 
     public int numAnnotations() {
@@ -144,9 +123,8 @@ public class ServiceType
         switch(key) {
             case 1: return mDocumentation != null;
             case 2: return true;
-            case 3: return mExtend != null;
-            case 4: return true;
-            case 5: return mAnnotations != null;
+            case 3: return true;
+            case 4: return mAnnotations != null;
             default: return false;
         }
     }
@@ -157,9 +135,8 @@ public class ServiceType
         switch(key) {
             case 1: return (T) mDocumentation;
             case 2: return (T) mName;
-            case 3: return (T) mExtend;
-            case 4: return (T) mMethods;
-            case 5: return (T) mAnnotations;
+            case 3: return (T) mValues;
+            case 4: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -168,11 +145,10 @@ public class ServiceType
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        ServiceType other = (ServiceType) o;
+        EnumType other = (EnumType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
-               java.util.Objects.equals(mExtend, other.mExtend) &&
-               java.util.Objects.equals(mMethods, other.mMethods) &&
+               java.util.Objects.equals(mValues, other.mValues) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
@@ -180,11 +156,10 @@ public class ServiceType
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    ServiceType.class,
+                    EnumType.class,
                     _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
-                    _Field.EXTEND, mExtend,
-                    _Field.METHODS, mMethods,
+                    _Field.VALUES, mValues,
                     _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
@@ -192,7 +167,7 @@ public class ServiceType
 
     @Override
     public String toString() {
-        return "model.ServiceType" + asString();
+        return "providence_model.EnumType" + asString();
     }
 
     @Override
@@ -214,16 +189,9 @@ public class ServiceType
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mName))
            .append('\"');
-        if (hasExtend()) {
-            out.append(',');
-            out.append("extend:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mExtend))
-               .append('\"');
-        }
         out.append(',');
-        out.append("methods:")
-           .append(net.morimekta.util.Strings.asString(mMethods));
+        out.append("values:")
+           .append(net.morimekta.util.Strings.asString(mValues));
         if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
@@ -234,7 +202,7 @@ public class ServiceType
     }
 
     @Override
-    public int compareTo(ServiceType other) {
+    public int compareTo(EnumType other) {
         int c;
 
         c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
@@ -247,14 +215,7 @@ public class ServiceType
         c = mName.compareTo(other.mName);
         if (c != 0) return c;
 
-        c = Boolean.compare(mExtend != null, other.mExtend != null);
-        if (c != 0) return c;
-        if (mExtend != null) {
-            c = mExtend.compareTo(other.mExtend);
-            if (c != 0) return c;
-        }
-
-        c = Integer.compare(mMethods.hashCode(), other.mMethods.hashCode());
+        c = Integer.compare(mValues.hashCode(), other.mValues.hashCode());
         if (c != 0) return c;
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
@@ -302,35 +263,27 @@ public class ServiceType
         length += writer.writeUInt32(tmp_2.length());
         length += writer.writeBinary(tmp_2);
 
-        if (hasExtend()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 3);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mExtend.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_3.length());
-            length += writer.writeBinary(tmp_3);
-        }
-
         length += writer.writeByte((byte) 15);
-        length += writer.writeShort((short) 4);
+        length += writer.writeShort((short) 3);
         length += writer.writeByte((byte) 12);
-        length += writer.writeUInt32(mMethods.size());
-        for (net.morimekta.providence.model.FunctionType entry_4 : mMethods) {
-            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_4);
+        length += writer.writeUInt32(mValues.size());
+        for (net.morimekta.providence.model.EnumValue entry_3 : mValues) {
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_3);
         }
 
         if (hasAnnotations()) {
             length += writer.writeByte((byte) 13);
-            length += writer.writeShort((short) 5);
+            length += writer.writeShort((short) 4);
             length += writer.writeByte((byte) 11);
             length += writer.writeByte((byte) 11);
             length += writer.writeUInt32(mAnnotations.size());
-            for (java.util.Map.Entry<String,String> entry_5 : mAnnotations.entrySet()) {
-                net.morimekta.util.Binary tmp_6 = net.morimekta.util.Binary.wrap(entry_5.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            for (java.util.Map.Entry<String,String> entry_4 : mAnnotations.entrySet()) {
+                net.morimekta.util.Binary tmp_5 = net.morimekta.util.Binary.wrap(entry_4.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_5.length());
+                length += writer.writeBinary(tmp_5);
+                net.morimekta.util.Binary tmp_6 = net.morimekta.util.Binary.wrap(entry_4.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 length += writer.writeUInt32(tmp_6.length());
                 length += writer.writeBinary(tmp_6);
-                net.morimekta.util.Binary tmp_7 = net.morimekta.util.Binary.wrap(entry_5.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                length += writer.writeUInt32(tmp_7.length());
-                length += writer.writeBinary(tmp_7);
             }
         }
 
@@ -347,9 +300,8 @@ public class ServiceType
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        EXTEND(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FunctionType.provider()), null),
-        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        VALUES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "values", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.EnumValue.provider()), null),
+        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mId;
@@ -399,9 +351,8 @@ public class ServiceType
             switch (id) {
                 case 1: return _Field.DOCUMENTATION;
                 case 2: return _Field.NAME;
-                case 3: return _Field.EXTEND;
-                case 4: return _Field.METHODS;
-                case 5: return _Field.ANNOTATIONS;
+                case 3: return _Field.VALUES;
+                case 4: return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -414,8 +365,7 @@ public class ServiceType
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
                 case "name": return _Field.NAME;
-                case "extend": return _Field.EXTEND;
-                case "methods": return _Field.METHODS;
+                case "values": return _Field.VALUES;
                 case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
@@ -428,7 +378,7 @@ public class ServiceType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in model.ServiceType");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.EnumType");
             }
             return field;
         }
@@ -441,7 +391,7 @@ public class ServiceType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in model.ServiceType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.EnumType");
             }
             return field;
         }
@@ -449,22 +399,22 @@ public class ServiceType
     }
 
     @javax.annotation.Nonnull
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<EnumType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
     @javax.annotation.Nonnull
-    public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> {
         public _Descriptor() {
-            super("model", "ServiceType", _Builder::new, false);
+            super("providence_model", "EnumType", _Builder::new, false);
         }
 
         @Override
@@ -490,15 +440,15 @@ public class ServiceType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<EnumType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a model.ServiceType builder.
+     * Make a providence_model.EnumType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -506,38 +456,37 @@ public class ServiceType
     }
 
     /**
-     * service (extends &lt;extend&gt;)? {
-     *   (&lt;method&gt; [;,]?)*
+     * enum {
+     *   (&lt;value&gt; ([;,])?)*
      * }
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field>
+            extends net.morimekta.providence.PMessageBuilder<EnumType,_Field>
             implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
         private String mDocumentation;
         private String mName;
-        private String mExtend;
-        private java.util.List<net.morimekta.providence.model.FunctionType> mMethods;
+        private java.util.List<net.morimekta.providence.model.EnumValue> mValues;
         private java.util.Map<String,String> mAnnotations;
 
         /**
-         * Make a model.ServiceType builder.
+         * Make a providence_model.EnumType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(5);
-            modified = new java.util.BitSet(5);
+            optionals = new java.util.BitSet(4);
+            modified = new java.util.BitSet(4);
             mName = kDefaultName;
-            mMethods = kDefaultMethods;
+            mValues = kDefaultValues;
         }
 
         /**
-         * Make a mutating builder off a base model.ServiceType.
+         * Make a mutating builder off a base providence_model.EnumType.
          *
-         * @param base The base ServiceType
+         * @param base The base EnumType
          */
-        public _Builder(ServiceType base) {
+        public _Builder(EnumType base) {
             this();
 
             if (base.hasDocumentation()) {
@@ -546,21 +495,17 @@ public class ServiceType
             }
             optionals.set(1);
             mName = base.mName;
-            if (base.hasExtend()) {
-                optionals.set(2);
-                mExtend = base.mExtend;
-            }
-            optionals.set(3);
-            mMethods = base.mMethods;
+            optionals.set(2);
+            mValues = base.mValues;
             if (base.hasAnnotations()) {
-                optionals.set(4);
+                optionals.set(3);
                 mAnnotations = base.mAnnotations;
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(ServiceType from) {
+        public _Builder merge(EnumType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
                 modified.set(0);
@@ -571,19 +516,13 @@ public class ServiceType
             modified.set(1);
             mName = from.getName();
 
-            if (from.hasExtend()) {
-                optionals.set(2);
-                modified.set(2);
-                mExtend = from.getExtend();
-            }
-
-            optionals.set(3);
-            modified.set(3);
-            mMethods = from.getMethods();
+            optionals.set(2);
+            modified.set(2);
+            mValues = from.getValues();
 
             if (from.hasAnnotations()) {
-                optionals.set(4);
-                modified.set(4);
+                optionals.set(3);
+                modified.set(3);
                 mutableAnnotations().putAll(from.getAnnotations());
             }
             return this;
@@ -706,145 +645,87 @@ public class ServiceType
         }
 
         /**
-         * Sets the value of extend.
+         * Sets the value of values.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setExtend(String value) {
+        public _Builder setValues(java.util.Collection<net.morimekta.providence.model.EnumValue> value) {
             if (value == null) {
-                return clearExtend();
+                return clearValues();
             }
 
             optionals.set(2);
             modified.set(2);
-            mExtend = value;
+            mValues = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
         /**
-         * Checks for presence of the extend field.
-         *
-         * @return True if extend has been set.
-         */
-        public boolean isSetExtend() {
-            return optionals.get(2);
-        }
-
-        /**
-         * Checks if extend has been modified since the _Builder was created.
-         *
-         * @return True if extend has been modified.
-         */
-        public boolean isModifiedExtend() {
-            return modified.get(2);
-        }
-
-        /**
-         * Clears the extend field.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearExtend() {
-            optionals.clear(2);
-            modified.set(2);
-            mExtend = null;
-            return this;
-        }
-
-        /**
-         * Gets the value of the contained extend.
-         *
-         * @return The field value
-         */
-        public String getExtend() {
-            return mExtend;
-        }
-
-        /**
-         * Sets the value of methods.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.FunctionType> value) {
-            if (value == null) {
-                return clearMethods();
-            }
-
-            optionals.set(3);
-            modified.set(3);
-            mMethods = com.google.common.collect.ImmutableList.copyOf(value);
-            return this;
-        }
-
-        /**
-         * Adds entries to methods.
+         * Adds entries to values.
          *
          * @param values The added value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToMethods(net.morimekta.providence.model.FunctionType... values) {
-            optionals.set(3);
-            modified.set(3);
-            java.util.List<net.morimekta.providence.model.FunctionType> _container = mutableMethods();
-            for (net.morimekta.providence.model.FunctionType item : values) {
+        public _Builder addToValues(net.morimekta.providence.model.EnumValue... values) {
+            optionals.set(2);
+            modified.set(2);
+            java.util.List<net.morimekta.providence.model.EnumValue> _container = mutableValues();
+            for (net.morimekta.providence.model.EnumValue item : values) {
                 _container.add(item);
             }
             return this;
         }
 
         /**
-         * Checks for presence of the methods field.
+         * Checks for presence of the values field.
          *
-         * @return True if methods has been set.
+         * @return True if values has been set.
          */
-        public boolean isSetMethods() {
-            return optionals.get(3);
+        public boolean isSetValues() {
+            return optionals.get(2);
         }
 
         /**
-         * Checks if methods has been modified since the _Builder was created.
+         * Checks if values has been modified since the _Builder was created.
          *
-         * @return True if methods has been modified.
+         * @return True if values has been modified.
          */
-        public boolean isModifiedMethods() {
-            return modified.get(3);
+        public boolean isModifiedValues() {
+            return modified.get(2);
         }
 
         /**
-         * Clears the methods field.
+         * Clears the values field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearMethods() {
-            optionals.clear(3);
-            modified.set(3);
-            mMethods = kDefaultMethods;
+        public _Builder clearValues() {
+            optionals.clear(2);
+            modified.set(2);
+            mValues = kDefaultValues;
             return this;
         }
 
         /**
-         * Gets the builder for the contained methods.
+         * Gets the builder for the contained values.
          *
          * @return The field builder
          */
         @javax.annotation.Nonnull
-        public java.util.List<net.morimekta.providence.model.FunctionType> mutableMethods() {
-            optionals.set(3);
-            modified.set(3);
+        public java.util.List<net.morimekta.providence.model.EnumValue> mutableValues() {
+            optionals.set(2);
+            modified.set(2);
 
-            if (mMethods == null) {
-                mMethods = new java.util.ArrayList<>();
-            } else if (!(mMethods instanceof java.util.ArrayList)) {
-                mMethods = new java.util.ArrayList<>(mMethods);
+            if (mValues == null) {
+                mValues = new java.util.ArrayList<>();
+            } else if (!(mValues instanceof java.util.ArrayList)) {
+                mValues = new java.util.ArrayList<>(mValues);
             }
-            return mMethods;
+            return mValues;
         }
 
         /**
@@ -859,8 +740,8 @@ public class ServiceType
                 return clearAnnotations();
             }
 
-            optionals.set(4);
-            modified.set(4);
+            optionals.set(3);
+            modified.set(3);
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
@@ -874,8 +755,8 @@ public class ServiceType
          */
         @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
-            optionals.set(4);
-            modified.set(4);
+            optionals.set(3);
+            modified.set(3);
             mutableAnnotations().put(key, value);
             return this;
         }
@@ -886,7 +767,7 @@ public class ServiceType
          * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
-            return optionals.get(4);
+            return optionals.get(3);
         }
 
         /**
@@ -895,7 +776,7 @@ public class ServiceType
          * @return True if annotations has been modified.
          */
         public boolean isModifiedAnnotations() {
-            return modified.get(4);
+            return modified.get(3);
         }
 
         /**
@@ -905,8 +786,8 @@ public class ServiceType
          */
         @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
-            optionals.clear(4);
-            modified.set(4);
+            optionals.clear(3);
+            modified.set(3);
             mAnnotations = null;
             return this;
         }
@@ -918,8 +799,8 @@ public class ServiceType
          */
         @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
-            optionals.set(4);
-            modified.set(4);
+            optionals.set(3);
+            modified.set(3);
 
             if (mAnnotations == null) {
                 mAnnotations = new java.util.TreeMap<>();
@@ -933,23 +814,21 @@ public class ServiceType
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            ServiceType._Builder other = (ServiceType._Builder) o;
+            EnumType._Builder other = (EnumType._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                    java.util.Objects.equals(mName, other.mName) &&
-                   java.util.Objects.equals(mExtend, other.mExtend) &&
-                   java.util.Objects.equals(mMethods, other.mMethods) &&
+                   java.util.Objects.equals(mValues, other.mValues) &&
                    java.util.Objects.equals(mAnnotations, other.mAnnotations);
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    ServiceType.class, optionals,
+                    EnumType.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
-                    _Field.EXTEND, mExtend,
-                    _Field.METHODS, mMethods,
+                    _Field.VALUES, mValues,
                     _Field.ANNOTATIONS, mAnnotations);
         }
 
@@ -969,9 +848,8 @@ public class ServiceType
             switch (key) {
                 case 1: setDocumentation((String) value); break;
                 case 2: setName((String) value); break;
-                case 3: setExtend((String) value); break;
-                case 4: setMethods((java.util.List<net.morimekta.providence.model.FunctionType>) value); break;
-                case 5: setAnnotations((java.util.Map<String,String>) value); break;
+                case 3: setValues((java.util.List<net.morimekta.providence.model.EnumValue>) value); break;
+                case 4: setAnnotations((java.util.Map<String,String>) value); break;
                 default: break;
             }
             return this;
@@ -984,7 +862,6 @@ public class ServiceType
                 case 2: return optionals.get(1);
                 case 3: return optionals.get(2);
                 case 4: return optionals.get(3);
-                case 5: return optionals.get(4);
                 default: break;
             }
             return false;
@@ -997,7 +874,6 @@ public class ServiceType
                 case 2: return modified.get(1);
                 case 3: return modified.get(2);
                 case 4: return modified.get(3);
-                case 5: return modified.get(4);
                 default: break;
             }
             return false;
@@ -1006,7 +882,7 @@ public class ServiceType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 4: addToMethods((net.morimekta.providence.model.FunctionType) value); break;
+                case 3: addToValues((net.morimekta.providence.model.EnumValue) value); break;
                 default: break;
             }
             return this;
@@ -1018,9 +894,8 @@ public class ServiceType
             switch (key) {
                 case 1: clearDocumentation(); break;
                 case 2: clearName(); break;
-                case 3: clearExtend(); break;
-                case 4: clearMethods(); break;
-                case 5: clearAnnotations(); break;
+                case 3: clearValues(); break;
+                case 4: clearAnnotations(); break;
                 default: break;
             }
             return this;
@@ -1043,13 +918,13 @@ public class ServiceType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message model.ServiceType");
+                        " in message providence_model.EnumType");
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
         }
 
@@ -1065,7 +940,7 @@ public class ServiceType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ServiceType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.EnumType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1075,64 +950,54 @@ public class ServiceType
                             mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ServiceType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.EnumType.name, should be struct(12)");
                         }
                         break;
                     }
                     case 3: {
-                        if (type == 11) {
-                            int len_3 = reader.expectUInt32();
-                            mExtend = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
+                        if (type == 15) {
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.EnumValue> b_3 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_5 = reader.expectByte();
+                            if (t_5 == 12) {
+                                final int len_4 = reader.expectUInt32();
+                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
+                                    net.morimekta.providence.model.EnumValue key_7 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumValue.kDescriptor, strict);
+                                    b_3.add(key_7);
+                                }
+                                mValues = b_3.build();
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_5) + " for providence_model.EnumType.values, should be struct(12)");
+                            }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ServiceType.extend, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.EnumType.values, should be struct(12)");
                         }
                         break;
                     }
                     case 4: {
-                        if (type == 15) {
-                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FunctionType> b_4 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
-                            byte t_6 = reader.expectByte();
-                            if (t_6 == 12) {
-                                final int len_5 = reader.expectUInt32();
-                                for (int i_7 = 0; i_7 < len_5; ++i_7) {
-                                    net.morimekta.providence.model.FunctionType key_8 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FunctionType.kDescriptor, strict);
-                                    b_4.add(key_8);
+                        if (type == 13) {
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_8 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_10 = reader.expectByte();
+                            byte t_11 = reader.expectByte();
+                            if (t_10 == 11 && t_11 == 11) {
+                                final int len_9 = reader.expectUInt32();
+                                for (int i_12 = 0; i_12 < len_9; ++i_12) {
+                                    int len_15 = reader.expectUInt32();
+                                    String key_13 = new String(reader.expectBytes(len_15), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_16 = reader.expectUInt32();
+                                    String val_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_8.put(key_13, val_14);
                                 }
-                                mMethods = b_4.build();
+                                mAnnotations = b_8.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_6) + " for model.ServiceType.methods, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException(
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_10) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
+                                        " for providence_model.EnumType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ServiceType.methods, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 5: {
-                        if (type == 13) {
-                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_9 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
-                            byte t_11 = reader.expectByte();
-                            byte t_12 = reader.expectByte();
-                            if (t_11 == 11 && t_12 == 11) {
-                                final int len_10 = reader.expectUInt32();
-                                for (int i_13 = 0; i_13 < len_10; ++i_13) {
-                                    int len_16 = reader.expectUInt32();
-                                    String key_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_17 = reader.expectUInt32();
-                                    String val_15 = new String(reader.expectBytes(len_17), java.nio.charset.StandardCharsets.UTF_8);
-                                    b_9.put(key_14, val_15);
-                                }
-                                mAnnotations = b_9.build();
-                            } else {
-                                throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
-                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_12) +
-                                        " for model.ServiceType.annotations, should be string(11) and string(11)");
-                            }
-                            optionals.set(4);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ServiceType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.EnumType.annotations, should be struct(12)");
                         }
                         break;
                     }
@@ -1146,8 +1011,8 @@ public class ServiceType
         }
 
         @Override
-        public ServiceType build() {
-            return new ServiceType(this);
+        public EnumType build() {
+            return new EnumType(this);
         }
     }
 }

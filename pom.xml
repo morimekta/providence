@@ -145,6 +145,11 @@
                 <artifactId>providence-core-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-idl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
@@ -901,6 +906,7 @@
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
                 <module>providence-core-jackson</module>
+                <module>idl</module>
 
                 <!-- Tooling Modules -->
                 <module>providence-reflect</module>
@@ -1005,6 +1011,7 @@
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
                 <module>providence-core-jackson</module>
+                <module>idl</module>
 
                 <!-- Tooling Modules -->
                 <module>providence-reflect</module>

@@ -8,11 +8,11 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/providence</directory>
+            <directory>${project.basedir}/github.com/morimekta/providence</directory>
             <includes>
                 <include>*.thrift</include>
             </includes>
-            <outputDirectory>net/morimekta/providence/providence-core</outputDirectory>
+            <outputDirectory>net/morimekta/providence/providence-idl</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>

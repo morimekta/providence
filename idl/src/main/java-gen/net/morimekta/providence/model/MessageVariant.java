@@ -79,7 +79,7 @@ public enum MessageVariant
     public static MessageVariant valueForId(int id) {
         MessageVariant value = findById(id);
         if (value == null) {
-            throw new IllegalArgumentException("No model.MessageVariant for id " + id);
+            throw new IllegalArgumentException("No providence_model.MessageVariant for id " + id);
         }
         return value;
     }
@@ -95,7 +95,7 @@ public enum MessageVariant
     public static MessageVariant valueForName(String name) {
         MessageVariant value = findByName(name);
         if (value == null) {
-            throw new IllegalArgumentException("No model.MessageVariant for name \"" + name + "\"");
+            throw new IllegalArgumentException("No providence_model.MessageVariant for name \"" + name + "\"");
         }
         return value;
     }
@@ -142,7 +142,7 @@ public enum MessageVariant
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<MessageVariant> {
         public _Descriptor() {
-            super("model", "MessageVariant", _Builder::new);
+            super("providence_model", "MessageVariant", _Builder::new);
         }
 
         @Override

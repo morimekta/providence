@@ -25,8 +25,6 @@ public class InclusionTest {
         assertEquals("{\n" +
                      "  program = {\n" +
                      "    program_name = \"program\"\n" +
-                     "    namespaces = {}\n" +
-                     "    decl = []\n" +
                      "  }\n" +
                      "}",
                      ProvidenceHelper.debugString(prog));

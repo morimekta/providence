@@ -126,8 +126,8 @@ public class ProgramConverter {
                     registry.register(type);
                     break;
                 }
-                case DECL_STRUCT: {
-                    MessageType messageType = decl.getDeclStruct();
+                case DECL_MESSAGE: {
+                    MessageType messageType = decl.getDeclMessage();
 
                     List<CField> fields = new ArrayList<>();
                     if (messageType.hasFields()) {

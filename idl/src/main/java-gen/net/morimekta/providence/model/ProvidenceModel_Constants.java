@@ -12,8 +12,8 @@ package net.morimekta.providence.model;
  */
 @javax.annotation.Generated("providence-maven-plugin")
 @SuppressWarnings("unused")
-public class Model_Constants {
-    private Model_Constants() {}
+public class ProvidenceModel_Constants {
+    private ProvidenceModel_Constants() {}
 
     public static final java.util.Set<String> kThriftKeywords = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<String>()
             .add("struct")

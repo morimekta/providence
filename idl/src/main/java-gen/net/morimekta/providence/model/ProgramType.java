@@ -11,9 +11,11 @@ public class ProgramType
                    Comparable<ProgramType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 2224801959218006031L;
+    private final static long serialVersionUID = 2735035679923797653L;
 
     private final static String kDefaultProgramName = "";
+    private final static java.util.List<String> kDefaultIncludes = new net.morimekta.providence.descriptor.PList.DefaultBuilder<String>()
+                .build();
     private final static java.util.Map<String,String> kDefaultNamespaces = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,String>()
                 .build();
     private final static java.util.List<net.morimekta.providence.model.Declaration> kDefaultDecl = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.Declaration>()
@@ -45,12 +47,12 @@ public class ProgramType
         if (builder.isSetNamespaces()) {
             mNamespaces = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mNamespaces);
         } else {
-            mNamespaces = kDefaultNamespaces;
+            mNamespaces = null;
         }
         if (builder.isSetDecl()) {
             mDecl = com.google.common.collect.ImmutableList.copyOf(builder.mDecl);
         } else {
-            mDecl = kDefaultDecl;
+            mDecl = null;
         }
     }
 
@@ -107,7 +109,7 @@ public class ProgramType
      * @return The field value
      */
     public java.util.List<String> getIncludes() {
-        return mIncludes;
+        return hasIncludes() ? mIncludes : kDefaultIncludes;
     }
 
     /**
@@ -127,7 +129,7 @@ public class ProgramType
     }
 
     public boolean hasNamespaces() {
-        return true;
+        return mNamespaces != null;
     }
 
     /**
@@ -137,9 +139,20 @@ public class ProgramType
      *
      * @return The field value
      */
-    @javax.annotation.Nonnull
     public java.util.Map<String,String> getNamespaces() {
-        return mNamespaces;
+        return hasNamespaces() ? mNamespaces : kDefaultNamespaces;
+    }
+
+    /**
+     * Map of language to laguage dependent namespace identifier.
+     * <p>
+     * namespace &lt;key&gt; &lt;value&gt;
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.Map<String,String>> optionalNamespaces() {
+        return java.util.Optional.ofNullable(mNamespaces);
     }
 
     public int numDecl() {
@@ -147,7 +160,7 @@ public class ProgramType
     }
 
     public boolean hasDecl() {
-        return true;
+        return mDecl != null;
     }
 
     /**
@@ -155,9 +168,18 @@ public class ProgramType
      *
      * @return The field value
      */
-    @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
-        return mDecl;
+        return hasDecl() ? mDecl : kDefaultDecl;
+    }
+
+    /**
+     * List of declarations in the program file. Same order as in the thrift file.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<java.util.List<net.morimekta.providence.model.Declaration>> optionalDecl() {
+        return java.util.Optional.ofNullable(mDecl);
     }
 
     @Override
@@ -166,8 +188,8 @@ public class ProgramType
             case 1: return mDocumentation != null;
             case 2: return true;
             case 3: return mIncludes != null;
-            case 4: return true;
-            case 5: return true;
+            case 4: return mNamespaces != null;
+            case 5: return mDecl != null;
             default: return false;
         }
     }
@@ -213,7 +235,7 @@ public class ProgramType
 
     @Override
     public String toString() {
-        return "model.ProgramType" + asString();
+        return "providence_model.ProgramType" + asString();
     }
 
     @Override
@@ -240,12 +262,16 @@ public class ProgramType
             out.append("includes:")
                .append(net.morimekta.util.Strings.asString(mIncludes));
         }
-        out.append(',');
-        out.append("namespaces:")
-           .append(net.morimekta.util.Strings.asString(mNamespaces));
-        out.append(',');
-        out.append("decl:")
-           .append(net.morimekta.util.Strings.asString(mDecl));
+        if (hasNamespaces()) {
+            out.append(',');
+            out.append("namespaces:")
+               .append(net.morimekta.util.Strings.asString(mNamespaces));
+        }
+        if (hasDecl()) {
+            out.append(',');
+            out.append("decl:")
+               .append(net.morimekta.util.Strings.asString(mDecl));
+        }
         out.append('}');
         return out.toString();
     }
@@ -271,11 +297,19 @@ public class ProgramType
             if (c != 0) return c;
         }
 
-        c = Integer.compare(mNamespaces.hashCode(), other.mNamespaces.hashCode());
+        c = Boolean.compare(mNamespaces != null, other.mNamespaces != null);
         if (c != 0) return c;
+        if (mNamespaces != null) {
+            c = Integer.compare(mNamespaces.hashCode(), other.mNamespaces.hashCode());
+            if (c != 0) return c;
+        }
 
-        c = Integer.compare(mDecl.hashCode(), other.mDecl.hashCode());
+        c = Boolean.compare(mDecl != null, other.mDecl != null);
         if (c != 0) return c;
+        if (mDecl != null) {
+            c = Integer.compare(mDecl.hashCode(), other.mDecl.hashCode());
+            if (c != 0) return c;
+        }
 
         return 0;
     }
@@ -327,26 +361,30 @@ public class ProgramType
             }
         }
 
-        length += writer.writeByte((byte) 13);
-        length += writer.writeShort((short) 4);
-        length += writer.writeByte((byte) 11);
-        length += writer.writeByte((byte) 11);
-        length += writer.writeUInt32(mNamespaces.size());
-        for (java.util.Map.Entry<String,String> entry_5 : mNamespaces.entrySet()) {
-            net.morimekta.util.Binary tmp_6 = net.morimekta.util.Binary.wrap(entry_5.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_6.length());
-            length += writer.writeBinary(tmp_6);
-            net.morimekta.util.Binary tmp_7 = net.morimekta.util.Binary.wrap(entry_5.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_7.length());
-            length += writer.writeBinary(tmp_7);
+        if (hasNamespaces()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 4);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mNamespaces.size());
+            for (java.util.Map.Entry<String,String> entry_5 : mNamespaces.entrySet()) {
+                net.morimekta.util.Binary tmp_6 = net.morimekta.util.Binary.wrap(entry_5.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_6.length());
+                length += writer.writeBinary(tmp_6);
+                net.morimekta.util.Binary tmp_7 = net.morimekta.util.Binary.wrap(entry_5.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_7.length());
+                length += writer.writeBinary(tmp_7);
+            }
         }
 
-        length += writer.writeByte((byte) 15);
-        length += writer.writeShort((short) 5);
-        length += writer.writeByte((byte) 12);
-        length += writer.writeUInt32(mDecl.size());
-        for (net.morimekta.providence.model.Declaration entry_8 : mDecl) {
-            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_8);
+        if (hasDecl()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 5);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mDecl.size());
+            for (net.morimekta.providence.model.Declaration entry_8 : mDecl) {
+                length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_8);
+            }
         }
 
         length += writer.writeByte((byte) 0);
@@ -362,9 +400,9 @@ public class ProgramType
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         PROGRAM_NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "program_name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        INCLUDES(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "includes", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "namespaces", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        DECL(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.Declaration.provider()), null),
+        INCLUDES(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "includes", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultIncludes)),
+        NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "namespaces", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultNamespaces)),
+        DECL(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.Declaration.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultDecl)),
         ;
 
         private final int mId;
@@ -443,7 +481,7 @@ public class ProgramType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in model.ProgramType");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ProgramType");
             }
             return field;
         }
@@ -456,7 +494,7 @@ public class ProgramType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in model.ProgramType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ProgramType");
             }
             return field;
         }
@@ -479,7 +517,7 @@ public class ProgramType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> {
         public _Descriptor() {
-            super("model", "ProgramType", _Builder::new, false);
+            super("providence_model", "ProgramType", _Builder::new, false);
         }
 
         @Override
@@ -513,7 +551,7 @@ public class ProgramType
     }
 
     /**
-     * Make a model.ProgramType builder.
+     * Make a providence_model.ProgramType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -536,18 +574,16 @@ public class ProgramType
         private java.util.List<net.morimekta.providence.model.Declaration> mDecl;
 
         /**
-         * Make a model.ProgramType builder.
+         * Make a providence_model.ProgramType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mProgramName = kDefaultProgramName;
-            mNamespaces = kDefaultNamespaces;
-            mDecl = kDefaultDecl;
         }
 
         /**
-         * Make a mutating builder off a base model.ProgramType.
+         * Make a mutating builder off a base providence_model.ProgramType.
          *
          * @param base The base ProgramType
          */
@@ -564,10 +600,14 @@ public class ProgramType
                 optionals.set(2);
                 mIncludes = base.mIncludes;
             }
-            optionals.set(3);
-            mNamespaces = base.mNamespaces;
-            optionals.set(4);
-            mDecl = base.mDecl;
+            if (base.hasNamespaces()) {
+                optionals.set(3);
+                mNamespaces = base.mNamespaces;
+            }
+            if (base.hasDecl()) {
+                optionals.set(4);
+                mDecl = base.mDecl;
+            }
         }
 
         @javax.annotation.Nonnull
@@ -589,13 +629,17 @@ public class ProgramType
                 mIncludes = from.getIncludes();
             }
 
-            optionals.set(3);
-            modified.set(3);
-            mutableNamespaces().putAll(from.getNamespaces());
+            if (from.hasNamespaces()) {
+                optionals.set(3);
+                modified.set(3);
+                mutableNamespaces().putAll(from.getNamespaces());
+            }
 
-            optionals.set(4);
-            modified.set(4);
-            mDecl = from.getDecl();
+            if (from.hasDecl()) {
+                optionals.set(4);
+                modified.set(4);
+                mDecl = from.getDecl();
+            }
             return this;
         }
 
@@ -881,7 +925,7 @@ public class ProgramType
         public _Builder clearNamespaces() {
             optionals.clear(3);
             modified.set(3);
-            mNamespaces = kDefaultNamespaces;
+            mNamespaces = null;
             return this;
         }
 
@@ -967,7 +1011,7 @@ public class ProgramType
         public _Builder clearDecl() {
             optionals.clear(4);
             modified.set(4);
-            mDecl = kDefaultDecl;
+            mDecl = null;
             return this;
         }
 
@@ -1104,7 +1148,7 @@ public class ProgramType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message model.ProgramType");
+                        " in message providence_model.ProgramType");
             }
         }
 
@@ -1126,7 +1170,7 @@ public class ProgramType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ProgramType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1136,7 +1180,7 @@ public class ProgramType
                             mProgramName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ProgramType.program_name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramType.program_name, should be struct(12)");
                         }
                         break;
                     }
@@ -1153,11 +1197,11 @@ public class ProgramType
                                 }
                                 mIncludes = b_3.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_5) + " for model.ProgramType.includes, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_5) + " for providence_model.ProgramType.includes, should be string(11)");
                             }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ProgramType.includes, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramType.includes, should be struct(12)");
                         }
                         break;
                     }
@@ -1180,11 +1224,11 @@ public class ProgramType
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_12) +
-                                        " for model.ProgramType.namespaces, should be string(11) and string(11)");
+                                        " for providence_model.ProgramType.namespaces, should be string(11) and string(11)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ProgramType.namespaces, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramType.namespaces, should be struct(12)");
                         }
                         break;
                     }
@@ -1200,11 +1244,11 @@ public class ProgramType
                                 }
                                 mDecl = b_18.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_20) + " for model.ProgramType.decl, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_20) + " for providence_model.ProgramType.decl, should be struct(12)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ProgramType.decl, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramType.decl, should be struct(12)");
                         }
                         break;
                     }

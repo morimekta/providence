@@ -11,11 +11,11 @@ public class Declaration
                    Comparable<Declaration>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -6998763195276182553L;
+    private final static long serialVersionUID = 6735853549980473725L;
 
     private final transient net.morimekta.providence.model.EnumType mDeclEnum;
     private final transient net.morimekta.providence.model.TypedefType mDeclTypedef;
-    private final transient net.morimekta.providence.model.MessageType mDeclStruct;
+    private final transient net.morimekta.providence.model.MessageType mDeclMessage;
     private final transient net.morimekta.providence.model.ServiceType mDeclService;
     private final transient net.morimekta.providence.model.ConstType mDeclConst;
 
@@ -62,16 +62,16 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
-    public static Declaration withDeclStruct(net.morimekta.providence.model.MessageType value) {
-        return new _Builder().setDeclStruct(value).build();
+    public static Declaration withDeclMessage(net.morimekta.providence.model.MessageType value) {
+        return new _Builder().setDeclMessage(value).build();
     }
 
     /**
      * @param value The union value
      * @return The created union.
      */
-    public static Declaration withDeclStruct(net.morimekta.providence.model.MessageType._Builder value) {
-        return withDeclStruct(value == null ? null : value.build());
+    public static Declaration withDeclMessage(net.morimekta.providence.model.MessageType._Builder value) {
+        return withDeclMessage(value == null ? null : value.build());
     }
 
     /**
@@ -115,9 +115,9 @@ public class Declaration
         mDeclTypedef = tUnionField != _Field.DECL_TYPEDEF
                 ? null
                 : builder.mDeclTypedef_builder != null ? builder.mDeclTypedef_builder.build() : builder.mDeclTypedef;
-        mDeclStruct = tUnionField != _Field.DECL_STRUCT
+        mDeclMessage = tUnionField != _Field.DECL_MESSAGE
                 ? null
-                : builder.mDeclStruct_builder != null ? builder.mDeclStruct_builder.build() : builder.mDeclStruct;
+                : builder.mDeclMessage_builder != null ? builder.mDeclMessage_builder.build() : builder.mDeclMessage;
         mDeclService = tUnionField != _Field.DECL_SERVICE
                 ? null
                 : builder.mDeclService_builder != null ? builder.mDeclService_builder.build() : builder.mDeclService;
@@ -164,23 +164,23 @@ public class Declaration
         return java.util.Optional.ofNullable(mDeclTypedef);
     }
 
-    public boolean hasDeclStruct() {
-        return tUnionField == _Field.DECL_STRUCT && mDeclStruct != null;
+    public boolean hasDeclMessage() {
+        return tUnionField == _Field.DECL_MESSAGE && mDeclMessage != null;
     }
 
     /**
      * @return The field value
      */
-    public net.morimekta.providence.model.MessageType getDeclStruct() {
-        return mDeclStruct;
+    public net.morimekta.providence.model.MessageType getDeclMessage() {
+        return mDeclMessage;
     }
 
     /**
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.Optional<net.morimekta.providence.model.MessageType> optionalDeclStruct() {
-        return java.util.Optional.ofNullable(mDeclStruct);
+    public java.util.Optional<net.morimekta.providence.model.MessageType> optionalDeclMessage() {
+        return java.util.Optional.ofNullable(mDeclMessage);
     }
 
     public boolean hasDeclService() {
@@ -226,7 +226,7 @@ public class Declaration
         switch(key) {
             case 1: return tUnionField == _Field.DECL_ENUM;
             case 2: return tUnionField == _Field.DECL_TYPEDEF;
-            case 3: return tUnionField == _Field.DECL_STRUCT;
+            case 3: return tUnionField == _Field.DECL_MESSAGE;
             case 4: return tUnionField == _Field.DECL_SERVICE;
             case 5: return tUnionField == _Field.DECL_CONST;
             default: return false;
@@ -239,7 +239,7 @@ public class Declaration
         switch(key) {
             case 1: return (T) mDeclEnum;
             case 2: return (T) mDeclTypedef;
-            case 3: return (T) mDeclStruct;
+            case 3: return (T) mDeclMessage;
             case 4: return (T) mDeclService;
             case 5: return (T) mDeclConst;
             default: return null;
@@ -254,7 +254,7 @@ public class Declaration
     @Override
     @javax.annotation.Nonnull
     public _Field unionField() {
-        if (tUnionField == null) throw new IllegalStateException("No union field set in model.Declaration");
+        if (tUnionField == null) throw new IllegalStateException("No union field set in providence_model.Declaration");
         return tUnionField;
     }
 
@@ -266,7 +266,7 @@ public class Declaration
         return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                java.util.Objects.equals(mDeclEnum, other.mDeclEnum) &&
                java.util.Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
-               java.util.Objects.equals(mDeclStruct, other.mDeclStruct) &&
+               java.util.Objects.equals(mDeclMessage, other.mDeclMessage) &&
                java.util.Objects.equals(mDeclService, other.mDeclService) &&
                java.util.Objects.equals(mDeclConst, other.mDeclConst);
     }
@@ -278,7 +278,7 @@ public class Declaration
                     Declaration.class,
                     _Field.DECL_ENUM, mDeclEnum,
                     _Field.DECL_TYPEDEF, mDeclTypedef,
-                    _Field.DECL_STRUCT, mDeclStruct,
+                    _Field.DECL_MESSAGE, mDeclMessage,
                     _Field.DECL_SERVICE, mDeclService,
                     _Field.DECL_CONST, mDeclConst);
         }
@@ -287,7 +287,7 @@ public class Declaration
 
     @Override
     public String toString() {
-        return "model.Declaration" + asString();
+        return "providence_model.Declaration" + asString();
     }
 
     @Override
@@ -307,9 +307,9 @@ public class Declaration
                    .append(mDeclTypedef.asString());
                 break;
             }
-            case DECL_STRUCT: {
-                out.append("decl_struct:")
-                   .append(mDeclStruct.asString());
+            case DECL_MESSAGE: {
+                out.append("decl_message:")
+                   .append(mDeclMessage.asString());
                 break;
             }
             case DECL_SERVICE: {
@@ -338,8 +338,8 @@ public class Declaration
                 return mDeclEnum.compareTo(other.mDeclEnum);
             case DECL_TYPEDEF:
                 return mDeclTypedef.compareTo(other.mDeclTypedef);
-            case DECL_STRUCT:
-                return mDeclStruct.compareTo(other.mDeclStruct);
+            case DECL_MESSAGE:
+                return mDeclMessage.compareTo(other.mDeclMessage);
             case DECL_SERVICE:
                 return mDeclService.compareTo(other.mDeclService);
             case DECL_CONST:
@@ -383,10 +383,10 @@ public class Declaration
                     length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclTypedef);
                     break;
                 }
-                case DECL_STRUCT: {
+                case DECL_MESSAGE: {
                     length += writer.writeByte((byte) 12);
                     length += writer.writeShort((short) 3);
-                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclStruct);
+                    length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mDeclMessage);
                     break;
                 }
                 case DECL_SERVICE: {
@@ -417,7 +417,7 @@ public class Declaration
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DECL_ENUM(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_enum", net.morimekta.providence.model.EnumType.provider(), null),
         DECL_TYPEDEF(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_typedef", net.morimekta.providence.model.TypedefType.provider(), null),
-        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_struct", net.morimekta.providence.model.MessageType.provider(), null),
+        DECL_MESSAGE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_message", net.morimekta.providence.model.MessageType.provider(), null),
         DECL_SERVICE(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_service", net.morimekta.providence.model.ServiceType.provider(), null),
         DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_const", net.morimekta.providence.model.ConstType.provider(), null),
         ;
@@ -469,7 +469,7 @@ public class Declaration
             switch (id) {
                 case 1: return _Field.DECL_ENUM;
                 case 2: return _Field.DECL_TYPEDEF;
-                case 3: return _Field.DECL_STRUCT;
+                case 3: return _Field.DECL_MESSAGE;
                 case 4: return _Field.DECL_SERVICE;
                 case 5: return _Field.DECL_CONST;
             }
@@ -484,7 +484,7 @@ public class Declaration
             switch (name) {
                 case "decl_enum": return _Field.DECL_ENUM;
                 case "decl_typedef": return _Field.DECL_TYPEDEF;
-                case "decl_struct": return _Field.DECL_STRUCT;
+                case "decl_message": return _Field.DECL_MESSAGE;
                 case "decl_service": return _Field.DECL_SERVICE;
                 case "decl_const": return _Field.DECL_CONST;
             }
@@ -498,7 +498,7 @@ public class Declaration
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in model.Declaration");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.Declaration");
             }
             return field;
         }
@@ -511,7 +511,7 @@ public class Declaration
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in model.Declaration");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.Declaration");
             }
             return field;
         }
@@ -534,7 +534,7 @@ public class Declaration
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> {
         public _Descriptor() {
-            super("model", "Declaration", _Builder::new, false);
+            super("providence_model", "Declaration", _Builder::new, false);
         }
 
         @Override
@@ -568,7 +568,7 @@ public class Declaration
     }
 
     /**
-     * Make a model.Declaration builder.
+     * Make a providence_model.Declaration builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -589,22 +589,22 @@ public class Declaration
         private net.morimekta.providence.model.EnumType._Builder mDeclEnum_builder;
         private net.morimekta.providence.model.TypedefType mDeclTypedef;
         private net.morimekta.providence.model.TypedefType._Builder mDeclTypedef_builder;
-        private net.morimekta.providence.model.MessageType mDeclStruct;
-        private net.morimekta.providence.model.MessageType._Builder mDeclStruct_builder;
+        private net.morimekta.providence.model.MessageType mDeclMessage;
+        private net.morimekta.providence.model.MessageType._Builder mDeclMessage_builder;
         private net.morimekta.providence.model.ServiceType mDeclService;
         private net.morimekta.providence.model.ServiceType._Builder mDeclService_builder;
         private net.morimekta.providence.model.ConstType mDeclConst;
         private net.morimekta.providence.model.ConstType._Builder mDeclConst_builder;
 
         /**
-         * Make a model.Declaration builder.
+         * Make a providence_model.Declaration builder.
          */
         public _Builder() {
             modified = false;
         }
 
         /**
-         * Make a mutating builder off a base model.Declaration.
+         * Make a mutating builder off a base providence_model.Declaration.
          *
          * @param base The base Declaration
          */
@@ -615,7 +615,7 @@ public class Declaration
 
             mDeclEnum = base.mDeclEnum;
             mDeclTypedef = base.mDeclTypedef;
-            mDeclStruct = base.mDeclStruct;
+            mDeclMessage = base.mDeclMessage;
             mDeclService = base.mDeclService;
             mDeclConst = base.mDeclConst;
         }
@@ -644,11 +644,11 @@ public class Declaration
                     }
                     break;
                 }
-                case DECL_STRUCT: {
-                    if (tUnionField == _Field.DECL_STRUCT && mDeclStruct != null) {
-                        mDeclStruct = mDeclStruct.mutate().merge(from.getDeclStruct()).build();
+                case DECL_MESSAGE: {
+                    if (tUnionField == _Field.DECL_MESSAGE && mDeclMessage != null) {
+                        mDeclMessage = mDeclMessage.mutate().merge(from.getDeclMessage()).build();
                     } else {
-                        setDeclStruct(from.getDeclStruct());
+                        setDeclMessage(from.getDeclMessage());
                     }
                     break;
                 }
@@ -855,94 +855,94 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_struct.
+         * Sets the value of decl_message.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setDeclStruct(net.morimekta.providence.model.MessageType value) {
+        public _Builder setDeclMessage(net.morimekta.providence.model.MessageType value) {
             if (value == null) {
-                return clearDeclStruct();
+                return clearDeclMessage();
             }
 
-            tUnionField = _Field.DECL_STRUCT;
+            tUnionField = _Field.DECL_MESSAGE;
             modified = true;
-            mDeclStruct = value;
-            mDeclStruct_builder = null;
+            mDeclMessage = value;
+            mDeclMessage_builder = null;
             return this;
         }
 
         /**
-         * Sets the value of decl_struct.
+         * Sets the value of decl_message.
          *
          * @param builder builder for the new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setDeclStruct(net.morimekta.providence.model.MessageType._Builder builder) {
-          return setDeclStruct(builder == null ? null : builder.build());
+        public _Builder setDeclMessage(net.morimekta.providence.model.MessageType._Builder builder) {
+          return setDeclMessage(builder == null ? null : builder.build());
         }
 
         /**
-         * Checks for presence of the decl_struct field.
+         * Checks for presence of the decl_message field.
          *
-         * @return True if decl_struct has been set.
+         * @return True if decl_message has been set.
          */
-        public boolean isSetDeclStruct() {
-            return tUnionField == _Field.DECL_STRUCT;
+        public boolean isSetDeclMessage() {
+            return tUnionField == _Field.DECL_MESSAGE;
         }
 
         /**
-         * Clears the decl_struct field.
+         * Clears the decl_message field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearDeclStruct() {
-            if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
+        public _Builder clearDeclMessage() {
+            if (tUnionField == _Field.DECL_MESSAGE) tUnionField = null;
             modified = true;
-            mDeclStruct = null;
-            mDeclStruct_builder = null;
+            mDeclMessage = null;
+            mDeclMessage_builder = null;
             return this;
         }
 
         /**
-         * Gets the builder for the contained decl_struct.
+         * Gets the builder for the contained decl_message.
          *
          * @return The field builder
          */
         @javax.annotation.Nonnull
-        public net.morimekta.providence.model.MessageType._Builder mutableDeclStruct() {
-            if (tUnionField != _Field.DECL_STRUCT) {
-                clearDeclStruct();
+        public net.morimekta.providence.model.MessageType._Builder mutableDeclMessage() {
+            if (tUnionField != _Field.DECL_MESSAGE) {
+                clearDeclMessage();
             }
-            tUnionField = _Field.DECL_STRUCT;
+            tUnionField = _Field.DECL_MESSAGE;
             modified = true;
 
-            if (mDeclStruct != null) {
-                mDeclStruct_builder = mDeclStruct.mutate();
-                mDeclStruct = null;
-            } else if (mDeclStruct_builder == null) {
-                mDeclStruct_builder = net.morimekta.providence.model.MessageType.builder();
+            if (mDeclMessage != null) {
+                mDeclMessage_builder = mDeclMessage.mutate();
+                mDeclMessage = null;
+            } else if (mDeclMessage_builder == null) {
+                mDeclMessage_builder = net.morimekta.providence.model.MessageType.builder();
             }
-            return mDeclStruct_builder;
+            return mDeclMessage_builder;
         }
 
         /**
-         * Gets the value for the contained decl_struct.
+         * Gets the value for the contained decl_message.
          *
          * @return The field value
          */
-        public net.morimekta.providence.model.MessageType getDeclStruct() {
-            if (tUnionField != _Field.DECL_STRUCT) {
+        public net.morimekta.providence.model.MessageType getDeclMessage() {
+            if (tUnionField != _Field.DECL_MESSAGE) {
                 return null;
             }
 
-            if (mDeclStruct_builder != null) {
-                return mDeclStruct_builder.build();
+            if (mDeclMessage_builder != null) {
+                return mDeclMessage_builder.build();
             }
-            return mDeclStruct;
+            return mDeclMessage;
         }
 
         /**
@@ -1144,7 +1144,7 @@ public class Declaration
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                    java.util.Objects.equals(getDeclEnum(), other.getDeclEnum()) &&
                    java.util.Objects.equals(getDeclTypedef(), other.getDeclTypedef()) &&
-                   java.util.Objects.equals(getDeclStruct(), other.getDeclStruct()) &&
+                   java.util.Objects.equals(getDeclMessage(), other.getDeclMessage()) &&
                    java.util.Objects.equals(getDeclService(), other.getDeclService()) &&
                    java.util.Objects.equals(getDeclConst(), other.getDeclConst());
         }
@@ -1155,7 +1155,7 @@ public class Declaration
                     Declaration.class,
                     _Field.DECL_ENUM, getDeclEnum(),
                     _Field.DECL_TYPEDEF, getDeclTypedef(),
-                    _Field.DECL_STRUCT, getDeclStruct(),
+                    _Field.DECL_MESSAGE, getDeclMessage(),
                     _Field.DECL_SERVICE, getDeclService(),
                     _Field.DECL_CONST, getDeclConst());
         }
@@ -1166,7 +1166,7 @@ public class Declaration
             switch (key) {
                 case 1: return mutableDeclEnum();
                 case 2: return mutableDeclTypedef();
-                case 3: return mutableDeclStruct();
+                case 3: return mutableDeclMessage();
                 case 4: return mutableDeclService();
                 case 5: return mutableDeclConst();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
@@ -1181,7 +1181,7 @@ public class Declaration
             switch (key) {
                 case 1: setDeclEnum((net.morimekta.providence.model.EnumType) value); break;
                 case 2: setDeclTypedef((net.morimekta.providence.model.TypedefType) value); break;
-                case 3: setDeclStruct((net.morimekta.providence.model.MessageType) value); break;
+                case 3: setDeclMessage((net.morimekta.providence.model.MessageType) value); break;
                 case 4: setDeclService((net.morimekta.providence.model.ServiceType) value); break;
                 case 5: setDeclConst((net.morimekta.providence.model.ConstType) value); break;
                 default: break;
@@ -1194,7 +1194,7 @@ public class Declaration
             switch (key) {
                 case 1: return tUnionField == _Field.DECL_ENUM;
                 case 2: return tUnionField == _Field.DECL_TYPEDEF;
-                case 3: return tUnionField == _Field.DECL_STRUCT;
+                case 3: return tUnionField == _Field.DECL_MESSAGE;
                 case 4: return tUnionField == _Field.DECL_SERVICE;
                 case 5: return tUnionField == _Field.DECL_CONST;
                 default: break;
@@ -1221,7 +1221,7 @@ public class Declaration
             switch (key) {
                 case 1: clearDeclEnum(); break;
                 case 2: clearDeclTypedef(); break;
-                case 3: clearDeclStruct(); break;
+                case 3: clearDeclMessage(); break;
                 case 4: clearDeclService(); break;
                 case 5: clearDeclConst(); break;
                 default: break;
@@ -1238,7 +1238,7 @@ public class Declaration
             switch (tUnionField) {
                 case DECL_ENUM: return mDeclEnum != null || mDeclEnum_builder != null;
                 case DECL_TYPEDEF: return mDeclTypedef != null || mDeclTypedef_builder != null;
-                case DECL_STRUCT: return mDeclStruct != null || mDeclStruct_builder != null;
+                case DECL_MESSAGE: return mDeclMessage != null || mDeclMessage_builder != null;
                 case DECL_SERVICE: return mDeclService != null || mDeclService_builder != null;
                 case DECL_CONST: return mDeclConst != null || mDeclConst_builder != null;
                 default: return true;
@@ -1248,7 +1248,7 @@ public class Declaration
         @Override
         public void validate() {
             if (!valid()) {
-                throw new java.lang.IllegalStateException("No union field set in model.Declaration");
+                throw new java.lang.IllegalStateException("No union field set in providence_model.Declaration");
             }
         }
 
@@ -1269,7 +1269,7 @@ public class Declaration
                             mDeclEnum = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumType.kDescriptor, strict);
                             tUnionField = _Field.DECL_ENUM;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_enum, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_enum, should be struct(12)");
                         }
                         break;
                     }
@@ -1278,16 +1278,16 @@ public class Declaration
                             mDeclTypedef = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.TypedefType.kDescriptor, strict);
                             tUnionField = _Field.DECL_TYPEDEF;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_typedef, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_typedef, should be struct(12)");
                         }
                         break;
                     }
                     case 3: {
                         if (type == 12) {
-                            mDeclStruct = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.MessageType.kDescriptor, strict);
-                            tUnionField = _Field.DECL_STRUCT;
+                            mDeclMessage = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.MessageType.kDescriptor, strict);
+                            tUnionField = _Field.DECL_MESSAGE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_struct, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_message, should be struct(12)");
                         }
                         break;
                     }
@@ -1296,7 +1296,7 @@ public class Declaration
                             mDeclService = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ServiceType.kDescriptor, strict);
                             tUnionField = _Field.DECL_SERVICE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_service, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_service, should be struct(12)");
                         }
                         break;
                     }
@@ -1305,7 +1305,7 @@ public class Declaration
                             mDeclConst = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ConstType.kDescriptor, strict);
                             tUnionField = _Field.DECL_CONST;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.Declaration.decl_const, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_const, should be struct(12)");
                         }
                         break;
                     }

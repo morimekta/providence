@@ -1,61 +1,55 @@
 package net.morimekta.providence.model;
 
 /**
- * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
+ * service (extends &lt;extend&gt;)? {
+ *   (&lt;method&gt; [;,]?)*
+ * }
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
 @javax.annotation.concurrent.Immutable
-public class ConstType
-        implements net.morimekta.providence.PMessage<ConstType,ConstType._Field>,
-                   Comparable<ConstType>,
+public class ServiceType
+        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
+                   Comparable<ServiceType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -7030319550715264712L;
+    private final static long serialVersionUID = 1299991496467223860L;
 
-    private final static String kDefaultType = "";
     private final static String kDefaultName = "";
-    private final static String kDefaultValue = "";
-    private final static int kDefaultStartLineNo = 0;
-    private final static int kDefaultStartLinePos = 0;
+    private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FunctionType>()
+                .build();
+    private final static java.util.Map<String,String> kDefaultAnnotations = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,String>()
+                .build();
 
     private final transient String mDocumentation;
-    private final transient String mType;
     private final transient String mName;
-    private final transient String mValue;
+    private final transient String mExtend;
+    private final transient java.util.List<net.morimekta.providence.model.FunctionType> mMethods;
     private final transient java.util.Map<String,String> mAnnotations;
-    private final transient Integer mStartLineNo;
-    private final transient Integer mStartLinePos;
 
     private volatile transient int tHashCode;
 
     // Transient object used during java deserialization.
-    private transient ConstType tSerializeInstance;
+    private transient ServiceType tSerializeInstance;
 
-    private ConstType(_Builder builder) {
+    private ServiceType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        if (builder.isSetType()) {
-            mType = builder.mType;
-        } else {
-            mType = kDefaultType;
-        }
         if (builder.isSetName()) {
             mName = builder.mName;
         } else {
             mName = kDefaultName;
         }
-        if (builder.isSetValue()) {
-            mValue = builder.mValue;
+        mExtend = builder.mExtend;
+        if (builder.isSetMethods()) {
+            mMethods = com.google.common.collect.ImmutableList.copyOf(builder.mMethods);
         } else {
-            mValue = kDefaultValue;
+            mMethods = kDefaultMethods;
         }
         if (builder.isSetAnnotations()) {
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
-        mStartLineNo = builder.mStartLineNo;
-        mStartLinePos = builder.mStartLinePos;
     }
 
     public boolean hasDocumentation() {
@@ -77,18 +71,6 @@ public class ConstType
         return java.util.Optional.ofNullable(mDocumentation);
     }
 
-    public boolean hasType() {
-        return true;
-    }
-
-    /**
-     * @return The field value
-     */
-    @javax.annotation.Nonnull
-    public String getType() {
-        return mType;
-    }
-
     public boolean hasName() {
         return true;
     }
@@ -101,7 +83,30 @@ public class ConstType
         return mName;
     }
 
-    public boolean hasValue() {
+    public boolean hasExtend() {
+        return mExtend != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public String getExtend() {
+        return mExtend;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<String> optionalExtend() {
+        return java.util.Optional.ofNullable(mExtend);
+    }
+
+    public int numMethods() {
+        return mMethods != null ? mMethods.size() : 0;
+    }
+
+    public boolean hasMethods() {
         return true;
     }
 
@@ -109,8 +114,8 @@ public class ConstType
      * @return The field value
      */
     @javax.annotation.Nonnull
-    public String getValue() {
-        return mValue;
+    public java.util.List<net.morimekta.providence.model.FunctionType> getMethods() {
+        return mMethods;
     }
 
     public int numAnnotations() {
@@ -125,7 +130,7 @@ public class ConstType
      * @return The field value
      */
     public java.util.Map<String,String> getAnnotations() {
-        return mAnnotations;
+        return hasAnnotations() ? mAnnotations : kDefaultAnnotations;
     }
 
     /**
@@ -136,60 +141,14 @@ public class ConstType
         return java.util.Optional.ofNullable(mAnnotations);
     }
 
-    public boolean hasStartLineNo() {
-        return mStartLineNo != null;
-    }
-
-    /**
-     * Note the start of the const in the parsed thrift file, this can be used
-     * for making more accurate exception / parse data from the const parser.
-     *
-     * @return The field value
-     */
-    public int getStartLineNo() {
-        return hasStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
-    }
-
-    /**
-     * Note the start of the const in the parsed thrift file, this can be used
-     * for making more accurate exception / parse data from the const parser.
-     *
-     * @return Optional field value
-     */
-    @javax.annotation.Nonnull
-    public java.util.OptionalInt optionalStartLineNo() {
-        return hasStartLineNo() ? java.util.OptionalInt.of(mStartLineNo) : java.util.OptionalInt.empty();
-    }
-
-    public boolean hasStartLinePos() {
-        return mStartLinePos != null;
-    }
-
-    /**
-     * @return The field value
-     */
-    public int getStartLinePos() {
-        return hasStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
-    }
-
-    /**
-     * @return Optional field value
-     */
-    @javax.annotation.Nonnull
-    public java.util.OptionalInt optionalStartLinePos() {
-        return hasStartLinePos() ? java.util.OptionalInt.of(mStartLinePos) : java.util.OptionalInt.empty();
-    }
-
     @Override
     public boolean has(int key) {
         switch(key) {
             case 1: return mDocumentation != null;
+            case 2: return true;
+            case 3: return mExtend != null;
             case 4: return true;
-            case 5: return true;
-            case 6: return true;
-            case 7: return mAnnotations != null;
-            case 10: return mStartLineNo != null;
-            case 11: return mStartLinePos != null;
+            case 5: return mAnnotations != null;
             default: return false;
         }
     }
@@ -199,12 +158,10 @@ public class ConstType
     public <T> T get(int key) {
         switch(key) {
             case 1: return (T) mDocumentation;
-            case 4: return (T) mType;
-            case 5: return (T) mName;
-            case 6: return (T) mValue;
-            case 7: return (T) mAnnotations;
-            case 10: return (T) mStartLineNo;
-            case 11: return (T) mStartLinePos;
+            case 2: return (T) mName;
+            case 3: return (T) mExtend;
+            case 4: return (T) mMethods;
+            case 5: return (T) mAnnotations;
             default: return null;
         }
     }
@@ -213,35 +170,31 @@ public class ConstType
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        ConstType other = (ConstType) o;
+        ServiceType other = (ServiceType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-               java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
-               java.util.Objects.equals(mValue, other.mValue) &&
-               java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
-               java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
-               java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
+               java.util.Objects.equals(mExtend, other.mExtend) &&
+               java.util.Objects.equals(mMethods, other.mMethods) &&
+               java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    ConstType.class,
+                    ServiceType.class,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, mAnnotations,
-                    _Field.START_LINE_NO, mStartLineNo,
-                    _Field.START_LINE_POS, mStartLinePos);
+                    _Field.EXTEND, mExtend,
+                    _Field.METHODS, mMethods,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
 
     @Override
     public String toString() {
-        return "model.ConstType" + asString();
+        return "providence_model.ServiceType" + asString();
     }
 
     @Override
@@ -259,41 +212,31 @@ public class ConstType
                .append('\"');
         }
         if (!first) out.append(',');
-        out.append("type:")
-           .append('\"')
-           .append(net.morimekta.util.Strings.escape(mType))
-           .append('\"');
-        out.append(',');
         out.append("name:")
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mName))
            .append('\"');
+        if (hasExtend()) {
+            out.append(',');
+            out.append("extend:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mExtend))
+               .append('\"');
+        }
         out.append(',');
-        out.append("value:")
-           .append('\"')
-           .append(net.morimekta.util.Strings.escape(mValue))
-           .append('\"');
+        out.append("methods:")
+           .append(net.morimekta.util.Strings.asString(mMethods));
         if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
-        }
-        if (hasStartLineNo()) {
-            out.append(',');
-            out.append("start_line_no:")
-               .append(mStartLineNo);
-        }
-        if (hasStartLinePos()) {
-            out.append(',');
-            out.append("start_line_pos:")
-               .append(mStartLinePos);
         }
         out.append('}');
         return out.toString();
     }
 
     @Override
-    public int compareTo(ConstType other) {
+    public int compareTo(ServiceType other) {
         int c;
 
         c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
@@ -303,33 +246,23 @@ public class ConstType
             if (c != 0) return c;
         }
 
-        c = mType.compareTo(other.mType);
-        if (c != 0) return c;
-
         c = mName.compareTo(other.mName);
         if (c != 0) return c;
 
-        c = mValue.compareTo(other.mValue);
+        c = Boolean.compare(mExtend != null, other.mExtend != null);
+        if (c != 0) return c;
+        if (mExtend != null) {
+            c = mExtend.compareTo(other.mExtend);
+            if (c != 0) return c;
+        }
+
+        c = Integer.compare(mMethods.hashCode(), other.mMethods.hashCode());
         if (c != 0) return c;
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
         if (mAnnotations != null) {
             c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
-            if (c != 0) return c;
-        }
-
-        c = Boolean.compare(mStartLineNo != null, other.mStartLineNo != null);
-        if (c != 0) return c;
-        if (mStartLineNo != null) {
-            c = Integer.compare(mStartLineNo, other.mStartLineNo);
-            if (c != 0) return c;
-        }
-
-        c = Boolean.compare(mStartLinePos != null, other.mStartLinePos != null);
-        if (c != 0) return c;
-        if (mStartLinePos != null) {
-            c = Integer.compare(mStartLinePos, other.mStartLinePos);
             if (c != 0) return c;
         }
 
@@ -366,26 +299,30 @@ public class ConstType
         }
 
         length += writer.writeByte((byte) 11);
-        length += writer.writeShort((short) 4);
-        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         length += writer.writeUInt32(tmp_2.length());
         length += writer.writeBinary(tmp_2);
 
-        length += writer.writeByte((byte) 11);
-        length += writer.writeShort((short) 5);
-        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        length += writer.writeUInt32(tmp_3.length());
-        length += writer.writeBinary(tmp_3);
+        if (hasExtend()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 3);
+            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mExtend.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_3.length());
+            length += writer.writeBinary(tmp_3);
+        }
 
-        length += writer.writeByte((byte) 11);
-        length += writer.writeShort((short) 6);
-        net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(mValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        length += writer.writeUInt32(tmp_4.length());
-        length += writer.writeBinary(tmp_4);
+        length += writer.writeByte((byte) 15);
+        length += writer.writeShort((short) 4);
+        length += writer.writeByte((byte) 12);
+        length += writer.writeUInt32(mMethods.size());
+        for (net.morimekta.providence.model.FunctionType entry_4 : mMethods) {
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_4);
+        }
 
         if (hasAnnotations()) {
             length += writer.writeByte((byte) 13);
-            length += writer.writeShort((short) 7);
+            length += writer.writeShort((short) 5);
             length += writer.writeByte((byte) 11);
             length += writer.writeByte((byte) 11);
             length += writer.writeUInt32(mAnnotations.size());
@@ -397,18 +334,6 @@ public class ConstType
                 length += writer.writeUInt32(tmp_7.length());
                 length += writer.writeBinary(tmp_7);
             }
-        }
-
-        if (hasStartLineNo()) {
-            length += writer.writeByte((byte) 8);
-            length += writer.writeShort((short) 10);
-            length += writer.writeInt(mStartLineNo);
-        }
-
-        if (hasStartLinePos()) {
-            length += writer.writeByte((byte) 8);
-            length += writer.writeShort((short) 11);
-            length += writer.writeInt(mStartLinePos);
         }
 
         length += writer.writeByte((byte) 0);
@@ -423,12 +348,10 @@ public class ConstType
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        START_LINE_NO(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_no", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        START_LINE_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_pos", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        EXTEND(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FunctionType.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultMethods)),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultAnnotations)),
         ;
 
         private final int mId;
@@ -477,12 +400,10 @@ public class ConstType
         public static _Field findById(int id) {
             switch (id) {
                 case 1: return _Field.DOCUMENTATION;
-                case 4: return _Field.TYPE;
-                case 5: return _Field.NAME;
-                case 6: return _Field.VALUE;
-                case 7: return _Field.ANNOTATIONS;
-                case 10: return _Field.START_LINE_NO;
-                case 11: return _Field.START_LINE_POS;
+                case 2: return _Field.NAME;
+                case 3: return _Field.EXTEND;
+                case 4: return _Field.METHODS;
+                case 5: return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -494,12 +415,10 @@ public class ConstType
         public static _Field findByName(String name) {
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
-                case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
-                case "value": return _Field.VALUE;
+                case "extend": return _Field.EXTEND;
+                case "methods": return _Field.METHODS;
                 case "annotations": return _Field.ANNOTATIONS;
-                case "start_line_no": return _Field.START_LINE_NO;
-                case "start_line_pos": return _Field.START_LINE_POS;
             }
             return null;
         }
@@ -511,7 +430,7 @@ public class ConstType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in model.ConstType");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ServiceType");
             }
             return field;
         }
@@ -524,7 +443,7 @@ public class ConstType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in model.ConstType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ServiceType");
             }
             return field;
         }
@@ -532,22 +451,22 @@ public class ConstType
     }
 
     @javax.annotation.Nonnull
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ConstType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
     @javax.annotation.Nonnull
-    public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> {
         public _Descriptor() {
-            super("model", "ConstType", _Builder::new, false);
+            super("providence_model", "ServiceType", _Builder::new, false);
         }
 
         @Override
@@ -573,15 +492,15 @@ public class ConstType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ConstType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a model.ConstType builder.
+     * Make a providence_model.ServiceType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -589,39 +508,38 @@ public class ConstType
     }
 
     /**
-     * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
+     * service (extends &lt;extend&gt;)? {
+     *   (&lt;method&gt; [;,]?)*
+     * }
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ConstType,_Field>
+            extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field>
             implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
         private String mDocumentation;
-        private String mType;
         private String mName;
-        private String mValue;
+        private String mExtend;
+        private java.util.List<net.morimekta.providence.model.FunctionType> mMethods;
         private java.util.Map<String,String> mAnnotations;
-        private Integer mStartLineNo;
-        private Integer mStartLinePos;
 
         /**
-         * Make a model.ConstType builder.
+         * Make a providence_model.ServiceType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(7);
-            modified = new java.util.BitSet(7);
-            mType = kDefaultType;
+            optionals = new java.util.BitSet(5);
+            modified = new java.util.BitSet(5);
             mName = kDefaultName;
-            mValue = kDefaultValue;
+            mMethods = kDefaultMethods;
         }
 
         /**
-         * Make a mutating builder off a base model.ConstType.
+         * Make a mutating builder off a base providence_model.ServiceType.
          *
-         * @param base The base ConstType
+         * @param base The base ServiceType
          */
-        public _Builder(ConstType base) {
+        public _Builder(ServiceType base) {
             this();
 
             if (base.hasDocumentation()) {
@@ -629,28 +547,22 @@ public class ConstType
                 mDocumentation = base.mDocumentation;
             }
             optionals.set(1);
-            mType = base.mType;
-            optionals.set(2);
             mName = base.mName;
+            if (base.hasExtend()) {
+                optionals.set(2);
+                mExtend = base.mExtend;
+            }
             optionals.set(3);
-            mValue = base.mValue;
+            mMethods = base.mMethods;
             if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations = base.mAnnotations;
-            }
-            if (base.hasStartLineNo()) {
-                optionals.set(5);
-                mStartLineNo = base.mStartLineNo;
-            }
-            if (base.hasStartLinePos()) {
-                optionals.set(6);
-                mStartLinePos = base.mStartLinePos;
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(ConstType from) {
+        public _Builder merge(ServiceType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
                 modified.set(0);
@@ -659,32 +571,22 @@ public class ConstType
 
             optionals.set(1);
             modified.set(1);
-            mType = from.getType();
-
-            optionals.set(2);
-            modified.set(2);
             mName = from.getName();
+
+            if (from.hasExtend()) {
+                optionals.set(2);
+                modified.set(2);
+                mExtend = from.getExtend();
+            }
 
             optionals.set(3);
             modified.set(3);
-            mValue = from.getValue();
+            mMethods = from.getMethods();
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
                 modified.set(4);
                 mutableAnnotations().putAll(from.getAnnotations());
-            }
-
-            if (from.hasStartLineNo()) {
-                optionals.set(5);
-                modified.set(5);
-                mStartLineNo = from.getStartLineNo();
-            }
-
-            if (from.hasStartLinePos()) {
-                optionals.set(6);
-                modified.set(6);
-                mStartLinePos = from.getStartLinePos();
             }
             return this;
         }
@@ -748,64 +650,6 @@ public class ConstType
         }
 
         /**
-         * Sets the value of type.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setType(String value) {
-            if (value == null) {
-                return clearType();
-            }
-
-            optionals.set(1);
-            modified.set(1);
-            mType = value;
-            return this;
-        }
-
-        /**
-         * Checks for presence of the type field.
-         *
-         * @return True if type has been set.
-         */
-        public boolean isSetType() {
-            return optionals.get(1);
-        }
-
-        /**
-         * Checks if type has been modified since the _Builder was created.
-         *
-         * @return True if type has been modified.
-         */
-        public boolean isModifiedType() {
-            return modified.get(1);
-        }
-
-        /**
-         * Clears the type field.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearType() {
-            optionals.clear(1);
-            modified.set(1);
-            mType = kDefaultType;
-            return this;
-        }
-
-        /**
-         * Gets the value of the contained type.
-         *
-         * @return The field value
-         */
-        public String getType() {
-            return mType;
-        }
-
-        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -817,8 +661,8 @@ public class ConstType
                 return clearName();
             }
 
-            optionals.set(2);
-            modified.set(2);
+            optionals.set(1);
+            modified.set(1);
             mName = value;
             return this;
         }
@@ -829,7 +673,7 @@ public class ConstType
          * @return True if name has been set.
          */
         public boolean isSetName() {
-            return optionals.get(2);
+            return optionals.get(1);
         }
 
         /**
@@ -838,7 +682,7 @@ public class ConstType
          * @return True if name has been modified.
          */
         public boolean isModifiedName() {
-            return modified.get(2);
+            return modified.get(1);
         }
 
         /**
@@ -848,8 +692,8 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder clearName() {
-            optionals.clear(2);
-            modified.set(2);
+            optionals.clear(1);
+            modified.set(1);
             mName = kDefaultName;
             return this;
         }
@@ -864,61 +708,145 @@ public class ConstType
         }
 
         /**
-         * Sets the value of value.
+         * Sets the value of extend.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setValue(String value) {
+        public _Builder setExtend(String value) {
             if (value == null) {
-                return clearValue();
+                return clearExtend();
             }
 
-            optionals.set(3);
-            modified.set(3);
-            mValue = value;
+            optionals.set(2);
+            modified.set(2);
+            mExtend = value;
             return this;
         }
 
         /**
-         * Checks for presence of the value field.
+         * Checks for presence of the extend field.
          *
-         * @return True if value has been set.
+         * @return True if extend has been set.
          */
-        public boolean isSetValue() {
-            return optionals.get(3);
+        public boolean isSetExtend() {
+            return optionals.get(2);
         }
 
         /**
-         * Checks if value has been modified since the _Builder was created.
+         * Checks if extend has been modified since the _Builder was created.
          *
-         * @return True if value has been modified.
+         * @return True if extend has been modified.
          */
-        public boolean isModifiedValue() {
-            return modified.get(3);
+        public boolean isModifiedExtend() {
+            return modified.get(2);
         }
 
         /**
-         * Clears the value field.
+         * Clears the extend field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearValue() {
-            optionals.clear(3);
-            modified.set(3);
-            mValue = kDefaultValue;
+        public _Builder clearExtend() {
+            optionals.clear(2);
+            modified.set(2);
+            mExtend = null;
             return this;
         }
 
         /**
-         * Gets the value of the contained value.
+         * Gets the value of the contained extend.
          *
          * @return The field value
          */
-        public String getValue() {
-            return mValue;
+        public String getExtend() {
+            return mExtend;
+        }
+
+        /**
+         * Sets the value of methods.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.FunctionType> value) {
+            if (value == null) {
+                return clearMethods();
+            }
+
+            optionals.set(3);
+            modified.set(3);
+            mMethods = com.google.common.collect.ImmutableList.copyOf(value);
+            return this;
+        }
+
+        /**
+         * Adds entries to methods.
+         *
+         * @param values The added value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder addToMethods(net.morimekta.providence.model.FunctionType... values) {
+            optionals.set(3);
+            modified.set(3);
+            java.util.List<net.morimekta.providence.model.FunctionType> _container = mutableMethods();
+            for (net.morimekta.providence.model.FunctionType item : values) {
+                _container.add(item);
+            }
+            return this;
+        }
+
+        /**
+         * Checks for presence of the methods field.
+         *
+         * @return True if methods has been set.
+         */
+        public boolean isSetMethods() {
+            return optionals.get(3);
+        }
+
+        /**
+         * Checks if methods has been modified since the _Builder was created.
+         *
+         * @return True if methods has been modified.
+         */
+        public boolean isModifiedMethods() {
+            return modified.get(3);
+        }
+
+        /**
+         * Clears the methods field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearMethods() {
+            optionals.clear(3);
+            modified.set(3);
+            mMethods = kDefaultMethods;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained methods.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public java.util.List<net.morimekta.providence.model.FunctionType> mutableMethods() {
+            optionals.set(3);
+            modified.set(3);
+
+            if (mMethods == null) {
+                mMethods = new java.util.ArrayList<>();
+            } else if (!(mMethods instanceof java.util.ArrayList)) {
+                mMethods = new java.util.ArrayList<>(mMethods);
+            }
+            return mMethods;
         }
 
         /**
@@ -1003,145 +931,28 @@ public class ConstType
             return mAnnotations;
         }
 
-        /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setStartLineNo(int value) {
-            optionals.set(5);
-            modified.set(5);
-            mStartLineNo = value;
-            return this;
-        }
-
-        /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
-         *
-         * @return True if start_line_no has been set.
-         */
-        public boolean isSetStartLineNo() {
-            return optionals.get(5);
-        }
-
-        /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
-         *
-         * @return True if start_line_no has been modified.
-         */
-        public boolean isModifiedStartLineNo() {
-            return modified.get(5);
-        }
-
-        /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearStartLineNo() {
-            optionals.clear(5);
-            modified.set(5);
-            mStartLineNo = null;
-            return this;
-        }
-
-        /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
-         *
-         * @return The field value
-         */
-        public int getStartLineNo() {
-            return isSetStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
-        }
-
-        /**
-         * Sets the value of start_line_pos.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setStartLinePos(int value) {
-            optionals.set(6);
-            modified.set(6);
-            mStartLinePos = value;
-            return this;
-        }
-
-        /**
-         * Checks for presence of the start_line_pos field.
-         *
-         * @return True if start_line_pos has been set.
-         */
-        public boolean isSetStartLinePos() {
-            return optionals.get(6);
-        }
-
-        /**
-         * Checks if start_line_pos has been modified since the _Builder was created.
-         *
-         * @return True if start_line_pos has been modified.
-         */
-        public boolean isModifiedStartLinePos() {
-            return modified.get(6);
-        }
-
-        /**
-         * Clears the start_line_pos field.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearStartLinePos() {
-            optionals.clear(6);
-            modified.set(6);
-            mStartLinePos = null;
-            return this;
-        }
-
-        /**
-         * Gets the value of the contained start_line_pos.
-         *
-         * @return The field value
-         */
-        public int getStartLinePos() {
-            return isSetStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            ConstType._Builder other = (ConstType._Builder) o;
+            ServiceType._Builder other = (ServiceType._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-                   java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mName, other.mName) &&
-                   java.util.Objects.equals(mValue, other.mValue) &&
-                   java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
-                   java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
-                   java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
+                   java.util.Objects.equals(mExtend, other.mExtend) &&
+                   java.util.Objects.equals(mMethods, other.mMethods) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    ConstType.class, optionals,
+                    ServiceType.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, mAnnotations,
-                    _Field.START_LINE_NO, mStartLineNo,
-                    _Field.START_LINE_POS, mStartLinePos);
+                    _Field.EXTEND, mExtend,
+                    _Field.METHODS, mMethods,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override
@@ -1159,12 +970,10 @@ public class ConstType
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setDocumentation((String) value); break;
-                case 4: setType((String) value); break;
-                case 5: setName((String) value); break;
-                case 6: setValue((String) value); break;
-                case 7: setAnnotations((java.util.Map<String,String>) value); break;
-                case 10: setStartLineNo((int) value); break;
-                case 11: setStartLinePos((int) value); break;
+                case 2: setName((String) value); break;
+                case 3: setExtend((String) value); break;
+                case 4: setMethods((java.util.List<net.morimekta.providence.model.FunctionType>) value); break;
+                case 5: setAnnotations((java.util.Map<String,String>) value); break;
                 default: break;
             }
             return this;
@@ -1174,12 +983,10 @@ public class ConstType
         public boolean isSet(int key) {
             switch (key) {
                 case 1: return optionals.get(0);
-                case 4: return optionals.get(1);
-                case 5: return optionals.get(2);
-                case 6: return optionals.get(3);
-                case 7: return optionals.get(4);
-                case 10: return optionals.get(5);
-                case 11: return optionals.get(6);
+                case 2: return optionals.get(1);
+                case 3: return optionals.get(2);
+                case 4: return optionals.get(3);
+                case 5: return optionals.get(4);
                 default: break;
             }
             return false;
@@ -1189,12 +996,10 @@ public class ConstType
         public boolean isModified(int key) {
             switch (key) {
                 case 1: return modified.get(0);
-                case 4: return modified.get(1);
-                case 5: return modified.get(2);
-                case 6: return modified.get(3);
-                case 7: return modified.get(4);
-                case 10: return modified.get(5);
-                case 11: return modified.get(6);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
                 default: break;
             }
             return false;
@@ -1203,6 +1008,7 @@ public class ConstType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
+                case 4: addToMethods((net.morimekta.providence.model.FunctionType) value); break;
                 default: break;
             }
             return this;
@@ -1213,12 +1019,10 @@ public class ConstType
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearDocumentation(); break;
-                case 4: clearType(); break;
-                case 5: clearName(); break;
-                case 6: clearValue(); break;
-                case 7: clearAnnotations(); break;
-                case 10: clearStartLineNo(); break;
-                case 11: clearStartLinePos(); break;
+                case 2: clearName(); break;
+                case 3: clearExtend(); break;
+                case 4: clearMethods(); break;
+                case 5: clearAnnotations(); break;
                 default: break;
             }
             return this;
@@ -1226,9 +1030,7 @@ public class ConstType
 
         @Override
         public boolean valid() {
-            return optionals.get(1) &&
-                   optionals.get(2) &&
-                   optionals.get(3);
+            return optionals.get(1);
         }
 
         @Override
@@ -1237,27 +1039,19 @@ public class ConstType
                 java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(1)) {
-                    missing.add("type");
-                }
-
-                if (!optionals.get(2)) {
                     missing.add("name");
-                }
-
-                if (!optionals.get(3)) {
-                    missing.add("value");
                 }
 
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message model.ConstType");
+                        " in message providence_model.ServiceType");
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
             return kDescriptor;
         }
 
@@ -1273,82 +1067,74 @@ public class ConstType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.documentation, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.name, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 11) {
+                            int len_3 = reader.expectUInt32();
+                            mExtend = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(2);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.extend, should be struct(12)");
                         }
                         break;
                     }
                     case 4: {
-                        if (type == 11) {
-                            int len_2 = reader.expectUInt32();
-                            mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(1);
+                        if (type == 15) {
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FunctionType> b_4 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_6 = reader.expectByte();
+                            if (t_6 == 12) {
+                                final int len_5 = reader.expectUInt32();
+                                for (int i_7 = 0; i_7 < len_5; ++i_7) {
+                                    net.morimekta.providence.model.FunctionType key_8 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FunctionType.kDescriptor, strict);
+                                    b_4.add(key_8);
+                                }
+                                mMethods = b_4.build();
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_6) + " for providence_model.ServiceType.methods, should be struct(12)");
+                            }
+                            optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.methods, should be struct(12)");
                         }
                         break;
                     }
                     case 5: {
-                        if (type == 11) {
-                            int len_3 = reader.expectUInt32();
-                            mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(2);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.name, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 6: {
-                        if (type == 11) {
-                            int len_4 = reader.expectUInt32();
-                            mValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(3);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.value, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 7: {
                         if (type == 13) {
-                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_5 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
-                            byte t_7 = reader.expectByte();
-                            byte t_8 = reader.expectByte();
-                            if (t_7 == 11 && t_8 == 11) {
-                                final int len_6 = reader.expectUInt32();
-                                for (int i_9 = 0; i_9 < len_6; ++i_9) {
-                                    int len_12 = reader.expectUInt32();
-                                    String key_10 = new String(reader.expectBytes(len_12), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_13 = reader.expectUInt32();
-                                    String val_11 = new String(reader.expectBytes(len_13), java.nio.charset.StandardCharsets.UTF_8);
-                                    b_5.put(key_10, val_11);
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_9 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_11 = reader.expectByte();
+                            byte t_12 = reader.expectByte();
+                            if (t_11 == 11 && t_12 == 11) {
+                                final int len_10 = reader.expectUInt32();
+                                for (int i_13 = 0; i_13 < len_10; ++i_13) {
+                                    int len_16 = reader.expectUInt32();
+                                    String key_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_17 = reader.expectUInt32();
+                                    String val_15 = new String(reader.expectBytes(len_17), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_9.put(key_14, val_15);
                                 }
-                                mAnnotations = b_5.build();
+                                mAnnotations = b_9.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_7) +
-                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_8) +
-                                        " for model.ConstType.annotations, should be string(11) and string(11)");
+                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
+                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_12) +
+                                        " for providence_model.ServiceType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.annotations, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 10: {
-                        if (type == 8) {
-                            mStartLineNo = reader.expectInt();
-                            optionals.set(5);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.start_line_no, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 11: {
-                        if (type == 8) {
-                            mStartLinePos = reader.expectInt();
-                            optionals.set(6);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for model.ConstType.start_line_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.annotations, should be struct(12)");
                         }
                         break;
                     }
@@ -1362,8 +1148,8 @@ public class ConstType
         }
 
         @Override
-        public ConstType build() {
-            return new ConstType(this);
+        public ServiceType build() {
+            return new ServiceType(this);
         }
     }
 }

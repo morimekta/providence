@@ -21,6 +21,7 @@ package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -100,7 +101,7 @@ public class ThriftProgramParserTest {
                            "      }\n" +
                            "    },\n" +
                            "    {\n" +
-                           "      decl_struct = {\n" +
+                           "      decl_message = {\n" +
                            "        documentation = \"Line comment on type.\"\n" +
                            "        variant = UNION\n" +
                            "        name = \"Operand\"\n" +
@@ -126,7 +127,7 @@ public class ThriftProgramParserTest {
                            "      }\n" +
                            "    },\n" +
                            "    {\n" +
-                           "      decl_struct = {\n" +
+                           "      decl_message = {\n" +
                            "        name = \"Operation\"\n" +
                            "        fields = [\n" +
                            "          {\n" +
@@ -146,7 +147,7 @@ public class ThriftProgramParserTest {
                            "      }\n" +
                            "    },\n" +
                            "    {\n" +
-                           "      decl_struct = {\n" +
+                           "      decl_message = {\n" +
                            "        variant = EXCEPTION\n" +
                            "        name = \"CalculateException\"\n" +
                            "        fields = [\n" +
@@ -303,7 +304,7 @@ public class ThriftProgramParserTest {
                 "      }\n" +
                 "    },\n" +
                 "    {\n" +
-                "      decl_struct = {\n" +
+                "      decl_message = {\n" +
                 "        documentation = \"Line comment on type.\"\n" +
                 "        variant = UNION\n" +
                 "        name = \"Operand\"\n" +
@@ -329,7 +330,7 @@ public class ThriftProgramParserTest {
                 "      }\n" +
                 "    },\n" +
                 "    {\n" +
-                "      decl_struct = {\n" +
+                "      decl_message = {\n" +
                 "        name = \"Operation\"\n" +
                 "        fields = [\n" +
                 "          {\n" +
@@ -349,7 +350,7 @@ public class ThriftProgramParserTest {
                 "      }\n" +
                 "    },\n" +
                 "    {\n" +
-                "      decl_struct = {\n" +
+                "      decl_message = {\n" +
                 "        variant = EXCEPTION\n" +
                 "        name = \"CalculateException\"\n" +
                 "        fields = [\n" +
@@ -449,7 +450,7 @@ public class ThriftProgramParserTest {
                            "      }\n" +
                            "    },\n" +
                            "    {\n" +
-                           "      decl_struct = {\n" +
+                           "      decl_message = {\n" +
                            "        name = \"Imaginary\"\n" +
                            "        fields = [\n" +
                            "          {\n" +
@@ -526,7 +527,7 @@ public class ThriftProgramParserTest {
                                 "      }\n" +
                                 "    },\n" +
                                 "    {\n" +
-                                "      decl_struct = {\n" +
+                                "      decl_message = {\n" +
                                 "        variant = EXCEPTION\n" +
                                 "        name = \"S\"\n" +
                                 "        fields = [\n" +
@@ -619,7 +620,7 @@ public class ThriftProgramParserTest {
                      "  }\n" +
                      "  decl = [\n" +
                      "    {\n" +
-                     "      decl_struct = {\n" +
+                     "      decl_message = {\n" +
                      "        variant = EXCEPTION\n" +
                      "        name = \"AutoId\"\n" +
                      "        fields = [\n" +
@@ -803,10 +804,9 @@ public class ThriftProgramParserTest {
 
         assertEquals("{\n" +
                      "  program_name = \"common_fileserver\"\n" +
-                     "  namespaces = {}\n" +
                      "  decl = [\n" +
                      "    {\n" +
-                     "      decl_struct = {\n" +
+                     "      decl_message = {\n" +
                      "        name = \"FileServerConfig\"\n" +
                      "        fields = [\n" +
                      "          {\n" +

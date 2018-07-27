@@ -31,8 +31,8 @@ import net.morimekta.providence.model.FieldType;
 import net.morimekta.providence.model.FunctionType;
 import net.morimekta.providence.model.MessageType;
 import net.morimekta.providence.model.MessageVariant;
-import net.morimekta.providence.model.Model_Constants;
 import net.morimekta.providence.model.ProgramType;
+import net.morimekta.providence.model.ProvidenceModel_Constants;
 import net.morimekta.providence.model.ServiceType;
 import net.morimekta.providence.model.TypedefType;
 import net.morimekta.providence.reflect.parser.internal.ThriftTokenizer;
@@ -154,7 +154,7 @@ public class ThriftProgramParser implements ProgramParser {
             }
 
             String keyword = token.asString();
-            if (!Model_Constants.kThriftKeywords.contains(keyword)) {
+            if (!ProvidenceModel_Constants.kThriftKeywords.contains(keyword)) {
                 throw tokenizer.failure(token,
                                         "Unexpected token \'%s\'", token.asString());
             }
@@ -202,7 +202,7 @@ public class ThriftProgramParser implements ProgramParser {
                     has_header = true;
                     hasDeclaration = true;
                     MessageType st = parseMessage(tokenizer, token.asString(), doc_string, includedPrograms);
-                    declarations.add(Declaration.withDeclStruct(st));
+                    declarations.add(Declaration.withDeclMessage(st));
                     doc_string = null;
                     break;
                 case kService:
@@ -240,9 +240,9 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private boolean allowedNameIdentifier(String name) {
-        if (Model_Constants.kThriftKeywords.contains(name)) {
+        if (ProvidenceModel_Constants.kThriftKeywords.contains(name)) {
             return false;
-        } else return allowLanguageReservedNames || !Model_Constants.kReservedWords.contains(name);
+        } else return allowLanguageReservedNames || !ProvidenceModel_Constants.kReservedWords.contains(name);
     }
 
     private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException {

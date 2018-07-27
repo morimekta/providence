@@ -65,7 +65,7 @@ public class JsonGeneratorTest {
                      "    },\n" +
                      "    \"decl\": [\n" +
                      "        {\n" +
-                     "            \"decl_struct\": {\n" +
+                     "            \"decl_message\": {\n" +
                      "                \"name\": \"Test\",\n" +
                      "                \"fields\": [\n" +
                      "                    {\n" +
