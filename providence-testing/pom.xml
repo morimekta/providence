@@ -109,7 +109,7 @@
                     <dependencies>
                         <dependency>
                             <groupId>net.morimekta.providence</groupId>
-                            <artifactId>providence-reflect</artifactId>
+                            <artifactId>providence-idl</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>

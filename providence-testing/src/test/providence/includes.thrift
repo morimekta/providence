@@ -1,7 +1,7 @@
 namespace java net.morimekta.test.providence.testing.includes
 
-include "model.thrift"
+include "providence_model.thrift"
 
 struct Program {
-    1: model.ProgramType program;
+    1: providence_model.ProgramType program;
 }
