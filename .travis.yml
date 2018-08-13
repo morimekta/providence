@@ -3,11 +3,14 @@ language: java
 jdk:
   - openjdk8
   - oraclejdk8
+cache:
+  directories:
+    - $HOME/.m2
 branches:
   only:
     - master
     - develop
-script: "mvn verify -Plib,cli,it,doc"
+script: "mvn verify -Pall"
 before_install:
   - sudo apt-get -y install rpm
   - unset _JAVA_OPTIONS
