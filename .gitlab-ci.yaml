@@ -1,6 +1,7 @@
 image: alpine
 
 stages:
+  - compile
   - test
 
 cache:
@@ -11,15 +12,22 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2 -Ddisable.distribution.packaging=true"
   MAVEN_CLI_OPTS: '-B'
 
+compile:
+  image: maven:3.5-jdk-8-alpine
+  stage: compile
+  script:
+    - 'mvn -Pall install dependency:go-offline -DskipTests=true'
+    - 'rm -rf .m2/repository/net/morimekta/providence'
+
 test-jdk-8-alpine:
   image: maven:3.5-jdk-8-alpine
   stage: test
   script:
-    - 'mvn clean verify -Pall -Ddisable.distribution.packaging=true'
+    - 'mvn clean verify -Pall'
 
 test-jdk-11-slim:
   image: maven:3.5-jdk-11-slim
   stage: test
   script:
-    - 'mvn clean verify -Pall -Ddisable.distribution.packaging=true'
+    - 'mvn clean verify -Pall'
 
