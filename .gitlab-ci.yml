@@ -27,7 +27,7 @@ cache:
     </settings>
     EOF
   script:
-  - mvn ${MAVEN_CLI_OPTS} verify
+  - mvn ${MAVEN_CLI_OPTS} verify -Plib,cli
   - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print int(100*covered/instructions), "% covered" }' target/site/jacoco-ut/jacoco.csv
   - |
     # Report coverage when: BRANCH=master JOB=verify:jdk8
