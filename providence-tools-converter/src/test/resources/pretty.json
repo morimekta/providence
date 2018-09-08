@@ -65,7 +65,7 @@
         -367492.221091128
     ],
     "stringSet": [
-        "C\\U\u05cf\rӂčy˃2C(",
+        "C\\U_X_\rӂčy˃2C(",
         "D1VP9٨uzk`֜\r"
     ],
     "binarySet": [
@@ -156,7 +156,7 @@
             "binaryValue": "w0XGKf3u7vqNc/yn",
             "enumValue": "TWENTIETH",
             "compactValue": [
-                "7\u0557\\p\r",
+                "7_X_\\p\r",
                 452,
                 "çvJ\rΙ"
             ]
@@ -185,7 +185,7 @@
             "integerValue": -588526042,
             "longValue": -554039986458,
             "doubleValue": -2.676320156580718E7,
-            "stringValue": "ѷƁ 3ө\u037fPa<gє0",
+            "stringValue": "ѷƁ 3ө_X_Pa<gє0",
             "binaryValue": "YE7LFVDP7dfl4f0q",
             "enumValue": "FOURTEENTH",
             "compactValue": [
@@ -269,7 +269,7 @@
         "binaryValue": "WOk0p7n1cLK45CRY",
         "enumValue": "NINTH",
         "compactValue": [
-            "ۚ'n\u052e2",
+            "ۚ'n_X_2",
             139
         ]
     },
@@ -576,7 +576,7 @@
             "integerValue": -310117557,
             "longValue": -1267257186545,
             "doubleValue": -1135310.5150407716,
-            "stringValue": "\u052fԆWܕռ\uab9e1@*gLJ",
+            "stringValue": "_X_ԆWܕռ_X_1@*gLJ",
             "binaryValue": "iKLHLatRp/j6Kcve",
             "enumValue": "TENTH",
             "compactValue": [
@@ -951,7 +951,7 @@
             "integerValue": -850259131,
             "longValue": -247043456264,
             "doubleValue": 1024370.9050545366,
-            "stringValue": "ޞܮƅ,ȂfB8F\u0378\bɑ",
+            "stringValue": "ޞܮƅ,ȂfB8F_X_\bɑ",
             "binaryValue": "Jl9lKw3m/fPb3nlK",
             "enumValue": "SEVENTH",
             "compactValue": [
@@ -983,7 +983,7 @@
             "integerValue": -174573982,
             "longValue": -2494161178853,
             "doubleValue": -6403185.720180746,
-            "stringValue": "GAȆQju|\ua799zķ\f[",
+            "stringValue": "GAȆQju|_X_zķ\f[",
             "binaryValue": "sO1IwDOgHo3aA3Tn",
             "enumValue": "FIRST",
             "compactValue": [
@@ -1437,7 +1437,7 @@
         "integerValue": -1027001309,
         "longValue": -793439432081,
         "doubleValue": 91346.32000180597,
-        "stringValue": "Q\tOVɥ֞K_܁nڎ\u05fa",
+        "stringValue": "Q\tOVɥ֞K_܁nڎ_X_",
         "binaryValue": "O0vFKwdWKqECtLkx",
         "enumValue": "TENTH",
         "compactValue": [
@@ -1799,7 +1799,7 @@
         "integerValue": 292089374,
         "longValue": -485762557216,
         "doubleValue": 105063.06756181904,
-        "stringValue": "\u05fa\u05f7l@iď\u07eepzуkV",
+        "stringValue": "_X__X_l@iď_X_pzуkV",
         "binaryValue": "nNxes6rG2+CkLIoc",
         "enumValue": "FIFTEENTH",
         "compactValue": [
@@ -2553,7 +2553,7 @@
         "binaryValue": "Wra/qrX6Ohk5jDrF",
         "enumValue": "THIRD",
         "compactValue": [
-            "\u052bȬא h",
+            "_X_Ȭא h",
             945,
             "L.Y4ޘ"
         ]
@@ -2805,7 +2805,7 @@
         }
     ],
     "messageMap": {
-        ",tlb\u05fd": {
+        ",tlb_X_": {
             "booleanValue": false,
             "byteValue": 112,
             "shortValue": 3636,
@@ -3020,9 +3020,9 @@
         1089952.9291666907
     ],
     "stringSet": [
-        "-ߎÁڰɽ⓪=#CŐ\u058d_",
+        "-ߎÁڰɽ⓪=#CŐ_X__",
         "?%.i}t@@㙃)vf",
-        "\u05f62ܶ}tUxشŸNBx",
+        "_X_2ܶ}tUxشŸNBx",
         "ۤ}\t[*w\rԞM*[@"
     ],
     "binarySet": [
@@ -3061,7 +3061,7 @@
     },
     "stringMap": {
         "Ndԙ>I": "[a>뢕#@/bf\tڋǱ",
-        "t#⻑{6": "1\\\u037fd#%s|!|AH",
+        "t#⻑{6": "1\\_X_d#%s|!|AH",
         "zfwօ`": "(Ȏ+ѓ0ie&fʑ*b"
     },
     "binaryMap": {
@@ -3285,7 +3285,7 @@
         "integerValue": -1388919638,
         "longValue": 851585091764,
         "doubleValue": 424799.4101982151,
-        "stringValue": "ɻic/pВ]wAڵ\u0588.",
+        "stringValue": "ɻic/pВ]wAڵ_X_.",
         "binaryValue": "ja/I0qULcJJDNeju",
         "enumValue": "FIRST",
         "compactValue": [

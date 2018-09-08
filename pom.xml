@@ -115,7 +115,10 @@
         <jackson.version>2.9.6</jackson.version>
         <slf4j.version>1.7.25</slf4j.version>
 
-        <morimekta_utils.version>2.7.1</morimekta_utils.version>
+        <!-- Morimekta Utilities -->
+        <io-util.version>3.0.0</io-util.version>
+        <console-util.version>2.7.1</console-util.version>
+
         <guava.version>25.1-jre</guava.version>
 
         <!-- Controlling the providence-maven-plugin -->
@@ -224,27 +227,12 @@
             <dependency>
                 <groupId>net.morimekta.utils</groupId>
                 <artifactId>io-util</artifactId>
-                <version>${morimekta_utils.version}</version>
+                <version>${io-util.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.morimekta.utils</groupId>
                 <artifactId>console-util</artifactId>
-                <version>${morimekta_utils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.morimekta.utils</groupId>
-                <artifactId>diff-util</artifactId>
-                <version>${morimekta_utils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.morimekta.utils</groupId>
-                <artifactId>config-util</artifactId>
-                <version>${morimekta_utils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.morimekta.utils</groupId>
-                <artifactId>android-util</artifactId>
-                <version>${morimekta_utils.version}</version>
+                <version>${console-util.version}</version>
             </dependency>
 
             <!-- CORE LIBRARIES DEPS -->
@@ -257,6 +245,11 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>findbugs-annotations</artifactId>
                 <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -362,7 +355,7 @@
             <dependency>
                 <groupId>net.morimekta.utils</groupId>
                 <artifactId>testing-util</artifactId>
-                <version>${morimekta_utils.version}</version>
+                <version>${io-util.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>
@@ -479,7 +472,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.1</version>
+                    <version>0.8.2</version>
                 </plugin>
 
                 <!-- core maven plugins -->
@@ -1051,6 +1044,25 @@
                 <module>it-serialization</module>
                 <module>it-hazelcast</module>
             </modules>
+        </profile>
+        <profile>
+            <id>jdk9</id>
+            <activation>
+                <jdk>[9,100)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalOptions>
+                                <additionalOption>-html5</additionalOption>
+                            </additionalOptions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <!-- release process modifications -->
         <profile>
