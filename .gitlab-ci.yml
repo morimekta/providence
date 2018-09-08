@@ -39,7 +39,7 @@ cache:
   coverage: /([0-9]{1,3}) % covered/
   after_script:
   # Never cache the snapshot build.
-  - rm -rf .m2/repository/net/morimekta/utils/io-util/*-SNAPSHOT/
+  - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
 
 verify:jdk8:
   <<: *verify
