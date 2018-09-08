@@ -20,6 +20,11 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
@@ -32,12 +37,6 @@ import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.providence.util.ThriftAnnotation;
 import net.morimekta.providence.util.ThriftContainer;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,6 +129,10 @@ public class JField {
 
     public String setter() {
         return camelCase("set", field.getName());
+    }
+
+    public String ref() {
+        return camelCase("ref", field.getName());
     }
 
     public String adder() {

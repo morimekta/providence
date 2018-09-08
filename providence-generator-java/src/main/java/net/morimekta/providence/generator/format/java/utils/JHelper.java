@@ -20,6 +20,10 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -34,11 +38,6 @@ import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
 import net.morimekta.providence.util.ThriftContainer;
 import net.morimekta.util.Binary;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,6 +59,10 @@ public class JHelper {
 
     public JHelper(ProgramTypeRegistry registry) {
         mRegistry = registry;
+    }
+
+    public ProgramTypeRegistry getRegistry() {
+        return mRegistry;
     }
 
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {

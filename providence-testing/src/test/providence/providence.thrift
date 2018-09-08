@@ -51,7 +51,7 @@ struct OptionalFields {
     1: optional bool booleanValue;
     2: optional byte byteValue,
     3: optional i16 shortValue
-    4: optional i32 integerValue;
+    4: optional i32 integerValue (ref.enum = "EnumNames");
     5: optional i64 longValue,
     6: optional double doubleValue
     7: optional string stringValue;
@@ -64,7 +64,7 @@ struct RequiredFields {
     1: required bool booleanValue;
     2: required byte byteValue,
     3: required i16 shortValue
-    4: required i32 integerValue;
+    4: required i32 integerValue (ref.enum = "providence.EnumNames");
     5: required i64 longValue,
     6: required double doubleValue
     7: required string stringValue;

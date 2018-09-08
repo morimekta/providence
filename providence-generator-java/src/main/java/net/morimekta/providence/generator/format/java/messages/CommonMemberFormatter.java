@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
 import net.morimekta.providence.generator.format.java.JavaOptions;
@@ -216,6 +217,49 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 writer.appendln('}')
                       .newline();
             }
+
+            // -------- ENUM REFERENCE --------
+            // i32 -> ref.enum
+
+            String enumTypeName = field.field().getAnnotationValue("ref.enum");
+            if (field.type() == PType.I32 && enumTypeName != null) {
+                if (!enumTypeName.contains(".")) {
+                    enumTypeName = message.descriptor().getProgramName() + "." + enumTypeName;
+                }
+
+                PDescriptor enumType = null;
+                try {
+                    enumType = helper.getRegistry()
+                                     .getRegistryForProgramName(message.descriptor().getProgramName())
+                                     .getEnumType(enumTypeName);
+                } catch (Exception e) {
+                    System.err.format("[ERROR] ref.enum = \"%s\" is unknown from %s%n",
+                                      enumTypeName,
+                                      message.descriptor().getQualifiedName());
+                    e.printStackTrace();
+                }
+
+                if (enumType != null) {
+                    writer.appendln(JAnnotation.NULLABLE);
+                    if (field.alwaysPresent()) {
+                        writer.formatln("public %s %s() {", helper.getValueType(enumType), field.ref())
+                              .begin()
+                              .formatln("return %s.findById(%s);", helper.getValueType(enumType), field.member())
+                              .end()
+                              .appendln('}')
+                              .newline();
+                    } else {
+                        writer.formatln("public %s %s() {", helper.getValueType(enumType), field.ref())
+                              .begin()
+                              .formatln("return %s != null ? %s.findById(%s) : null;",
+                                        field.member(), helper.getValueType(enumType), field.member())
+                              .end()
+                              .appendln('}')
+                              .newline();
+                    }
+                }
+            }
+
 
             // -------- OPTIONAL --------
 

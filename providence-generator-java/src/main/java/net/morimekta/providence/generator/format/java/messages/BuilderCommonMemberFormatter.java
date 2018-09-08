@@ -22,6 +22,7 @@ package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.generator.GeneratorException;
@@ -429,6 +430,57 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (field.type() == MESSAGE) {
             appendSetterBuilderOverload(field);
         }
+
+        // -------- ENUM REFERENCE --------
+        // i32 -> ref.enum
+
+        String enumTypeName = field.field().getAnnotationValue("ref.enum");
+        if (field.type() == PType.I32 && enumTypeName != null) {
+            if (!enumTypeName.contains(".")) {
+                enumTypeName = message.descriptor().getProgramName() + "." + enumTypeName;
+            }
+            PDescriptor enumType = null;
+            try {
+                enumType = helper.getRegistry()
+                                 .getRegistryForProgramName(message.descriptor().getProgramName())
+                                 .getEnumType(enumTypeName);
+            } catch (Exception e) {
+                System.err.format("[ERROR] ref.enum = \"%s\" is unknown from %s%n",
+                                  enumTypeName,
+                                  message.descriptor().getQualifiedName());
+                e.printStackTrace();
+            }
+
+            if (enumType != null) {
+                comment = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    comment.comment(field.comment());
+                } else {
+                    comment.comment("Sets the value of " + field.name() + ".");
+                }
+                comment.newline();
+                if (!field.isVoid()) {
+                    comment.param_("value", "The new value ref");
+                }
+                comment.return_("The builder");
+                if (JAnnotation.isDeprecated(field)) {
+                    String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                    if (reason != null && reason.trim().length() > 0) {
+                        comment.deprecated_(reason);
+                    }
+                }
+                comment.finish();
+                writer.appendln(JAnnotation.NULLABLE);
+                writer.formatln("public _Builder %s(%s value) {", field.setter(), helper.getValueType(enumType))
+                      .begin()
+                      .formatln("if (value == null) return %s();", field.resetter())
+                      .formatln("return %s(value.asInteger());", field.setter())
+                      .end()
+                      .appendln('}')
+                      .newline();
+            }
+        }
+
     }
 
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
