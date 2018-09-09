@@ -49,3 +49,28 @@ verify:jdk8:
 verify:jdk11:
   <<: *verify
   image: maven:3.5-jdk-11-slim
+
+package:releases:
+  stage: release
+  image: maven:3.5-jdk-8-alpine
+  only:
+  - tags
+  before_script:
+  - apk update
+  - apk add --no-cache rpm
+  - mkdir -p .m2/repository
+  - |
+    cat <<EOF > .m2/settings.xml
+    <settings>
+    </settings>
+    EOF
+  script:
+  - mvn ${MAVEN_CLI_OPTS} package -Plib,cli
+  artifacts:
+    paths:
+    - providence-tools/target/providence-tools-*.tar.gz
+    - providence-tools/target/providence-*.deb
+    - providence-tools/target/rpm/providence/RPMS/noarch/providence-*.noarch.rpm
+  after_script:
+  # Never cache the snapshot build.
+  - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
