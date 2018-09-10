@@ -31,6 +31,7 @@ sections: [
 # Keep as an empty string if served up at the root. If served up at a specific
 # path (e.g. on GitHub pages) leave off the trailing slash, e.g. /my-project
 baseurl: '/providence'
+url: "https://morimekta.gitlab.io" # the base hostname & protocol for your site
 
 # Dates are not included in permalinks
 permalink: none
@@ -42,7 +43,7 @@ highlighter: rouge
 future: true
 
 # Exclude non-site files
-exclude: ['bin']
+exclude: ['bin', 'vendor', 'Gemfile', 'Gemfile.lock']
 
 providence_version: "1.3.1"
 

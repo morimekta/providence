@@ -57,7 +57,9 @@ public class MyServer {
     public void start() {
         Server server = new Server(8080);
         ServletContextHandler handler = new ServletContextHandler();
-        handler.addFilter(new FilterHolder(new BarFilter()), "/thrift", EnumSet.of(DispatcherType.REQUEST));
+        handler.addFilter(new FilterHolder(new BarFilter()),
+                          "/thrift",
+                          EnumSet.of(DispatcherType.REQUEST));
         handler.addServlet(new ServletHolder(
                                    new ProvidenceServlet(
                                            MyServletImpl::makeProcessor,

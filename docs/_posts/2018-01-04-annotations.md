@@ -91,5 +91,6 @@ Two other variants exists, which is controlled by the `container` annotations.
   generate `@Deprecated` annotations in java.
 - `json.compact = ""`: Enables the use of the compact syntax in the
   [json serializer](../dev/serializer-json.html).
-
-
+- `ref.enum = "program.EnumName"`: If sucessfully referencing an enum will add
+  setter for the enum in the builder and a `refFieldName()` getter that returns
+  the enum name if set AND valid.

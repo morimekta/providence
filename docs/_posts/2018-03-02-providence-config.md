@@ -229,7 +229,8 @@ class Program implements ConfigListener<Service,Service._Field> {
 
         this.providenceConfig = new ProvidenceConfig(reg);
 
-        ConfigSupplier<Service,Service._Field> serviceSupplier = providenceConfig.resolveConfig("my_service.cfg");
+        ConfigSupplier<Service,Service._Field> serviceSupplier =
+                providenceConfig.resolveConfig("my_service.cfg");
         serviceSupplier.addListener(this);
         this.service = serviceSupplier.get();
     }

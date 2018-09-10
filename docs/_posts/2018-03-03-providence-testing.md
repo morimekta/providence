@@ -49,18 +49,21 @@ messages in case of failure.
 ```java
 class MyTest {
     @Rule
-    SimpleGeneratorWatcher generator =
-            GeneratorWatcher.create()
-                            .dumpOnFailure()
-                            .withGenerator(MyMessage.kDescriptor, gen -> {
-                                gen.setValueGenerator(MyMessage._Field.UUID, ctx -> UUID.randomUUID().toString());
-                            });
+    SimpleGeneratorWatcher generator = SimpleGeneratorWatcher
+            .create()
+            .dumpOnFailure()
+            .withGenerator(MyMessage.kDescriptor, gen -> {
+                gen.setValueGenerator(MyMessage._Field.UUID,
+                        ctx -> UUID.randomUUID().toString());
+            });
 
     @Test
     public testSomething() {
         generator.withGenerator(MyMessage.kDescriptor, gen -> {
-            gen.setValueGenerator(MyMessage._Field.NAME, ctx -> ctx.getFairy().person().getFullName());
-            gen.setValueGenerator(MyMessage._Field.AGE, ctx -> 20 + ctx.getRandom().nextInt(35));
+            gen.setValueGenerator(MyMessage._Field.NAME,
+                    ctx -> ctx.getFairy().person().getFullName());
+            gen.setValueGenerator(MyMessage._Field.AGE,
+                    ctx -> 20 + ctx.getRandom().nextInt(35));
         });
 
         MyMessage msg = generator.generate(MyMessage.kDescriptor);

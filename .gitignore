@@ -28,6 +28,11 @@ _site/
 .gradle
 build/
 
+Gemfile.lock
+public/
+vendor/
+.bundle/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

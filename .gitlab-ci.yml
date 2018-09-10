@@ -50,7 +50,7 @@ verify:jdk11:
   <<: *verify
   image: maven:3.5-jdk-11-slim
 
-package:releases:
+release:packaging:
   stage: release
   image: maven:3.5-jdk-8-alpine
   only:
@@ -74,3 +74,25 @@ package:releases:
   after_script:
   # Never cache the snapshot build.
   - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
+
+release:pages:
+  image: ruby:2.5
+  cache:
+    key: "vendor-$CI_PROJECT_NAME"
+    paths:
+    - docs/vendor/
+  stage: post-release
+  before_script:
+  - cd docs
+  - bundle install --path vendor
+  script:
+  - bundle exec jekyll build -d public
+  - mv public ..
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
