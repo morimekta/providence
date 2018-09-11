@@ -118,6 +118,7 @@
         <!-- Morimekta Utilities -->
         <io-util.version>3.0.1</io-util.version>
         <console-util.version>3.0.0</console-util.version>
+        <testing-util.version>3.0.0</testing-util.version>
 
         <guava.version>25.1-jre</guava.version>
 
@@ -355,7 +356,7 @@
             <dependency>
                 <groupId>net.morimekta.utils</groupId>
                 <artifactId>testing-util</artifactId>
-                <version>${io-util.version}</version>
+                <version>${testing-util.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdbi</groupId>
