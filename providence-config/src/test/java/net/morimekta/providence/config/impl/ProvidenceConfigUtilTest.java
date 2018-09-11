@@ -1,9 +1,5 @@
 package net.morimekta.providence.config.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.config.ProvidenceConfigException;
@@ -24,6 +20,11 @@ import net.morimekta.test.providence.config.Value;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,10 +65,10 @@ import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asString
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.canonicalFileLocation;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.consumeValue;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.readCanonicalPath;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.resolveFile;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
+import static net.morimekta.util.FileUtil.readCanonicalPath;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

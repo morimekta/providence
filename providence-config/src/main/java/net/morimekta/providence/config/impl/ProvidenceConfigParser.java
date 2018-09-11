@@ -73,8 +73,8 @@ import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.asType;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.canonicalFileLocation;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.consumeValue;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.nextNotLineSep;
-import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.readCanonicalPath;
 import static net.morimekta.providence.config.impl.ProvidenceConfigUtil.resolveFile;
+import static net.morimekta.util.FileUtil.readCanonicalPath;
 
 /**
  * This parser parses config files. The class in itself should be stateless, so

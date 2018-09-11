@@ -38,12 +38,10 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -59,6 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+
+import static net.morimekta.util.FileUtil.readCanonicalPath;
 
 /**
  * Utilities for helping with providence config handling.
@@ -511,71 +511,6 @@ public class ProvidenceConfigUtil {
         } catch (IOException e) {
             throw new ProvidenceConfigException(e, e.getMessage());
         }
-    }
-
-    /**
-     * Read and parse the path to its absolute canonical path.
-     * <p>
-     * To circumvent the problem that java cached file metadata, including symlink
-     * targets, we need to read canonical paths directly. This includes resolving
-     * symlinks and relative path resolution (../..).<br>
-     * <p>
-     * This will read all the file meta each time and not use any of the java file
-     * meta caching, so will probably be a little slower. So should not be used
-     * repeatedly or too often.
-     * <p>
-     * TODO(morimekta): Use utils.FileUtil method.
-     *
-     * @param path The path to make canonical path of.
-     * @return The resolved canonical path.
-     * @throws IOException If unable to read the path.
-     */
-    @VisibleForTesting
-    static Path readCanonicalPath(Path path) throws IOException {
-        if (!path.isAbsolute()) {
-            path = path.toAbsolutePath();
-        }
-        if (path.toString().equals(File.separator)) {
-            return path;
-        }
-
-        String fileName = path.getFileName().toString();
-        if (".".equals(fileName)) {
-            path = path.getParent();
-            fileName = path.getFileName().toString();
-        }
-
-        // resolve ".." relative to the top of the path.
-        int parents = 0;
-        while ("..".equals(fileName)) {
-            path = path.getParent();
-            if (path == null || path.getFileName() == null) {
-                throw new IOException("Parent of root does not exist!");
-            }
-            fileName = path.getFileName().toString();
-            ++parents;
-        }
-        while (parents-- > 0) {
-            path = path.getParent();
-            if (path == null || path.getFileName() == null) {
-                throw new IOException("Parent of root does not exist!");
-            }
-            fileName = path.getFileName().toString();
-        }
-
-        if (path.getParent() != null) {
-            Path parent = readCanonicalPath(path.getParent());
-            path = parent.resolve(fileName);
-
-            if (Files.isSymbolicLink(path)) {
-                path = Files.readSymbolicLink(path);
-                if (!path.isAbsolute()) {
-                    path = readCanonicalPath(parent.resolve(path));
-                }
-            }
-        }
-
-        return path;
     }
 
     /**
