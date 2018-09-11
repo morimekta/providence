@@ -93,6 +93,7 @@ release:pages:
     - public
   only:
   - master
+  - pages
   except:
     variables:
     - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
