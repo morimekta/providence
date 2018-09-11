@@ -4,8 +4,10 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Simple store searcher that finds all messages in a given store that matches
@@ -34,12 +36,16 @@ public class PredicateFilterMessageStoreSearcher<Q, K, M extends PMessage<M,F>, 
     @Nonnull
     @Override
     public List<M> search(@Nonnull Q query) {
-        List<M> result = new ArrayList<>();
-        store.getAll(store.keys())
-             .entrySet()
-             .stream()
-             .filter(entry -> predicate.test(entry.getKey(), entry.getValue(), query))
-             .forEach(entry -> result.add(entry.getValue()));
-        return result;
+        return stream(query).collect(Collectors.toList());
+    }
+
+    @Nonnull
+    @Override
+    public Stream<M> stream(@Nonnull Q query) {
+        return store.getAll(store.keys())
+                    .entrySet()
+                    .stream()
+                    .filter(entry -> predicate.test(entry.getKey(), entry.getValue(), query))
+                    .map(Map.Entry::getValue);
     }
 }
