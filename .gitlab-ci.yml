@@ -66,11 +66,14 @@ packaging:
     EOF
   script:
   - mvn ${MAVEN_CLI_OPTS} ${MAVEN_NO_TESTS} package -Plib,cli
+  - mv providence-tools/target/providence-tools-*.tar.gz .
+  - mv providence-tools/target/providence-*.deb .
+  - mv providence-tools/target/rpm/providence/RPMS/noarch/providence-*.noarch.rpm .
   artifacts:
     paths:
-    - providence-tools/target/providence-tools-*.tar.gz
-    - providence-tools/target/providence-*.deb
-    - providence-tools/target/rpm/providence/RPMS/noarch/providence-*.noarch.rpm
+    - providence-tools-*.tar.gz
+    - providence-*.deb
+    - providence-*.noarch.rpm
   after_script:
   # Never cache the snapshot build.
   - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
