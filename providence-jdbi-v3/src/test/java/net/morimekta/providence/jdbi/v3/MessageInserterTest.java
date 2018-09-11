@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 
 public class MessageInserterTest {
     private static final MessageInserter<OptionalFields, OptionalFields._Field> INSERTER =
-            new MessageInserter.Builder<OptionalFields, OptionalFields._Field>("mappings_v3.default_mappings")
+            new MessageInserter.Builder<>(OptionalFields.kDescriptor, "mappings_v3.default_mappings")
                     .set(ID, PRESENT, TINY, SMALL, MEDIUM, LARGE, REAL, NAME, DATA, FIB)
                     .set("compact", MESSAGE)
                     .set(TIMESTAMP_S, Types.TIMESTAMP)

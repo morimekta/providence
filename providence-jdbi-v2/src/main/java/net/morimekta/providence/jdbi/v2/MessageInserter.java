@@ -2,12 +2,16 @@ package net.morimekta.providence.jdbi.v2;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Update;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -145,7 +149,32 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
         private final Set<String>          onDuplicateUpdate;
         private final AtomicBoolean        onDuplicateIgnore;
 
-        public Builder(String intoTable) {
+        private final PMessageDescriptor<M, F> descriptor;
+
+        /**
+         * Create a message inserter builder.
+         *
+         * @param intoTable The table name to insert info.
+         * @deprecated since 1.7.0
+         */
+        @Deprecated
+        public Builder(@Nonnull String intoTable) {
+            this(intoTable, null);
+        }
+
+        /**
+         * Create a message inserter builder.
+         *
+         * @param descriptor The type descriptor.
+         * @param intoTable The table name to insert info.
+         */
+        public Builder(@Nonnull PMessageDescriptor<M, F> descriptor,
+                       @Nonnull String intoTable) {
+            this(intoTable, descriptor);
+        }
+
+        private Builder(@Nonnull String intoTable, @Nullable PMessageDescriptor<M, F> descriptor) {
+            this.descriptor = descriptor;
             this.intoTable = intoTable;
             this.columnToFieldMap = new LinkedHashMap<>();
             this.columnTypeMap = new HashMap<>();
@@ -153,22 +182,127 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             this.onDuplicateIgnore = new AtomicBoolean();
         }
 
+        /**
+         * Set all fields with defaults.
+         * @return The builder.
+         */
+        public final Builder<M,F> setAll() {
+            if (descriptor == null) throw new IllegalStateException("No descriptor in builder");
+            return set(descriptor.getFields());
+        }
+
+        /**
+         * Set all fields with defaults.
+         *
+         * @param except Fields to exclude.
+         * @return The builder.
+         */
+        @SafeVarargs
+        public final Builder<M,F> setAllExcept(F... except) {
+            if (descriptor == null) throw new IllegalStateException("No descriptor in builder");
+            return setAllExcept(ImmutableSet.copyOf(except), descriptor);
+        }
+
+        /**
+         * Set all fields with defaults.
+         *
+         * @param except Fields to exclude.
+         * @return The builder.
+         */
+        public Builder<M,F> setAllExcept(Collection<F> except) {
+            if (descriptor == null) throw new IllegalStateException("No descriptor in builder");
+            return setAllExcept(except, descriptor);
+        }
+
+        /**
+         * Set all fields with defaults.
+         *
+         * @param except Fields to exclude.
+         * @return The builder.
+         * @deprecated since 1.7.0
+         */
+        @Deprecated
+        @SafeVarargs
+        public final Builder<M,F> setAllExcept(PMessageDescriptor<M, F> descriptor, F... except) {
+            return setAllExcept(ImmutableSet.copyOf(except), descriptor);
+        }
+
+        /**
+         * Set all fields with defaults.
+         *
+         * @param except Fields to exclude.
+         * @return The builder.
+         * @deprecated since 1.7.0
+         */
+        @Deprecated
+        public Builder<M,F> setAllExcept(PMessageDescriptor<M, F> descriptor, Collection<F> except) {
+            return setAllExcept(except, descriptor);
+        }
+
+        private Builder<M,F> setAllExcept(@Nonnull Collection<F> except,
+                                          @Nonnull PMessageDescriptor<M, F> descriptor) {
+            for (F field : descriptor.getFields()) {
+                if (!except.contains(field)) {
+                    set(field.getName(), field, getDefaultColumnType(field));
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Set the specific fields with default name and type.
+         *
+         * @param fields The fields to be set.
+         * @return The builder.
+         */
         @SafeVarargs
         public final Builder<M,F> set(F... fields) {
+            return set(ImmutableList.copyOf(fields));
+        }
+
+        /**
+         * Set the specific fields with default name and type.
+         *
+         * @param fields The fields to be set.
+         * @return The builder.
+         */
+        public final Builder<M,F> set(Collection<F> fields) {
             for (F field : fields) {
                 set(field.getName(), field, getDefaultColumnType(field));
             }
             return this;
         }
 
+        /**
+         * Set the specific field with name and default type.
+         *
+         * @param column The column name to set.
+         * @param field The field to be set.
+         * @return The builder.
+         */
         public final Builder<M,F> set(String column, F field) {
             return set(column, field, getDefaultColumnType(field));
         }
 
+        /**
+         * Set the specific field with specific type and default name.
+         *
+         * @param field The field to be set.
+         * @param type The field type to set as.
+         * @return The builder.
+         */
         public final Builder<M,F> set(F field, int type) {
             return set(field.getName(), field, type);
         }
 
+        /**
+         * Set the specific field with specific name and type.
+         *
+         * @param column The column name to set.
+         * @param field The field to be set.
+         * @param type The field type to set as.
+         * @return The builder.
+         */
         public final Builder<M,F> set(String column, F field, int type) {
             if (columnToFieldMap.containsKey(column)) {
                 throw new IllegalArgumentException("Column " + column + " already inserted");
@@ -181,11 +315,23 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return this;
         }
 
+        /**
+         * On duplicate keys update the given fields.
+         *
+         * @param fields The fields to update.
+         * @return The builder.
+         */
         @SafeVarargs
         public final Builder<M,F> onDuplicateKeyUpdate(F... fields) {
             return onDuplicateKeyUpdate(ImmutableList.copyOf(fields));
         }
 
+        /**
+         * On duplicate keys update the given fields.
+         *
+         * @param fields The fields to update.
+         * @return The builder.
+         */
         public final Builder<M,F> onDuplicateKeyUpdate(Collection<F> fields) {
             List<String> columns = new ArrayList<>(fields.size());
             fields.forEach(field -> {
@@ -204,11 +350,23 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return onDuplicateKeyUpdate(columns.toArray(new String[0]));
         }
 
+        /**
+         * On duplicate keys update all except the given fields.
+         *
+         * @param fields The fields to NOT update.
+         * @return The builder.
+         */
         @SafeVarargs
         public final Builder<M,F> onDuplicateKeyUpdateAllExcept(F... fields) {
             return onDuplicateKeyUpdateAllExcept(ImmutableList.copyOf(fields));
         }
 
+        /**
+         * On duplicate keys update all except the given fields.
+         *
+         * @param fields The fields to NOT update.
+         * @return The builder.
+         */
         public final Builder<M,F> onDuplicateKeyUpdateAllExcept(Collection<F> fields) {
             List<String> columns = new ArrayList<>(fields.size());
             fields.forEach(field -> {
@@ -227,12 +385,24 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return onDuplicateKeyUpdateAllExcept(columns.toArray(new String[0]));
         }
 
+        /**
+         * On duplicate keys update all except the given fields.
+         *
+         * @param exceptColumns The column names NOT to update.
+         * @return The builder.
+         */
         public final Builder<M,F> onDuplicateKeyUpdateAllExcept(String... exceptColumns) {
             TreeSet<String> columns = new TreeSet<>(columnToFieldMap.keySet());
             columns.removeAll(ImmutableList.copyOf(exceptColumns));
             return onDuplicateKeyUpdate(columns.toArray(new String[0]));
         }
 
+        /**
+         * On duplicate keys update the given columns.
+         *
+         * @param columns The column names NOT to update.
+         * @return The builder.
+         */
         public final Builder<M,F> onDuplicateKeyUpdate(String... columns) {
             if (onDuplicateIgnore.get()) {
                 throw new IllegalStateException("Duplicate key behavior already set to ignore");
@@ -241,6 +411,11 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return this;
         }
 
+        /**
+         * On duplicate keys ignore updates.
+         *
+         * @return The builder.
+         */
         public final Builder<M,F> onDuplicateKeyIgnore() {
             if (onDuplicateUpdate.size() > 0) {
                 throw new IllegalStateException("Duplicate key behavior already set to update");
@@ -249,6 +424,9 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
             return this;
         }
 
+        /**
+         * @return The final built inserter.
+         */
         public MessageInserter<M,F> build() {
             if (columnToFieldMap.isEmpty()) {
                 throw new IllegalStateException("No columns inserted");

@@ -10,8 +10,6 @@ import org.skife.jdbi.v2.Handle;
 import java.sql.Types;
 import java.time.Clock;
 
-import static net.morimekta.providence.jdbi.v2.ProvidenceJdbi.toMessage;
-import static net.morimekta.providence.jdbi.v2.ProvidenceJdbi.withColumn;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BASE64_DATA;
 import static net.morimekta.test.providence.storage.jdbc.OptionalFields._Field.BINARY_MESSAGE;
@@ -37,7 +35,7 @@ import static org.junit.Assert.assertThat;
 
 public class MessageInserterTest {
     private static final MessageInserter<OptionalFields, OptionalFields._Field> INSERTER =
-            new MessageInserter.Builder<OptionalFields, OptionalFields._Field>("mappings.default_mappings")
+            new MessageInserter.Builder<>(OptionalFields.kDescriptor, "mappings.default_mappings")
                     .set(ID, PRESENT, TINY, SMALL, MEDIUM, LARGE, REAL, NAME, DATA, FIB)
                     .set("compact", MESSAGE)
                     .set(TIMESTAMP_S, Types.TIMESTAMP)
