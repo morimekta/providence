@@ -217,6 +217,7 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
         /**
          * Set all fields with defaults.
          *
+         * @param descriptor The message descriptor.
          * @param except Fields to exclude.
          * @return The builder.
          * @deprecated since 1.7.0
@@ -230,6 +231,7 @@ public class MessageInserter<M extends PMessage<M,F>, F extends PField> {
         /**
          * Set all fields with defaults.
          *
+         * @param descriptor The message descriptor.
          * @param except Fields to exclude.
          * @return The builder.
          * @deprecated since 1.7.0

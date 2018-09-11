@@ -84,7 +84,6 @@ public class ProgramConverter {
      * Convert document model to declared document.
      *
      * @param path The program file path.
-     * @param path Path of the program file to convert.
      * @param program Program model to convert.
      * @return The declared thrift document.
      */
