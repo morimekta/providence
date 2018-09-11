@@ -50,7 +50,7 @@ verify:jdk11:
   <<: *verify
   image: maven:3.5-jdk-11-slim
 
-release:packaging:
+packaging:
   stage: release
   image: maven:3.5-jdk-8-alpine
   only:
@@ -65,7 +65,7 @@ release:packaging:
     </settings>
     EOF
   script:
-  - mvn ${MAVEN_CLI_OPTS} package -Plib,cli
+  - mvn ${MAVEN_CLI_OPTS} ${MAVEN_NO_TESTS} package -Plib,cli
   artifacts:
     paths:
     - providence-tools/target/providence-tools-*.tar.gz
