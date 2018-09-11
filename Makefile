@@ -2,15 +2,15 @@ VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::
 THRIFT_VERSION := $(shell cat pom.xml | grep ".*<thrift.version>" | sed -e 's:.*<thrift.version>::' -e 's:</thrift.version>.*::')
 
 compile:
-	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
+	mvn -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 	mvn -Dprovidence.main.input=github.com/morimekta/providence \
-	    net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
+	    -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 
 test-compile:
-	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	mvn -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 	mvn -Dprovidence.gen.rw_binary=false \
 	    -Dprovidence.test.input=src/test/no_rw_binary/**/*.thrift \
-	    net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	    -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 
 models: compile
 	mv providence-core/target/generated-sources/providence/net/morimekta/providence/* \

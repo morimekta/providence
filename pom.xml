@@ -116,8 +116,8 @@
         <slf4j.version>1.7.25</slf4j.version>
 
         <!-- Morimekta Utilities -->
-        <io-util.version>3.0.0</io-util.version>
-        <console-util.version>2.7.1</console-util.version>
+        <io-util.version>3.0.1</io-util.version>
+        <console-util.version>3.0.0</console-util.version>
 
         <guava.version>25.1-jre</guava.version>
 

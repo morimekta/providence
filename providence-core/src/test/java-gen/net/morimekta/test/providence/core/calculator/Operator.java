@@ -47,6 +47,16 @@ public enum Operator
     }
 
     /**
+     * Find a value based in its ID
+     *
+     * @param id Id of value
+     * @return Value found or null
+     */
+    public static Operator findById(Integer id) {
+        return id == null ? null : findById(id.intValue());
+    }
+
+    /**
      * Find a value based in its name
      *
      * @param name Name of value

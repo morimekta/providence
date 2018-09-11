@@ -92,6 +92,17 @@ public class CommonMemberFormatter implements EnumMemberFormatter {
               .newline();
 
         new BlockCommentBuilder(writer)
+                .comment("Find a value based in its ID")
+                .newline()
+                .param_("id", "Id of value")
+                .return_("Value found or null")
+                .finish();
+        writer.formatln("public static %s findById(Integer id) {", simpleClass)
+              .appendln("    return id == null ? null : findById(id.intValue());")
+              .appendln('}')
+              .newline();
+
+        new BlockCommentBuilder(writer)
                 .comment("Find a value based in its name")
                 .newline()
                 .param_("name", "Name of value")
