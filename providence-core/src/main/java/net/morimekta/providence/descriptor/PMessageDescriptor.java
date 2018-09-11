@@ -98,7 +98,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     /**
      * @param name Field name.
      * @return Field or null.
-     * @deprecated Use {@link #findFieldByName(String)} instead.
+     * @deprecated since 0.5.0. Use {@link #findFieldByName(String)} instead.
      */
     @Deprecated
     public F getField(String name) {
@@ -108,7 +108,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     /**
      * @param key Field key.
      * @return Field or null.
-     * @deprecated Use {@link #findFieldById(int)} instead.
+     * @deprecated since 0.5.0. Use {@link #findFieldById(int)} instead.
      */
     @Deprecated
     public F getField(int key) {

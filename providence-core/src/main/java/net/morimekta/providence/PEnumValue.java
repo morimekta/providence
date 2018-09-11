@@ -53,7 +53,7 @@ public interface PEnumValue<T> extends PValue<T>, Stringable, Numeric {
 
     /**
      * @return The numeric value for the enum.
-     * @deprecated Use {@link #asInteger()} or {@link #getId()} instead.
+     * @deprecated since 0.5.0 Use {@link #asInteger()} or {@link #getId()} instead.
      *             Will be removed in a future version, but kept for now as it is
      *             too widely used to be removed immediately.
      */
