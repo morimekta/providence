@@ -42,11 +42,11 @@ cache:
   # Never cache the snapshot build.
   - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
 
-verify:jdk8:
+.verify:jdk8:
   <<: *verify
   image: maven:3.5-jdk-8-alpine
 
-verify:jdk11:
+.verify:jdk11:
   <<: *verify
   image: maven:3.5-jdk-11-slim
 
@@ -75,7 +75,7 @@ release:packaging:
   # Never cache the snapshot build.
   - rm -rf .m2/repository/net/morimekta/providence/*/*-SNAPSHOT/
 
-release:pages:
+pages:
   image: ruby:2.5
   cache:
     key: "vendor-$CI_PROJECT_NAME"
