@@ -91,25 +91,25 @@
         <!-- test dependencies (mostly) -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>2.19.0</mockito.version>
+        <mockito.version>2.22.0</mockito.version>
         <jfairy.version>0.5.9</jfairy.version>
-        <awaitility.version>3.1.1</awaitility.version>
+        <awaitility.version>3.1.2</awaitility.version>
 
         <!-- subsystems -->
         <hazelcast.version>3.10.2</hazelcast.version>
         <dropwizard.version>1.3.5</dropwizard.version>
         <jdbi2.version>2.78</jdbi2.version>
-        <jdbi3.version>3.3.0</jdbi3.version>
+        <jdbi3.version>3.4.0</jdbi3.version>
 
         <!-- RPC tools, Client -->
         <commons.math3.version>3.6.1</commons.math3.version>
-        <jetty.version>9.4.11.v20180605</jetty.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
         <thrift.version>0.11.0</thrift.version>
-        <google-http.version>1.23.0</google-http.version>
+        <google-http.version>1.25.0</google-http.version>
         <httpcore.version>4.4.10</httpcore.version>
         <httpclient.version>4.5.6</httpclient.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-        <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
+        <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
         <!-- compile dependencies -->
         <jackson.version>2.9.6</jackson.version>
@@ -120,7 +120,7 @@
         <console-util.version>3.0.0</console-util.version>
         <testing-util.version>3.0.0</testing-util.version>
 
-        <guava.version>25.1-jre</guava.version>
+        <guava.version>26.0-jre</guava.version>
 
         <!-- Controlling the providence-maven-plugin -->
         <providence.gen.generated_annotation_version>false</providence.gen.generated_annotation_version>
