@@ -16,7 +16,8 @@ import static net.morimekta.providence.storage.MessageStoreUtils.mutateAll;
  * @param <M> PMessage that we search for.
  * @param <F> PField of M.
  */
-public interface MessageSearcher<Q, M extends PMessage<M, F>, F extends PField> {
+public interface MessageSearcher<Q, M extends PMessage<M, F>, F extends PField>
+        extends Searcher<Q, M> {
 
     /**
      * Get a list of builders for the query input. Any modifications
