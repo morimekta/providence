@@ -36,13 +36,22 @@ fi
 
 BINTRAY_API_KEY=$(cat ~/.config/bintray/api-key)
 
+echo -n "providence-${pvd_version}_all.deb: "
 curl -T providence-tools/target/providence-${pvd_version}_all.deb \
      -umorimekta:${BINTRAY_API_KEY} \
      https://api.bintray.com/content/morimekta/debian-ppa/providence/${pvd_version}/providence-${pvd_version}_all.deb;deb_distribution=stable;deb_component=main;deb_architecture=all
-
+echo
+echo -n "providence-${pvd_version}-1.noarch.rpm: "
 curl -T providence-tools/target/rpm/providence/RPMS/noarch/providence-${pvd_version}-1.noarch.rpm \
      -umorimekta:${BINTRAY_API_KEY} \
      https://api.bintray.com/content/morimekta/yum-repo/providence/${pvd_version}/providence-${pvd_version}-1.noarch.rpm
+echo
+echo -n "providence-tools-${pvd_version}.tar.gz: "
+curl -T providence-tools/target/providence-tools-${pvd_version}.tar.gz \
+     -umorimekta:${BINTRAY_API_KEY} \
+     https://api.bintray.com/content/morimekta/archive/providence/${pvd_version}/providence-tools-${pvd_version}.tar.gz
+echo
+echo
 
 docker build . \
        -t morimekta-docker-tools.bintray.io/providence:${pvd_version} \
@@ -54,10 +63,11 @@ echo
 echo "Now go to:"
 echo " - https://bintray.com/morimekta/debian-ppa/providence"
 echo " - https://bintray.com/morimekta/yum-repo/providence"
-echo "and publish the new files."
+echo " - https://bintray.com/morimekta/archive/providence"
+echo "and publish the new files. (and add to downloads-list in archive)"
 echo
 
-SHA256SUM=$(curl -sL https://github.com/morimekta/providence/releases/download/v${pvd_version}/providence-tools-${pvd_version}.tar.gz --output - | \
+SHA256SUM=$(sha256sum providence-tools/target/providence-tools-${pvd_version}.tar.gz | \
             sha256sum | \
             sed 's/ .*//')
 
@@ -69,7 +79,7 @@ class Providence < Formula
     desc "Providence Tools"
     homepage "http://www.morimekta.net/providence"
     version "${pvd_version}"
-    url "https://github.com/morimekta/providence/releases/download/v#{version}/providence-tools-#{version}.tar.gz"
+    url "https://bintray.com/morimekta/archive/download_file?file_path=providence-tools-#{version}.tar.gz"
     sha256 "${SHA256SUM}"
 
     depends_on :java => "1.8+"
