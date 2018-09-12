@@ -67,7 +67,7 @@ echo " - https://bintray.com/morimekta/archive/providence"
 echo "and publish the new files. (and add to downloads-list in archive)"
 echo
 
-SHA256SUM=$(sha256sum providence-tools/target/providence-tools-${pvd_version}.tar.gz | \
+SHA256SUM=$(cat providence-tools/target/providence-tools-${pvd_version}.tar.gz | \
             sha256sum | \
             sed 's/ .*//')
 
