@@ -470,7 +470,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                     }
                 }
                 comment.finish();
-                writer.appendln(JAnnotation.NULLABLE);
+                writer.appendln(JAnnotation.NON_NULL);
                 writer.formatln("public _Builder %s(%s value) {", field.setter(), helper.getValueType(enumType))
                       .begin()
                       .formatln("if (value == null) return %s();", field.resetter())
