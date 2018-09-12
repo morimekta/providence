@@ -2,7 +2,11 @@
 
 set -e
 
-export pvd_version=$(cat pom.xml | grep '^    <version>' | sed 's: *[<][/]\?version[>]::g')
+function __sort() {
+   type -fp gsort >/dev/null && command gsort "$@" || sort "$@"
+}
+
+export pvd_version=$(git tag | grep '^v[0-9]\{1,4\}[.][0-9]\+' | __sort -V | tail -n 1)
 
 echo "This will upload packages to bintray:"
 echo
