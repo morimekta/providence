@@ -28,6 +28,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 
+import com.google.common.collect.ImmutableSet;
 import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -49,12 +50,24 @@ import java.util.stream.Collectors;
 public class EqualToMessage<Message extends PMessage<Message, Field>, Field extends PField>
         extends BaseMatcher<Message> {
     private final Message expected;
+    private final Set<PField> ignoringFields;
 
     public EqualToMessage(Message expected) {
         this.expected = expected;
+        this.ignoringFields = ImmutableSet.of();
+    }
+
+    private EqualToMessage(Message expected, Set<PField> ignoringFields) {
+        this.expected = expected;
+        this.ignoringFields = ignoringFields;
+    }
+
+    public EqualToMessage<Message, Field> ignoring(PField... fields) {
+        return new EqualToMessage<>(expected, ImmutableSet.copyOf(fields));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean matches(Object actual) {
         if (expected == null) {
             return actual == null;
@@ -62,7 +75,9 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         if (!(actual instanceof PMessage)) {
             throw new AssertionFailedError("Item " + actual.getClass().toString() + " not a providence message.");
         }
-        return expected.equals(actual);
+        ArrayList<String> mismatches = new ArrayList<>();
+        collectMismatches("", (PMessage) expected, (PMessage) actual, mismatches);
+        return mismatches.isEmpty();
     }
 
     @Override
@@ -73,6 +88,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void describeMismatch(Object actual, Description mismatchDescription) {
         if (expected == null) {
             mismatchDescription.appendText("got " + toString(actual));
@@ -107,7 +123,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         }
     }
 
-    private static <T extends PMessage<T, F>, F extends PField>
+    private <T extends PMessage<T, F>, F extends PField>
     void collectMismatches(String xPath, T expected, T actual, ArrayList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
@@ -127,8 +143,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
             }
         }
 
-        for (PField field : expected.descriptor()
-                                       .getFields()) {
+        for (PField field : expected.descriptor().getFields()) {
+            if (ignoringFields.contains(field)) {
+                continue;
+            }
+
             int key = field.getId();
             String fieldXPath = xPath.isEmpty() ? field.getName() : xPath + "." + field.getName();
 
@@ -175,10 +194,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
         }
     }
 
-    private static <K, V> void collectMapMismatches(String xPath,
-                                                    Map<K, V> expected,
-                                                    Map<K, V> actual,
-                                                    ArrayList<String> mismatches) {
+    @SuppressWarnings("unchecked")
+    private <K, V> void collectMapMismatches(String xPath,
+                                             Map<K, V> expected,
+                                             Map<K, V> actual,
+                                             ArrayList<String> mismatches) {
         mismatches.addAll(actual.keySet()
                                 .stream()
                                 .filter(key -> !expected.keySet()
@@ -241,10 +261,11 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
 
     }
 
-    private static <T> void collectListMismatches(String xPath,
-                                                  List<T> expected,
-                                                  List<T> actual,
-                                                  ArrayList<String> mismatches) {
+    @SuppressWarnings("unchecked")
+    private <T> void collectListMismatches(String xPath,
+                                           List<T> expected,
+                                           List<T> actual,
+                                           ArrayList<String> mismatches) {
         Set<T> handledItems = new HashSet<>();
 
         boolean hasReorder = false;
