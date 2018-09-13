@@ -158,7 +158,7 @@ public abstract class GeneratorBase<
     @SuppressWarnings("unchecked")
     public <E extends PEnumValue<E>>
     Generator<Context, E> enumGeneratorFor(PEnumDescriptor<E> descriptor) {
-        EnumGenerator<Context,E> generator = (EnumGenerator) defaultEnumGenerators.get(descriptor);
+        Generator<Context,E> generator = defaultEnumGenerators.get(descriptor);
         if (generator == null) {
             generator = new EnumGenerator<>(descriptor);
             defaultEnumGenerators.put(descriptor, generator);
