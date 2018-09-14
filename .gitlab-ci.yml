@@ -99,3 +99,4 @@ pages:
   except:
     variables:
     - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
+    - $CI_COMMIT_MESSAGE =~ /\[maven-release-plugin\]/      

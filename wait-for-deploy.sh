@@ -24,7 +24,7 @@ do
 
   echo -e '\033[31mFailed download...\033[00m'
   echo -e " -- $(date --iso-8601=seconds | sed 's/+.*//')"
-  sleep 120
+  sleep 180
   TRY=$(echo ${TRY} + 1 | bc)
   echo
 done
