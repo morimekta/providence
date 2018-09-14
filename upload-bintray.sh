@@ -6,7 +6,7 @@ function __sort() {
    type -fp gsort >/dev/null && command gsort "$@" || sort "$@"
 }
 
-export pvd_version=$(git tag | grep '^v[0-9]\{1,4\}[.][0-9]\+' | __sort -V | tail -n 1)
+export pvd_version=$(git tag | grep '^v[0-9]\{1,4\}[.][0-9]\+' | __sort -V | tail -n 1 | cut -b '2-')
 
 echo "This will upload packages to bintray:"
 echo
