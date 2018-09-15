@@ -46,16 +46,12 @@ after_script:
     - $CI_COMMIT_MESSAGE =~ /\[maven-release-plugin\]/
 
 test:jdk8:
-  <<: *verify
-  image:
-    name: maven:3.5-jdk-8-alpine
-    entrypoint: ["/bin/bash", "-c"]
+  <<: *test
+  image: maven:3.5-jdk-8-alpine
 
 test:jdk11:
   <<: *test
-  image:
-    name: maven:3.5-jdk-11-slim
-    entrypoint: ["/bin/bash", "-c"]
+  image: maven:3.5-jdk-11-slim
 
 verify:jdk8:
   <<: *verify
@@ -68,7 +64,7 @@ verify:jdk8:
   - apk add --no-cache git
   - |
     # Report coverage only chen a java file has changed.
-    NUM_JAVA=$(git diff HEAD~ --name-only | grep '.java$' | wc -l)
+    NUM_JAVA=$(git diff ${CI_COMMIT_BEFORE_SHA}..HEAD --name-only | grep '.java$' | wc -l)
     if [[ $NUM_JAVA -gt 0 ]]
     then
       echo "Sending jacoco coverage report to codecov.io"
@@ -77,9 +73,7 @@ verify:jdk8:
 
 verify:jdk11:
   <<: *verify
-  image:
-    name: maven:3.5-jdk-11-slim
-    entrypoint: ["/bin/bash", "-c"]
+  image: maven:3.5-jdk-11-slim
 
 packaging:
   stage: release
