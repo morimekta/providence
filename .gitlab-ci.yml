@@ -18,7 +18,7 @@ before_script:
 - mkdir -p .m2/repository
 
 after_script:
-# Never cache the itself.
+# Never cache itself.
 - rm -rf .m2/repository/net/morimekta/providence/ || true
 
 .test: &test
@@ -30,7 +30,6 @@ after_script:
     - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
     - $CI_COMMIT_MESSAGE =~ /\[maven-release-plugin\]/
   script:
-  - mkdir -p .m2/repository
   - mvn ${MAVEN_CLI_OPTS} ${MAVEN_NO_PACKAGING} verify -Plib,cli
   - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print int(100*covered/instructions), "% covered" }' */target/site/jacoco-ut/jacoco.csv
   - /bin/true
