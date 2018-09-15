@@ -3,6 +3,14 @@ layout: page
 title: "About Providence"
 ---
 
+<div style="float:right; width: 30%;">
+<img src="img/providence.svg" width="95%" height="auto" />
+<span style="font-size: small;">
+The "Eye of Providence" symbol, used among others by the Free-masons,
+US Treasury (found on the $1 bill) and attributed to the fabled Illuminati.
+</span>
+</div>
+
 The `providence` project was made in order to make an immutable model java
 library for thrift. It is mostly separate from the thrift library, but can use
 the standard thrift protocols to serialize and serialize messages. It is mainly
