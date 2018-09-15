@@ -33,7 +33,7 @@ after_script:
   - mkdir -p .m2/repository
   - mvn ${MAVEN_CLI_OPTS} ${MAVEN_NO_PACKAGING} verify -Plib,cli
   - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print int(100*covered/instructions), "% covered" }' */target/site/jacoco-ut/jacoco.csv
-  - true
+  - /bin/true
   coverage: /([0-9]{1,3}) % covered/
 
 .verify: &verify
