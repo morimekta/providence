@@ -20,12 +20,11 @@
  */
 package net.morimekta.providence.streams;
 
+import com.google.common.base.Suppliers;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
-
-import com.google.common.base.Suppliers;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedOutputStream;
@@ -72,6 +71,8 @@ public class MessageCollectors {
     Collector<Message, OutputStream, Integer> toFile(File file,
                                                      Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
+        final Object mutex = new Object();
+
         return Collector.of(Suppliers.memoize(() -> {
             // Delay file creation until the write starts.
             try {
@@ -81,7 +82,7 @@ public class MessageCollectors {
             }
         }), (outputStream, t) -> {
             try {
-                synchronized (result) {
+                synchronized (mutex) {
                     result.addAndGet(serializer.serialize(outputStream, t));
                     if (!serializer.binaryProtocol()) {
                         result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));

@@ -1,5 +1,7 @@
 package net.morimekta.providence.testing.generator;
 
+import com.google.common.collect.ImmutableList;
+import io.codearte.jfairy.Fairy;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
@@ -9,9 +11,6 @@ import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
-
-import com.google.common.collect.ImmutableList;
-import io.codearte.jfairy.Fairy;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -355,7 +354,7 @@ public class GeneratorWatcher<
     public GeneratorWatcher<Base, Context> setResourceReader(String resource,
                                                              Serializer serializer) {
         return setMessageReader(new IOMessageReader(
-                getClass().getResourceAsStream(resource),
+                GeneratorWatcher.class.getResourceAsStream(resource),
                 serializer));
     }
 

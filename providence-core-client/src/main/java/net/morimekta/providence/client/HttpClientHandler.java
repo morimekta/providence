@@ -20,6 +20,13 @@
  */
 package net.morimekta.providence.client;
 
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.common.net.MediaType;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PMessage;
@@ -32,14 +39,6 @@ import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
-
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.common.net.MediaType;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.HttpHostConnectException;
 
@@ -189,7 +188,7 @@ public class HttpClientHandler implements PServiceCallHandler {
                 // The native exception is not helpful (for when using NetHttpTransport).
                 throw new HttpHostConnectException(e, new HttpHost(url.getHost(), url.getPort(), url.getScheme()));
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             long endTime = System.nanoTime();
             double duration = ((double) (endTime - startTime)) / NS_IN_MILLIS;
             try {

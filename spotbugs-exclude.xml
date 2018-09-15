@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+    <Match>
+        <Class name="net.morimekta.providence.serializer.SerializerException" />
+        <!-- False Flag: It thinks the int param needs to be de-referenced, so null is not allowed, but it is. -->
+        <Bug pattern="NP_NULL_PARAM_DEREF" />
+    </Match>
+    <Match>
+        <Class name="net.morimekta.providence.generator.GeneratorOptions" />
+        <!-- Expected. Fields are just not used in same module. -->
+        <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" />
+    </Match>
+    <Match>
+        <Class name="net.morimekta.providence.maven.plugin.GenerateSourcesMojo" />
+        <!-- Expected. Fields are only set by guice using dependency injection. -->
+        <Bug pattern="UWF_NULL_FIELD" />
+    </Match>
+    <Match>
+        <Class name="net.morimekta.providence.maven.plugin.GenerateTestSourcesMojo" />
+        <!-- Expected. Fields are only set by guice using dependency injection. -->
+        <Bug pattern="UWF_NULL_FIELD" />
+    </Match>
+    <Match>
+        <Class name="net.morimekta.providence.maven.plugin.ProvidenceAssemblyMojo" />
+        <!-- Expected. Fields are only set by guice using dependency injection. -->
+        <Bug pattern="UWF_NULL_FIELD" />
+    </Match>
+
+    <Match>
+        <Class name="net.morimekta.providence.config.impl.ProvidenceConfigParser" />
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+    </Match>
+    <Match>
+        <Class name="net.morimekta.providence.config.impl.ProvidenceConfigUtil" />
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+    </Match>
+
+</FindBugsFilter>

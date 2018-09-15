@@ -18,6 +18,7 @@
  */
 package net.morimekta.providence.thrift.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PProcessor;
@@ -29,8 +30,6 @@ import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
 import net.morimekta.providence.util.ServiceCallInstrumentation;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.ByteBufferInputStream;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,7 +291,7 @@ public class NonblockingSocketServer implements AutoCloseable {
             while ((socketChannel = serverSocketChannel.accept()) != null) {
                 // But make the actual accepted channel blocking.
                 socketChannel.configureBlocking(false);
-                socketChannel.register(selector, SelectionKey.OP_READ, new Context(socketChannel));
+                socketChannel.register(selector, SelectionKey.OP_READ, new Context(socketChannel, maxFrameSizeInBytes));
             }
         } catch (IOException e) {
             LOGGER.error("Exception when accepting: {}", e.getMessage(), e);
@@ -390,7 +389,7 @@ public class NonblockingSocketServer implements AutoCloseable {
                                                                     .build());
                 }
 
-                synchronized (context.writeQueue) {
+                synchronized (context.mutex) {
                     context.writeQueue.offer(new WriteEntry(startTime, call, reply));
                     key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
                     selector.wakeup();
@@ -430,7 +429,7 @@ public class NonblockingSocketServer implements AutoCloseable {
             }
         }
 
-        synchronized (context.writeQueue) {
+        synchronized (context.mutex) {
             // double-guard as a new write entry may just have been added.
             if (context.writeQueue.isEmpty()) {
                 key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
@@ -438,7 +437,7 @@ public class NonblockingSocketServer implements AutoCloseable {
         }
     }
 
-    private class WriteEntry {
+    private static class WriteEntry {
         long startTime;
         PServiceCall call;
         PServiceCall reply;
@@ -450,7 +449,8 @@ public class NonblockingSocketServer implements AutoCloseable {
         }
     }
 
-    private class Context {
+    private static class Context {
+        final Object                   mutex;
         final SocketChannel            channel;
         final Queue<WriteEntry>        writeQueue;
         final FramedBufferOutputStream out;
@@ -459,7 +459,8 @@ public class NonblockingSocketServer implements AutoCloseable {
         final ByteBuffer               readBuffer;
         int currentFrameSize;
 
-        private Context(SocketChannel channel) {
+        private Context(SocketChannel channel, int maxFrameSizeInBytes) {
+            this.mutex = new Object();
             this.channel = channel;
             this.currentFrameSize = 0;
             this.sizeBuffer = ByteBuffer.allocate(Integer.BYTES);

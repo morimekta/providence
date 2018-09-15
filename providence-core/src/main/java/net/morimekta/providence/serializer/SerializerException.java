@@ -20,11 +20,10 @@
  */
 package net.morimekta.providence.serializer;
 
+import com.google.common.base.MoreObjects;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.util.Stringable;
-
-import com.google.common.base.MoreObjects;
 
 import java.io.IOException;
 import java.util.Locale;
