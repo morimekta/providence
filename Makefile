@@ -3,7 +3,7 @@ THRIFT_VERSION := $(shell cat pom.xml | grep ".*<thrift.version>" | sed -e 's:.*
 
 compile:
 	mvn -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
-	mvn -Dprovidence.main.input=github.com/morimekta/providence \
+	mvn -Dprovidence.main.input=github.com/morimekta/providence/*.thrift \
 	    -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 
 test-compile:
