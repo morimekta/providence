@@ -233,8 +233,10 @@ public class ThriftProgramParserTest {
                            "        type = \"Operand\"\n" +
                            "        name = \"PI\"\n" +
                            "        value = \"{\\n  \\\"number\\\": 3.141592\\n}\"\n" +
-                           "        start_line_no = 63\n" +
-                           "        start_line_pos = 20\n" +
+                           "        start_pos = {\n" +
+                           "          line_no = 63\n" +
+                           "          line_pos = 20\n" +
+                           "        }\n" +
                            "      }\n" +
                            "    },\n" +
                            "    {\n" +
@@ -243,8 +245,10 @@ public class ThriftProgramParserTest {
                            "        type = \"set<Operator>\"\n" +
                            "        name = \"kComplexOperands\"\n" +
                            "        value = \"[\\n    Operator.MULTIPLY,\\n    Operator.DIVIDE\\n]\"\n" +
-                           "        start_line_no = 68\n" +
-                           "        start_line_pos = 40\n" +
+                           "        start_pos = {\n" +
+                           "          line_no = 68\n" +
+                           "          line_pos = 40\n" +
+                           "        }\n" +
                            "      }\n" +
                            "    }\n" +
                            "  ]\n" +
@@ -406,8 +410,10 @@ public class ThriftProgramParserTest {
                 "        type = \"Operand\"\n" +
                 "        name = \"PI\"\n" +
                 "        value = \"{\\n  \\\"number\\\": 3.141592\\n}\"\n" +
-                "        start_line_no = 56\n" +
-                "        start_line_pos = 20\n" +
+                "        start_pos = {\n" +
+                "          line_no = 56\n" +
+                "          line_pos = 20\n" +
+                "        }\n" +
                 "      }\n" +
                 "    },\n" +
                 "    {\n" +
@@ -416,8 +422,10 @@ public class ThriftProgramParserTest {
                 "        type = \"set<Operator>\"\n" +
                 "        name = \"kComplexOperands\"\n" +
                 "        value = \"[\\n    Operator.MULTIPLY,\\n    Operator.DIVIDE\\n]\"\n" +
-                "        start_line_no = 61\n" +
-                "        start_line_pos = 40\n" +
+                "        start_pos = {\n" +
+                "          line_no = 61\n" +
+                "          line_pos = 40\n" +
+                "        }\n" +
                 "      }\n" +
                 "    }\n" +
                 "  ]\n" +
@@ -464,8 +472,10 @@ public class ThriftProgramParserTest {
                            "            type = \"double\"\n" +
                            "            name = \"i\"\n" +
                            "            default_value = \"0.0\"\n" +
-                           "            start_line_no = 8\n" +
-                           "            start_line_pos = 19\n" +
+                           "            start_pos = {\n" +
+                           "              line_no = 8\n" +
+                           "              line_pos = 19\n" +
+                           "            }\n" +
                            "          }\n" +
                            "        ]\n" +
                            "        annotations = {\n" +
@@ -484,8 +494,10 @@ public class ThriftProgramParserTest {
                            "        type = \"Imaginary\"\n" +
                            "        name = \"kSqrtMinusOne\"\n" +
                            "        value = \"{\\n  \\\"v\\\": 0.0,\\n  \\\"i\\\": -1.0\\n}\"\n" +
-                           "        start_line_no = 13\n" +
-                           "        start_line_pos = 33\n" +
+                           "        start_pos = {\n" +
+                           "          line_no = 13\n" +
+                           "          line_pos = 33\n" +
+                           "        }\n" +
                            "      }\n" +
                            "    }\n" +
                            "  ]\n" +

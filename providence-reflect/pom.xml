@@ -24,10 +24,6 @@
             <artifactId>providence-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-idl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

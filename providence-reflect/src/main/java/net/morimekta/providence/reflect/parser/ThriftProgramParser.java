@@ -28,6 +28,7 @@ import net.morimekta.providence.model.EnumType;
 import net.morimekta.providence.model.EnumValue;
 import net.morimekta.providence.model.FieldRequirement;
 import net.morimekta.providence.model.FieldType;
+import net.morimekta.providence.model.FilePos;
 import net.morimekta.providence.model.FunctionType;
 import net.morimekta.providence.model.MessageType;
 import net.morimekta.providence.model.MessageVariant;
@@ -265,8 +266,7 @@ public class ThriftProgramParser implements ProgramParser {
                         .setName(id.asString())
                         .setType(type)
                         .setValue(value.asString())
-                        .setStartLineNo(value.getLineNo())
-                        .setStartLinePos(value.getLinePos())
+                        .setStartPos(new FilePos(value.getLineNo(), value.getLinePos()))
                         .build();
     }
 
@@ -792,8 +792,7 @@ public class ThriftProgramParser implements ProgramParser {
                 tokenizer.next();
                 Token defaultValue = tokenizer.parseValue();
                 field.setDefaultValue(defaultValue.asString());
-                field.setStartLineNo(defaultValue.getLineNo());
-                field.setStartLinePos(defaultValue.getLinePos());
+                field.setStartPos(new FilePos(defaultValue.getLineNo(), defaultValue.getLinePos()));
                 token = tokenizer.peek("field annotation, def or message end");
             }
 

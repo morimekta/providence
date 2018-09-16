@@ -98,6 +98,13 @@ public class JavaGenerator extends Generator {
         String javaPackage = JUtils.getJavaPackage(program);
         JHelper helper = new JHelper(registry);
 
+        if (!javaOptions.generate_providence_core_types &&
+            ("net.morimekta.providence".equals(helper.getJavaPackage(program)) ||
+             "net.morimekta.providence.model".equals(helper.getJavaPackage(program)))) {
+            // Just skip internal types if not requested.
+            return;
+        }
+
         String path = JUtils.getPackageClassPath(javaPackage);
 
         if (program.getConstants().size() > 0) {

@@ -11,6 +11,14 @@
 namespace java net.morimekta.providence.model
 namespace js morimekta.providence.model
 
+/** Describes */
+struct FilePos {
+    /** The line no in the file. The first line is 1 */
+    1: required i32 line_no;
+    /** The character porisiotn in the line. The first char is 0. */
+    2: required i32 line_pos;
+} (java.public.constructor = "")
+
 /**
  * <name> (= <value>)
  */
@@ -19,6 +27,10 @@ struct EnumValue {
     2: required string name;
     3: optional i32    id;
     4: optional map<string,string> annotations (container = "SORTED");
+    /** The start of the definition (position of 'name')*/
+    10: optional FilePos start_pos;
+    /** The end of the definition (position of ';' or last pos of value) */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -31,6 +43,10 @@ struct EnumType {
     2: required string name;
     3:          list<EnumValue> values;
     4: optional map<string,string> annotations (container = "SORTED");
+    /** The start of the definition (position of 'enum')*/
+    10: optional FilePos start_pos;
+    /** The end of the definition (position of '}') */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -40,6 +56,10 @@ struct TypedefType {
     1: optional string documentation;
     2: required string type;
     3: required string name;
+    /** The start of the definition (position of 'typedef')*/
+    10: optional FilePos start_pos;
+    /** The end of the definition */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -89,8 +109,10 @@ struct FieldType {
     // Note the start of the default value in the parsed thrift file, this
     // can be used for making more accurate exception / parse data from the
     // const parser.
-    10: optional i32 start_line_no;
-    11: optional i32 start_line_pos;
+    /** The start of the definition (position of field ID)*/
+    10: optional FilePos start_pos;
+    /** The end of the definition */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -104,6 +126,10 @@ struct MessageType {
     3: required string name;
     4:          list<FieldType> fields;
     5: optional map<string,string> annotations (container = "SORTED");
+    /** The start of the definition (position of 'struct' / message type)*/
+    10: optional FilePos start_pos;
+    /** The end of the definition (position of '}') */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -117,6 +143,10 @@ struct FunctionType {
     5:          list<FieldType> params = [];
     6: optional list<FieldType> exceptions = [];
     7: optional map<string,string> annotations (container = "SORTED");
+    /** The start of the definition (position of return type)*/
+    10: optional FilePos start_pos;
+    /** The end of the definition */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -130,6 +160,10 @@ struct ServiceType {
     3: optional string extend;
     4:          list<FunctionType> methods = [];
     5: optional map<string,string> annotations = {} (container = "SORTED");
+    /** The start of the definition (position of 'service')*/
+    10: optional FilePos start_pos;
+    /** The end of the definition (position of '}') */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -144,8 +178,10 @@ struct ConstType {
 
     // Note the start of the const in the parsed thrift file, this can be used
     // for making more accurate exception / parse data from the const parser.
-    10: optional i32 start_line_no;
-    11: optional i32 start_line_pos;
+    /** The start of the definition (position of 'enum')*/
+    10: optional FilePos start_pos;
+    /** The end of the definition (position of '}') */
+    11: optional FilePos end_pos;
 }
 
 /**
@@ -194,6 +230,20 @@ struct ProgramType {
 }
 
 /**
+ * A meta object describing a parsed program file. This may include the
+ * included programs as their own meta file. The lines of the original
+ * program .thrift file is also included.
+ */
+struct ProgramMeta {
+    /** The program type definition */
+    1: required ProgramType program;
+    /** The lines of the program file */
+    2: optional list<string> lines;
+    /** Map of program name to meta of included programs */
+    3: optional map<string, ProgramMeta> includes;
+}
+
+/**
  * Set of words used in thrift IDL as specific meanings.
  */
 const set<string> kThriftKeywords = [
@@ -227,7 +277,8 @@ const set<string> kThriftKeywords = [
  * - service method names
  *
  * This compatibility check can be turned off in the compiler and generator
- * if wanted, but should generally be kept on.
+ * if wanted, but should generally be kept on. Note that the name check here is
+ * always case sensitive.
  */
 const set<string> kReservedWords = [
     "abstract"

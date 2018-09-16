@@ -62,6 +62,12 @@
         </dependency>
 
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-idl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>testing-util</artifactId>
         </dependency>

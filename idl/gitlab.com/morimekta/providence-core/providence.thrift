@@ -23,16 +23,14 @@ struct Any {
      */
     2: optional string media_type = "application/vnd.apache.thrift.binary";
 
-    // 3: required one_of content {
     /**
      * The actual content binary data.
      */
-    4: optional binary bin;
+    4: optional binary data (one_of = "content");
 
     /**
      * Optional string encoded content for non-binary media types. If this is filled
      * in, then the 'bin' field is not needed.
      */
-    5: optional string str;
-    // }
+    5: optional string text (one_of = "content");
 }

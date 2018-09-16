@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.reflect.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
@@ -48,9 +50,6 @@ import net.morimekta.providence.reflect.contained.CServiceMethod;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.contained.CUnionDescriptor;
 import net.morimekta.providence.util.TypeRegistry;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -300,8 +299,8 @@ public class ProgramConverter {
                                                        field.getType(),
                                                        pkg,
                                                        field.getValue(),
-                                                       field.getStartLineNo(),
-                                                       field.getStartLinePos());
+                                                       field.getStartPos().getLineNo(),
+                                                       field.getStartPos().getLinePos());
 
         @SuppressWarnings("unchecked")
         CConst made = new CConst(field.getDocumentation(),
@@ -320,8 +319,8 @@ public class ProgramConverter {
                                              field.getType(),
                                              pkg,
                                              field.getDefaultValue(),
-                                             field.getStartLineNo(),
-                                             field.getStartLinePos());
+                                             field.getStartPos().getLineNo(),
+                                             field.getStartPos().getLinePos());
         }
         PRequirement requirement = PRequirement.valueOf(field.getRequirement()
                                                              .asString());

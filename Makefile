@@ -2,26 +2,26 @@ VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::
 THRIFT_VERSION := $(shell cat pom.xml | grep ".*<thrift.version>" | sed -e 's:.*<thrift.version>::' -e 's:</thrift.version>.*::')
 
 compile:
-	mvn -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
-	mvn -Dprovidence.main.input=github.com/morimekta/providence/*.thrift \
-	    -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
+	mvn -Plib net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
+	mvn -Dprovidence.gen.generate_providence_core_models=true \
+        -Dprovidence.main.input=gitlab.com/morimekta/*/*.thrift \
+	    -Plib net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 
 test-compile:
-	mvn -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	mvn -Plib net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 	mvn -Dprovidence.gen.rw_binary=false \
 	    -Dprovidence.test.input=src/test/no_rw_binary/**/*.thrift \
-	    -Pall net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
+	    -Plib net.morimekta.providence:providence-maven-plugin:$(VERSION):testCompile
 
 models: compile
-	mv providence-core/target/generated-sources/providence/net/morimekta/providence/* \
-	   providence-core/src/main/java/net/morimekta/providence
-
-	rm   -rf idl/src/main/java-gen/*
-	mkdir -p idl/src/main/java-gen/net/morimekta/providence/model
+	rm   -rf providence-core/src/main/java-gen/*
+	mkdir -p providence-core/src/main/java-gen/net/morimekta/providence
+	rm   -rf providence-reflect/src/main/java-gen/*
+	mkdir -p providence-reflect/src/main/java-gen/net/morimekta/providence/model
 	mv idl/target/generated-sources/providence/net/morimekta/providence/*.java \
-	   idl/src/main/java-gen/net/morimekta/providence
+	   providence-core/src/main/java-gen/net/morimekta/providence
 	mv idl/target/generated-sources/providence/net/morimekta/providence/model/*.java \
-	   idl/src/main/java-gen/net/morimekta/providence/model
+	   providence-reflect/src/main/java-gen/net/morimekta/providence/model
 
 test-models: test-compile
 	rm -rf providence-core/src/test/java-gen/*

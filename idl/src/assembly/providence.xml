@@ -8,11 +8,19 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/github.com/morimekta/providence</directory>
+            <directory>${project.basedir}/gitlab.com/morimekta/providence-core</directory>
             <includes>
                 <include>*.thrift</include>
             </includes>
-            <outputDirectory>net/morimekta/providence/providence-idl</outputDirectory>
+            <outputDirectory>net/morimekta/providence/providence-core</outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/gitlab.com/morimekta/providence-reflect</directory>
+            <includes>
+                <include>*.thrift</include>
+            </includes>
+            <outputDirectory>net/morimekta/providence/providence-reflect</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>
