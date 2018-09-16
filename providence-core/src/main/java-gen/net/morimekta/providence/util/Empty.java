@@ -1,4 +1,4 @@
-package net.morimekta.providence;
+package net.morimekta.providence.util;
 
 /**
  * Dummy struct that is just empty. Can be used to &quot;ignore&quot; everything.
@@ -11,7 +11,7 @@ public class Empty
                    Comparable<Empty>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 217669794177679296L;
+    private final static long serialVersionUID = -8040174771584611017L;
 
 
     private volatile transient int tHashCode;
@@ -55,7 +55,7 @@ public class Empty
 
     @Override
     public String toString() {
-        return "providence.Empty" + asString();
+        return "providence_util.Empty" + asString();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class Empty
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence.Empty");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_util.Empty");
             }
             return field;
         }
@@ -188,7 +188,7 @@ public class Empty
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.Empty");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_util.Empty");
             }
             return field;
         }
@@ -211,7 +211,7 @@ public class Empty
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Empty,_Field> {
         public _Descriptor() {
-            super("providence", "Empty", _Builder::new, true);
+            super("providence_util", "Empty", _Builder::new, true);
         }
 
         @Override
@@ -245,7 +245,7 @@ public class Empty
     }
 
     /**
-     * Make a providence.Empty builder.
+     * Make a providence_util.Empty builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -262,7 +262,7 @@ public class Empty
         private java.util.BitSet modified;
 
         /**
-         * Make a providence.Empty builder.
+         * Make a providence_util.Empty builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(0);
@@ -270,7 +270,7 @@ public class Empty
         }
 
         /**
-         * Make a mutating builder off a base providence.Empty.
+         * Make a mutating builder off a base providence_util.Empty.
          *
          * @param base The base Empty
          */

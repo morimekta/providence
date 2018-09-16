@@ -1,4 +1,4 @@
-package net.morimekta.providence;
+package net.morimekta.providence.util;
 
 /**
  * A message containing anything.
@@ -11,15 +11,15 @@ public class Any
                    Comparable<Any>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 8306176226829184051L;
+    private final static long serialVersionUID = 3506393331826792594L;
 
     private final static String kDefaultType = "";
     private final static String kDefaultMediaType = "application/vnd.apache.thrift.binary";
 
     private final transient String mType;
     private final transient String mMediaType;
-    private final transient net.morimekta.util.Binary mBin;
-    private final transient String mStr;
+    private final transient net.morimekta.util.Binary mData;
+    private final transient String mText;
 
     private volatile transient int tHashCode;
 
@@ -33,8 +33,8 @@ public class Any
             mType = kDefaultType;
         }
         mMediaType = builder.mMediaType;
-        mBin = builder.mBin;
-        mStr = builder.mStr;
+        mData = builder.mData;
+        mText = builder.mText;
     }
 
     public boolean hasType() {
@@ -79,8 +79,8 @@ public class Any
         return java.util.Optional.ofNullable(mMediaType);
     }
 
-    public boolean hasBin() {
-        return mBin != null;
+    public boolean hasData() {
+        return mData != null;
     }
 
     /**
@@ -88,8 +88,8 @@ public class Any
      *
      * @return The field value
      */
-    public net.morimekta.util.Binary getBin() {
-        return mBin;
+    public net.morimekta.util.Binary getData() {
+        return mData;
     }
 
     /**
@@ -98,12 +98,12 @@ public class Any
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.Optional<net.morimekta.util.Binary> optionalBin() {
-        return java.util.Optional.ofNullable(mBin);
+    public java.util.Optional<net.morimekta.util.Binary> optionalData() {
+        return java.util.Optional.ofNullable(mData);
     }
 
-    public boolean hasStr() {
-        return mStr != null;
+    public boolean hasText() {
+        return mText != null;
     }
 
     /**
@@ -112,8 +112,8 @@ public class Any
      *
      * @return The field value
      */
-    public String getStr() {
-        return mStr;
+    public String getText() {
+        return mText;
     }
 
     /**
@@ -123,8 +123,8 @@ public class Any
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.Optional<String> optionalStr() {
-        return java.util.Optional.ofNullable(mStr);
+    public java.util.Optional<String> optionalText() {
+        return java.util.Optional.ofNullable(mText);
     }
 
     @Override
@@ -132,8 +132,8 @@ public class Any
         switch(key) {
             case 1: return true;
             case 2: return mMediaType != null;
-            case 4: return mBin != null;
-            case 5: return mStr != null;
+            case 4: return mData != null;
+            case 5: return mText != null;
             default: return false;
         }
     }
@@ -144,8 +144,8 @@ public class Any
         switch(key) {
             case 1: return (T) mType;
             case 2: return (T) mMediaType;
-            case 4: return (T) mBin;
-            case 5: return (T) mStr;
+            case 4: return (T) mData;
+            case 5: return (T) mText;
             default: return null;
         }
     }
@@ -157,8 +157,8 @@ public class Any
         Any other = (Any) o;
         return java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mMediaType, other.mMediaType) &&
-               java.util.Objects.equals(mBin, other.mBin) &&
-               java.util.Objects.equals(mStr, other.mStr);
+               java.util.Objects.equals(mData, other.mData) &&
+               java.util.Objects.equals(mText, other.mText);
     }
 
     @Override
@@ -168,15 +168,15 @@ public class Any
                     Any.class,
                     _Field.TYPE, mType,
                     _Field.MEDIA_TYPE, mMediaType,
-                    _Field.BIN, mBin,
-                    _Field.STR, mStr);
+                    _Field.DATA, mData,
+                    _Field.TEXT, mText);
         }
         return tHashCode;
     }
 
     @Override
     public String toString() {
-        return "providence.Any" + asString();
+        return "providence_util.Any" + asString();
     }
 
     @Override
@@ -196,18 +196,18 @@ public class Any
                .append(net.morimekta.util.Strings.escape(mMediaType))
                .append('\"');
         }
-        if (hasBin()) {
+        if (hasData()) {
             out.append(',');
-            out.append("bin:")
+            out.append("data:")
                .append("b64(")
-               .append(mBin.toBase64())
+               .append(mData.toBase64())
                .append(')');
         }
-        if (hasStr()) {
+        if (hasText()) {
             out.append(',');
-            out.append("str:")
+            out.append("text:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mStr))
+               .append(net.morimekta.util.Strings.escape(mText))
                .append('\"');
         }
         out.append('}');
@@ -228,17 +228,17 @@ public class Any
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mBin != null, other.mBin != null);
+        c = Boolean.compare(mData != null, other.mData != null);
         if (c != 0) return c;
-        if (mBin != null) {
-            c = mBin.compareTo(other.mBin);
+        if (mData != null) {
+            c = mData.compareTo(other.mData);
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mStr != null, other.mStr != null);
+        c = Boolean.compare(mText != null, other.mText != null);
         if (c != 0) return c;
-        if (mStr != null) {
-            c = mStr.compareTo(other.mStr);
+        if (mText != null) {
+            c = mText.compareTo(other.mText);
             if (c != 0) return c;
         }
 
@@ -280,17 +280,17 @@ public class Any
             length += writer.writeBinary(tmp_2);
         }
 
-        if (hasBin()) {
+        if (hasData()) {
             length += writer.writeByte((byte) 11);
             length += writer.writeShort((short) 4);
-            length += writer.writeUInt32(mBin.length());
-            length += writer.writeBinary(mBin);
+            length += writer.writeUInt32(mData.length());
+            length += writer.writeBinary(mData);
         }
 
-        if (hasStr()) {
+        if (hasText()) {
             length += writer.writeByte((byte) 11);
             length += writer.writeShort((short) 5);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mStr.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             length += writer.writeUInt32(tmp_3.length());
             length += writer.writeBinary(tmp_3);
         }
@@ -308,8 +308,8 @@ public class Any
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         TYPE(1, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         MEDIA_TYPE(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "media_type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultMediaType)),
-        BIN(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "bin", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        STR(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "str", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DATA(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "data", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
+        TEXT(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "text", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ;
 
         private final int mId;
@@ -359,8 +359,8 @@ public class Any
             switch (id) {
                 case 1: return _Field.TYPE;
                 case 2: return _Field.MEDIA_TYPE;
-                case 4: return _Field.BIN;
-                case 5: return _Field.STR;
+                case 4: return _Field.DATA;
+                case 5: return _Field.TEXT;
             }
             return null;
         }
@@ -373,8 +373,8 @@ public class Any
             switch (name) {
                 case "type": return _Field.TYPE;
                 case "media_type": return _Field.MEDIA_TYPE;
-                case "bin": return _Field.BIN;
-                case "str": return _Field.STR;
+                case "data": return _Field.DATA;
+                case "text": return _Field.TEXT;
             }
             return null;
         }
@@ -386,7 +386,7 @@ public class Any
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence.Any");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_util.Any");
             }
             return field;
         }
@@ -399,7 +399,7 @@ public class Any
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence.Any");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_util.Any");
             }
             return field;
         }
@@ -422,7 +422,7 @@ public class Any
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Any,_Field> {
         public _Descriptor() {
-            super("providence", "Any", _Builder::new, true);
+            super("providence_util", "Any", _Builder::new, true);
         }
 
         @Override
@@ -456,7 +456,7 @@ public class Any
     }
 
     /**
-     * Make a providence.Any builder.
+     * Make a providence_util.Any builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -474,11 +474,11 @@ public class Any
 
         private String mType;
         private String mMediaType;
-        private net.morimekta.util.Binary mBin;
-        private String mStr;
+        private net.morimekta.util.Binary mData;
+        private String mText;
 
         /**
-         * Make a providence.Any builder.
+         * Make a providence_util.Any builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(4);
@@ -487,7 +487,7 @@ public class Any
         }
 
         /**
-         * Make a mutating builder off a base providence.Any.
+         * Make a mutating builder off a base providence_util.Any.
          *
          * @param base The base Any
          */
@@ -500,13 +500,13 @@ public class Any
                 optionals.set(1);
                 mMediaType = base.mMediaType;
             }
-            if (base.hasBin()) {
+            if (base.hasData()) {
                 optionals.set(2);
-                mBin = base.mBin;
+                mData = base.mData;
             }
-            if (base.hasStr()) {
+            if (base.hasText()) {
                 optionals.set(3);
-                mStr = base.mStr;
+                mText = base.mText;
             }
         }
 
@@ -523,16 +523,16 @@ public class Any
                 mMediaType = from.getMediaType();
             }
 
-            if (from.hasBin()) {
+            if (from.hasData()) {
                 optionals.set(2);
                 modified.set(2);
-                mBin = from.getBin();
+                mData = from.getData();
             }
 
-            if (from.hasStr()) {
+            if (from.hasText()) {
                 optionals.set(3);
                 modified.set(3);
-                mStr = from.getStr();
+                mText = from.getText();
             }
             return this;
         }
@@ -675,32 +675,32 @@ public class Any
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setBin(net.morimekta.util.Binary value) {
+        public _Builder setData(net.morimekta.util.Binary value) {
             if (value == null) {
-                return clearBin();
+                return clearData();
             }
 
             optionals.set(2);
             modified.set(2);
-            mBin = value;
+            mData = value;
             return this;
         }
 
         /**
          * The actual content binary data.
          *
-         * @return True if bin has been set.
+         * @return True if data has been set.
          */
-        public boolean isSetBin() {
+        public boolean isSetData() {
             return optionals.get(2);
         }
 
         /**
          * The actual content binary data.
          *
-         * @return True if bin has been modified.
+         * @return True if data has been modified.
          */
-        public boolean isModifiedBin() {
+        public boolean isModifiedData() {
             return modified.get(2);
         }
 
@@ -710,10 +710,10 @@ public class Any
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearBin() {
+        public _Builder clearData() {
             optionals.clear(2);
             modified.set(2);
-            mBin = null;
+            mData = null;
             return this;
         }
 
@@ -722,8 +722,8 @@ public class Any
          *
          * @return The field value
          */
-        public net.morimekta.util.Binary getBin() {
-            return mBin;
+        public net.morimekta.util.Binary getData() {
+            return mData;
         }
 
         /**
@@ -734,14 +734,14 @@ public class Any
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setStr(String value) {
+        public _Builder setText(String value) {
             if (value == null) {
-                return clearStr();
+                return clearText();
             }
 
             optionals.set(3);
             modified.set(3);
-            mStr = value;
+            mText = value;
             return this;
         }
 
@@ -749,9 +749,9 @@ public class Any
          * Optional string encoded content for non-binary media types. If this is filled
          * in, then the &#39;bin&#39; field is not needed.
          *
-         * @return True if str has been set.
+         * @return True if text has been set.
          */
-        public boolean isSetStr() {
+        public boolean isSetText() {
             return optionals.get(3);
         }
 
@@ -759,9 +759,9 @@ public class Any
          * Optional string encoded content for non-binary media types. If this is filled
          * in, then the &#39;bin&#39; field is not needed.
          *
-         * @return True if str has been modified.
+         * @return True if text has been modified.
          */
-        public boolean isModifiedStr() {
+        public boolean isModifiedText() {
             return modified.get(3);
         }
 
@@ -772,10 +772,10 @@ public class Any
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearStr() {
+        public _Builder clearText() {
             optionals.clear(3);
             modified.set(3);
-            mStr = null;
+            mText = null;
             return this;
         }
 
@@ -785,8 +785,8 @@ public class Any
          *
          * @return The field value
          */
-        public String getStr() {
-            return mStr;
+        public String getText() {
+            return mText;
         }
 
         @Override
@@ -797,8 +797,8 @@ public class Any
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mMediaType, other.mMediaType) &&
-                   java.util.Objects.equals(mBin, other.mBin) &&
-                   java.util.Objects.equals(mStr, other.mStr);
+                   java.util.Objects.equals(mData, other.mData) &&
+                   java.util.Objects.equals(mText, other.mText);
         }
 
         @Override
@@ -807,8 +807,8 @@ public class Any
                     Any.class, optionals,
                     _Field.TYPE, mType,
                     _Field.MEDIA_TYPE, mMediaType,
-                    _Field.BIN, mBin,
-                    _Field.STR, mStr);
+                    _Field.DATA, mData,
+                    _Field.TEXT, mText);
         }
 
         @Override
@@ -827,8 +827,8 @@ public class Any
             switch (key) {
                 case 1: setType((String) value); break;
                 case 2: setMediaType((String) value); break;
-                case 4: setBin((net.morimekta.util.Binary) value); break;
-                case 5: setStr((String) value); break;
+                case 4: setData((net.morimekta.util.Binary) value); break;
+                case 5: setText((String) value); break;
                 default: break;
             }
             return this;
@@ -872,8 +872,8 @@ public class Any
             switch (key) {
                 case 1: clearType(); break;
                 case 2: clearMediaType(); break;
-                case 4: clearBin(); break;
-                case 5: clearStr(); break;
+                case 4: clearData(); break;
+                case 5: clearText(); break;
                 default: break;
             }
             return this;
@@ -896,7 +896,7 @@ public class Any
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence.Any");
+                        " in message providence_util.Any");
             }
         }
 
@@ -918,7 +918,7 @@ public class Any
                             mType = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Any.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.type, should be struct(12)");
                         }
                         break;
                     }
@@ -928,27 +928,27 @@ public class Any
                             mMediaType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Any.media_type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.media_type, should be struct(12)");
                         }
                         break;
                     }
                     case 4: {
                         if (type == 11) {
                             int len_3 = reader.expectUInt32();
-                            mBin = reader.expectBinary(len_3);
+                            mData = reader.expectBinary(len_3);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Any.bin, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.data, should be struct(12)");
                         }
                         break;
                     }
                     case 5: {
                         if (type == 11) {
                             int len_4 = reader.expectUInt32();
-                            mStr = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
+                            mText = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence.Any.str, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.text, should be struct(12)");
                         }
                         break;
                     }

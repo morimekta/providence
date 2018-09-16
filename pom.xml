@@ -149,11 +149,6 @@
                 <artifactId>providence-core-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>net.morimekta.providence</groupId>
-                <artifactId>providence-idl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>net.morimekta.providence</groupId>
@@ -241,11 +236,6 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>findbugs-annotations</artifactId>
-                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.annotation</groupId>
@@ -909,7 +899,6 @@
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
                 <module>providence-core-jackson</module>
-                <module>idl</module>
 
                 <!-- Tooling Modules -->
                 <module>providence-reflect</module>
@@ -1014,7 +1003,6 @@
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
                 <module>providence-core-jackson</module>
-                <module>idl</module>
 
                 <!-- Tooling Modules -->
                 <module>providence-reflect</module>

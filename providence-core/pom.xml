@@ -32,10 +32,6 @@
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>findbugs-annotations</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

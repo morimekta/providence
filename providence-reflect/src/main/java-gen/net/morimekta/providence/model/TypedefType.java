@@ -1,54 +1,46 @@
 package net.morimekta.providence.model;
 
 /**
- * &lt;variant&gt; {
- *   (&lt;field&gt; ([,;])?)*
- * }
+ * typedef &lt;type&gt; &lt;name&gt;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
 @javax.annotation.concurrent.Immutable
-public class MessageType
-        implements net.morimekta.providence.PMessage<MessageType,MessageType._Field>,
-                   Comparable<MessageType>,
+public class TypedefType
+        implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
+                   Comparable<TypedefType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -6531425470268658068L;
+    private final static long serialVersionUID = 5941816774146332176L;
 
-    private final static net.morimekta.providence.model.MessageVariant kDefaultVariant = net.morimekta.providence.model.MessageVariant.STRUCT;
+    private final static String kDefaultType = "";
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType>()
-                .build();
 
     private final transient String mDocumentation;
-    private final transient net.morimekta.providence.model.MessageVariant mVariant;
+    private final transient String mType;
     private final transient String mName;
-    private final transient java.util.List<net.morimekta.providence.model.FieldType> mFields;
-    private final transient java.util.Map<String,String> mAnnotations;
+    private final transient net.morimekta.providence.model.FilePos mStartPos;
+    private final transient net.morimekta.providence.model.FilePos mEndPos;
 
     private volatile transient int tHashCode;
 
     // Transient object used during java deserialization.
-    private transient MessageType tSerializeInstance;
+    private transient TypedefType tSerializeInstance;
 
-    private MessageType(_Builder builder) {
+    private TypedefType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mVariant = builder.mVariant;
+        if (builder.isSetType()) {
+            mType = builder.mType;
+        } else {
+            mType = kDefaultType;
+        }
         if (builder.isSetName()) {
             mName = builder.mName;
         } else {
             mName = kDefaultName;
         }
-        if (builder.isSetFields()) {
-            mFields = com.google.common.collect.ImmutableList.copyOf(builder.mFields);
-        } else {
-            mFields = kDefaultFields;
-        }
-        if (builder.isSetAnnotations()) {
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
-        } else {
-            mAnnotations = null;
-        }
+        mStartPos = builder.mStartPos_builder != null ? builder.mStartPos_builder.build() : builder.mStartPos;
+        mEndPos = builder.mEndPos_builder != null ? builder.mEndPos_builder.build() : builder.mEndPos;
     }
 
     public boolean hasDocumentation() {
@@ -70,23 +62,16 @@ public class MessageType
         return java.util.Optional.ofNullable(mDocumentation);
     }
 
-    public boolean hasVariant() {
-        return mVariant != null;
+    public boolean hasType() {
+        return true;
     }
 
     /**
      * @return The field value
      */
-    public net.morimekta.providence.model.MessageVariant getVariant() {
-        return hasVariant() ? mVariant : kDefaultVariant;
-    }
-
-    /**
-     * @return Optional field value
-     */
     @javax.annotation.Nonnull
-    public java.util.Optional<net.morimekta.providence.model.MessageVariant> optionalVariant() {
-        return java.util.Optional.ofNullable(mVariant);
+    public String getType() {
+        return mType;
     }
 
     public boolean hasName() {
@@ -101,53 +86,60 @@ public class MessageType
         return mName;
     }
 
-    public int numFields() {
-        return mFields != null ? mFields.size() : 0;
-    }
-
-    public boolean hasFields() {
-        return true;
+    public boolean hasStartPos() {
+        return mStartPos != null;
     }
 
     /**
+     * The start of the definition (position of &#39;typedef&#39;)
+     *
      * @return The field value
      */
-    @javax.annotation.Nonnull
-    public java.util.List<net.morimekta.providence.model.FieldType> getFields() {
-        return mFields;
-    }
-
-    public int numAnnotations() {
-        return mAnnotations != null ? mAnnotations.size() : 0;
-    }
-
-    public boolean hasAnnotations() {
-        return mAnnotations != null;
+    public net.morimekta.providence.model.FilePos getStartPos() {
+        return mStartPos;
     }
 
     /**
-     * @return The field value
-     */
-    public java.util.Map<String,String> getAnnotations() {
-        return mAnnotations;
-    }
-
-    /**
+     * The start of the definition (position of &#39;typedef&#39;)
+     *
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
-        return java.util.Optional.ofNullable(mAnnotations);
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
+        return java.util.Optional.ofNullable(mStartPos);
+    }
+
+    public boolean hasEndPos() {
+        return mEndPos != null;
+    }
+
+    /**
+     * The end of the definition
+     *
+     * @return The field value
+     */
+    public net.morimekta.providence.model.FilePos getEndPos() {
+        return mEndPos;
+    }
+
+    /**
+     * The end of the definition
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
+        return java.util.Optional.ofNullable(mEndPos);
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
             case 1: return mDocumentation != null;
-            case 2: return mVariant != null;
+            case 2: return true;
             case 3: return true;
-            case 4: return true;
-            case 5: return mAnnotations != null;
+            case 10: return mStartPos != null;
+            case 11: return mEndPos != null;
             default: return false;
         }
     }
@@ -157,10 +149,10 @@ public class MessageType
     public <T> T get(int key) {
         switch(key) {
             case 1: return (T) mDocumentation;
-            case 2: return (T) mVariant;
+            case 2: return (T) mType;
             case 3: return (T) mName;
-            case 4: return (T) mFields;
-            case 5: return (T) mAnnotations;
+            case 10: return (T) mStartPos;
+            case 11: return (T) mEndPos;
             default: return null;
         }
     }
@@ -169,31 +161,31 @@ public class MessageType
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        MessageType other = (MessageType) o;
+        TypedefType other = (TypedefType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-               java.util.Objects.equals(mVariant, other.mVariant) &&
+               java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
-               java.util.Objects.equals(mFields, other.mFields) &&
-               java.util.Objects.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mStartPos, other.mStartPos) &&
+               java.util.Objects.equals(mEndPos, other.mEndPos);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    MessageType.class,
+                    TypedefType.class,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.VARIANT, mVariant,
+                    _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.FIELDS, mFields,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.START_POS, mStartPos,
+                    _Field.END_POS, mEndPos);
         }
         return tHashCode;
     }
 
     @Override
     public String toString() {
-        return "providence_model.MessageType" + asString();
+        return "providence_model.TypedefType" + asString();
     }
 
     @Override
@@ -210,31 +202,32 @@ public class MessageType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasVariant()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("variant:")
-               .append(mVariant.asString());
-        }
         if (!first) out.append(',');
+        out.append("type:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mType))
+           .append('\"');
+        out.append(',');
         out.append("name:")
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mName))
            .append('\"');
-        out.append(',');
-        out.append("fields:")
-           .append(net.morimekta.util.Strings.asString(mFields));
-        if (hasAnnotations()) {
+        if (hasStartPos()) {
             out.append(',');
-            out.append("annotations:")
-               .append(net.morimekta.util.Strings.asString(mAnnotations));
+            out.append("start_pos:")
+               .append(mStartPos.asString());
+        }
+        if (hasEndPos()) {
+            out.append(',');
+            out.append("end_pos:")
+               .append(mEndPos.asString());
         }
         out.append('}');
         return out.toString();
     }
 
     @Override
-    public int compareTo(MessageType other) {
+    public int compareTo(TypedefType other) {
         int c;
 
         c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
@@ -244,23 +237,23 @@ public class MessageType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mVariant != null, other.mVariant != null);
+        c = mType.compareTo(other.mType);
         if (c != 0) return c;
-        if (mVariant != null) {
-            c = Integer.compare(mVariant.ordinal(), mVariant.ordinal());
-            if (c != 0) return c;
-        }
 
         c = mName.compareTo(other.mName);
         if (c != 0) return c;
 
-        c = Integer.compare(mFields.hashCode(), other.mFields.hashCode());
+        c = Boolean.compare(mStartPos != null, other.mStartPos != null);
         if (c != 0) return c;
+        if (mStartPos != null) {
+            c = mStartPos.compareTo(other.mStartPos);
+            if (c != 0) return c;
+        }
 
-        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        c = Boolean.compare(mEndPos != null, other.mEndPos != null);
         if (c != 0) return c;
-        if (mAnnotations != null) {
-            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+        if (mEndPos != null) {
+            c = mEndPos.compareTo(other.mEndPos);
             if (c != 0) return c;
         }
 
@@ -296,40 +289,28 @@ public class MessageType
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasVariant()) {
-            length += writer.writeByte((byte) 8);
-            length += writer.writeShort((short) 2);
-            length += writer.writeInt(mVariant.asInteger());
-        }
-
         length += writer.writeByte((byte) 11);
-        length += writer.writeShort((short) 3);
-        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         length += writer.writeUInt32(tmp_2.length());
         length += writer.writeBinary(tmp_2);
 
-        length += writer.writeByte((byte) 15);
-        length += writer.writeShort((short) 4);
-        length += writer.writeByte((byte) 12);
-        length += writer.writeUInt32(mFields.size());
-        for (net.morimekta.providence.model.FieldType entry_3 : mFields) {
-            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, entry_3);
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 3);
+        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_3.length());
+        length += writer.writeBinary(tmp_3);
+
+        if (hasStartPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 10);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mStartPos);
         }
 
-        if (hasAnnotations()) {
-            length += writer.writeByte((byte) 13);
-            length += writer.writeShort((short) 5);
-            length += writer.writeByte((byte) 11);
-            length += writer.writeByte((byte) 11);
-            length += writer.writeUInt32(mAnnotations.size());
-            for (java.util.Map.Entry<String,String> entry_4 : mAnnotations.entrySet()) {
-                net.morimekta.util.Binary tmp_5 = net.morimekta.util.Binary.wrap(entry_4.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                length += writer.writeUInt32(tmp_5.length());
-                length += writer.writeBinary(tmp_5);
-                net.morimekta.util.Binary tmp_6 = net.morimekta.util.Binary.wrap(entry_4.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                length += writer.writeUInt32(tmp_6.length());
-                length += writer.writeBinary(tmp_6);
-            }
+        if (hasEndPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 11);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mEndPos);
         }
 
         length += writer.writeByte((byte) 0);
@@ -344,10 +325,10 @@ public class MessageType
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        VARIANT(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "variant", net.morimekta.providence.model.MessageVariant.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultVariant)),
+        TYPE(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(3, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        FIELDS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "fields", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        START_POS(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_pos", net.morimekta.providence.model.FilePos.provider(), null),
+        END_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "end_pos", net.morimekta.providence.model.FilePos.provider(), null),
         ;
 
         private final int mId;
@@ -396,10 +377,10 @@ public class MessageType
         public static _Field findById(int id) {
             switch (id) {
                 case 1: return _Field.DOCUMENTATION;
-                case 2: return _Field.VARIANT;
+                case 2: return _Field.TYPE;
                 case 3: return _Field.NAME;
-                case 4: return _Field.FIELDS;
-                case 5: return _Field.ANNOTATIONS;
+                case 10: return _Field.START_POS;
+                case 11: return _Field.END_POS;
             }
             return null;
         }
@@ -411,10 +392,10 @@ public class MessageType
         public static _Field findByName(String name) {
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
-                case "variant": return _Field.VARIANT;
+                case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
-                case "fields": return _Field.FIELDS;
-                case "annotations": return _Field.ANNOTATIONS;
+                case "start_pos": return _Field.START_POS;
+                case "end_pos": return _Field.END_POS;
             }
             return null;
         }
@@ -426,7 +407,7 @@ public class MessageType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.MessageType");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.TypedefType");
             }
             return field;
         }
@@ -439,7 +420,7 @@ public class MessageType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.MessageType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.TypedefType");
             }
             return field;
         }
@@ -447,22 +428,22 @@ public class MessageType
     }
 
     @javax.annotation.Nonnull
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<MessageType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<TypedefType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
     @javax.annotation.Nonnull
-    public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> {
         public _Descriptor() {
-            super("providence_model", "MessageType", _Builder::new, false);
+            super("providence_model", "TypedefType", _Builder::new, false);
         }
 
         @Override
@@ -488,15 +469,15 @@ public class MessageType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<MessageType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<TypedefType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a providence_model.MessageType builder.
+     * Make a providence_model.TypedefType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -504,85 +485,99 @@ public class MessageType
     }
 
     /**
-     * &lt;variant&gt; {
-     *   (&lt;field&gt; ([,;])?)*
-     * }
+     * typedef &lt;type&gt; &lt;name&gt;
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<MessageType,_Field>
+            extends net.morimekta.providence.PMessageBuilder<TypedefType,_Field>
             implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
         private String mDocumentation;
-        private net.morimekta.providence.model.MessageVariant mVariant;
+        private String mType;
         private String mName;
-        private java.util.List<net.morimekta.providence.model.FieldType> mFields;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.model.FilePos mStartPos;
+        private net.morimekta.providence.model.FilePos._Builder mStartPos_builder;
+        private net.morimekta.providence.model.FilePos mEndPos;
+        private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.MessageType builder.
+         * Make a providence_model.TypedefType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
+            mType = kDefaultType;
             mName = kDefaultName;
-            mFields = kDefaultFields;
         }
 
         /**
-         * Make a mutating builder off a base providence_model.MessageType.
+         * Make a mutating builder off a base providence_model.TypedefType.
          *
-         * @param base The base MessageType
+         * @param base The base TypedefType
          */
-        public _Builder(MessageType base) {
+        public _Builder(TypedefType base) {
             this();
 
             if (base.hasDocumentation()) {
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasVariant()) {
-                optionals.set(1);
-                mVariant = base.mVariant;
-            }
+            optionals.set(1);
+            mType = base.mType;
             optionals.set(2);
             mName = base.mName;
-            optionals.set(3);
-            mFields = base.mFields;
-            if (base.hasAnnotations()) {
+            if (base.hasStartPos()) {
+                optionals.set(3);
+                mStartPos = base.mStartPos;
+            }
+            if (base.hasEndPos()) {
                 optionals.set(4);
-                mAnnotations = base.mAnnotations;
+                mEndPos = base.mEndPos;
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(MessageType from) {
+        public _Builder merge(TypedefType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
                 modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasVariant()) {
-                optionals.set(1);
-                modified.set(1);
-                mVariant = from.getVariant();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mType = from.getType();
 
             optionals.set(2);
             modified.set(2);
             mName = from.getName();
 
-            optionals.set(3);
-            modified.set(3);
-            mFields = from.getFields();
+            if (from.hasStartPos()) {
+                optionals.set(3);
+                modified.set(3);
+                if (mStartPos_builder != null) {
+                    mStartPos_builder.merge(from.getStartPos());
+                } else if (mStartPos != null) {
+                    mStartPos_builder = mStartPos.mutate().merge(from.getStartPos());
+                    mStartPos = null;
+                } else {
+                    mStartPos = from.getStartPos();
+                }
+            }
 
-            if (from.hasAnnotations()) {
+            if (from.hasEndPos()) {
                 optionals.set(4);
                 modified.set(4);
-                mutableAnnotations().putAll(from.getAnnotations());
+                if (mEndPos_builder != null) {
+                    mEndPos_builder.merge(from.getEndPos());
+                } else if (mEndPos != null) {
+                    mEndPos_builder = mEndPos.mutate().merge(from.getEndPos());
+                    mEndPos = null;
+                } else {
+                    mEndPos = from.getEndPos();
+                }
             }
             return this;
         }
@@ -646,61 +641,61 @@ public class MessageType
         }
 
         /**
-         * Sets the value of variant.
+         * Sets the value of type.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setVariant(net.morimekta.providence.model.MessageVariant value) {
+        public _Builder setType(String value) {
             if (value == null) {
-                return clearVariant();
+                return clearType();
             }
 
             optionals.set(1);
             modified.set(1);
-            mVariant = value;
+            mType = value;
             return this;
         }
 
         /**
-         * Checks for presence of the variant field.
+         * Checks for presence of the type field.
          *
-         * @return True if variant has been set.
+         * @return True if type has been set.
          */
-        public boolean isSetVariant() {
+        public boolean isSetType() {
             return optionals.get(1);
         }
 
         /**
-         * Checks if variant has been modified since the _Builder was created.
+         * Checks if type has been modified since the _Builder was created.
          *
-         * @return True if variant has been modified.
+         * @return True if type has been modified.
          */
-        public boolean isModifiedVariant() {
+        public boolean isModifiedType() {
             return modified.get(1);
         }
 
         /**
-         * Clears the variant field.
+         * Clears the type field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearVariant() {
+        public _Builder clearType() {
             optionals.clear(1);
             modified.set(1);
-            mVariant = null;
+            mType = kDefaultType;
             return this;
         }
 
         /**
-         * Gets the value of the contained variant.
+         * Gets the value of the contained type.
          *
          * @return The field value
          */
-        public net.morimekta.providence.model.MessageVariant getVariant() {
-            return isSetVariant() ? mVariant : kDefaultVariant;
+        public String getType() {
+            return mType;
         }
 
         /**
@@ -762,199 +757,223 @@ public class MessageType
         }
 
         /**
-         * Sets the value of fields.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setFields(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos value) {
             if (value == null) {
-                return clearFields();
+                return clearStartPos();
             }
 
             optionals.set(3);
             modified.set(3);
-            mFields = com.google.common.collect.ImmutableList.copyOf(value);
+            mStartPos = value;
+            mStartPos_builder = null;
             return this;
         }
 
         /**
-         * Adds entries to fields.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
-         * @param values The added value
+         * @param builder builder for the new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder addToFields(net.morimekta.providence.model.FieldType... values) {
-            optionals.set(3);
-            modified.set(3);
-            java.util.List<net.morimekta.providence.model.FieldType> _container = mutableFields();
-            for (net.morimekta.providence.model.FieldType item : values) {
-                _container.add(item);
-            }
-            return this;
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setStartPos(builder == null ? null : builder.build());
         }
 
         /**
-         * Checks for presence of the fields field.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
-         * @return True if fields has been set.
+         * @return True if start_pos has been set.
          */
-        public boolean isSetFields() {
+        public boolean isSetStartPos() {
             return optionals.get(3);
         }
 
         /**
-         * Checks if fields has been modified since the _Builder was created.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
-         * @return True if fields has been modified.
+         * @return True if start_pos has been modified.
          */
-        public boolean isModifiedFields() {
+        public boolean isModifiedStartPos() {
             return modified.get(3);
         }
 
         /**
-         * Clears the fields field.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearFields() {
+        public _Builder clearStartPos() {
             optionals.clear(3);
             modified.set(3);
-            mFields = kDefaultFields;
+            mStartPos = null;
+            mStartPos_builder = null;
             return this;
         }
 
         /**
-         * Gets the builder for the contained fields.
+         * The start of the definition (position of &#39;typedef&#39;)
          *
          * @return The field builder
          */
         @javax.annotation.Nonnull
-        public java.util.List<net.morimekta.providence.model.FieldType> mutableFields() {
+        public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
             optionals.set(3);
             modified.set(3);
 
-            if (mFields == null) {
-                mFields = new java.util.ArrayList<>();
-            } else if (!(mFields instanceof java.util.ArrayList)) {
-                mFields = new java.util.ArrayList<>(mFields);
+            if (mStartPos != null) {
+                mStartPos_builder = mStartPos.mutate();
+                mStartPos = null;
+            } else if (mStartPos_builder == null) {
+                mStartPos_builder = net.morimekta.providence.model.FilePos.builder();
             }
-            return mFields;
+            return mStartPos_builder;
         }
 
         /**
-         * Sets the value of annotations.
+         * The start of the definition (position of &#39;typedef&#39;)
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getStartPos() {
+
+            if (mStartPos_builder != null) {
+                return mStartPos_builder.build();
+            }
+            return mStartPos;
+        }
+
+        /**
+         * The end of the definition
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setAnnotations(java.util.Map<String,String> value) {
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos value) {
             if (value == null) {
-                return clearAnnotations();
+                return clearEndPos();
             }
 
             optionals.set(4);
             modified.set(4);
-            mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
+            mEndPos = value;
+            mEndPos_builder = null;
             return this;
         }
 
         /**
-         * Adds a mapping to annotations.
+         * The end of the definition
          *
-         * @param key The inserted key
-         * @param value The inserted value
+         * @param builder builder for the new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder putInAnnotations(String key, String value) {
-            optionals.set(4);
-            modified.set(4);
-            mutableAnnotations().put(key, value);
-            return this;
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setEndPos(builder == null ? null : builder.build());
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * The end of the definition
          *
-         * @return True if annotations has been set.
+         * @return True if end_pos has been set.
          */
-        public boolean isSetAnnotations() {
+        public boolean isSetEndPos() {
             return optionals.get(4);
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * The end of the definition
          *
-         * @return True if annotations has been modified.
+         * @return True if end_pos has been modified.
          */
-        public boolean isModifiedAnnotations() {
+        public boolean isModifiedEndPos() {
             return modified.get(4);
         }
 
         /**
-         * Clears the annotations field.
+         * The end of the definition
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearAnnotations() {
+        public _Builder clearEndPos() {
             optionals.clear(4);
             modified.set(4);
-            mAnnotations = null;
+            mEndPos = null;
+            mEndPos_builder = null;
             return this;
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * The end of the definition
          *
          * @return The field builder
          */
         @javax.annotation.Nonnull
-        public java.util.Map<String,String> mutableAnnotations() {
+        public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {
             optionals.set(4);
             modified.set(4);
 
-            if (mAnnotations == null) {
-                mAnnotations = new java.util.TreeMap<>();
-            } else if (!(mAnnotations instanceof java.util.TreeMap)) {
-                mAnnotations = new java.util.TreeMap<>(mAnnotations);
+            if (mEndPos != null) {
+                mEndPos_builder = mEndPos.mutate();
+                mEndPos = null;
+            } else if (mEndPos_builder == null) {
+                mEndPos_builder = net.morimekta.providence.model.FilePos.builder();
             }
-            return mAnnotations;
+            return mEndPos_builder;
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getEndPos() {
+
+            if (mEndPos_builder != null) {
+                return mEndPos_builder.build();
+            }
+            return mEndPos;
         }
 
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            MessageType._Builder other = (MessageType._Builder) o;
+            TypedefType._Builder other = (TypedefType._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-                   java.util.Objects.equals(mVariant, other.mVariant) &&
+                   java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mName, other.mName) &&
-                   java.util.Objects.equals(mFields, other.mFields) &&
-                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+                   java.util.Objects.equals(getStartPos(), other.getStartPos()) &&
+                   java.util.Objects.equals(getEndPos(), other.getEndPos());
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    MessageType.class, optionals,
+                    TypedefType.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.VARIANT, mVariant,
+                    _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.FIELDS, mFields,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.START_POS, getStartPos(),
+                    _Field.END_POS, getEndPos());
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
+                case 10: return mutableStartPos();
+                case 11: return mutableEndPos();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }
@@ -966,10 +985,10 @@ public class MessageType
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setDocumentation((String) value); break;
-                case 2: setVariant((net.morimekta.providence.model.MessageVariant) value); break;
+                case 2: setType((String) value); break;
                 case 3: setName((String) value); break;
-                case 4: setFields((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
-                case 5: setAnnotations((java.util.Map<String,String>) value); break;
+                case 10: setStartPos((net.morimekta.providence.model.FilePos) value); break;
+                case 11: setEndPos((net.morimekta.providence.model.FilePos) value); break;
                 default: break;
             }
             return this;
@@ -981,8 +1000,8 @@ public class MessageType
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
                 case 3: return optionals.get(2);
-                case 4: return optionals.get(3);
-                case 5: return optionals.get(4);
+                case 10: return optionals.get(3);
+                case 11: return optionals.get(4);
                 default: break;
             }
             return false;
@@ -994,8 +1013,8 @@ public class MessageType
                 case 1: return modified.get(0);
                 case 2: return modified.get(1);
                 case 3: return modified.get(2);
-                case 4: return modified.get(3);
-                case 5: return modified.get(4);
+                case 10: return modified.get(3);
+                case 11: return modified.get(4);
                 default: break;
             }
             return false;
@@ -1004,7 +1023,6 @@ public class MessageType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 4: addToFields((net.morimekta.providence.model.FieldType) value); break;
                 default: break;
             }
             return this;
@@ -1015,10 +1033,10 @@ public class MessageType
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearDocumentation(); break;
-                case 2: clearVariant(); break;
+                case 2: clearType(); break;
                 case 3: clearName(); break;
-                case 4: clearFields(); break;
-                case 5: clearAnnotations(); break;
+                case 10: clearStartPos(); break;
+                case 11: clearEndPos(); break;
                 default: break;
             }
             return this;
@@ -1026,13 +1044,18 @@ public class MessageType
 
         @Override
         public boolean valid() {
-            return optionals.get(2);
+            return optionals.get(1) &&
+                   optionals.get(2);
         }
 
         @Override
         public void validate() {
             if (!valid()) {
                 java.util.ArrayList<String> missing = new java.util.ArrayList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("type");
+                }
 
                 if (!optionals.get(2)) {
                     missing.add("name");
@@ -1041,13 +1064,13 @@ public class MessageType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.MessageType");
+                        " in message providence_model.TypedefType");
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
         }
 
@@ -1063,73 +1086,45 @@ public class MessageType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.MessageType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.documentation, should be struct(12)");
                         }
                         break;
                     }
                     case 2: {
-                        if (type == 8) {
-                            mVariant = net.morimekta.providence.model.MessageVariant.findById(reader.expectInt());
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.MessageType.variant, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.type, should be struct(12)");
                         }
                         break;
                     }
                     case 3: {
                         if (type == 11) {
-                            int len_2 = reader.expectUInt32();
-                            mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
+                            int len_3 = reader.expectUInt32();
+                            mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.MessageType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.name, should be struct(12)");
                         }
                         break;
                     }
-                    case 4: {
-                        if (type == 15) {
-                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FieldType> b_3 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
-                            byte t_5 = reader.expectByte();
-                            if (t_5 == 12) {
-                                final int len_4 = reader.expectUInt32();
-                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
-                                    net.morimekta.providence.model.FieldType key_7 = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
-                                    b_3.add(key_7);
-                                }
-                                mFields = b_3.build();
-                            } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_5) + " for providence_model.MessageType.fields, should be struct(12)");
-                            }
+                    case 10: {
+                        if (type == 12) {
+                            mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.MessageType.fields, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.start_pos, should be struct(12)");
                         }
                         break;
                     }
-                    case 5: {
-                        if (type == 13) {
-                            net.morimekta.providence.descriptor.PMap.SortedBuilder<String,String> b_8 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
-                            byte t_10 = reader.expectByte();
-                            byte t_11 = reader.expectByte();
-                            if (t_10 == 11 && t_11 == 11) {
-                                final int len_9 = reader.expectUInt32();
-                                for (int i_12 = 0; i_12 < len_9; ++i_12) {
-                                    int len_15 = reader.expectUInt32();
-                                    String key_13 = new String(reader.expectBytes(len_15), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_16 = reader.expectUInt32();
-                                    String val_14 = new String(reader.expectBytes(len_16), java.nio.charset.StandardCharsets.UTF_8);
-                                    b_8.put(key_13, val_14);
-                                }
-                                mAnnotations = b_8.build();
-                            } else {
-                                throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_10) +
-                                        " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
-                                        " for providence_model.MessageType.annotations, should be string(11) and string(11)");
-                            }
+                    case 11: {
+                        if (type == 12) {
+                            mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.MessageType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.end_pos, should be struct(12)");
                         }
                         break;
                     }
@@ -1143,8 +1138,8 @@ public class MessageType
         }
 
         @Override
-        public MessageType build() {
-            return new MessageType(this);
+        public TypedefType build() {
+            return new TypedefType(this);
         }
     }
 }

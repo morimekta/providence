@@ -28,7 +28,6 @@ import net.morimekta.providence.generator.format.java.JavaGenerator;
 import net.morimekta.providence.generator.format.java.JavaGeneratorFactory;
 import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.maven.util.ProvidenceDependency;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ProgramParser;
@@ -38,8 +37,6 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -68,7 +65,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -84,8 +80,6 @@ import java.util.zip.ZipInputStream;
  * mvn net.morimekta.providence:providence-maven-plugin:1.3.1:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
-    private static final String TEST = "test";
-
     // -----------    PARSER OPTIONS    ----------- //
 
     /**
@@ -156,6 +150,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                property = "providence.gen.generated_annotation_version")
     protected boolean generated_annotation_version;
 
+    @Parameter(defaultValue = "false",
+               property = "providence.gen.generate_providence_core_types")
+    protected boolean generate_providence_core_types;
+
     /**
      * Generate public constructors with all fields as arguments for structs and
      * exceptions.
@@ -170,15 +168,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter(defaultValue = "false",
                property = "providence.print_debug")
     protected boolean print_debug;
-
-    /**
-     * Dependencies to providence artifacts. 'providence' classifier and 'zip'
-     * type is implied here, but can be overridden. The thrift files from these
-     * artifacts will be available for inclusion by compiled thrift files, but
-     * will not be compiled themselves.
-     */
-    @Parameter
-    protected ProvidenceDependency[] dependencies = new ProvidenceDependency[0];
 
     /**
      * If true will add the generated sources to be compiled.
@@ -203,20 +192,16 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project = null;
 
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
     protected ArtifactRepository localRepository = null;
 
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     @Parameter(defaultValue = "${project.remoteRepositories}", readonly = true, required = true)
     protected List<ArtifactRepository> remoteRepositories = null;
 
     @Component
-    @SuppressFBWarnings("URF_UNREAD_FIELD")
     private ArtifactResolver artifactResolver = null;
 
     @Component
-    @SuppressFBWarnings("URF_UNREAD_FIELD")
     private RepositorySystem repositorySystem = null;
 
     boolean executeInternal(IncludeExcludeFileSelector includeDirs,
@@ -246,13 +231,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         } else if (deleteFiles != null) {
             StreamSupport.<File>stream(Spliterators.spliterator(deleteFiles, Spliterator.DISTINCT | Spliterator.IMMUTABLE),
                                        false).forEach(File::delete);
-        }
-
-        Set<Artifact> resolvedArtifacts = new HashSet<>();
-        for (Dependency dep : dependencies) {
-            if (testCompile || !TEST.equalsIgnoreCase(dep.getScope())) {
-                resolveDependency(dep, includes, workingDir, resolvedArtifacts);
-            }
         }
 
         if (includeDirs != null) {
@@ -297,6 +275,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         javaOptions.hazelcast_portable = hazelcast_portable;
         javaOptions.generated_annotation_version = generated_annotation_version;
         javaOptions.public_constructors = public_constructors;
+        javaOptions.generate_providence_core_types = generate_providence_core_types;
         GeneratorOptions generatorOptions = new GeneratorOptions();
         generatorOptions.generator_program_name = "providence-maven-plugin";
         generatorOptions.program_version = getVersionString();

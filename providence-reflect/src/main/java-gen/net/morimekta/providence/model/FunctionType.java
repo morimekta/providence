@@ -27,6 +27,8 @@ public class FunctionType
     private final transient java.util.List<net.morimekta.providence.model.FieldType> mParams;
     private final transient java.util.List<net.morimekta.providence.model.FieldType> mExceptions;
     private final transient java.util.Map<String,String> mAnnotations;
+    private final transient net.morimekta.providence.model.FilePos mStartPos;
+    private final transient net.morimekta.providence.model.FilePos mEndPos;
 
     private volatile transient int tHashCode;
 
@@ -57,6 +59,8 @@ public class FunctionType
         } else {
             mAnnotations = null;
         }
+        mStartPos = builder.mStartPos_builder != null ? builder.mStartPos_builder.build() : builder.mStartPos;
+        mEndPos = builder.mEndPos_builder != null ? builder.mEndPos_builder.build() : builder.mEndPos;
     }
 
     public boolean hasDocumentation() {
@@ -190,6 +194,52 @@ public class FunctionType
         return java.util.Optional.ofNullable(mAnnotations);
     }
 
+    public boolean hasStartPos() {
+        return mStartPos != null;
+    }
+
+    /**
+     * The start of the definition (position of return type)
+     *
+     * @return The field value
+     */
+    public net.morimekta.providence.model.FilePos getStartPos() {
+        return mStartPos;
+    }
+
+    /**
+     * The start of the definition (position of return type)
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
+        return java.util.Optional.ofNullable(mStartPos);
+    }
+
+    public boolean hasEndPos() {
+        return mEndPos != null;
+    }
+
+    /**
+     * The end of the definition
+     *
+     * @return The field value
+     */
+    public net.morimekta.providence.model.FilePos getEndPos() {
+        return mEndPos;
+    }
+
+    /**
+     * The end of the definition
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
+        return java.util.Optional.ofNullable(mEndPos);
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -200,6 +250,8 @@ public class FunctionType
             case 5: return true;
             case 6: return mExceptions != null;
             case 7: return mAnnotations != null;
+            case 10: return mStartPos != null;
+            case 11: return mEndPos != null;
             default: return false;
         }
     }
@@ -215,6 +267,8 @@ public class FunctionType
             case 5: return (T) mParams;
             case 6: return (T) mExceptions;
             case 7: return (T) mAnnotations;
+            case 10: return (T) mStartPos;
+            case 11: return (T) mEndPos;
             default: return null;
         }
     }
@@ -230,7 +284,9 @@ public class FunctionType
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mParams, other.mParams) &&
                java.util.Objects.equals(mExceptions, other.mExceptions) &&
-               java.util.Objects.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+               java.util.Objects.equals(mStartPos, other.mStartPos) &&
+               java.util.Objects.equals(mEndPos, other.mEndPos);
     }
 
     @Override
@@ -244,7 +300,9 @@ public class FunctionType
                     _Field.NAME, mName,
                     _Field.PARAMS, mParams,
                     _Field.EXCEPTIONS, mExceptions,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.ANNOTATIONS, mAnnotations,
+                    _Field.START_POS, mStartPos,
+                    _Field.END_POS, mEndPos);
         }
         return tHashCode;
     }
@@ -300,6 +358,16 @@ public class FunctionType
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
+        if (hasStartPos()) {
+            out.append(',');
+            out.append("start_pos:")
+               .append(mStartPos.asString());
+        }
+        if (hasEndPos()) {
+            out.append(',');
+            out.append("end_pos:")
+               .append(mEndPos.asString());
+        }
         out.append('}');
         return out.toString();
     }
@@ -346,6 +414,20 @@ public class FunctionType
         if (c != 0) return c;
         if (mAnnotations != null) {
             c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mStartPos != null, other.mStartPos != null);
+        if (c != 0) return c;
+        if (mStartPos != null) {
+            c = mStartPos.compareTo(other.mStartPos);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mEndPos != null, other.mEndPos != null);
+        if (c != 0) return c;
+        if (mEndPos != null) {
+            c = mEndPos.compareTo(other.mEndPos);
             if (c != 0) return c;
         }
 
@@ -435,6 +517,18 @@ public class FunctionType
             }
         }
 
+        if (hasStartPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 10);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mStartPos);
+        }
+
+        if (hasEndPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 11);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mEndPos);
+        }
+
         length += writer.writeByte((byte) 0);
         return length;
     }
@@ -453,6 +547,8 @@ public class FunctionType
         PARAMS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "params", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultParams)),
         EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultExceptions)),
         ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        START_POS(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_pos", net.morimekta.providence.model.FilePos.provider(), null),
+        END_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "end_pos", net.morimekta.providence.model.FilePos.provider(), null),
         ;
 
         private final int mId;
@@ -507,6 +603,8 @@ public class FunctionType
                 case 5: return _Field.PARAMS;
                 case 6: return _Field.EXCEPTIONS;
                 case 7: return _Field.ANNOTATIONS;
+                case 10: return _Field.START_POS;
+                case 11: return _Field.END_POS;
             }
             return null;
         }
@@ -524,6 +622,8 @@ public class FunctionType
                 case "params": return _Field.PARAMS;
                 case "exceptions": return _Field.EXCEPTIONS;
                 case "annotations": return _Field.ANNOTATIONS;
+                case "start_pos": return _Field.START_POS;
+                case "end_pos": return _Field.END_POS;
             }
             return null;
         }
@@ -628,13 +728,17 @@ public class FunctionType
         private java.util.List<net.morimekta.providence.model.FieldType> mParams;
         private java.util.List<net.morimekta.providence.model.FieldType> mExceptions;
         private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.model.FilePos mStartPos;
+        private net.morimekta.providence.model.FilePos._Builder mStartPos_builder;
+        private net.morimekta.providence.model.FilePos mEndPos;
+        private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
          * Make a providence_model.FunctionType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(7);
-            modified = new java.util.BitSet(7);
+            optionals = new java.util.BitSet(9);
+            modified = new java.util.BitSet(9);
             mName = kDefaultName;
             mParams = kDefaultParams;
         }
@@ -670,6 +774,14 @@ public class FunctionType
             if (base.hasAnnotations()) {
                 optionals.set(6);
                 mAnnotations = base.mAnnotations;
+            }
+            if (base.hasStartPos()) {
+                optionals.set(7);
+                mStartPos = base.mStartPos;
+            }
+            if (base.hasEndPos()) {
+                optionals.set(8);
+                mEndPos = base.mEndPos;
             }
         }
 
@@ -712,6 +824,32 @@ public class FunctionType
                 optionals.set(6);
                 modified.set(6);
                 mutableAnnotations().putAll(from.getAnnotations());
+            }
+
+            if (from.hasStartPos()) {
+                optionals.set(7);
+                modified.set(7);
+                if (mStartPos_builder != null) {
+                    mStartPos_builder.merge(from.getStartPos());
+                } else if (mStartPos != null) {
+                    mStartPos_builder = mStartPos.mutate().merge(from.getStartPos());
+                    mStartPos = null;
+                } else {
+                    mStartPos = from.getStartPos();
+                }
+            }
+
+            if (from.hasEndPos()) {
+                optionals.set(8);
+                modified.set(8);
+                if (mEndPos_builder != null) {
+                    mEndPos_builder.merge(from.getEndPos());
+                } else if (mEndPos != null) {
+                    mEndPos_builder = mEndPos.mutate().merge(from.getEndPos());
+                    mEndPos = null;
+                } else {
+                    mEndPos = from.getEndPos();
+                }
             }
             return this;
         }
@@ -1194,6 +1332,194 @@ public class FunctionType
             return mAnnotations;
         }
 
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearStartPos();
+            }
+
+            optionals.set(7);
+            modified.set(7);
+            mStartPos = value;
+            mStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setStartPos(builder == null ? null : builder.build());
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @return True if start_pos has been set.
+         */
+        public boolean isSetStartPos() {
+            return optionals.get(7);
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @return True if start_pos has been modified.
+         */
+        public boolean isModifiedStartPos() {
+            return modified.get(7);
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearStartPos() {
+            optionals.clear(7);
+            modified.set(7);
+            mStartPos = null;
+            mStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
+            optionals.set(7);
+            modified.set(7);
+
+            if (mStartPos != null) {
+                mStartPos_builder = mStartPos.mutate();
+                mStartPos = null;
+            } else if (mStartPos_builder == null) {
+                mStartPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mStartPos_builder;
+        }
+
+        /**
+         * The start of the definition (position of return type)
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getStartPos() {
+
+            if (mStartPos_builder != null) {
+                return mStartPos_builder.build();
+            }
+            return mStartPos;
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearEndPos();
+            }
+
+            optionals.set(8);
+            modified.set(8);
+            mEndPos = value;
+            mEndPos_builder = null;
+            return this;
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setEndPos(builder == null ? null : builder.build());
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return True if end_pos has been set.
+         */
+        public boolean isSetEndPos() {
+            return optionals.get(8);
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return True if end_pos has been modified.
+         */
+        public boolean isModifiedEndPos() {
+            return modified.get(8);
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearEndPos() {
+            optionals.clear(8);
+            modified.set(8);
+            mEndPos = null;
+            mEndPos_builder = null;
+            return this;
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {
+            optionals.set(8);
+            modified.set(8);
+
+            if (mEndPos != null) {
+                mEndPos_builder = mEndPos.mutate();
+                mEndPos = null;
+            } else if (mEndPos_builder == null) {
+                mEndPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mEndPos_builder;
+        }
+
+        /**
+         * The end of the definition
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getEndPos() {
+
+            if (mEndPos_builder != null) {
+                return mEndPos_builder.build();
+            }
+            return mEndPos;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -1206,7 +1532,9 @@ public class FunctionType
                    java.util.Objects.equals(mName, other.mName) &&
                    java.util.Objects.equals(mParams, other.mParams) &&
                    java.util.Objects.equals(mExceptions, other.mExceptions) &&
-                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+                   java.util.Objects.equals(getStartPos(), other.getStartPos()) &&
+                   java.util.Objects.equals(getEndPos(), other.getEndPos());
         }
 
         @Override
@@ -1219,13 +1547,17 @@ public class FunctionType
                     _Field.NAME, mName,
                     _Field.PARAMS, mParams,
                     _Field.EXCEPTIONS, mExceptions,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.ANNOTATIONS, mAnnotations,
+                    _Field.START_POS, getStartPos(),
+                    _Field.END_POS, getEndPos());
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
+                case 10: return mutableStartPos();
+                case 11: return mutableEndPos();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }
@@ -1243,6 +1575,8 @@ public class FunctionType
                 case 5: setParams((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 6: setExceptions((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                case 10: setStartPos((net.morimekta.providence.model.FilePos) value); break;
+                case 11: setEndPos((net.morimekta.providence.model.FilePos) value); break;
                 default: break;
             }
             return this;
@@ -1258,6 +1592,8 @@ public class FunctionType
                 case 5: return optionals.get(4);
                 case 6: return optionals.get(5);
                 case 7: return optionals.get(6);
+                case 10: return optionals.get(7);
+                case 11: return optionals.get(8);
                 default: break;
             }
             return false;
@@ -1273,6 +1609,8 @@ public class FunctionType
                 case 5: return modified.get(4);
                 case 6: return modified.get(5);
                 case 7: return modified.get(6);
+                case 10: return modified.get(7);
+                case 11: return modified.get(8);
                 default: break;
             }
             return false;
@@ -1299,6 +1637,8 @@ public class FunctionType
                 case 5: clearParams(); break;
                 case 6: clearExceptions(); break;
                 case 7: clearAnnotations(); break;
+                case 10: clearStartPos(); break;
+                case 11: clearEndPos(); break;
                 default: break;
             }
             return this;
@@ -1440,6 +1780,24 @@ public class FunctionType
                             optionals.set(6);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FunctionType.annotations, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 10: {
+                        if (type == 12) {
+                            mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(7);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FunctionType.start_pos, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 11: {
+                        if (type == 12) {
+                            mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(8);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FunctionType.end_pos, should be struct(12)");
                         }
                         break;
                     }

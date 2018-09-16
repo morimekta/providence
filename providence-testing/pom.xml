@@ -26,17 +26,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>findbugs-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
         </dependency>
@@ -61,12 +50,6 @@
             <artifactId>jfairy</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-idl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>testing-util</artifactId>
@@ -111,16 +94,6 @@
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>net.morimekta.providence</groupId>
-                            <artifactId>providence-idl</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <generated_annotation_version>true</generated_annotation_version>
-                </configuration>
                 <executions>
                     <execution>
                         <id>generate-sources-for-test</id>
@@ -128,6 +101,9 @@
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
+                        <configuration>
+                            <generated_annotation_version>true</generated_annotation_version>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

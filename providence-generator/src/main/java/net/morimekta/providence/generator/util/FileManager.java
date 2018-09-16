@@ -20,12 +20,11 @@
  */
 package net.morimekta.providence.generator.util;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -56,10 +55,6 @@ public class FileManager {
         return new File(root, relativePath(path, name)).getCanonicalPath();
     }
 
-    @SuppressFBWarnings(justification = "We don't care if the directory was created," +
-                                        "or the file, just that it exists and is writable " +
-                                        "when opened.",
-                        value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     public OutputStream create(String path, String name) throws IOException {
         File file = new File(absolutePath(path, name));
 
@@ -67,9 +62,10 @@ public class FileManager {
             throw new IOException("File " + path + File.separator + name + " already created.");
         }
 
-        file.getParentFile()
-            .mkdirs();
-        file.createNewFile();
+        Files.createDirectories(file.getParentFile().toPath());
+        if (!Files.exists(file.toPath())) {
+            Files.createFile(file.toPath());
+        }
 
         generatedFiles.add(file.getCanonicalPath());
 

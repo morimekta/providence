@@ -1,5 +1,5 @@
-namespace java net.morimekta.providence
-namespace js morimekta.providence
+namespace java net.morimekta.providence.util
+namespace js morimekta.providence.util
 
 /**
  * Dummy struct that is just empty. Can be used to "ignore" everything.

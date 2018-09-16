@@ -51,4 +51,12 @@ public class JavaOptions {
      * <code>java.public.constructor = ""</code> annotation.
      */
     public boolean public_constructors = false;
+
+    /**
+     * Set to true to generate types belonging in the 'net.morimekta.providence' and
+     * 'net.morimekta.providence.model' packages. Per default this is skipped as the
+     * models are located in the 'providence-core' and 'providence-reflect' packages
+     * respectively, where they are mainly used.
+     */
+    public boolean generate_providence_core_types = false;
 }

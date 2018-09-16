@@ -25,8 +25,6 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -41,9 +39,6 @@ import java.util.stream.StreamSupport;
  * Helper class to create streams that read providence messages.
  */
 public class MessageStreams {
-    @SuppressFBWarnings(justification = "We need this constant some place anyway, and" +
-                                        "java does still not support truly const arrays.",
-                        value = "MS_MUTABLE_ARRAY")
     public static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
 
     /**

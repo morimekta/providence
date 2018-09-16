@@ -1,53 +1,39 @@
 package net.morimekta.providence.model;
 
 /**
- * For fields:
- *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
- * For const:
- *   const &lt;type&gt; &lt;name&gt; = &lt;default_value&gt;
- * <p>
- * Fields without key is assigned values ranging from 65335 and down (2^16-1)
- * in order of appearance. Because of the &quot;in order of appearance&quot; the field
- * *must* be filled by the IDL parser.
- * <p>
- * Consts are always given the key &#39;0&#39;.
+ * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
  */
 @SuppressWarnings("unused")
 @javax.annotation.Generated("providence-maven-plugin")
 @javax.annotation.concurrent.Immutable
-public class FieldType
-        implements net.morimekta.providence.PMessage<FieldType,FieldType._Field>,
-                   Comparable<FieldType>,
+public class ConstType
+        implements net.morimekta.providence.PMessage<ConstType,ConstType._Field>,
+                   Comparable<ConstType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -6946509003048025675L;
+    private final static long serialVersionUID = -8091187846418488882L;
 
-    private final static int kDefaultId = 0;
-    private final static net.morimekta.providence.model.FieldRequirement kDefaultRequirement = net.morimekta.providence.model.FieldRequirement.DEFAULT;
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
-    private final static int kDefaultStartLineNo = 0;
-    private final static int kDefaultStartLinePos = 0;
+    private final static String kDefaultValue = "";
+    private final static java.util.Map<String,String> kDefaultAnnotations = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,String>()
+                .build();
 
     private final transient String mDocumentation;
-    private final transient int mId;
-    private final transient net.morimekta.providence.model.FieldRequirement mRequirement;
     private final transient String mType;
     private final transient String mName;
-    private final transient String mDefaultValue;
+    private final transient String mValue;
     private final transient java.util.Map<String,String> mAnnotations;
-    private final transient Integer mStartLineNo;
-    private final transient Integer mStartLinePos;
+    private final transient net.morimekta.providence.model.FilePos mStartPos;
+    private final transient net.morimekta.providence.model.FilePos mEndPos;
 
     private volatile transient int tHashCode;
 
     // Transient object used during java deserialization.
-    private transient FieldType tSerializeInstance;
+    private transient ConstType tSerializeInstance;
 
-    private FieldType(_Builder builder) {
+    private ConstType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mId = builder.mId;
-        mRequirement = builder.mRequirement;
         if (builder.isSetType()) {
             mType = builder.mType;
         } else {
@@ -58,14 +44,18 @@ public class FieldType
         } else {
             mName = kDefaultName;
         }
-        mDefaultValue = builder.mDefaultValue;
+        if (builder.isSetValue()) {
+            mValue = builder.mValue;
+        } else {
+            mValue = kDefaultValue;
+        }
         if (builder.isSetAnnotations()) {
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
             mAnnotations = null;
         }
-        mStartLineNo = builder.mStartLineNo;
-        mStartLinePos = builder.mStartLinePos;
+        mStartPos = builder.mStartPos_builder != null ? builder.mStartPos_builder.build() : builder.mStartPos;
+        mEndPos = builder.mEndPos_builder != null ? builder.mEndPos_builder.build() : builder.mEndPos;
     }
 
     public boolean hasDocumentation() {
@@ -85,36 +75,6 @@ public class FieldType
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
         return java.util.Optional.ofNullable(mDocumentation);
-    }
-
-    public boolean hasId() {
-        return true;
-    }
-
-    /**
-     * @return The field value
-     */
-    public int getId() {
-        return mId;
-    }
-
-    public boolean hasRequirement() {
-        return mRequirement != null;
-    }
-
-    /**
-     * @return The field value
-     */
-    public net.morimekta.providence.model.FieldRequirement getRequirement() {
-        return hasRequirement() ? mRequirement : kDefaultRequirement;
-    }
-
-    /**
-     * @return Optional field value
-     */
-    @javax.annotation.Nonnull
-    public java.util.Optional<net.morimekta.providence.model.FieldRequirement> optionalRequirement() {
-        return java.util.Optional.ofNullable(mRequirement);
     }
 
     public boolean hasType() {
@@ -141,23 +101,16 @@ public class FieldType
         return mName;
     }
 
-    public boolean hasDefaultValue() {
-        return mDefaultValue != null;
+    public boolean hasValue() {
+        return true;
     }
 
     /**
      * @return The field value
      */
-    public String getDefaultValue() {
-        return mDefaultValue;
-    }
-
-    /**
-     * @return Optional field value
-     */
     @javax.annotation.Nonnull
-    public java.util.Optional<String> optionalDefaultValue() {
-        return java.util.Optional.ofNullable(mDefaultValue);
+    public String getValue() {
+        return mValue;
     }
 
     public int numAnnotations() {
@@ -172,7 +125,7 @@ public class FieldType
      * @return The field value
      */
     public java.util.Map<String,String> getAnnotations() {
-        return mAnnotations;
+        return hasAnnotations() ? mAnnotations : kDefaultAnnotations;
     }
 
     /**
@@ -183,64 +136,62 @@ public class FieldType
         return java.util.Optional.ofNullable(mAnnotations);
     }
 
-    public boolean hasStartLineNo() {
-        return mStartLineNo != null;
+    public boolean hasStartPos() {
+        return mStartPos != null;
     }
 
     /**
-     * Note the start of the default value in the parsed thrift file, this
-     * can be used for making more accurate exception / parse data from the
-     * const parser.
+     * The start of the definition (position of &#39;enum&#39;)
      *
      * @return The field value
      */
-    public int getStartLineNo() {
-        return hasStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
+    public net.morimekta.providence.model.FilePos getStartPos() {
+        return mStartPos;
     }
 
     /**
-     * Note the start of the default value in the parsed thrift file, this
-     * can be used for making more accurate exception / parse data from the
-     * const parser.
+     * The start of the definition (position of &#39;enum&#39;)
      *
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.OptionalInt optionalStartLineNo() {
-        return hasStartLineNo() ? java.util.OptionalInt.of(mStartLineNo) : java.util.OptionalInt.empty();
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
+        return java.util.Optional.ofNullable(mStartPos);
     }
 
-    public boolean hasStartLinePos() {
-        return mStartLinePos != null;
+    public boolean hasEndPos() {
+        return mEndPos != null;
     }
 
     /**
+     * The end of the definition (position of &#39;}&#39;)
+     *
      * @return The field value
      */
-    public int getStartLinePos() {
-        return hasStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+    public net.morimekta.providence.model.FilePos getEndPos() {
+        return mEndPos;
     }
 
     /**
+     * The end of the definition (position of &#39;}&#39;)
+     *
      * @return Optional field value
      */
     @javax.annotation.Nonnull
-    public java.util.OptionalInt optionalStartLinePos() {
-        return hasStartLinePos() ? java.util.OptionalInt.of(mStartLinePos) : java.util.OptionalInt.empty();
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
+        return java.util.Optional.ofNullable(mEndPos);
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
             case 1: return mDocumentation != null;
-            case 2: return true;
-            case 3: return mRequirement != null;
             case 4: return true;
             case 5: return true;
-            case 6: return mDefaultValue != null;
+            case 6: return true;
             case 7: return mAnnotations != null;
-            case 10: return mStartLineNo != null;
-            case 11: return mStartLinePos != null;
+            case 10: return mStartPos != null;
+            case 11: return mEndPos != null;
             default: return false;
         }
     }
@@ -250,14 +201,12 @@ public class FieldType
     public <T> T get(int key) {
         switch(key) {
             case 1: return (T) mDocumentation;
-            case 2: return (T) (Integer) mId;
-            case 3: return (T) mRequirement;
             case 4: return (T) mType;
             case 5: return (T) mName;
-            case 6: return (T) mDefaultValue;
+            case 6: return (T) mValue;
             case 7: return (T) mAnnotations;
-            case 10: return (T) mStartLineNo;
-            case 11: return (T) mStartLinePos;
+            case 10: return (T) mStartPos;
+            case 11: return (T) mEndPos;
             default: return null;
         }
     }
@@ -266,39 +215,35 @@ public class FieldType
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
-        FieldType other = (FieldType) o;
+        ConstType other = (ConstType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-               java.util.Objects.equals(mId, other.mId) &&
-               java.util.Objects.equals(mRequirement, other.mRequirement) &&
                java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
-               java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
+               java.util.Objects.equals(mValue, other.mValue) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
-               java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
-               java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
+               java.util.Objects.equals(mStartPos, other.mStartPos) &&
+               java.util.Objects.equals(mEndPos, other.mEndPos);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    FieldType.class,
+                    ConstType.class,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.ID, mId,
-                    _Field.REQUIREMENT, mRequirement,
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.DEFAULT_VALUE, mDefaultValue,
+                    _Field.VALUE, mValue,
                     _Field.ANNOTATIONS, mAnnotations,
-                    _Field.START_LINE_NO, mStartLineNo,
-                    _Field.START_LINE_POS, mStartLinePos);
+                    _Field.START_POS, mStartPos,
+                    _Field.END_POS, mEndPos);
         }
         return tHashCode;
     }
 
     @Override
     public String toString() {
-        return "providence_model.FieldType" + asString();
+        return "providence_model.ConstType" + asString();
     }
 
     @Override
@@ -316,14 +261,6 @@ public class FieldType
                .append('\"');
         }
         if (!first) out.append(',');
-        out.append("id:")
-           .append(mId);
-        if (hasRequirement()) {
-            out.append(',');
-            out.append("requirement:")
-               .append(mRequirement.asString());
-        }
-        out.append(',');
         out.append("type:")
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mType))
@@ -333,34 +270,32 @@ public class FieldType
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mName))
            .append('\"');
-        if (hasDefaultValue()) {
-            out.append(',');
-            out.append("default_value:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mDefaultValue))
-               .append('\"');
-        }
+        out.append(',');
+        out.append("value:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mValue))
+           .append('\"');
         if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
-        if (hasStartLineNo()) {
+        if (hasStartPos()) {
             out.append(',');
-            out.append("start_line_no:")
-               .append(mStartLineNo);
+            out.append("start_pos:")
+               .append(mStartPos.asString());
         }
-        if (hasStartLinePos()) {
+        if (hasEndPos()) {
             out.append(',');
-            out.append("start_line_pos:")
-               .append(mStartLinePos);
+            out.append("end_pos:")
+               .append(mEndPos.asString());
         }
         out.append('}');
         return out.toString();
     }
 
     @Override
-    public int compareTo(FieldType other) {
+    public int compareTo(ConstType other) {
         int c;
 
         c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
@@ -370,28 +305,14 @@ public class FieldType
             if (c != 0) return c;
         }
 
-        c = Integer.compare(mId, other.mId);
-        if (c != 0) return c;
-
-        c = Boolean.compare(mRequirement != null, other.mRequirement != null);
-        if (c != 0) return c;
-        if (mRequirement != null) {
-            c = Integer.compare(mRequirement.ordinal(), mRequirement.ordinal());
-            if (c != 0) return c;
-        }
-
         c = mType.compareTo(other.mType);
         if (c != 0) return c;
 
         c = mName.compareTo(other.mName);
         if (c != 0) return c;
 
-        c = Boolean.compare(mDefaultValue != null, other.mDefaultValue != null);
+        c = mValue.compareTo(other.mValue);
         if (c != 0) return c;
-        if (mDefaultValue != null) {
-            c = mDefaultValue.compareTo(other.mDefaultValue);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -400,17 +321,17 @@ public class FieldType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mStartLineNo != null, other.mStartLineNo != null);
+        c = Boolean.compare(mStartPos != null, other.mStartPos != null);
         if (c != 0) return c;
-        if (mStartLineNo != null) {
-            c = Integer.compare(mStartLineNo, other.mStartLineNo);
+        if (mStartPos != null) {
+            c = mStartPos.compareTo(other.mStartPos);
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mStartLinePos != null, other.mStartLinePos != null);
+        c = Boolean.compare(mEndPos != null, other.mEndPos != null);
         if (c != 0) return c;
-        if (mStartLinePos != null) {
-            c = Integer.compare(mStartLinePos, other.mStartLinePos);
+        if (mEndPos != null) {
+            c = mEndPos.compareTo(other.mEndPos);
             if (c != 0) return c;
         }
 
@@ -446,16 +367,6 @@ public class FieldType
             length += writer.writeBinary(tmp_1);
         }
 
-        length += writer.writeByte((byte) 8);
-        length += writer.writeShort((short) 2);
-        length += writer.writeInt(mId);
-
-        if (hasRequirement()) {
-            length += writer.writeByte((byte) 8);
-            length += writer.writeShort((short) 3);
-            length += writer.writeInt(mRequirement.asInteger());
-        }
-
         length += writer.writeByte((byte) 11);
         length += writer.writeShort((short) 4);
         net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
@@ -468,13 +379,11 @@ public class FieldType
         length += writer.writeUInt32(tmp_3.length());
         length += writer.writeBinary(tmp_3);
 
-        if (hasDefaultValue()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 6);
-            net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(mDefaultValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_4.length());
-            length += writer.writeBinary(tmp_4);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 6);
+        net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(mValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_4.length());
+        length += writer.writeBinary(tmp_4);
 
         if (hasAnnotations()) {
             length += writer.writeByte((byte) 13);
@@ -492,16 +401,16 @@ public class FieldType
             }
         }
 
-        if (hasStartLineNo()) {
-            length += writer.writeByte((byte) 8);
+        if (hasStartPos()) {
+            length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 10);
-            length += writer.writeInt(mStartLineNo);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mStartPos);
         }
 
-        if (hasStartLinePos()) {
-            length += writer.writeByte((byte) 8);
+        if (hasEndPos()) {
+            length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 11);
-            length += writer.writeInt(mStartLinePos);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mEndPos);
         }
 
         length += writer.writeByte((byte) 0);
@@ -516,14 +425,12 @@ public class FieldType
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ID(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "id", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        REQUIREMENT(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requirement", net.morimekta.providence.model.FieldRequirement.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultRequirement)),
         TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        DEFAULT_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "default_value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
-        START_LINE_NO(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_no", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        START_LINE_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_pos", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultAnnotations)),
+        START_POS(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_pos", net.morimekta.providence.model.FilePos.provider(), null),
+        END_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "end_pos", net.morimekta.providence.model.FilePos.provider(), null),
         ;
 
         private final int mId;
@@ -572,14 +479,12 @@ public class FieldType
         public static _Field findById(int id) {
             switch (id) {
                 case 1: return _Field.DOCUMENTATION;
-                case 2: return _Field.ID;
-                case 3: return _Field.REQUIREMENT;
                 case 4: return _Field.TYPE;
                 case 5: return _Field.NAME;
-                case 6: return _Field.DEFAULT_VALUE;
+                case 6: return _Field.VALUE;
                 case 7: return _Field.ANNOTATIONS;
-                case 10: return _Field.START_LINE_NO;
-                case 11: return _Field.START_LINE_POS;
+                case 10: return _Field.START_POS;
+                case 11: return _Field.END_POS;
             }
             return null;
         }
@@ -591,14 +496,12 @@ public class FieldType
         public static _Field findByName(String name) {
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
-                case "id": return _Field.ID;
-                case "requirement": return _Field.REQUIREMENT;
                 case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
-                case "default_value": return _Field.DEFAULT_VALUE;
+                case "value": return _Field.VALUE;
                 case "annotations": return _Field.ANNOTATIONS;
-                case "start_line_no": return _Field.START_LINE_NO;
-                case "start_line_pos": return _Field.START_LINE_POS;
+                case "start_pos": return _Field.START_POS;
+                case "end_pos": return _Field.END_POS;
             }
             return null;
         }
@@ -610,7 +513,7 @@ public class FieldType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.FieldType");
+                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ConstType");
             }
             return field;
         }
@@ -623,7 +526,7 @@ public class FieldType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.FieldType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ConstType");
             }
             return field;
         }
@@ -631,22 +534,22 @@ public class FieldType
     }
 
     @javax.annotation.Nonnull
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<FieldType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ConstType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
     @javax.annotation.Nonnull
-    public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> {
         public _Descriptor() {
-            super("providence_model", "FieldType", _Builder::new, false);
+            super("providence_model", "ConstType", _Builder::new, false);
         }
 
         @Override
@@ -672,15 +575,15 @@ public class FieldType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<FieldType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ConstType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     /**
-     * Make a providence_model.FieldType builder.
+     * Make a providence_model.ConstType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -688,50 +591,41 @@ public class FieldType
     }
 
     /**
-     * For fields:
-     *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
-     * For const:
-     *   const &lt;type&gt; &lt;name&gt; = &lt;default_value&gt;
-     * <p>
-     * Fields without key is assigned values ranging from 65335 and down (2^16-1)
-     * in order of appearance. Because of the &quot;in order of appearance&quot; the field
-     * *must* be filled by the IDL parser.
-     * <p>
-     * Consts are always given the key &#39;0&#39;.
+     * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<FieldType,_Field>
+            extends net.morimekta.providence.PMessageBuilder<ConstType,_Field>
             implements net.morimekta.providence.serializer.binary.BinaryReader {
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
         private String mDocumentation;
-        private int mId;
-        private net.morimekta.providence.model.FieldRequirement mRequirement;
         private String mType;
         private String mName;
-        private String mDefaultValue;
+        private String mValue;
         private java.util.Map<String,String> mAnnotations;
-        private Integer mStartLineNo;
-        private Integer mStartLinePos;
+        private net.morimekta.providence.model.FilePos mStartPos;
+        private net.morimekta.providence.model.FilePos._Builder mStartPos_builder;
+        private net.morimekta.providence.model.FilePos mEndPos;
+        private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.FieldType builder.
+         * Make a providence_model.ConstType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(9);
-            modified = new java.util.BitSet(9);
-            mId = kDefaultId;
+            optionals = new java.util.BitSet(7);
+            modified = new java.util.BitSet(7);
             mType = kDefaultType;
             mName = kDefaultName;
+            mValue = kDefaultValue;
         }
 
         /**
-         * Make a mutating builder off a base providence_model.FieldType.
+         * Make a mutating builder off a base providence_model.ConstType.
          *
-         * @param base The base FieldType
+         * @param base The base ConstType
          */
-        public _Builder(FieldType base) {
+        public _Builder(ConstType base) {
             this();
 
             if (base.hasDocumentation()) {
@@ -739,36 +633,28 @@ public class FieldType
                 mDocumentation = base.mDocumentation;
             }
             optionals.set(1);
-            mId = base.mId;
-            if (base.hasRequirement()) {
-                optionals.set(2);
-                mRequirement = base.mRequirement;
-            }
-            optionals.set(3);
             mType = base.mType;
-            optionals.set(4);
+            optionals.set(2);
             mName = base.mName;
-            if (base.hasDefaultValue()) {
-                optionals.set(5);
-                mDefaultValue = base.mDefaultValue;
-            }
+            optionals.set(3);
+            mValue = base.mValue;
             if (base.hasAnnotations()) {
-                optionals.set(6);
+                optionals.set(4);
                 mAnnotations = base.mAnnotations;
             }
-            if (base.hasStartLineNo()) {
-                optionals.set(7);
-                mStartLineNo = base.mStartLineNo;
+            if (base.hasStartPos()) {
+                optionals.set(5);
+                mStartPos = base.mStartPos;
             }
-            if (base.hasStartLinePos()) {
-                optionals.set(8);
-                mStartLinePos = base.mStartLinePos;
+            if (base.hasEndPos()) {
+                optionals.set(6);
+                mEndPos = base.mEndPos;
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public _Builder merge(FieldType from) {
+        public _Builder merge(ConstType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
                 modified.set(0);
@@ -777,44 +663,46 @@ public class FieldType
 
             optionals.set(1);
             modified.set(1);
-            mId = from.getId();
+            mType = from.getType();
 
-            if (from.hasRequirement()) {
-                optionals.set(2);
-                modified.set(2);
-                mRequirement = from.getRequirement();
-            }
+            optionals.set(2);
+            modified.set(2);
+            mName = from.getName();
 
             optionals.set(3);
             modified.set(3);
-            mType = from.getType();
-
-            optionals.set(4);
-            modified.set(4);
-            mName = from.getName();
-
-            if (from.hasDefaultValue()) {
-                optionals.set(5);
-                modified.set(5);
-                mDefaultValue = from.getDefaultValue();
-            }
+            mValue = from.getValue();
 
             if (from.hasAnnotations()) {
-                optionals.set(6);
-                modified.set(6);
+                optionals.set(4);
+                modified.set(4);
                 mutableAnnotations().putAll(from.getAnnotations());
             }
 
-            if (from.hasStartLineNo()) {
-                optionals.set(7);
-                modified.set(7);
-                mStartLineNo = from.getStartLineNo();
+            if (from.hasStartPos()) {
+                optionals.set(5);
+                modified.set(5);
+                if (mStartPos_builder != null) {
+                    mStartPos_builder.merge(from.getStartPos());
+                } else if (mStartPos != null) {
+                    mStartPos_builder = mStartPos.mutate().merge(from.getStartPos());
+                    mStartPos = null;
+                } else {
+                    mStartPos = from.getStartPos();
+                }
             }
 
-            if (from.hasStartLinePos()) {
-                optionals.set(8);
-                modified.set(8);
-                mStartLinePos = from.getStartLinePos();
+            if (from.hasEndPos()) {
+                optionals.set(6);
+                modified.set(6);
+                if (mEndPos_builder != null) {
+                    mEndPos_builder.merge(from.getEndPos());
+                } else if (mEndPos != null) {
+                    mEndPos_builder = mEndPos.mutate().merge(from.getEndPos());
+                    mEndPos = null;
+                } else {
+                    mEndPos = from.getEndPos();
+                }
             }
             return this;
         }
@@ -878,118 +766,6 @@ public class FieldType
         }
 
         /**
-         * Sets the value of id.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setId(int value) {
-            optionals.set(1);
-            modified.set(1);
-            mId = value;
-            return this;
-        }
-
-        /**
-         * Checks for presence of the id field.
-         *
-         * @return True if id has been set.
-         */
-        public boolean isSetId() {
-            return optionals.get(1);
-        }
-
-        /**
-         * Checks if id has been modified since the _Builder was created.
-         *
-         * @return True if id has been modified.
-         */
-        public boolean isModifiedId() {
-            return modified.get(1);
-        }
-
-        /**
-         * Clears the id field.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearId() {
-            optionals.clear(1);
-            modified.set(1);
-            mId = kDefaultId;
-            return this;
-        }
-
-        /**
-         * Gets the value of the contained id.
-         *
-         * @return The field value
-         */
-        public int getId() {
-            return mId;
-        }
-
-        /**
-         * Sets the value of requirement.
-         *
-         * @param value The new value
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder setRequirement(net.morimekta.providence.model.FieldRequirement value) {
-            if (value == null) {
-                return clearRequirement();
-            }
-
-            optionals.set(2);
-            modified.set(2);
-            mRequirement = value;
-            return this;
-        }
-
-        /**
-         * Checks for presence of the requirement field.
-         *
-         * @return True if requirement has been set.
-         */
-        public boolean isSetRequirement() {
-            return optionals.get(2);
-        }
-
-        /**
-         * Checks if requirement has been modified since the _Builder was created.
-         *
-         * @return True if requirement has been modified.
-         */
-        public boolean isModifiedRequirement() {
-            return modified.get(2);
-        }
-
-        /**
-         * Clears the requirement field.
-         *
-         * @return The builder
-         */
-        @javax.annotation.Nonnull
-        public _Builder clearRequirement() {
-            optionals.clear(2);
-            modified.set(2);
-            mRequirement = null;
-            return this;
-        }
-
-        /**
-         * Gets the value of the contained requirement.
-         *
-         * @return The field value
-         */
-        public net.morimekta.providence.model.FieldRequirement getRequirement() {
-            return isSetRequirement() ? mRequirement : kDefaultRequirement;
-        }
-
-        /**
          * Sets the value of type.
          *
          * @param value The new value
@@ -1001,8 +777,8 @@ public class FieldType
                 return clearType();
             }
 
-            optionals.set(3);
-            modified.set(3);
+            optionals.set(1);
+            modified.set(1);
             mType = value;
             return this;
         }
@@ -1013,7 +789,7 @@ public class FieldType
          * @return True if type has been set.
          */
         public boolean isSetType() {
-            return optionals.get(3);
+            return optionals.get(1);
         }
 
         /**
@@ -1022,7 +798,7 @@ public class FieldType
          * @return True if type has been modified.
          */
         public boolean isModifiedType() {
-            return modified.get(3);
+            return modified.get(1);
         }
 
         /**
@@ -1032,8 +808,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder clearType() {
-            optionals.clear(3);
-            modified.set(3);
+            optionals.clear(1);
+            modified.set(1);
             mType = kDefaultType;
             return this;
         }
@@ -1059,8 +835,8 @@ public class FieldType
                 return clearName();
             }
 
-            optionals.set(4);
-            modified.set(4);
+            optionals.set(2);
+            modified.set(2);
             mName = value;
             return this;
         }
@@ -1071,7 +847,7 @@ public class FieldType
          * @return True if name has been set.
          */
         public boolean isSetName() {
-            return optionals.get(4);
+            return optionals.get(2);
         }
 
         /**
@@ -1080,7 +856,7 @@ public class FieldType
          * @return True if name has been modified.
          */
         public boolean isModifiedName() {
-            return modified.get(4);
+            return modified.get(2);
         }
 
         /**
@@ -1090,8 +866,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder clearName() {
-            optionals.clear(4);
-            modified.set(4);
+            optionals.clear(2);
+            modified.set(2);
             mName = kDefaultName;
             return this;
         }
@@ -1106,61 +882,61 @@ public class FieldType
         }
 
         /**
-         * Sets the value of default_value.
+         * Sets the value of value.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setDefaultValue(String value) {
+        public _Builder setValue(String value) {
             if (value == null) {
-                return clearDefaultValue();
+                return clearValue();
             }
 
-            optionals.set(5);
-            modified.set(5);
-            mDefaultValue = value;
+            optionals.set(3);
+            modified.set(3);
+            mValue = value;
             return this;
         }
 
         /**
-         * Checks for presence of the default_value field.
+         * Checks for presence of the value field.
          *
-         * @return True if default_value has been set.
+         * @return True if value has been set.
          */
-        public boolean isSetDefaultValue() {
-            return optionals.get(5);
+        public boolean isSetValue() {
+            return optionals.get(3);
         }
 
         /**
-         * Checks if default_value has been modified since the _Builder was created.
+         * Checks if value has been modified since the _Builder was created.
          *
-         * @return True if default_value has been modified.
+         * @return True if value has been modified.
          */
-        public boolean isModifiedDefaultValue() {
-            return modified.get(5);
+        public boolean isModifiedValue() {
+            return modified.get(3);
         }
 
         /**
-         * Clears the default_value field.
+         * Clears the value field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearDefaultValue() {
-            optionals.clear(5);
-            modified.set(5);
-            mDefaultValue = null;
+        public _Builder clearValue() {
+            optionals.clear(3);
+            modified.set(3);
+            mValue = kDefaultValue;
             return this;
         }
 
         /**
-         * Gets the value of the contained default_value.
+         * Gets the value of the contained value.
          *
          * @return The field value
          */
-        public String getDefaultValue() {
-            return mDefaultValue;
+        public String getValue() {
+            return mValue;
         }
 
         /**
@@ -1175,8 +951,8 @@ public class FieldType
                 return clearAnnotations();
             }
 
-            optionals.set(6);
-            modified.set(6);
+            optionals.set(4);
+            modified.set(4);
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
@@ -1190,8 +966,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
-            optionals.set(6);
-            modified.set(6);
+            optionals.set(4);
+            modified.set(4);
             mutableAnnotations().put(key, value);
             return this;
         }
@@ -1202,7 +978,7 @@ public class FieldType
          * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
-            return optionals.get(6);
+            return optionals.get(4);
         }
 
         /**
@@ -1211,7 +987,7 @@ public class FieldType
          * @return True if annotations has been modified.
          */
         public boolean isModifiedAnnotations() {
-            return modified.get(6);
+            return modified.get(4);
         }
 
         /**
@@ -1221,8 +997,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
-            optionals.clear(6);
-            modified.set(6);
+            optionals.clear(4);
+            modified.set(4);
             mAnnotations = null;
             return this;
         }
@@ -1234,8 +1010,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public java.util.Map<String,String> mutableAnnotations() {
-            optionals.set(6);
-            modified.set(6);
+            optionals.set(4);
+            modified.set(4);
 
             if (mAnnotations == null) {
                 mAnnotations = new java.util.TreeMap<>();
@@ -1246,159 +1022,227 @@ public class FieldType
         }
 
         /**
-         * Note the start of the default value in the parsed thrift file, this
-         * can be used for making more accurate exception / parse data from the
-         * const parser.
+         * The start of the definition (position of &#39;enum&#39;)
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setStartLineNo(int value) {
-            optionals.set(7);
-            modified.set(7);
-            mStartLineNo = value;
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearStartPos();
+            }
+
+            optionals.set(5);
+            modified.set(5);
+            mStartPos = value;
+            mStartPos_builder = null;
             return this;
         }
 
         /**
-         * Note the start of the default value in the parsed thrift file, this
-         * can be used for making more accurate exception / parse data from the
-         * const parser.
+         * The start of the definition (position of &#39;enum&#39;)
          *
-         * @return True if start_line_no has been set.
+         * @param builder builder for the new value
+         * @return The builder
          */
-        public boolean isSetStartLineNo() {
-            return optionals.get(7);
+        @javax.annotation.Nonnull
+        public _Builder setStartPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setStartPos(builder == null ? null : builder.build());
         }
 
         /**
-         * Note the start of the default value in the parsed thrift file, this
-         * can be used for making more accurate exception / parse data from the
-         * const parser.
+         * The start of the definition (position of &#39;enum&#39;)
          *
-         * @return True if start_line_no has been modified.
+         * @return True if start_pos has been set.
          */
-        public boolean isModifiedStartLineNo() {
-            return modified.get(7);
+        public boolean isSetStartPos() {
+            return optionals.get(5);
         }
 
         /**
-         * Note the start of the default value in the parsed thrift file, this
-         * can be used for making more accurate exception / parse data from the
-         * const parser.
+         * The start of the definition (position of &#39;enum&#39;)
+         *
+         * @return True if start_pos has been modified.
+         */
+        public boolean isModifiedStartPos() {
+            return modified.get(5);
+        }
+
+        /**
+         * The start of the definition (position of &#39;enum&#39;)
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearStartLineNo() {
-            optionals.clear(7);
-            modified.set(7);
-            mStartLineNo = null;
+        public _Builder clearStartPos() {
+            optionals.clear(5);
+            modified.set(5);
+            mStartPos = null;
+            mStartPos_builder = null;
             return this;
         }
 
         /**
-         * Note the start of the default value in the parsed thrift file, this
-         * can be used for making more accurate exception / parse data from the
-         * const parser.
+         * The start of the definition (position of &#39;enum&#39;)
          *
-         * @return The field value
+         * @return The field builder
          */
-        public int getStartLineNo() {
-            return isSetStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
+            optionals.set(5);
+            modified.set(5);
+
+            if (mStartPos != null) {
+                mStartPos_builder = mStartPos.mutate();
+                mStartPos = null;
+            } else if (mStartPos_builder == null) {
+                mStartPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mStartPos_builder;
         }
 
         /**
-         * Sets the value of start_line_pos.
+         * The start of the definition (position of &#39;enum&#39;)
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getStartPos() {
+
+            if (mStartPos_builder != null) {
+                return mStartPos_builder.build();
+            }
+            return mStartPos;
+        }
+
+        /**
+         * The end of the definition (position of &#39;}&#39;)
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setStartLinePos(int value) {
-            optionals.set(8);
-            modified.set(8);
-            mStartLinePos = value;
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearEndPos();
+            }
+
+            optionals.set(6);
+            modified.set(6);
+            mEndPos = value;
+            mEndPos_builder = null;
             return this;
         }
 
         /**
-         * Checks for presence of the start_line_pos field.
+         * The end of the definition (position of &#39;}&#39;)
          *
-         * @return True if start_line_pos has been set.
+         * @param builder builder for the new value
+         * @return The builder
          */
-        public boolean isSetStartLinePos() {
-            return optionals.get(8);
+        @javax.annotation.Nonnull
+        public _Builder setEndPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setEndPos(builder == null ? null : builder.build());
         }
 
         /**
-         * Checks if start_line_pos has been modified since the _Builder was created.
+         * The end of the definition (position of &#39;}&#39;)
          *
-         * @return True if start_line_pos has been modified.
+         * @return True if end_pos has been set.
          */
-        public boolean isModifiedStartLinePos() {
-            return modified.get(8);
+        public boolean isSetEndPos() {
+            return optionals.get(6);
         }
 
         /**
-         * Clears the start_line_pos field.
+         * The end of the definition (position of &#39;}&#39;)
+         *
+         * @return True if end_pos has been modified.
+         */
+        public boolean isModifiedEndPos() {
+            return modified.get(6);
+        }
+
+        /**
+         * The end of the definition (position of &#39;}&#39;)
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearStartLinePos() {
-            optionals.clear(8);
-            modified.set(8);
-            mStartLinePos = null;
+        public _Builder clearEndPos() {
+            optionals.clear(6);
+            modified.set(6);
+            mEndPos = null;
+            mEndPos_builder = null;
             return this;
         }
 
         /**
-         * Gets the value of the contained start_line_pos.
+         * The end of the definition (position of &#39;}&#39;)
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {
+            optionals.set(6);
+            modified.set(6);
+
+            if (mEndPos != null) {
+                mEndPos_builder = mEndPos.mutate();
+                mEndPos = null;
+            } else if (mEndPos_builder == null) {
+                mEndPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mEndPos_builder;
+        }
+
+        /**
+         * The end of the definition (position of &#39;}&#39;)
          *
          * @return The field value
          */
-        public int getStartLinePos() {
-            return isSetStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+        public net.morimekta.providence.model.FilePos getEndPos() {
+
+            if (mEndPos_builder != null) {
+                return mEndPos_builder.build();
+            }
+            return mEndPos;
         }
 
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            FieldType._Builder other = (FieldType._Builder) o;
+            ConstType._Builder other = (ConstType._Builder) o;
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
-                   java.util.Objects.equals(mId, other.mId) &&
-                   java.util.Objects.equals(mRequirement, other.mRequirement) &&
                    java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mName, other.mName) &&
-                   java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
+                   java.util.Objects.equals(mValue, other.mValue) &&
                    java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
-                   java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
-                   java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
+                   java.util.Objects.equals(getStartPos(), other.getStartPos()) &&
+                   java.util.Objects.equals(getEndPos(), other.getEndPos());
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    FieldType.class, optionals,
+                    ConstType.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
-                    _Field.ID, mId,
-                    _Field.REQUIREMENT, mRequirement,
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.DEFAULT_VALUE, mDefaultValue,
+                    _Field.VALUE, mValue,
                     _Field.ANNOTATIONS, mAnnotations,
-                    _Field.START_LINE_NO, mStartLineNo,
-                    _Field.START_LINE_POS, mStartLinePos);
+                    _Field.START_POS, getStartPos(),
+                    _Field.END_POS, getEndPos());
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
+                case 10: return mutableStartPos();
+                case 11: return mutableEndPos();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }
@@ -1410,14 +1254,12 @@ public class FieldType
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setDocumentation((String) value); break;
-                case 2: setId((int) value); break;
-                case 3: setRequirement((net.morimekta.providence.model.FieldRequirement) value); break;
                 case 4: setType((String) value); break;
                 case 5: setName((String) value); break;
-                case 6: setDefaultValue((String) value); break;
+                case 6: setValue((String) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
-                case 10: setStartLineNo((int) value); break;
-                case 11: setStartLinePos((int) value); break;
+                case 10: setStartPos((net.morimekta.providence.model.FilePos) value); break;
+                case 11: setEndPos((net.morimekta.providence.model.FilePos) value); break;
                 default: break;
             }
             return this;
@@ -1427,14 +1269,12 @@ public class FieldType
         public boolean isSet(int key) {
             switch (key) {
                 case 1: return optionals.get(0);
-                case 2: return optionals.get(1);
-                case 3: return optionals.get(2);
-                case 4: return optionals.get(3);
-                case 5: return optionals.get(4);
-                case 6: return optionals.get(5);
-                case 7: return optionals.get(6);
-                case 10: return optionals.get(7);
-                case 11: return optionals.get(8);
+                case 4: return optionals.get(1);
+                case 5: return optionals.get(2);
+                case 6: return optionals.get(3);
+                case 7: return optionals.get(4);
+                case 10: return optionals.get(5);
+                case 11: return optionals.get(6);
                 default: break;
             }
             return false;
@@ -1444,14 +1284,12 @@ public class FieldType
         public boolean isModified(int key) {
             switch (key) {
                 case 1: return modified.get(0);
-                case 2: return modified.get(1);
-                case 3: return modified.get(2);
-                case 4: return modified.get(3);
-                case 5: return modified.get(4);
-                case 6: return modified.get(5);
-                case 7: return modified.get(6);
-                case 10: return modified.get(7);
-                case 11: return modified.get(8);
+                case 4: return modified.get(1);
+                case 5: return modified.get(2);
+                case 6: return modified.get(3);
+                case 7: return modified.get(4);
+                case 10: return modified.get(5);
+                case 11: return modified.get(6);
                 default: break;
             }
             return false;
@@ -1470,14 +1308,12 @@ public class FieldType
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearDocumentation(); break;
-                case 2: clearId(); break;
-                case 3: clearRequirement(); break;
                 case 4: clearType(); break;
                 case 5: clearName(); break;
-                case 6: clearDefaultValue(); break;
+                case 6: clearValue(); break;
                 case 7: clearAnnotations(); break;
-                case 10: clearStartLineNo(); break;
-                case 11: clearStartLinePos(); break;
+                case 10: clearStartPos(); break;
+                case 11: clearEndPos(); break;
                 default: break;
             }
             return this;
@@ -1486,8 +1322,8 @@ public class FieldType
         @Override
         public boolean valid() {
             return optionals.get(1) &&
-                   optionals.get(3) &&
-                   optionals.get(4);
+                   optionals.get(2) &&
+                   optionals.get(3);
         }
 
         @Override
@@ -1496,27 +1332,27 @@ public class FieldType
                 java.util.ArrayList<String> missing = new java.util.ArrayList<>();
 
                 if (!optionals.get(1)) {
-                    missing.add("id");
-                }
-
-                if (!optionals.get(3)) {
                     missing.add("type");
                 }
 
-                if (!optionals.get(4)) {
+                if (!optionals.get(2)) {
                     missing.add("name");
+                }
+
+                if (!optionals.get(3)) {
+                    missing.add("value");
                 }
 
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.FieldType");
+                        " in message providence_model.ConstType");
             }
         }
 
         @javax.annotation.Nonnull
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> descriptor() {
             return kDescriptor;
         }
 
@@ -1532,25 +1368,7 @@ public class FieldType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.documentation, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 2: {
-                        if (type == 8) {
-                            mId = reader.expectInt();
-                            optionals.set(1);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.id, should be struct(12)");
-                        }
-                        break;
-                    }
-                    case 3: {
-                        if (type == 8) {
-                            mRequirement = net.morimekta.providence.model.FieldRequirement.findById(reader.expectInt());
-                            optionals.set(2);
-                        } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.requirement, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1558,9 +1376,9 @@ public class FieldType
                         if (type == 11) {
                             int len_2 = reader.expectUInt32();
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(3);
+                            optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -1568,19 +1386,19 @@ public class FieldType
                         if (type == 11) {
                             int len_3 = reader.expectUInt32();
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(4);
+                            optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.name, should be struct(12)");
                         }
                         break;
                     }
                     case 6: {
                         if (type == 11) {
                             int len_4 = reader.expectUInt32();
-                            mDefaultValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
-                            optionals.set(5);
+                            mValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.default_value, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.value, should be struct(12)");
                         }
                         break;
                     }
@@ -1603,29 +1421,29 @@ public class FieldType
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_7) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_8) +
-                                        " for providence_model.FieldType.annotations, should be string(11) and string(11)");
+                                        " for providence_model.ConstType.annotations, should be string(11) and string(11)");
                             }
-                            optionals.set(6);
+                            optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.annotations, should be struct(12)");
                         }
                         break;
                     }
                     case 10: {
-                        if (type == 8) {
-                            mStartLineNo = reader.expectInt();
-                            optionals.set(7);
+                        if (type == 12) {
+                            mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(5);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.start_line_no, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.start_pos, should be struct(12)");
                         }
                         break;
                     }
                     case 11: {
-                        if (type == 8) {
-                            mStartLinePos = reader.expectInt();
-                            optionals.set(8);
+                        if (type == 12) {
+                            mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.start_line_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.end_pos, should be struct(12)");
                         }
                         break;
                     }
@@ -1639,8 +1457,8 @@ public class FieldType
         }
 
         @Override
-        public FieldType build() {
-            return new FieldType(this);
+        public ConstType build() {
+            return new ConstType(this);
         }
     }
 }

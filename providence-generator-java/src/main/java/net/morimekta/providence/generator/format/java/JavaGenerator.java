@@ -100,6 +100,7 @@ public class JavaGenerator extends Generator {
 
         if (!javaOptions.generate_providence_core_types &&
             ("net.morimekta.providence".equals(helper.getJavaPackage(program)) ||
+             "net.morimekta.providence.util".equals(helper.getJavaPackage(program)) ||
              "net.morimekta.providence.model".equals(helper.getJavaPackage(program)))) {
             // Just skip internal types if not requested.
             return;

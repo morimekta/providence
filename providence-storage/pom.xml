@@ -29,17 +29,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>findbugs-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>testing-util</artifactId>
             <scope>test</scope>
