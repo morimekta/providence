@@ -238,12 +238,13 @@ struct ProgramType {
  * program .thrift file is also included.
  */
 struct ProgramMeta {
-    /** The program type definition */
-    1: required ProgramType program;
+    1: optional string file_path;
     /** The lines of the program file */
-    2: optional list<string> lines;
+    2: optional list<string> file_lines;
+    /** The program type definition */
+    3: optional ProgramType program;
     /** Map of program name to meta of included programs */
-    3: optional map<string, ProgramMeta> includes;
+    4: optional map<string, ProgramMeta> includes;
 }
 
 /**

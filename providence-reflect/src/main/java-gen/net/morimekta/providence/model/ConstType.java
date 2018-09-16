@@ -143,6 +143,9 @@ public class ConstType
     }
 
     /**
+     * Note the start of the const in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
      * @return The field value
      */
     public net.morimekta.providence.model.FilePos getValueStartPos() {
@@ -150,6 +153,9 @@ public class ConstType
     }
 
     /**
+     * Note the start of the const in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
      * @return Optional field value
      */
     @javax.annotation.Nonnull
@@ -1087,7 +1093,8 @@ public class ConstType
         }
 
         /**
-         * Sets the value of value_start_pos.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @param value The new value
          * @return The builder
@@ -1106,7 +1113,8 @@ public class ConstType
         }
 
         /**
-         * Sets the value of value_start_pos.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -1117,7 +1125,8 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the value_start_pos field.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @return True if value_start_pos has been set.
          */
@@ -1126,7 +1135,8 @@ public class ConstType
         }
 
         /**
-         * Checks if value_start_pos has been modified since the _Builder was created.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @return True if value_start_pos has been modified.
          */
@@ -1135,7 +1145,8 @@ public class ConstType
         }
 
         /**
-         * Clears the value_start_pos field.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @return The builder
          */
@@ -1149,7 +1160,8 @@ public class ConstType
         }
 
         /**
-         * Gets the builder for the contained value_start_pos.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @return The field builder
          */
@@ -1168,7 +1180,8 @@ public class ConstType
         }
 
         /**
-         * Gets the value for the contained value_start_pos.
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
          *
          * @return The field value
          */
