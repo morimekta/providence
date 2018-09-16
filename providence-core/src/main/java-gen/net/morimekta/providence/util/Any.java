@@ -11,7 +11,7 @@ public class Any
                    Comparable<Any>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 3506393331826792594L;
+    private final static long serialVersionUID = -1774169565792574332L;
 
     private final static String kDefaultType = "";
     private final static String kDefaultMediaType = "application/vnd.apache.thrift.binary";
@@ -176,7 +176,7 @@ public class Any
 
     @Override
     public String toString() {
-        return "providence_util.Any" + asString();
+        return "putil.Any" + asString();
     }
 
     @Override
@@ -386,7 +386,7 @@ public class Any
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_util.Any");
+                throw new IllegalArgumentException("No such field id " + id + " in putil.Any");
             }
             return field;
         }
@@ -399,7 +399,7 @@ public class Any
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_util.Any");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in putil.Any");
             }
             return field;
         }
@@ -422,7 +422,7 @@ public class Any
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Any,_Field> {
         public _Descriptor() {
-            super("providence_util", "Any", _Builder::new, true);
+            super("putil", "Any", _Builder::new, true);
         }
 
         @Override
@@ -456,7 +456,7 @@ public class Any
     }
 
     /**
-     * Make a providence_util.Any builder.
+     * Make a putil.Any builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -478,7 +478,7 @@ public class Any
         private String mText;
 
         /**
-         * Make a providence_util.Any builder.
+         * Make a putil.Any builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(4);
@@ -487,7 +487,7 @@ public class Any
         }
 
         /**
-         * Make a mutating builder off a base providence_util.Any.
+         * Make a mutating builder off a base putil.Any.
          *
          * @param base The base Any
          */
@@ -896,7 +896,7 @@ public class Any
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_util.Any");
+                        " in message putil.Any");
             }
         }
 
@@ -918,7 +918,7 @@ public class Any
                             mType = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for putil.Any.type, should be struct(12)");
                         }
                         break;
                     }
@@ -928,7 +928,7 @@ public class Any
                             mMediaType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.media_type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for putil.Any.media_type, should be struct(12)");
                         }
                         break;
                     }
@@ -938,7 +938,7 @@ public class Any
                             mData = reader.expectBinary(len_3);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.data, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for putil.Any.data, should be struct(12)");
                         }
                         break;
                     }
@@ -948,7 +948,7 @@ public class Any
                             mText = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_util.Any.text, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for putil.Any.text, should be struct(12)");
                         }
                         break;
                     }

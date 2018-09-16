@@ -20,7 +20,7 @@ public class FieldType
                    Comparable<FieldType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -6946509003048025675L;
+    private final static long serialVersionUID = 3572042762986343919L;
 
     private final static int kDefaultId = 0;
     private final static net.morimekta.providence.model.FieldRequirement kDefaultRequirement = net.morimekta.providence.model.FieldRequirement.DEFAULT;
@@ -296,7 +296,7 @@ public class FieldType
 
     @Override
     public String toString() {
-        return "providence_model.FieldType" + asString();
+        return "pmodel.FieldType" + asString();
     }
 
     @Override
@@ -608,7 +608,7 @@ public class FieldType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.FieldType");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.FieldType");
             }
             return field;
         }
@@ -621,7 +621,7 @@ public class FieldType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.FieldType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.FieldType");
             }
             return field;
         }
@@ -644,7 +644,7 @@ public class FieldType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> {
         public _Descriptor() {
-            super("providence_model", "FieldType", _Builder::new, false);
+            super("pmodel", "FieldType", _Builder::new, false);
         }
 
         @Override
@@ -678,7 +678,7 @@ public class FieldType
     }
 
     /**
-     * Make a providence_model.FieldType builder.
+     * Make a pmodel.FieldType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -716,7 +716,7 @@ public class FieldType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.FieldType builder.
+         * Make a pmodel.FieldType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(9);
@@ -727,7 +727,7 @@ public class FieldType
         }
 
         /**
-         * Make a mutating builder off a base providence_model.FieldType.
+         * Make a mutating builder off a base pmodel.FieldType.
          *
          * @param base The base FieldType
          */
@@ -1596,7 +1596,7 @@ public class FieldType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.FieldType");
+                        " in message pmodel.FieldType");
             }
         }
 
@@ -1618,7 +1618,7 @@ public class FieldType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1627,7 +1627,7 @@ public class FieldType
                             mId = reader.expectInt();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.id, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.id, should be struct(12)");
                         }
                         break;
                     }
@@ -1636,7 +1636,7 @@ public class FieldType
                             mRequirement = net.morimekta.providence.model.FieldRequirement.findById(reader.expectInt());
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.requirement, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.requirement, should be struct(12)");
                         }
                         break;
                     }
@@ -1646,7 +1646,7 @@ public class FieldType
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -1656,7 +1656,7 @@ public class FieldType
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -1666,7 +1666,7 @@ public class FieldType
                             mDefaultValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(5);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.default_value, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.default_value, should be struct(12)");
                         }
                         break;
                     }
@@ -1689,11 +1689,11 @@ public class FieldType
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_7) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_8) +
-                                        " for providence_model.FieldType.annotations, should be string(11) and string(11)");
+                                        " for pmodel.FieldType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.annotations, should be struct(12)");
                         }
                         break;
                     }
@@ -1702,7 +1702,7 @@ public class FieldType
                             mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(7);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.start_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.start_pos, should be struct(12)");
                         }
                         break;
                     }
@@ -1711,7 +1711,7 @@ public class FieldType
                             mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(8);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FieldType.end_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.end_pos, should be struct(12)");
                         }
                         break;
                     }

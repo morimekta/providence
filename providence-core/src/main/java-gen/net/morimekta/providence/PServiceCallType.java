@@ -106,7 +106,7 @@ public enum PServiceCallType
     public static PServiceCallType valueForId(int id) {
         PServiceCallType value = findById(id);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_service.PServiceCallType for id " + id);
+            throw new IllegalArgumentException("No pservice.PServiceCallType for id " + id);
         }
         return value;
     }
@@ -122,7 +122,7 @@ public enum PServiceCallType
     public static PServiceCallType valueForName(String name) {
         PServiceCallType value = findByName(name);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_service.PServiceCallType for name \"" + name + "\"");
+            throw new IllegalArgumentException("No pservice.PServiceCallType for name \"" + name + "\"");
         }
         return value;
     }
@@ -169,7 +169,7 @@ public enum PServiceCallType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<PServiceCallType> {
         public _Descriptor() {
-            super("providence_service", "PServiceCallType", _Builder::new);
+            super("pservice", "PServiceCallType", _Builder::new);
         }
 
         @Override

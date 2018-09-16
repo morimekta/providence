@@ -11,7 +11,7 @@ public class Declaration
                    Comparable<Declaration>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 6735853549980473725L;
+    private final static long serialVersionUID = 5510346821235011879L;
 
     private final transient net.morimekta.providence.model.EnumType mDeclEnum;
     private final transient net.morimekta.providence.model.TypedefType mDeclTypedef;
@@ -254,7 +254,7 @@ public class Declaration
     @Override
     @javax.annotation.Nonnull
     public _Field unionField() {
-        if (tUnionField == null) throw new IllegalStateException("No union field set in providence_model.Declaration");
+        if (tUnionField == null) throw new IllegalStateException("No union field set in pmodel.Declaration");
         return tUnionField;
     }
 
@@ -287,7 +287,7 @@ public class Declaration
 
     @Override
     public String toString() {
-        return "providence_model.Declaration" + asString();
+        return "pmodel.Declaration" + asString();
     }
 
     @Override
@@ -498,7 +498,7 @@ public class Declaration
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.Declaration");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.Declaration");
             }
             return field;
         }
@@ -511,7 +511,7 @@ public class Declaration
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.Declaration");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.Declaration");
             }
             return field;
         }
@@ -534,7 +534,7 @@ public class Declaration
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> {
         public _Descriptor() {
-            super("providence_model", "Declaration", _Builder::new, false);
+            super("pmodel", "Declaration", _Builder::new, false);
         }
 
         @Override
@@ -568,7 +568,7 @@ public class Declaration
     }
 
     /**
-     * Make a providence_model.Declaration builder.
+     * Make a pmodel.Declaration builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -597,14 +597,14 @@ public class Declaration
         private net.morimekta.providence.model.ConstType._Builder mDeclConst_builder;
 
         /**
-         * Make a providence_model.Declaration builder.
+         * Make a pmodel.Declaration builder.
          */
         public _Builder() {
             modified = false;
         }
 
         /**
-         * Make a mutating builder off a base providence_model.Declaration.
+         * Make a mutating builder off a base pmodel.Declaration.
          *
          * @param base The base Declaration
          */
@@ -1248,7 +1248,7 @@ public class Declaration
         @Override
         public void validate() {
             if (!valid()) {
-                throw new java.lang.IllegalStateException("No union field set in providence_model.Declaration");
+                throw new java.lang.IllegalStateException("No union field set in pmodel.Declaration");
             }
         }
 
@@ -1269,7 +1269,7 @@ public class Declaration
                             mDeclEnum = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.EnumType.kDescriptor, strict);
                             tUnionField = _Field.DECL_ENUM;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_enum, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.Declaration.decl_enum, should be struct(12)");
                         }
                         break;
                     }
@@ -1278,7 +1278,7 @@ public class Declaration
                             mDeclTypedef = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.TypedefType.kDescriptor, strict);
                             tUnionField = _Field.DECL_TYPEDEF;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_typedef, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.Declaration.decl_typedef, should be struct(12)");
                         }
                         break;
                     }
@@ -1287,7 +1287,7 @@ public class Declaration
                             mDeclMessage = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.MessageType.kDescriptor, strict);
                             tUnionField = _Field.DECL_MESSAGE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_message, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.Declaration.decl_message, should be struct(12)");
                         }
                         break;
                     }
@@ -1296,7 +1296,7 @@ public class Declaration
                             mDeclService = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ServiceType.kDescriptor, strict);
                             tUnionField = _Field.DECL_SERVICE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_service, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.Declaration.decl_service, should be struct(12)");
                         }
                         break;
                     }
@@ -1305,7 +1305,7 @@ public class Declaration
                             mDeclConst = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ConstType.kDescriptor, strict);
                             tUnionField = _Field.DECL_CONST;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.Declaration.decl_const, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.Declaration.decl_const, should be struct(12)");
                         }
                         break;
                     }

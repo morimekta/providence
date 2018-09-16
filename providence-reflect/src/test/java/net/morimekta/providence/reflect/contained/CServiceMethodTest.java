@@ -95,7 +95,7 @@ public class CServiceMethodTest {
 
         assertThat(iamalive.hashCode(), is(not(calculate.hashCode())));
 
-        assertThat(iamalive.getDocumentation(), is("line comment on method."));
+        assertThat(iamalive.getDocumentation(), is(nullValue()));
         assertThat(iamalive.getAnnotations(), is(Collections.EMPTY_SET));
         assertThat(iamalive.hasAnnotation("foo"), is(false));
         assertThat(iamalive.hasAnnotation(ThriftAnnotation.DEPRECATED), is(false));

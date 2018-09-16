@@ -44,6 +44,7 @@ public class Tokenizer extends LineBufferedReader {
 
     public static final int     DEFAULT_BUFFER_SIZE = 1 << 11; // 2048 chars --> 4kb
 
+    private Token lastToken;
     private Token unreadToken;
 
     /**
@@ -111,9 +112,9 @@ public class Tokenizer extends LineBufferedReader {
         if (!hasNext()) {
             throw eof("Expected %s: Got end of file", expected);
         }
-        Token tmp = unreadToken;
+        lastToken = unreadToken;
         unreadToken = null;
-        return tmp;
+        return lastToken;
     }
 
     /**
@@ -128,9 +129,9 @@ public class Tokenizer extends LineBufferedReader {
         if (!hasNext()) {
             throw eof("Expected %s, got end of file", expected);
         } else if (validator.validate(unreadToken)) {
-            Token next = unreadToken;
+            lastToken = unreadToken;
             unreadToken = null;
-            return next;
+            return lastToken;
         }
         throw failure(unreadToken, "Expected %s, but got '%s'", expected, Strings.escape(unreadToken.asString()));
     }
@@ -154,6 +155,7 @@ public class Tokenizer extends LineBufferedReader {
         } else {
             for (char symbol : symbols) {
                 if (unreadToken.isSymbol(symbol)) {
+                    lastToken = unreadToken;
                     unreadToken = null;
                     return symbol;
                 }
@@ -197,6 +199,10 @@ public class Tokenizer extends LineBufferedReader {
             unreadToken = next();
         }
         return unreadToken != null;
+    }
+
+    public Token getLastToken() {
+        return lastToken;
     }
 
     /**
@@ -262,9 +268,9 @@ public class Tokenizer extends LineBufferedReader {
     @Nullable
     public Token next() throws IOException {
         if (unreadToken != null) {
-            Token tmp = unreadToken;
+            lastToken = unreadToken;
             unreadToken = null;
-            return tmp;
+            return lastToken;
         }
 
         while (lastChar >= 0) {
@@ -287,18 +293,22 @@ public class Tokenizer extends LineBufferedReader {
             }
 
             if (lastChar == Token.kLiteralDoubleQuote || lastChar == Token.kLiteralQuote) {
-                return nextStringLiteral((char) lastChar);
+                lastToken = nextStringLiteral((char) lastChar);
+                return lastToken;
             } else if (lastChar == '.' || lastChar == '-' || (lastChar >= '0' && lastChar <= '9')) {
-                return nextNumber();
+                lastToken = nextNumber();
+                return lastToken;
             } else if ('_' == lastChar ||
                        ('a' <= lastChar && lastChar <= 'z') ||
                        ('A' <= lastChar && lastChar <= 'Z')) {
-                return nextToken();
+                lastToken = nextToken();
+                return lastToken;
             } else if (lastChar < 0x20 || lastChar >= 0x7F) {
                 // non-ASCII UTF-8 characters are only allowed inside JSON string literals.
                 throw failure(lineNo, linePos, 1, "Unknown token initiator '%s'", Strings.escape((char) lastChar));
             } else {
-                return nextSymbol();
+                lastToken = nextSymbol();
+                return lastToken;
             }
         }
 

@@ -149,7 +149,7 @@ public enum PApplicationExceptionType
     public static PApplicationExceptionType valueForId(int id) {
         PApplicationExceptionType value = findById(id);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_service.PApplicationExceptionType for id " + id);
+            throw new IllegalArgumentException("No pservice.PApplicationExceptionType for id " + id);
         }
         return value;
     }
@@ -165,7 +165,7 @@ public enum PApplicationExceptionType
     public static PApplicationExceptionType valueForName(String name) {
         PApplicationExceptionType value = findByName(name);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_service.PApplicationExceptionType for name \"" + name + "\"");
+            throw new IllegalArgumentException("No pservice.PApplicationExceptionType for name \"" + name + "\"");
         }
         return value;
     }
@@ -212,7 +212,7 @@ public enum PApplicationExceptionType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<PApplicationExceptionType> {
         public _Descriptor() {
-            super("providence_service", "PApplicationExceptionType", _Builder::new);
+            super("pservice", "PApplicationExceptionType", _Builder::new);
         }
 
         @Override

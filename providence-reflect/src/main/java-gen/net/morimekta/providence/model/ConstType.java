@@ -11,7 +11,7 @@ public class ConstType
                    Comparable<ConstType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -8091187846418488882L;
+    private final static long serialVersionUID = 2427363919615880712L;
 
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
@@ -24,6 +24,7 @@ public class ConstType
     private final transient String mName;
     private final transient String mValue;
     private final transient java.util.Map<String,String> mAnnotations;
+    private final transient net.morimekta.providence.model.FilePos mValueStartPos;
     private final transient net.morimekta.providence.model.FilePos mStartPos;
     private final transient net.morimekta.providence.model.FilePos mEndPos;
 
@@ -54,6 +55,7 @@ public class ConstType
         } else {
             mAnnotations = null;
         }
+        mValueStartPos = builder.mValueStartPos_builder != null ? builder.mValueStartPos_builder.build() : builder.mValueStartPos;
         mStartPos = builder.mStartPos_builder != null ? builder.mStartPos_builder.build() : builder.mStartPos;
         mEndPos = builder.mEndPos_builder != null ? builder.mEndPos_builder.build() : builder.mEndPos;
     }
@@ -136,6 +138,25 @@ public class ConstType
         return java.util.Optional.ofNullable(mAnnotations);
     }
 
+    public boolean hasValueStartPos() {
+        return mValueStartPos != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public net.morimekta.providence.model.FilePos getValueStartPos() {
+        return mValueStartPos;
+    }
+
+    /**
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalValueStartPos() {
+        return java.util.Optional.ofNullable(mValueStartPos);
+    }
+
     public boolean hasStartPos() {
         return mStartPos != null;
     }
@@ -190,6 +211,7 @@ public class ConstType
             case 5: return true;
             case 6: return true;
             case 7: return mAnnotations != null;
+            case 9: return mValueStartPos != null;
             case 10: return mStartPos != null;
             case 11: return mEndPos != null;
             default: return false;
@@ -205,6 +227,7 @@ public class ConstType
             case 5: return (T) mName;
             case 6: return (T) mValue;
             case 7: return (T) mAnnotations;
+            case 9: return (T) mValueStartPos;
             case 10: return (T) mStartPos;
             case 11: return (T) mEndPos;
             default: return null;
@@ -221,6 +244,7 @@ public class ConstType
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mValue, other.mValue) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+               java.util.Objects.equals(mValueStartPos, other.mValueStartPos) &&
                java.util.Objects.equals(mStartPos, other.mStartPos) &&
                java.util.Objects.equals(mEndPos, other.mEndPos);
     }
@@ -235,6 +259,7 @@ public class ConstType
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
                     _Field.ANNOTATIONS, mAnnotations,
+                    _Field.VALUE_START_POS, mValueStartPos,
                     _Field.START_POS, mStartPos,
                     _Field.END_POS, mEndPos);
         }
@@ -243,7 +268,7 @@ public class ConstType
 
     @Override
     public String toString() {
-        return "providence_model.ConstType" + asString();
+        return "pmodel.ConstType" + asString();
     }
 
     @Override
@@ -279,6 +304,11 @@ public class ConstType
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
+        }
+        if (hasValueStartPos()) {
+            out.append(',');
+            out.append("value_start_pos:")
+               .append(mValueStartPos.asString());
         }
         if (hasStartPos()) {
             out.append(',');
@@ -318,6 +348,13 @@ public class ConstType
         if (c != 0) return c;
         if (mAnnotations != null) {
             c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mValueStartPos != null, other.mValueStartPos != null);
+        if (c != 0) return c;
+        if (mValueStartPos != null) {
+            c = mValueStartPos.compareTo(other.mValueStartPos);
             if (c != 0) return c;
         }
 
@@ -401,6 +438,12 @@ public class ConstType
             }
         }
 
+        if (hasValueStartPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 9);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mValueStartPos);
+        }
+
         if (hasStartPos()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 10);
@@ -429,6 +472,7 @@ public class ConstType
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultAnnotations)),
+        VALUE_START_POS(9, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value_start_pos", net.morimekta.providence.model.FilePos.provider(), null),
         START_POS(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_pos", net.morimekta.providence.model.FilePos.provider(), null),
         END_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "end_pos", net.morimekta.providence.model.FilePos.provider(), null),
         ;
@@ -483,6 +527,7 @@ public class ConstType
                 case 5: return _Field.NAME;
                 case 6: return _Field.VALUE;
                 case 7: return _Field.ANNOTATIONS;
+                case 9: return _Field.VALUE_START_POS;
                 case 10: return _Field.START_POS;
                 case 11: return _Field.END_POS;
             }
@@ -500,6 +545,7 @@ public class ConstType
                 case "name": return _Field.NAME;
                 case "value": return _Field.VALUE;
                 case "annotations": return _Field.ANNOTATIONS;
+                case "value_start_pos": return _Field.VALUE_START_POS;
                 case "start_pos": return _Field.START_POS;
                 case "end_pos": return _Field.END_POS;
             }
@@ -513,7 +559,7 @@ public class ConstType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ConstType");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.ConstType");
             }
             return field;
         }
@@ -526,7 +572,7 @@ public class ConstType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ConstType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.ConstType");
             }
             return field;
         }
@@ -549,7 +595,7 @@ public class ConstType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> {
         public _Descriptor() {
-            super("providence_model", "ConstType", _Builder::new, false);
+            super("pmodel", "ConstType", _Builder::new, false);
         }
 
         @Override
@@ -583,7 +629,7 @@ public class ConstType
     }
 
     /**
-     * Make a providence_model.ConstType builder.
+     * Make a pmodel.ConstType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -604,24 +650,26 @@ public class ConstType
         private String mName;
         private String mValue;
         private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.model.FilePos mValueStartPos;
+        private net.morimekta.providence.model.FilePos._Builder mValueStartPos_builder;
         private net.morimekta.providence.model.FilePos mStartPos;
         private net.morimekta.providence.model.FilePos._Builder mStartPos_builder;
         private net.morimekta.providence.model.FilePos mEndPos;
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.ConstType builder.
+         * Make a pmodel.ConstType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(7);
-            modified = new java.util.BitSet(7);
+            optionals = new java.util.BitSet(8);
+            modified = new java.util.BitSet(8);
             mType = kDefaultType;
             mName = kDefaultName;
             mValue = kDefaultValue;
         }
 
         /**
-         * Make a mutating builder off a base providence_model.ConstType.
+         * Make a mutating builder off a base pmodel.ConstType.
          *
          * @param base The base ConstType
          */
@@ -642,12 +690,16 @@ public class ConstType
                 optionals.set(4);
                 mAnnotations = base.mAnnotations;
             }
-            if (base.hasStartPos()) {
+            if (base.hasValueStartPos()) {
                 optionals.set(5);
+                mValueStartPos = base.mValueStartPos;
+            }
+            if (base.hasStartPos()) {
+                optionals.set(6);
                 mStartPos = base.mStartPos;
             }
             if (base.hasEndPos()) {
-                optionals.set(6);
+                optionals.set(7);
                 mEndPos = base.mEndPos;
             }
         }
@@ -679,9 +731,22 @@ public class ConstType
                 mutableAnnotations().putAll(from.getAnnotations());
             }
 
-            if (from.hasStartPos()) {
+            if (from.hasValueStartPos()) {
                 optionals.set(5);
                 modified.set(5);
+                if (mValueStartPos_builder != null) {
+                    mValueStartPos_builder.merge(from.getValueStartPos());
+                } else if (mValueStartPos != null) {
+                    mValueStartPos_builder = mValueStartPos.mutate().merge(from.getValueStartPos());
+                    mValueStartPos = null;
+                } else {
+                    mValueStartPos = from.getValueStartPos();
+                }
+            }
+
+            if (from.hasStartPos()) {
+                optionals.set(6);
+                modified.set(6);
                 if (mStartPos_builder != null) {
                     mStartPos_builder.merge(from.getStartPos());
                 } else if (mStartPos != null) {
@@ -693,8 +758,8 @@ public class ConstType
             }
 
             if (from.hasEndPos()) {
-                optionals.set(6);
-                modified.set(6);
+                optionals.set(7);
+                modified.set(7);
                 if (mEndPos_builder != null) {
                     mEndPos_builder.merge(from.getEndPos());
                 } else if (mEndPos != null) {
@@ -1022,6 +1087,100 @@ public class ConstType
         }
 
         /**
+         * Sets the value of value_start_pos.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setValueStartPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearValueStartPos();
+            }
+
+            optionals.set(5);
+            modified.set(5);
+            mValueStartPos = value;
+            mValueStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * Sets the value of value_start_pos.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setValueStartPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setValueStartPos(builder == null ? null : builder.build());
+        }
+
+        /**
+         * Checks for presence of the value_start_pos field.
+         *
+         * @return True if value_start_pos has been set.
+         */
+        public boolean isSetValueStartPos() {
+            return optionals.get(5);
+        }
+
+        /**
+         * Checks if value_start_pos has been modified since the _Builder was created.
+         *
+         * @return True if value_start_pos has been modified.
+         */
+        public boolean isModifiedValueStartPos() {
+            return modified.get(5);
+        }
+
+        /**
+         * Clears the value_start_pos field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearValueStartPos() {
+            optionals.clear(5);
+            modified.set(5);
+            mValueStartPos = null;
+            mValueStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained value_start_pos.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableValueStartPos() {
+            optionals.set(5);
+            modified.set(5);
+
+            if (mValueStartPos != null) {
+                mValueStartPos_builder = mValueStartPos.mutate();
+                mValueStartPos = null;
+            } else if (mValueStartPos_builder == null) {
+                mValueStartPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mValueStartPos_builder;
+        }
+
+        /**
+         * Gets the value for the contained value_start_pos.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getValueStartPos() {
+
+            if (mValueStartPos_builder != null) {
+                return mValueStartPos_builder.build();
+            }
+            return mValueStartPos;
+        }
+
+        /**
          * The start of the definition (position of &#39;enum&#39;)
          *
          * @param value The new value
@@ -1033,8 +1192,8 @@ public class ConstType
                 return clearStartPos();
             }
 
-            optionals.set(5);
-            modified.set(5);
+            optionals.set(6);
+            modified.set(6);
             mStartPos = value;
             mStartPos_builder = null;
             return this;
@@ -1057,7 +1216,7 @@ public class ConstType
          * @return True if start_pos has been set.
          */
         public boolean isSetStartPos() {
-            return optionals.get(5);
+            return optionals.get(6);
         }
 
         /**
@@ -1066,7 +1225,7 @@ public class ConstType
          * @return True if start_pos has been modified.
          */
         public boolean isModifiedStartPos() {
-            return modified.get(5);
+            return modified.get(6);
         }
 
         /**
@@ -1076,8 +1235,8 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder clearStartPos() {
-            optionals.clear(5);
-            modified.set(5);
+            optionals.clear(6);
+            modified.set(6);
             mStartPos = null;
             mStartPos_builder = null;
             return this;
@@ -1090,8 +1249,8 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
-            optionals.set(5);
-            modified.set(5);
+            optionals.set(6);
+            modified.set(6);
 
             if (mStartPos != null) {
                 mStartPos_builder = mStartPos.mutate();
@@ -1127,8 +1286,8 @@ public class ConstType
                 return clearEndPos();
             }
 
-            optionals.set(6);
-            modified.set(6);
+            optionals.set(7);
+            modified.set(7);
             mEndPos = value;
             mEndPos_builder = null;
             return this;
@@ -1151,7 +1310,7 @@ public class ConstType
          * @return True if end_pos has been set.
          */
         public boolean isSetEndPos() {
-            return optionals.get(6);
+            return optionals.get(7);
         }
 
         /**
@@ -1160,7 +1319,7 @@ public class ConstType
          * @return True if end_pos has been modified.
          */
         public boolean isModifiedEndPos() {
-            return modified.get(6);
+            return modified.get(7);
         }
 
         /**
@@ -1170,8 +1329,8 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder clearEndPos() {
-            optionals.clear(6);
-            modified.set(6);
+            optionals.clear(7);
+            modified.set(7);
             mEndPos = null;
             mEndPos_builder = null;
             return this;
@@ -1184,8 +1343,8 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {
-            optionals.set(6);
-            modified.set(6);
+            optionals.set(7);
+            modified.set(7);
 
             if (mEndPos != null) {
                 mEndPos_builder = mEndPos.mutate();
@@ -1220,6 +1379,7 @@ public class ConstType
                    java.util.Objects.equals(mName, other.mName) &&
                    java.util.Objects.equals(mValue, other.mValue) &&
                    java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+                   java.util.Objects.equals(getValueStartPos(), other.getValueStartPos()) &&
                    java.util.Objects.equals(getStartPos(), other.getStartPos()) &&
                    java.util.Objects.equals(getEndPos(), other.getEndPos());
         }
@@ -1233,6 +1393,7 @@ public class ConstType
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
                     _Field.ANNOTATIONS, mAnnotations,
+                    _Field.VALUE_START_POS, getValueStartPos(),
                     _Field.START_POS, getStartPos(),
                     _Field.END_POS, getEndPos());
         }
@@ -1241,6 +1402,7 @@ public class ConstType
         @SuppressWarnings("unchecked")
         public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
+                case 9: return mutableValueStartPos();
                 case 10: return mutableStartPos();
                 case 11: return mutableEndPos();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
@@ -1258,6 +1420,7 @@ public class ConstType
                 case 5: setName((String) value); break;
                 case 6: setValue((String) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                case 9: setValueStartPos((net.morimekta.providence.model.FilePos) value); break;
                 case 10: setStartPos((net.morimekta.providence.model.FilePos) value); break;
                 case 11: setEndPos((net.morimekta.providence.model.FilePos) value); break;
                 default: break;
@@ -1273,8 +1436,9 @@ public class ConstType
                 case 5: return optionals.get(2);
                 case 6: return optionals.get(3);
                 case 7: return optionals.get(4);
-                case 10: return optionals.get(5);
-                case 11: return optionals.get(6);
+                case 9: return optionals.get(5);
+                case 10: return optionals.get(6);
+                case 11: return optionals.get(7);
                 default: break;
             }
             return false;
@@ -1288,8 +1452,9 @@ public class ConstType
                 case 5: return modified.get(2);
                 case 6: return modified.get(3);
                 case 7: return modified.get(4);
-                case 10: return modified.get(5);
-                case 11: return modified.get(6);
+                case 9: return modified.get(5);
+                case 10: return modified.get(6);
+                case 11: return modified.get(7);
                 default: break;
             }
             return false;
@@ -1312,6 +1477,7 @@ public class ConstType
                 case 5: clearName(); break;
                 case 6: clearValue(); break;
                 case 7: clearAnnotations(); break;
+                case 9: clearValueStartPos(); break;
                 case 10: clearStartPos(); break;
                 case 11: clearEndPos(); break;
                 default: break;
@@ -1323,7 +1489,8 @@ public class ConstType
         public boolean valid() {
             return optionals.get(1) &&
                    optionals.get(2) &&
-                   optionals.get(3);
+                   optionals.get(3) &&
+                   optionals.get(5);
         }
 
         @Override
@@ -1343,10 +1510,14 @@ public class ConstType
                     missing.add("value");
                 }
 
+                if (!optionals.get(5)) {
+                    missing.add("value_start_pos");
+                }
+
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.ConstType");
+                        " in message pmodel.ConstType");
             }
         }
 
@@ -1368,7 +1539,7 @@ public class ConstType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1378,7 +1549,7 @@ public class ConstType
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -1388,7 +1559,7 @@ public class ConstType
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -1398,7 +1569,7 @@ public class ConstType
                             mValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.value, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.value, should be struct(12)");
                         }
                         break;
                     }
@@ -1421,29 +1592,38 @@ public class ConstType
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_7) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_8) +
-                                        " for providence_model.ConstType.annotations, should be string(11) and string(11)");
+                                        " for pmodel.ConstType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.annotations, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 9: {
+                        if (type == 12) {
+                            mValueStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(5);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.value_start_pos, should be struct(12)");
                         }
                         break;
                     }
                     case 10: {
                         if (type == 12) {
                             mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
-                            optionals.set(5);
+                            optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.start_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.start_pos, should be struct(12)");
                         }
                         break;
                     }
                     case 11: {
                         if (type == 12) {
                             mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
-                            optionals.set(6);
+                            optionals.set(7);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ConstType.end_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ConstType.end_pos, should be struct(12)");
                         }
                         break;
                     }

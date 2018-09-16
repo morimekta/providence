@@ -299,8 +299,8 @@ public class ProgramConverter {
                                                        field.getType(),
                                                        pkg,
                                                        field.getValue(),
-                                                       field.getStartPos().getLineNo(),
-                                                       field.getStartPos().getLinePos());
+                                                       field.getValueStartPos().getLineNo(),
+                                                       field.getValueStartPos().getLinePos());
 
         @SuppressWarnings("unchecked")
         CConst made = new CConst(field.getDocumentation(),

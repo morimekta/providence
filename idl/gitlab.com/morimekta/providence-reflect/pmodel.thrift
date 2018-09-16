@@ -176,8 +176,11 @@ struct ConstType {
     6: required string value;
     7: optional map<string,string> annotations = {} (container = "SORTED");
 
-    // Note the start of the const in the parsed thrift file, this can be used
-    // for making more accurate exception / parse data from the const parser.
+    /**
+     * Note the start of the const in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     */
+    9: required FilePos value_start_pos;
     /** The start of the definition (position of 'enum')*/
     10: optional FilePos start_pos;
     /** The end of the definition (position of '}') */

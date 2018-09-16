@@ -11,7 +11,7 @@ public class FilePos
                    Comparable<FilePos>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 8657691867543579697L;
+    private final static long serialVersionUID = -2424032802527346597L;
 
     private final static int kDefaultLineNo = 0;
     private final static int kDefaultLinePos = 0;
@@ -102,7 +102,7 @@ public class FilePos
 
     @Override
     public String toString() {
-        return "providence_model.FilePos" + asString();
+        return "pmodel.FilePos" + asString();
     }
 
     @Override
@@ -247,7 +247,7 @@ public class FilePos
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.FilePos");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.FilePos");
             }
             return field;
         }
@@ -260,7 +260,7 @@ public class FilePos
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.FilePos");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.FilePos");
             }
             return field;
         }
@@ -283,7 +283,7 @@ public class FilePos
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FilePos,_Field> {
         public _Descriptor() {
-            super("providence_model", "FilePos", _Builder::new, true);
+            super("pmodel", "FilePos", _Builder::new, true);
         }
 
         @Override
@@ -317,7 +317,7 @@ public class FilePos
     }
 
     /**
-     * Make a providence_model.FilePos builder.
+     * Make a pmodel.FilePos builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -337,7 +337,7 @@ public class FilePos
         private int mLinePos;
 
         /**
-         * Make a providence_model.FilePos builder.
+         * Make a pmodel.FilePos builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -347,7 +347,7 @@ public class FilePos
         }
 
         /**
-         * Make a mutating builder off a base providence_model.FilePos.
+         * Make a mutating builder off a base pmodel.FilePos.
          *
          * @param base The base FilePos
          */
@@ -581,7 +581,7 @@ public class FilePos
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.FilePos");
+                        " in message pmodel.FilePos");
             }
         }
 
@@ -602,7 +602,7 @@ public class FilePos
                             mLineNo = reader.expectInt();
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FilePos.line_no, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FilePos.line_no, should be struct(12)");
                         }
                         break;
                     }
@@ -611,7 +611,7 @@ public class FilePos
                             mLinePos = reader.expectInt();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.FilePos.line_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FilePos.line_pos, should be struct(12)");
                         }
                         break;
                     }

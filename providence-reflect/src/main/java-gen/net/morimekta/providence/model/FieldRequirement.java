@@ -84,7 +84,7 @@ public enum FieldRequirement
     public static FieldRequirement valueForId(int id) {
         FieldRequirement value = findById(id);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_model.FieldRequirement for id " + id);
+            throw new IllegalArgumentException("No pmodel.FieldRequirement for id " + id);
         }
         return value;
     }
@@ -100,7 +100,7 @@ public enum FieldRequirement
     public static FieldRequirement valueForName(String name) {
         FieldRequirement value = findByName(name);
         if (value == null) {
-            throw new IllegalArgumentException("No providence_model.FieldRequirement for name \"" + name + "\"");
+            throw new IllegalArgumentException("No pmodel.FieldRequirement for name \"" + name + "\"");
         }
         return value;
     }
@@ -147,7 +147,7 @@ public enum FieldRequirement
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<FieldRequirement> {
         public _Descriptor() {
-            super("providence_model", "FieldRequirement", _Builder::new);
+            super("pmodel", "FieldRequirement", _Builder::new);
         }
 
         @Override

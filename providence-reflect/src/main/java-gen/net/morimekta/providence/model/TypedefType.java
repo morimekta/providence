@@ -11,7 +11,7 @@ public class TypedefType
                    Comparable<TypedefType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 5941816774146332176L;
+    private final static long serialVersionUID = 5952907105830992090L;
 
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
@@ -185,7 +185,7 @@ public class TypedefType
 
     @Override
     public String toString() {
-        return "providence_model.TypedefType" + asString();
+        return "pmodel.TypedefType" + asString();
     }
 
     @Override
@@ -407,7 +407,7 @@ public class TypedefType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.TypedefType");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.TypedefType");
             }
             return field;
         }
@@ -420,7 +420,7 @@ public class TypedefType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.TypedefType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.TypedefType");
             }
             return field;
         }
@@ -443,7 +443,7 @@ public class TypedefType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> {
         public _Descriptor() {
-            super("providence_model", "TypedefType", _Builder::new, false);
+            super("pmodel", "TypedefType", _Builder::new, false);
         }
 
         @Override
@@ -477,7 +477,7 @@ public class TypedefType
     }
 
     /**
-     * Make a providence_model.TypedefType builder.
+     * Make a pmodel.TypedefType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -502,7 +502,7 @@ public class TypedefType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.TypedefType builder.
+         * Make a pmodel.TypedefType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
@@ -512,7 +512,7 @@ public class TypedefType
         }
 
         /**
-         * Make a mutating builder off a base providence_model.TypedefType.
+         * Make a mutating builder off a base pmodel.TypedefType.
          *
          * @param base The base TypedefType
          */
@@ -1064,7 +1064,7 @@ public class TypedefType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.TypedefType");
+                        " in message pmodel.TypedefType");
             }
         }
 
@@ -1086,7 +1086,7 @@ public class TypedefType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.TypedefType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1096,7 +1096,7 @@ public class TypedefType
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.type, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.TypedefType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -1106,7 +1106,7 @@ public class TypedefType
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.TypedefType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -1115,7 +1115,7 @@ public class TypedefType
                             mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.start_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.TypedefType.start_pos, should be struct(12)");
                         }
                         break;
                     }
@@ -1124,7 +1124,7 @@ public class TypedefType
                             mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.TypedefType.end_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.TypedefType.end_pos, should be struct(12)");
                         }
                         break;
                     }

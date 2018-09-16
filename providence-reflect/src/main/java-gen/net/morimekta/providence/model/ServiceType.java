@@ -13,7 +13,7 @@ public class ServiceType
                    Comparable<ServiceType>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 1299991496467223860L;
+    private final static long serialVersionUID = 1311081828151883774L;
 
     private final static String kDefaultName = "";
     private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.providence.model.FunctionType>()
@@ -252,7 +252,7 @@ public class ServiceType
 
     @Override
     public String toString() {
-        return "providence_model.ServiceType" + asString();
+        return "pmodel.ServiceType" + asString();
     }
 
     @Override
@@ -530,7 +530,7 @@ public class ServiceType
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ServiceType");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.ServiceType");
             }
             return field;
         }
@@ -543,7 +543,7 @@ public class ServiceType
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ServiceType");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.ServiceType");
             }
             return field;
         }
@@ -566,7 +566,7 @@ public class ServiceType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> {
         public _Descriptor() {
-            super("providence_model", "ServiceType", _Builder::new, false);
+            super("pmodel", "ServiceType", _Builder::new, false);
         }
 
         @Override
@@ -600,7 +600,7 @@ public class ServiceType
     }
 
     /**
-     * Make a providence_model.ServiceType builder.
+     * Make a pmodel.ServiceType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -629,7 +629,7 @@ public class ServiceType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a providence_model.ServiceType builder.
+         * Make a pmodel.ServiceType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
@@ -639,7 +639,7 @@ public class ServiceType
         }
 
         /**
-         * Make a mutating builder off a base providence_model.ServiceType.
+         * Make a mutating builder off a base pmodel.ServiceType.
          *
          * @param base The base ServiceType
          */
@@ -1385,7 +1385,7 @@ public class ServiceType
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.ServiceType");
+                        " in message pmodel.ServiceType");
             }
         }
 
@@ -1407,7 +1407,7 @@ public class ServiceType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.documentation, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -1417,7 +1417,7 @@ public class ServiceType
                             mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.name, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -1427,7 +1427,7 @@ public class ServiceType
                             mExtend = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.extend, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.extend, should be struct(12)");
                         }
                         break;
                     }
@@ -1443,11 +1443,11 @@ public class ServiceType
                                 }
                                 mMethods = b_4.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_6) + " for providence_model.ServiceType.methods, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_6) + " for pmodel.ServiceType.methods, should be struct(12)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.methods, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.methods, should be struct(12)");
                         }
                         break;
                     }
@@ -1470,11 +1470,11 @@ public class ServiceType
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_11) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_12) +
-                                        " for providence_model.ServiceType.annotations, should be string(11) and string(11)");
+                                        " for pmodel.ServiceType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.annotations, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.annotations, should be struct(12)");
                         }
                         break;
                     }
@@ -1483,7 +1483,7 @@ public class ServiceType
                             mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(5);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.start_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.start_pos, should be struct(12)");
                         }
                         break;
                     }
@@ -1492,7 +1492,7 @@ public class ServiceType
                             mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
                             optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ServiceType.end_pos, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ServiceType.end_pos, should be struct(12)");
                         }
                         break;
                     }

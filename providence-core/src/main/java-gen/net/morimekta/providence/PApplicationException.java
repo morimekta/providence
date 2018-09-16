@@ -13,7 +13,7 @@ public class PApplicationException
                    net.morimekta.providence.PException,
                    Comparable<PApplicationException>,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = -4273562575029809402L;
+    private final static long serialVersionUID = -7676592966881244064L;
 
     private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
 
@@ -147,7 +147,7 @@ public class PApplicationException
 
     @Override
     public String toString() {
-        return "providence_service.PApplicationException" + asString();
+        return "pservice.PApplicationException" + asString();
     }
 
     @Override
@@ -318,7 +318,7 @@ public class PApplicationException
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_service.PApplicationException");
+                throw new IllegalArgumentException("No such field id " + id + " in pservice.PApplicationException");
             }
             return field;
         }
@@ -331,7 +331,7 @@ public class PApplicationException
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_service.PApplicationException");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pservice.PApplicationException");
             }
             return field;
         }
@@ -354,7 +354,7 @@ public class PApplicationException
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> {
         public _Descriptor() {
-            super("providence_service", "PApplicationException", _Builder::new, true);
+            super("pservice", "PApplicationException", _Builder::new, true);
         }
 
         @Override
@@ -388,7 +388,7 @@ public class PApplicationException
     }
 
     /**
-     * Make a providence_service.PApplicationException builder.
+     * Make a pservice.PApplicationException builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -410,7 +410,7 @@ public class PApplicationException
         private net.morimekta.providence.PApplicationExceptionType mId;
 
         /**
-         * Make a providence_service.PApplicationException builder.
+         * Make a pservice.PApplicationException builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -418,7 +418,7 @@ public class PApplicationException
         }
 
         /**
-         * Make a mutating builder off a base providence_service.PApplicationException.
+         * Make a mutating builder off a base pservice.PApplicationException.
          *
          * @param base The base PApplicationException
          */
@@ -569,7 +569,7 @@ public class PApplicationException
         }
 
         /**
-         * Initializes the cause of the providence_service.PApplicationException
+         * Initializes the cause of the pservice.PApplicationException
          *
          * @param cause The cause
          * @return Builder instance
@@ -685,7 +685,7 @@ public class PApplicationException
                             mMessage = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_service.PApplicationException.message, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pservice.PApplicationException.message, should be struct(12)");
                         }
                         break;
                     }
@@ -694,7 +694,7 @@ public class PApplicationException
                             mId = net.morimekta.providence.PApplicationExceptionType.findById(reader.expectInt());
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_service.PApplicationException.id, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pservice.PApplicationException.id, should be struct(12)");
                         }
                         break;
                     }

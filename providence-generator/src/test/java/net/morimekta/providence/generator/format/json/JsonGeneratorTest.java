@@ -72,20 +72,52 @@ public class JsonGeneratorTest {
                      "                        \"id\": 1,\n" +
                      "                        \"requirement\": \"REQUIRED\",\n" +
                      "                        \"type\": \"i32\",\n" +
-                     "                        \"name\": \"test\"\n" +
+                     "                        \"name\": \"test\",\n" +
+                     "                        \"start_pos\": {\n" +
+                     "                            \"line_no\": 6,\n" +
+                     "                            \"line_pos\": 5\n" +
+                     "                        },\n" +
+                     "                        \"end_pos\": {\n" +
+                     "                            \"line_no\": 6,\n" +
+                     "                            \"line_pos\": 25\n" +
+                     "                        }\n" +
                      "                    },\n" +
                      "                    {\n" +
                      "                        \"id\": 15,\n" +
                      "                        \"requirement\": \"OPTIONAL\",\n" +
                      "                        \"type\": \"i32\",\n" +
-                     "                        \"name\": \"another\"\n" +
+                     "                        \"name\": \"another\",\n" +
+                     "                        \"start_pos\": {\n" +
+                     "                            \"line_no\": 7,\n" +
+                     "                            \"line_pos\": 5\n" +
+                     "                        },\n" +
+                     "                        \"end_pos\": {\n" +
+                     "                            \"line_no\": 7,\n" +
+                     "                            \"line_pos\": 29\n" +
+                     "                        }\n" +
                      "                    },\n" +
                      "                    {\n" +
                      "                        \"id\": 2,\n" +
                      "                        \"type\": \"included.Included\",\n" +
-                     "                        \"name\": \"included\"\n" +
+                     "                        \"name\": \"included\",\n" +
+                     "                        \"start_pos\": {\n" +
+                     "                            \"line_no\": 8,\n" +
+                     "                            \"line_pos\": 5\n" +
+                     "                        },\n" +
+                     "                        \"end_pos\": {\n" +
+                     "                            \"line_no\": 8,\n" +
+                     "                            \"line_pos\": 34\n" +
+                     "                        }\n" +
                      "                    }\n" +
-                     "                ]\n" +
+                     "                ],\n" +
+                     "                \"start_pos\": {\n" +
+                     "                    \"line_no\": 5,\n" +
+                     "                    \"line_pos\": 1\n" +
+                     "                },\n" +
+                     "                \"end_pos\": {\n" +
+                     "                    \"line_no\": 9,\n" +
+                     "                    \"line_pos\": 2\n" +
+                     "                }\n" +
                      "            }\n" +
                      "        }\n" +
                      "    ]\n" +

@@ -13,7 +13,7 @@ public class ProgramMeta
                    Comparable<ProgramMeta>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.binary.BinaryWriter {
-    private final static long serialVersionUID = 2728474224781124924L;
+    private final static long serialVersionUID = 2739564556465784838L;
 
     private final transient net.morimekta.providence.model.ProgramType mProgram;
     private final transient java.util.List<String> mLines;
@@ -160,7 +160,7 @@ public class ProgramMeta
 
     @Override
     public String toString() {
-        return "providence_model.ProgramMeta" + asString();
+        return "pmodel.ProgramMeta" + asString();
     }
 
     @Override
@@ -359,7 +359,7 @@ public class ProgramMeta
         public static _Field fieldForId(int id) {
             _Field field = findById(id);
             if (field == null) {
-                throw new IllegalArgumentException("No such field id " + id + " in providence_model.ProgramMeta");
+                throw new IllegalArgumentException("No such field id " + id + " in pmodel.ProgramMeta");
             }
             return field;
         }
@@ -372,7 +372,7 @@ public class ProgramMeta
         public static _Field fieldForName(String name) {
             _Field field = findByName(name);
             if (field == null) {
-                throw new IllegalArgumentException("No such field \"" + name + "\" in providence_model.ProgramMeta");
+                throw new IllegalArgumentException("No such field \"" + name + "\" in pmodel.ProgramMeta");
             }
             return field;
         }
@@ -395,7 +395,7 @@ public class ProgramMeta
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ProgramMeta,_Field> {
         public _Descriptor() {
-            super("providence_model", "ProgramMeta", _Builder::new, false);
+            super("pmodel", "ProgramMeta", _Builder::new, false);
         }
 
         @Override
@@ -429,7 +429,7 @@ public class ProgramMeta
     }
 
     /**
-     * Make a providence_model.ProgramMeta builder.
+     * Make a pmodel.ProgramMeta builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -453,7 +453,7 @@ public class ProgramMeta
         private java.util.Map<String,net.morimekta.providence.model.ProgramMeta> mIncludes;
 
         /**
-         * Make a providence_model.ProgramMeta builder.
+         * Make a pmodel.ProgramMeta builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(3);
@@ -461,7 +461,7 @@ public class ProgramMeta
         }
 
         /**
-         * Make a mutating builder off a base providence_model.ProgramMeta.
+         * Make a mutating builder off a base pmodel.ProgramMeta.
          *
          * @param base The base ProgramMeta
          */
@@ -875,7 +875,7 @@ public class ProgramMeta
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message providence_model.ProgramMeta");
+                        " in message pmodel.ProgramMeta");
             }
         }
 
@@ -896,7 +896,7 @@ public class ProgramMeta
                             mProgram = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.ProgramType.kDescriptor, strict);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramMeta.program, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ProgramMeta.program, should be struct(12)");
                         }
                         break;
                     }
@@ -913,11 +913,11 @@ public class ProgramMeta
                                 }
                                 mLines = b_1.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_3) + " for providence_model.ProgramMeta.lines, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_3) + " for pmodel.ProgramMeta.lines, should be string(11)");
                             }
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramMeta.lines, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ProgramMeta.lines, should be struct(12)");
                         }
                         break;
                     }
@@ -939,11 +939,11 @@ public class ProgramMeta
                                 throw new net.morimekta.providence.serializer.SerializerException(
                                         "Wrong key type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_9) +
                                         " or value type " + net.morimekta.providence.serializer.binary.BinaryType.asString(t_10) +
-                                        " for providence_model.ProgramMeta.includes, should be string(11) and struct(12)");
+                                        " for pmodel.ProgramMeta.includes, should be string(11) and struct(12)");
                             }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for providence_model.ProgramMeta.includes, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.ProgramMeta.includes, should be struct(12)");
                         }
                         break;
                     }
