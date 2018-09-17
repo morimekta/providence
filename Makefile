@@ -1,9 +1,9 @@
-VERSION := 1.7.1
-# VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::' -e 's:</version>.*::')
+# VERSION := 1.7.1
+VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::' -e 's:</version>.*::')
 THRIFT_VERSION := $(shell cat pom.xml | grep ".*<thrift.version>" | sed -e 's:.*<thrift.version>::' -e 's:</thrift.version>.*::')
 
 compile:
-	mvn -Dprovidence.gen.generate_providence_core_models=true \
+	mvn -Dprovidence.gen.generate_providence_core_types=true \
         -Dprovidence.main.input=idl/gitlab.com/**/*.thrift \
 	    -Pnone net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 

@@ -191,7 +191,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                     comment.comment(field.comment())
                            .newline();
                 }
-                comment.return_("The field value");
+                comment.return_("The <code>" + field.name() + "</code> value");
                 if (JAnnotation.isDeprecated(field)) {
                     String reason = field.field()
                                          .getAnnotationValue(ThriftAnnotation.DEPRECATED);
@@ -265,11 +265,13 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
 
             if (!field.alwaysPresent()) {
                 BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+                comment.commentRaw("Optional <code>" + field.name() + "</code> value.");
                 if (field.hasComment()) {
-                    comment.comment(field.comment())
-                           .newline();
+                    comment.paragraph()
+                           .comment(field.comment());
                 }
-                comment.return_("Optional field value");
+                comment.newline()
+                       .return_("Optional field value");
                 if (JAnnotation.isDeprecated(field)) {
                     String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
                     if (reason != null && reason.trim().length() > 0) {
@@ -477,7 +479,8 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
     private void appendCreateConstructorBuilderOverload(JMessage<?> message, JField field) {
         BlockCommentBuilder block = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
-            block.comment(field.comment());
+            block.comment(field.comment())
+                 .newline();
         }
         block.param_("value", "The union value")
              .return_("The created union.")
@@ -498,7 +501,8 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             for (JField field : message.declaredOrderFields()) {
                 BlockCommentBuilder block = new BlockCommentBuilder(writer);
                 if (field.hasComment()) {
-                    block.comment(field.comment());
+                    block.comment(field.comment())
+                         .newline();
                 }
                 if (field.isVoid()) {
                     block.return_("The created union.")

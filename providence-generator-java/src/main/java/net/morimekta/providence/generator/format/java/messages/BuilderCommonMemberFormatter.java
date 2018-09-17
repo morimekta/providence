@@ -41,6 +41,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static net.morimekta.providence.PType.MESSAGE;
+import static net.morimekta.providence.PType.SET;
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.util.Strings.camelCase;
 
@@ -260,7 +261,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder.")
+        comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder instance.")
                .finish();
         writer.appendln("public _Builder() {")
               .begin();
@@ -326,10 +327,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendSetterBuilderOverload(JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.commentRaw("Sets the <code>" + field.name() + "</code> field value.");
         if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Sets the value of " + field.name() + ".");
+            comment.paragraph()
+                   .comment(field.comment());
         }
         comment.newline();
         if (!field.isVoid()) {
@@ -355,10 +356,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.commentRaw("Sets the <code>" + field.name() + "</code> field value.");
         if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Sets the value of " + field.name() + ".");
+            comment.paragraph()
+                   .comment(field.comment());
         }
         comment.newline();
         if (!field.isVoid()) {
@@ -448,7 +449,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 System.err.format("[ERROR] ref.enum = \"%s\" is unknown from %s%n",
                                   enumTypeName,
                                   message.descriptor().getQualifiedName());
-                e.printStackTrace();
+                // TODO: Proper logging?
+                // e.printStackTrace();
             }
 
             if (enumType != null) {
@@ -486,12 +488,16 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
 
-        if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else if (field.type() == PType.MAP) {
-            comment.comment("Adds a mapping to " + field.name() + ".");
+        if (field.type() == PType.MAP) {
+            comment.commentRaw("Adds a mapping to the <code>" + field.name() + "</code> map.");
+        } else if (field.type() == SET) {
+            comment.commentRaw("Adds entries to the <code>" + field.name() + "</code> set.");
         } else {
-            comment.comment("Adds entries to " + field.name() + ".");
+            comment.commentRaw("Adds entries to the <code>" + field.name() + "</code> list.");
+        }
+        if (field.hasComment()) {
+            comment.paragraph()
+                   .comment(field.comment());
         }
         comment.newline();
 
@@ -572,12 +578,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendIsSet(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Checks for presence of the " + field.name() + " field.");
-        }
-
+        comment.commentRaw("Checks for presence of the <code>" + field.name() + "</code> field.");
         comment.newline()
                .return_(String.format(Locale.US, "True if %s has been set.", field.name()))
                .finish();
@@ -596,11 +597,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendIsModified(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Checks if " + field.name() + " has been modified since the _Builder was created.");
-        }
+        comment.commentRaw("Checks if the <code>" + field.name() + "</code> field has been modified since the \n" +
+                           "builder was created.");
 
         comment.newline()
                .return_(String.format(Locale.US, "True if %s has been modified.", field.name()))
@@ -615,8 +613,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendIsUnionModified(JMessage message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Checks if " + message.descriptor().getName() + " has been modified since the _Builder " +
-                        "was created.");
+        comment.commentRaw("Checks if the <code>" + message.descriptor().getName() + "</code> union has been modified since the \n" +
+                           "builder was created.");
 
         comment.newline()
                .return_(String.format(Locale.US, "True if %s has been modified.", message.descriptor().getName()))
@@ -631,11 +629,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendResetter(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Clears the " + field.name() + " field.");
-        }
+        comment.comment("Clears the <code>" + field.name() + "</code> field.");
         comment.newline()
                .return_("The builder");
         if (JAnnotation.isDeprecated(field)) {
@@ -692,13 +686,13 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Gets the builder for the contained <code>" + field.name() + "</code> message field.");
         if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Gets the builder for the contained " + field.name() + ".");
+            comment.paragraph()
+                   .comment(field.comment());
         }
         comment.newline()
-               .return_("The field builder");
+               .return_("The field message builder");
         if (JAnnotation.isDeprecated(field)) {
             String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
             if (reason != null && reason.trim().length() > 0) {
@@ -744,12 +738,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 // It will not change the state of the builder.
                 comment = new BlockCommentBuilder(writer);
                 if (field.hasComment()) {
-                    comment.comment(field.comment());
-                } else {
-                    comment.comment("Gets the value for the contained " + field.name() + ".");
+                    comment.comment(field.comment())
+                           .newline();
                 }
-                comment.newline()
-                       .return_("The field value");
+                comment.return_("The field value");
                 if (JAnnotation.isDeprecated(field)) {
                     String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
                     if (reason != null && reason.trim().length() > 0) {
@@ -783,6 +775,22 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             case SET:
             case LIST:
             case MAP:
+                comment = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    comment.comment(field.comment())
+                           .newline();
+                }
+                comment.return_("The mutable <code>" + field.name() + "</code> container");
+                if (JAnnotation.isDeprecated(field)) {
+                    String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                    if (reason != null && reason.trim().length() > 0) {
+                        comment.deprecated_(reason);
+                    }
+                }
+                comment.finish();
+                if (JAnnotation.isDeprecated(field)) {
+                    writer.appendln(JAnnotation.DEPRECATED);
+                }
                 writer.formatln("public %s %s() {", field.fieldType(), field.mutable())
                       .begin();
 
@@ -821,12 +829,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
-            comment.comment(field.comment());
-        } else {
-            comment.comment("Gets the value of the contained " + field.name() + ".");
+            comment.comment(field.comment())
+                   .newline();
         }
-        comment.newline()
-               .return_("The field value");
+        comment.return_("The <code>" + field.name() + "</code> field value");
         if (JAnnotation.isDeprecated(field)) {
             String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
             if (reason != null && reason.trim().length() > 0) {

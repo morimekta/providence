@@ -20,10 +20,9 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
-import net.morimekta.util.io.IndentedPrintWriter;
-
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import javax.annotation.Nonnull;
 
@@ -31,11 +30,11 @@ import javax.annotation.Nonnull;
  * Builds a proper block javadoc-compatible comment.
  */
 public class BlockCommentBuilder {
+    private static final Escaper HTML = HtmlEscapers.htmlEscaper();
+
     private final IndentedPrintWriter writer;
-    private final Escaper             html;
 
     public BlockCommentBuilder(IndentedPrintWriter writer) {
-        this.html = HtmlEscapers.htmlEscaper();
         this.writer = writer;
 
         writer.appendln("/**")
@@ -43,8 +42,20 @@ public class BlockCommentBuilder {
     }
 
     public BlockCommentBuilder comment(String comment) {
-        String escaped = html.escape(comment).replaceAll("[@]", "&#64;");
+        String escaped = HTML.escape(comment).replaceAll("[@]", "&#64;");
         for (String line : escaped.trim().split("\r?\n")) {
+            if (line.trim().length() == 0) {
+                writer.appendln(" <p>");
+            } else {
+                writer.appendln(" " + line.replaceAll("[ ]*$", ""));
+            }
+        }
+
+        return this;
+    }
+
+    public BlockCommentBuilder commentRaw(String comment) {
+        for (String line : comment.trim().split("\r?\n")) {
             if (line.trim().length() == 0) {
                 writer.appendln(" <p>");
             } else {
@@ -60,13 +71,18 @@ public class BlockCommentBuilder {
         return this;
     }
 
+    public BlockCommentBuilder paragraph() {
+        writer.appendln(" <p>");
+        return this;
+    }
+
     public BlockCommentBuilder param_(String name, String comment) {
-        writer.formatln(" @param %s %s", name, html.escape(comment));
+        writer.formatln(" @param %s %s", name, HTML.escape(comment));
         return this;
     }
 
     public BlockCommentBuilder return_(String comment) {
-        writer.formatln(" @return %s", html.escape(comment));
+        writer.formatln(" @return %s", comment);
         return this;
     }
 
@@ -77,12 +93,12 @@ public class BlockCommentBuilder {
     public BlockCommentBuilder throws_(String klass, String comment) {
         writer.formatln(" @throws %s %s",
                         klass,
-                        html.escape(comment));
+                        comment);
         return this;
     }
 
     public BlockCommentBuilder deprecated_(@Nonnull String reason) {
-        writer.formatln(" @deprecated %s", html.escape(reason));
+        writer.formatln(" @deprecated %s", HTML.escape(reason));
         return this;
     }
 
