@@ -764,11 +764,11 @@
                     </includes>
                     <excludes>
                         <!-- actually only for providence-core -->
-                        <exclude>**/PApplicationException*</exclude>
-                        <exclude>**/PApplicationExceptionType*</exclude>
-                        <exclude>**/PServiceCallType*</exclude>
-                        <exclude>net/morimekta/providence/Any*</exclude>
-                        <exclude>net/morimekta/providence/Empty*</exclude>
+                        <exclude>net/morimekta/providence/PApplicationException*</exclude>
+                        <exclude>net/morimekta/providence/PApplicationExceptionType*</exclude>
+                        <exclude>net/morimekta/providence/PServiceCallType*</exclude>
+                        <exclude>net/morimekta/providence/util/Any*</exclude>
+                        <exclude>net/morimekta/providence/util/Empty*</exclude>
                         <!-- actually only for providence-reflect -->
                         <exclude>net/morimekta/providence/model/*</exclude>
                         <exclude>net/morimekta/providence/model/**/*</exclude>
