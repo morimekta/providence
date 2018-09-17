@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java;
 
+import com.google.common.collect.ImmutableList;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.GeneratorOptions;
@@ -29,6 +30,7 @@ import net.morimekta.providence.generator.format.java.messages.CommonBuilderForm
 import net.morimekta.providence.generator.format.java.messages.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.AnyMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryReaderBuilderFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinarySerializableFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryWriterFormatter;
@@ -39,8 +41,6 @@ import net.morimekta.providence.generator.format.java.shared.MessageMemberFormat
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
-
-import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -84,7 +84,8 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
         formatters.add(new CommonMemberFormatter(writer, helper, generatorOptions, javaOptions))
                   .add(new CoreOverridesFormatter(writer))
                   .add(new CommonOverridesFormatter(writer))
-                  .add(new BinarySerializableFormatter(writer, helper));
+                  .add(new BinarySerializableFormatter(writer, helper))
+                  .add(new AnyMessageFormatter(writer, helper));
 
         if (javaOptions.jackson) {
             formatters.add(new JacksonMessageFormatter(writer, helper));
