@@ -46,7 +46,21 @@ after_script:
 
 test:jdk8:
   <<: *test
-  image: maven:3.5-jdk-8-alpine
+  image:
+    name: maven:3.5-jdk-8-alpine
+    entrypoint: ["/bin/bash", "-c"]
+  after_script:
+    # Never cache itself.
+    - rm -rf .m2/repository/net/morimekta/providence/ || true
+    - apk add --no-cache git
+    - |
+      # Report coverage only chen a java file has changed.
+      NUM_JAVA=$(git diff ${CI_COMMIT_BEFORE_SHA}..HEAD --name-only | grep '.java$' | wc -l)
+      if [[ $NUM_JAVA -gt 0 ]]
+      then
+        echo "Sending jacoco coverage report to codecov.io"
+        curl -s https://codecov.io/bash | bash -s
+      fi
 
 test:jdk11:
   <<: *test
