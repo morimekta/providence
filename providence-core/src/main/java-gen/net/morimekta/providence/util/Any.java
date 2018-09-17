@@ -262,6 +262,69 @@ public class Any
         return tSerializeInstance;
     }
 
+    /**
+     * Check the wrapped message type against the provided message type
+     * descriptor.
+     *
+     * @param descriptor The message type to check.
+     * @param <M> The message type
+     * @param <F> The message field type
+     * @return True if the wrapped message type matches the provided.
+     */
+    public <M extends net.morimekta.providence.PMessage<M, F>, F extends net.morimekta.providence.descriptor.PField>
+    boolean wrappedTypeIs(@javax.annotation.Nonnull net.morimekta.providence.descriptor.PMessageDescriptor<M,F> descriptor) {
+        return descriptor.getQualifiedName().equals(getType());
+    }
+
+    /**
+     * Unwrap a message from this wrapper message. This will use the default
+     * serializer provider to find a suitable serializer to use to deserialize
+     * the wrapped message. If no serializer is available, or the message
+     * cannot be deserialized an unchecked IO exception is thrown.
+     *
+     * @param descriptor The message type to unpack from the content.
+     * @param <M> The message type
+     * @param <F> The message field type
+     * @return The unwrapped message.
+     */
+    public <M extends net.morimekta.providence.PMessage<M, F>, F extends net.morimekta.providence.descriptor.PField>
+    M unwrapMessage(@javax.annotation.Nonnull net.morimekta.providence.descriptor.PMessageDescriptor<M,F> descriptor) {
+        return unwrapMessage(descriptor, new net.morimekta.providence.serializer.DefaultSerializerProvider());
+    }
+
+    /**
+     * Unwrap a message from this wrapper message. This will use the provided
+     * serializer provider to find a suitable serializer to use to deserialize
+     * the wrapped message. If no serializer is available, or the message
+     * cannot be deserialized an unchecked IO exception is thrown.
+     *
+     * @param descriptor The message type to unpack from the content.
+     * @param provider Serializer provider to get serializer from.
+     * @param <M> The message type
+     * @param <F> The message field type
+     * @return The unwrapped message.
+     */
+    public <M extends net.morimekta.providence.PMessage<M, F>, F extends net.morimekta.providence.descriptor.PField>
+    M unwrapMessage(@javax.annotation.Nonnull net.morimekta.providence.descriptor.PMessageDescriptor<M,F> descriptor, @javax.annotation.Nonnull net.morimekta.providence.serializer.SerializerProvider provider) {
+        if (!descriptor.getQualifiedName().equals(getType())) {
+            throw new IllegalStateException("Any type " + getType() + " does not match requested " + descriptor.getQualifiedName());
+        }
+
+        try {
+            net.morimekta.providence.serializer.Serializer serializer = provider.getSerializer(getMediaType());
+            if (hasData()) {
+                return serializer.deserialize(getData().getInputStream(), descriptor);
+            } else if (hasText()) {
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(getText().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                return serializer.deserialize(bais, descriptor);
+            } else {
+                throw new net.morimekta.providence.serializer.SerializerException("Neither data, nor text de deserialize.");
+            }
+        } catch (java.io.IOException e) {
+            throw new java.io.UncheckedIOException(e.getMessage(), e);
+        }
+    }
+
     @Override
     public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
         int length = 0;
@@ -452,6 +515,49 @@ public class Any
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Any,_Field> descriptor() {
             return kDescriptor;
+        }
+    }
+
+    /**
+     * Wrap a message into an <code>Any</code> wrapper message. This
+     * will serialize the message using the default binary serializer.
+     *
+     * @param message Wrap this message.
+     * @param <M> The message type
+     * @param <F> The message field type
+     * @return The wrapped message.
+     */
+    public static <M extends net.morimekta.providence.PMessage<M, F>, F extends net.morimekta.providence.descriptor.PField>
+    Any wrapMessage(@javax.annotation.Nonnull M message) {
+        return wrapMessage(message, new net.morimekta.providence.serializer.BinarySerializer());
+    }
+
+    /**
+     * Wrap a message into an <code>Any</code> wrapper message. This
+     * will serialize the message using the provided serializer.
+     *
+     * @param message Wrap this message.
+     * @param serializer Use this serializer.
+     * @param <M> The message type
+     * @param <F> The message field type
+     * @return The wrapped message.
+     */
+    public static <M extends net.morimekta.providence.PMessage<M, F>, F extends net.morimekta.providence.descriptor.PField>
+    Any wrapMessage(@javax.annotation.Nonnull M message, @javax.annotation.Nonnull net.morimekta.providence.serializer.Serializer serializer) {
+        try {
+            _Builder builder = builder();
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            serializer.serialize(baos, message);
+            if (serializer.binaryProtocol()) {
+                builder.setData(net.morimekta.util.Binary.wrap(baos.toByteArray()));
+            } else {
+                builder.setText(new String(baos.toByteArray(), java.nio.charset.StandardCharsets.UTF_8));
+            }
+            builder.setType(message.descriptor().getQualifiedName());
+            builder.setMediaType(serializer.mediaType());
+            return builder.build();
+        } catch (java.io.IOException e) {
+            throw new java.io.UncheckedIOException(e.getMessage(), e);
         }
     }
 
