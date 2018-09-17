@@ -45,6 +45,8 @@ public class ProgramMeta
     }
 
     /**
+     * Full absolute path to the file.
+     *
      * @return The field value
      */
     public String getFilePath() {
@@ -52,6 +54,8 @@ public class ProgramMeta
     }
 
     /**
+     * Full absolute path to the file.
+     *
      * @return Optional field value
      */
     @javax.annotation.Nonnull
@@ -575,7 +579,7 @@ public class ProgramMeta
         }
 
         /**
-         * Sets the value of file_path.
+         * Full absolute path to the file.
          *
          * @param value The new value
          * @return The builder
@@ -593,7 +597,7 @@ public class ProgramMeta
         }
 
         /**
-         * Checks for presence of the file_path field.
+         * Full absolute path to the file.
          *
          * @return True if file_path has been set.
          */
@@ -602,7 +606,7 @@ public class ProgramMeta
         }
 
         /**
-         * Checks if file_path has been modified since the _Builder was created.
+         * Full absolute path to the file.
          *
          * @return True if file_path has been modified.
          */
@@ -611,7 +615,7 @@ public class ProgramMeta
         }
 
         /**
-         * Clears the file_path field.
+         * Full absolute path to the file.
          *
          * @return The builder
          */
@@ -624,7 +628,7 @@ public class ProgramMeta
         }
 
         /**
-         * Gets the value of the contained file_path.
+         * Full absolute path to the file.
          *
          * @return The field value
          */

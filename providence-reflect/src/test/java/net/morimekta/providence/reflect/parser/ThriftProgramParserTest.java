@@ -875,6 +875,10 @@ public class ThriftProgramParserTest {
                            "            type = \"double\"\n" +
                            "            name = \"i\"\n" +
                            "            default_value = \"0.0\"\n" +
+                           "            value_start_pos = {\n" +
+                           "              line_no = 8\n" +
+                           "              line_pos = 19\n" +
+                           "            }\n" +
                            "            start_pos = {\n" +
                            "              line_no = 8\n" +
                            "              line_pos = 5\n" +

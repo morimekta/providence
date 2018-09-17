@@ -106,9 +106,11 @@ struct FieldType {
     6: optional string default_value;
     7: optional map<string,string> annotations (container = "SORTED");
 
-    // Note the start of the default value in the parsed thrift file, this
-    // can be used for making more accurate exception / parse data from the
-    // const parser.
+    /**
+     * Note the start of the default value in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     */
+    9: required FilePos value_start_pos;
     /** The start of the definition (position of field ID)*/
     10: optional FilePos start_pos;
     /** The end of the definition */
@@ -238,6 +240,7 @@ struct ProgramType {
  * program .thrift file is also included.
  */
 struct ProgramMeta {
+    /** Full absolute path to the file. */
     1: optional string file_path;
     /** The lines of the program file */
     2: optional list<string> file_lines;

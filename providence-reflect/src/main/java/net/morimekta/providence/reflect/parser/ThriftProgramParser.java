@@ -840,6 +840,7 @@ public class ThriftProgramParser implements ProgramParser {
             if (token.isSymbol(Token.kFieldValueSep)) {
                 tokenizer.next();
                 Token defaultValue = tokenizer.parseValue();
+                field.setValueStartPos(new FilePos(defaultValue.getLineNo(), defaultValue.getLinePos()));
                 field.setDefaultValue(defaultValue.asString());
                 endPos = endOf(defaultValue);
                 token = tokenizer.peek("field annotation, def or message end");

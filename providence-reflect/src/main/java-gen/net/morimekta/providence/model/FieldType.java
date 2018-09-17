@@ -34,6 +34,7 @@ public class FieldType
     private final transient String mName;
     private final transient String mDefaultValue;
     private final transient java.util.Map<String,String> mAnnotations;
+    private final transient net.morimekta.providence.model.FilePos mValueStartPos;
     private final transient net.morimekta.providence.model.FilePos mStartPos;
     private final transient net.morimekta.providence.model.FilePos mEndPos;
 
@@ -62,6 +63,7 @@ public class FieldType
         } else {
             mAnnotations = null;
         }
+        mValueStartPos = builder.mValueStartPos_builder != null ? builder.mValueStartPos_builder.build() : builder.mValueStartPos;
         mStartPos = builder.mStartPos_builder != null ? builder.mStartPos_builder.build() : builder.mStartPos;
         mEndPos = builder.mEndPos_builder != null ? builder.mEndPos_builder.build() : builder.mEndPos;
     }
@@ -181,6 +183,31 @@ public class FieldType
         return java.util.Optional.ofNullable(mAnnotations);
     }
 
+    public boolean hasValueStartPos() {
+        return mValueStartPos != null;
+    }
+
+    /**
+     * Note the start of the default value in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
+     * @return The field value
+     */
+    public net.morimekta.providence.model.FilePos getValueStartPos() {
+        return mValueStartPos;
+    }
+
+    /**
+     * Note the start of the default value in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
+     * @return Optional field value
+     */
+    @javax.annotation.Nonnull
+    public java.util.Optional<net.morimekta.providence.model.FilePos> optionalValueStartPos() {
+        return java.util.Optional.ofNullable(mValueStartPos);
+    }
+
     public boolean hasStartPos() {
         return mStartPos != null;
     }
@@ -237,6 +264,7 @@ public class FieldType
             case 5: return true;
             case 6: return mDefaultValue != null;
             case 7: return mAnnotations != null;
+            case 9: return mValueStartPos != null;
             case 10: return mStartPos != null;
             case 11: return mEndPos != null;
             default: return false;
@@ -254,6 +282,7 @@ public class FieldType
             case 5: return (T) mName;
             case 6: return (T) mDefaultValue;
             case 7: return (T) mAnnotations;
+            case 9: return (T) mValueStartPos;
             case 10: return (T) mStartPos;
             case 11: return (T) mEndPos;
             default: return null;
@@ -272,6 +301,7 @@ public class FieldType
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+               java.util.Objects.equals(mValueStartPos, other.mValueStartPos) &&
                java.util.Objects.equals(mStartPos, other.mStartPos) &&
                java.util.Objects.equals(mEndPos, other.mEndPos);
     }
@@ -288,6 +318,7 @@ public class FieldType
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
                     _Field.ANNOTATIONS, mAnnotations,
+                    _Field.VALUE_START_POS, mValueStartPos,
                     _Field.START_POS, mStartPos,
                     _Field.END_POS, mEndPos);
         }
@@ -343,6 +374,11 @@ public class FieldType
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
+        if (hasValueStartPos()) {
+            out.append(',');
+            out.append("value_start_pos:")
+               .append(mValueStartPos.asString());
+        }
         if (hasStartPos()) {
             out.append(',');
             out.append("start_pos:")
@@ -395,6 +431,13 @@ public class FieldType
         if (c != 0) return c;
         if (mAnnotations != null) {
             c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mValueStartPos != null, other.mValueStartPos != null);
+        if (c != 0) return c;
+        if (mValueStartPos != null) {
+            c = mValueStartPos.compareTo(other.mValueStartPos);
             if (c != 0) return c;
         }
 
@@ -490,6 +533,12 @@ public class FieldType
             }
         }
 
+        if (hasValueStartPos()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 9);
+            length += net.morimekta.providence.serializer.binary.BinaryFormatUtils.writeMessage(writer, mValueStartPos);
+        }
+
         if (hasStartPos()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 10);
@@ -520,6 +569,7 @@ public class FieldType
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         DEFAULT_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "default_value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        VALUE_START_POS(9, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value_start_pos", net.morimekta.providence.model.FilePos.provider(), null),
         START_POS(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_pos", net.morimekta.providence.model.FilePos.provider(), null),
         END_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "end_pos", net.morimekta.providence.model.FilePos.provider(), null),
         ;
@@ -576,6 +626,7 @@ public class FieldType
                 case 5: return _Field.NAME;
                 case 6: return _Field.DEFAULT_VALUE;
                 case 7: return _Field.ANNOTATIONS;
+                case 9: return _Field.VALUE_START_POS;
                 case 10: return _Field.START_POS;
                 case 11: return _Field.END_POS;
             }
@@ -595,6 +646,7 @@ public class FieldType
                 case "name": return _Field.NAME;
                 case "default_value": return _Field.DEFAULT_VALUE;
                 case "annotations": return _Field.ANNOTATIONS;
+                case "value_start_pos": return _Field.VALUE_START_POS;
                 case "start_pos": return _Field.START_POS;
                 case "end_pos": return _Field.END_POS;
             }
@@ -710,6 +762,8 @@ public class FieldType
         private String mName;
         private String mDefaultValue;
         private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.model.FilePos mValueStartPos;
+        private net.morimekta.providence.model.FilePos._Builder mValueStartPos_builder;
         private net.morimekta.providence.model.FilePos mStartPos;
         private net.morimekta.providence.model.FilePos._Builder mStartPos_builder;
         private net.morimekta.providence.model.FilePos mEndPos;
@@ -719,8 +773,8 @@ public class FieldType
          * Make a pmodel.FieldType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(9);
-            modified = new java.util.BitSet(9);
+            optionals = new java.util.BitSet(10);
+            modified = new java.util.BitSet(10);
             mId = kDefaultId;
             mType = kDefaultType;
             mName = kDefaultName;
@@ -756,12 +810,16 @@ public class FieldType
                 optionals.set(6);
                 mAnnotations = base.mAnnotations;
             }
-            if (base.hasStartPos()) {
+            if (base.hasValueStartPos()) {
                 optionals.set(7);
+                mValueStartPos = base.mValueStartPos;
+            }
+            if (base.hasStartPos()) {
+                optionals.set(8);
                 mStartPos = base.mStartPos;
             }
             if (base.hasEndPos()) {
-                optionals.set(8);
+                optionals.set(9);
                 mEndPos = base.mEndPos;
             }
         }
@@ -805,9 +863,22 @@ public class FieldType
                 mutableAnnotations().putAll(from.getAnnotations());
             }
 
-            if (from.hasStartPos()) {
+            if (from.hasValueStartPos()) {
                 optionals.set(7);
                 modified.set(7);
+                if (mValueStartPos_builder != null) {
+                    mValueStartPos_builder.merge(from.getValueStartPos());
+                } else if (mValueStartPos != null) {
+                    mValueStartPos_builder = mValueStartPos.mutate().merge(from.getValueStartPos());
+                    mValueStartPos = null;
+                } else {
+                    mValueStartPos = from.getValueStartPos();
+                }
+            }
+
+            if (from.hasStartPos()) {
+                optionals.set(8);
+                modified.set(8);
                 if (mStartPos_builder != null) {
                     mStartPos_builder.merge(from.getStartPos());
                 } else if (mStartPos != null) {
@@ -819,8 +890,8 @@ public class FieldType
             }
 
             if (from.hasEndPos()) {
-                optionals.set(8);
-                modified.set(8);
+                optionals.set(9);
+                modified.set(9);
                 if (mEndPos_builder != null) {
                     mEndPos_builder.merge(from.getEndPos());
                 } else if (mEndPos != null) {
@@ -1260,6 +1331,107 @@ public class FieldType
         }
 
         /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setValueStartPos(net.morimekta.providence.model.FilePos value) {
+            if (value == null) {
+                return clearValueStartPos();
+            }
+
+            optionals.set(7);
+            modified.set(7);
+            mValueStartPos = value;
+            mValueStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @param builder builder for the new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setValueStartPos(net.morimekta.providence.model.FilePos._Builder builder) {
+          return setValueStartPos(builder == null ? null : builder.build());
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return True if value_start_pos has been set.
+         */
+        public boolean isSetValueStartPos() {
+            return optionals.get(7);
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return True if value_start_pos has been modified.
+         */
+        public boolean isModifiedValueStartPos() {
+            return modified.get(7);
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearValueStartPos() {
+            optionals.clear(7);
+            modified.set(7);
+            mValueStartPos = null;
+            mValueStartPos_builder = null;
+            return this;
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return The field builder
+         */
+        @javax.annotation.Nonnull
+        public net.morimekta.providence.model.FilePos._Builder mutableValueStartPos() {
+            optionals.set(7);
+            modified.set(7);
+
+            if (mValueStartPos != null) {
+                mValueStartPos_builder = mValueStartPos.mutate();
+                mValueStartPos = null;
+            } else if (mValueStartPos_builder == null) {
+                mValueStartPos_builder = net.morimekta.providence.model.FilePos.builder();
+            }
+            return mValueStartPos_builder;
+        }
+
+        /**
+         * Note the start of the default value in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FilePos getValueStartPos() {
+
+            if (mValueStartPos_builder != null) {
+                return mValueStartPos_builder.build();
+            }
+            return mValueStartPos;
+        }
+
+        /**
          * The start of the definition (position of field ID)
          *
          * @param value The new value
@@ -1271,8 +1443,8 @@ public class FieldType
                 return clearStartPos();
             }
 
-            optionals.set(7);
-            modified.set(7);
+            optionals.set(8);
+            modified.set(8);
             mStartPos = value;
             mStartPos_builder = null;
             return this;
@@ -1295,7 +1467,7 @@ public class FieldType
          * @return True if start_pos has been set.
          */
         public boolean isSetStartPos() {
-            return optionals.get(7);
+            return optionals.get(8);
         }
 
         /**
@@ -1304,7 +1476,7 @@ public class FieldType
          * @return True if start_pos has been modified.
          */
         public boolean isModifiedStartPos() {
-            return modified.get(7);
+            return modified.get(8);
         }
 
         /**
@@ -1314,8 +1486,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder clearStartPos() {
-            optionals.clear(7);
-            modified.set(7);
+            optionals.clear(8);
+            modified.set(8);
             mStartPos = null;
             mStartPos_builder = null;
             return this;
@@ -1328,8 +1500,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
-            optionals.set(7);
-            modified.set(7);
+            optionals.set(8);
+            modified.set(8);
 
             if (mStartPos != null) {
                 mStartPos_builder = mStartPos.mutate();
@@ -1365,8 +1537,8 @@ public class FieldType
                 return clearEndPos();
             }
 
-            optionals.set(8);
-            modified.set(8);
+            optionals.set(9);
+            modified.set(9);
             mEndPos = value;
             mEndPos_builder = null;
             return this;
@@ -1389,7 +1561,7 @@ public class FieldType
          * @return True if end_pos has been set.
          */
         public boolean isSetEndPos() {
-            return optionals.get(8);
+            return optionals.get(9);
         }
 
         /**
@@ -1398,7 +1570,7 @@ public class FieldType
          * @return True if end_pos has been modified.
          */
         public boolean isModifiedEndPos() {
-            return modified.get(8);
+            return modified.get(9);
         }
 
         /**
@@ -1408,8 +1580,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder clearEndPos() {
-            optionals.clear(8);
-            modified.set(8);
+            optionals.clear(9);
+            modified.set(9);
             mEndPos = null;
             mEndPos_builder = null;
             return this;
@@ -1422,8 +1594,8 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {
-            optionals.set(8);
-            modified.set(8);
+            optionals.set(9);
+            modified.set(9);
 
             if (mEndPos != null) {
                 mEndPos_builder = mEndPos.mutate();
@@ -1460,6 +1632,7 @@ public class FieldType
                    java.util.Objects.equals(mName, other.mName) &&
                    java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
                    java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+                   java.util.Objects.equals(getValueStartPos(), other.getValueStartPos()) &&
                    java.util.Objects.equals(getStartPos(), other.getStartPos()) &&
                    java.util.Objects.equals(getEndPos(), other.getEndPos());
         }
@@ -1475,6 +1648,7 @@ public class FieldType
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
                     _Field.ANNOTATIONS, mAnnotations,
+                    _Field.VALUE_START_POS, getValueStartPos(),
                     _Field.START_POS, getStartPos(),
                     _Field.END_POS, getEndPos());
         }
@@ -1483,6 +1657,7 @@ public class FieldType
         @SuppressWarnings("unchecked")
         public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
+                case 9: return mutableValueStartPos();
                 case 10: return mutableStartPos();
                 case 11: return mutableEndPos();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
@@ -1502,6 +1677,7 @@ public class FieldType
                 case 5: setName((String) value); break;
                 case 6: setDefaultValue((String) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                case 9: setValueStartPos((net.morimekta.providence.model.FilePos) value); break;
                 case 10: setStartPos((net.morimekta.providence.model.FilePos) value); break;
                 case 11: setEndPos((net.morimekta.providence.model.FilePos) value); break;
                 default: break;
@@ -1519,8 +1695,9 @@ public class FieldType
                 case 5: return optionals.get(4);
                 case 6: return optionals.get(5);
                 case 7: return optionals.get(6);
-                case 10: return optionals.get(7);
-                case 11: return optionals.get(8);
+                case 9: return optionals.get(7);
+                case 10: return optionals.get(8);
+                case 11: return optionals.get(9);
                 default: break;
             }
             return false;
@@ -1536,8 +1713,9 @@ public class FieldType
                 case 5: return modified.get(4);
                 case 6: return modified.get(5);
                 case 7: return modified.get(6);
-                case 10: return modified.get(7);
-                case 11: return modified.get(8);
+                case 9: return modified.get(7);
+                case 10: return modified.get(8);
+                case 11: return modified.get(9);
                 default: break;
             }
             return false;
@@ -1562,6 +1740,7 @@ public class FieldType
                 case 5: clearName(); break;
                 case 6: clearDefaultValue(); break;
                 case 7: clearAnnotations(); break;
+                case 9: clearValueStartPos(); break;
                 case 10: clearStartPos(); break;
                 case 11: clearEndPos(); break;
                 default: break;
@@ -1573,7 +1752,8 @@ public class FieldType
         public boolean valid() {
             return optionals.get(1) &&
                    optionals.get(3) &&
-                   optionals.get(4);
+                   optionals.get(4) &&
+                   optionals.get(7);
         }
 
         @Override
@@ -1591,6 +1771,10 @@ public class FieldType
 
                 if (!optionals.get(4)) {
                     missing.add("name");
+                }
+
+                if (!optionals.get(7)) {
+                    missing.add("value_start_pos");
                 }
 
                 throw new java.lang.IllegalStateException(
@@ -1697,10 +1881,19 @@ public class FieldType
                         }
                         break;
                     }
+                    case 9: {
+                        if (type == 12) {
+                            mValueStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
+                            optionals.set(7);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.value_start_pos, should be struct(12)");
+                        }
+                        break;
+                    }
                     case 10: {
                         if (type == 12) {
                             mStartPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
-                            optionals.set(7);
+                            optionals.set(8);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.start_pos, should be struct(12)");
                         }
@@ -1709,7 +1902,7 @@ public class FieldType
                     case 11: {
                         if (type == 12) {
                             mEndPos = net.morimekta.providence.serializer.binary.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FilePos.kDescriptor, strict);
-                            optionals.set(8);
+                            optionals.set(9);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.binary.BinaryType.asString(type) + " for pmodel.FieldType.end_pos, should be struct(12)");
                         }

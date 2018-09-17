@@ -319,8 +319,8 @@ public class ProgramConverter {
                                              field.getType(),
                                              pkg,
                                              field.getDefaultValue(),
-                                             field.getStartPos().getLineNo(),
-                                             field.getStartPos().getLinePos());
+                                             field.getValueStartPos().getLineNo(),
+                                             field.getValueStartPos().getLinePos());
         }
         PRequirement requirement = PRequirement.valueOf(field.getRequirement()
                                                              .asString());

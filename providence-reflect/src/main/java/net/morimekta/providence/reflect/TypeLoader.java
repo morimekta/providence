@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.reflect;
 
+import com.google.common.collect.ImmutableList;
 import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
@@ -28,8 +29,6 @@ import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramConverter;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.providence.reflect.util.ProgramTypeRegistry;
-
-import com.google.common.collect.ImmutableList;
 
 import java.io.BufferedInputStream;
 import java.io.File;
