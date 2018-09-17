@@ -63,7 +63,7 @@ public class ProgramType
     /**
      * Program documentation must come before the first statement of the header.
      *
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
@@ -72,7 +72,7 @@ public class ProgramType
     /**
      * Program documentation must come before the first statement of the header.
      *
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -86,7 +86,7 @@ public class ProgramType
     /**
      * The program name, deducted from the .thrift IDL file name.
      *
-     * @return The field value
+     * @return The <code>program_name</code> value
      */
     @javax.annotation.Nonnull
     public String getProgramName() {
@@ -106,7 +106,7 @@ public class ProgramType
      * <p>
      * include &quot;&lt;program&gt;.thrift&quot;
      *
-     * @return The field value
+     * @return The <code>includes</code> value
      */
     public java.util.List<String> getIncludes() {
         return hasIncludes() ? mIncludes : kDefaultIncludes;
@@ -117,7 +117,7 @@ public class ProgramType
      * <p>
      * include &quot;&lt;program&gt;.thrift&quot;
      *
-     * @return Optional field value
+     * @return Optional of the <code>includes</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<String>> optionalIncludes() {
@@ -137,7 +137,7 @@ public class ProgramType
      * <p>
      * namespace &lt;key&gt; &lt;value&gt;
      *
-     * @return The field value
+     * @return The <code>namespaces</code> value
      */
     public java.util.Map<String,String> getNamespaces() {
         return hasNamespaces() ? mNamespaces : kDefaultNamespaces;
@@ -148,7 +148,7 @@ public class ProgramType
      * <p>
      * namespace &lt;key&gt; &lt;value&gt;
      *
-     * @return Optional field value
+     * @return Optional of the <code>namespaces</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalNamespaces() {
@@ -166,7 +166,7 @@ public class ProgramType
     /**
      * List of declarations in the program file. Same order as in the thrift file.
      *
-     * @return The field value
+     * @return The <code>decl</code> value
      */
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
         return hasDecl() ? mDecl : kDefaultDecl;
@@ -175,7 +175,7 @@ public class ProgramType
     /**
      * List of declarations in the program file. Same order as in the thrift file.
      *
-     * @return Optional field value
+     * @return Optional of the <code>decl</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.providence.model.Declaration>> optionalDecl() {
@@ -551,7 +551,7 @@ public class ProgramType
     }
 
     /**
-     * Make a pmodel.ProgramType builder.
+     * Make a <code>pmodel.ProgramType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -574,7 +574,7 @@ public class ProgramType
         private java.util.List<net.morimekta.providence.model.Declaration> mDecl;
 
         /**
-         * Make a pmodel.ProgramType builder.
+         * Make a pmodel.ProgramType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
@@ -644,6 +644,8 @@ public class ProgramType
         }
 
         /**
+         * Set the <code>documentation</code> field value.
+         * <p>
          * Program documentation must come before the first statement of the header.
          *
          * @param value The new value
@@ -662,7 +664,7 @@ public class ProgramType
         }
 
         /**
-         * Program documentation must come before the first statement of the header.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -671,7 +673,8 @@ public class ProgramType
         }
 
         /**
-         * Program documentation must come before the first statement of the header.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -680,7 +683,7 @@ public class ProgramType
         }
 
         /**
-         * Program documentation must come before the first statement of the header.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -695,13 +698,15 @@ public class ProgramType
         /**
          * Program documentation must come before the first statement of the header.
          *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
+         * Set the <code>program_name</code> field value.
+         * <p>
          * The program name, deducted from the .thrift IDL file name.
          *
          * @param value The new value
@@ -720,7 +725,7 @@ public class ProgramType
         }
 
         /**
-         * The program name, deducted from the .thrift IDL file name.
+         * Checks for presence of the <code>program_name</code> field.
          *
          * @return True if program_name has been set.
          */
@@ -729,7 +734,8 @@ public class ProgramType
         }
 
         /**
-         * The program name, deducted from the .thrift IDL file name.
+         * Checks if the <code>program_name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if program_name has been modified.
          */
@@ -738,7 +744,7 @@ public class ProgramType
         }
 
         /**
-         * The program name, deducted from the .thrift IDL file name.
+         * Clear the <code>program_name</code> field.
          *
          * @return The builder
          */
@@ -753,13 +759,15 @@ public class ProgramType
         /**
          * The program name, deducted from the .thrift IDL file name.
          *
-         * @return The field value
+         * @return The <code>program_name</code> field value
          */
         public String getProgramName() {
             return mProgramName;
         }
 
         /**
+         * Set the <code>includes</code> field value.
+         * <p>
          * List of included thrift files. Same as from the actual thrift file.
          * <p>
          * include &quot;&lt;program&gt;.thrift&quot;
@@ -780,6 +788,8 @@ public class ProgramType
         }
 
         /**
+         * Adds entries to the <code>includes</code> list.
+         * <p>
          * List of included thrift files. Same as from the actual thrift file.
          * <p>
          * include &quot;&lt;program&gt;.thrift&quot;
@@ -799,9 +809,7 @@ public class ProgramType
         }
 
         /**
-         * List of included thrift files. Same as from the actual thrift file.
-         * <p>
-         * include &quot;&lt;program&gt;.thrift&quot;
+         * Checks for presence of the <code>includes</code> field.
          *
          * @return True if includes has been set.
          */
@@ -810,9 +818,8 @@ public class ProgramType
         }
 
         /**
-         * List of included thrift files. Same as from the actual thrift file.
-         * <p>
-         * include &quot;&lt;program&gt;.thrift&quot;
+         * Checks if the <code>includes</code> field has been modified since the
+         * builder was created.
          *
          * @return True if includes has been modified.
          */
@@ -821,9 +828,7 @@ public class ProgramType
         }
 
         /**
-         * List of included thrift files. Same as from the actual thrift file.
-         * <p>
-         * include &quot;&lt;program&gt;.thrift&quot;
+         * Clear the <code>includes</code> field.
          *
          * @return The builder
          */
@@ -836,13 +841,22 @@ public class ProgramType
         }
 
         /**
+         * Get the builder for the contained <code>includes</code> message field.
+         * <p>
          * List of included thrift files. Same as from the actual thrift file.
          * <p>
          * include &quot;&lt;program&gt;.thrift&quot;
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
+         *
+         * @return The mutable <code>includes</code> container
+         */
         public java.util.List<String> mutableIncludes() {
             optionals.set(2);
             modified.set(2);
@@ -856,6 +870,8 @@ public class ProgramType
         }
 
         /**
+         * Set the <code>namespaces</code> field value.
+         * <p>
          * Map of language to laguage dependent namespace identifier.
          * <p>
          * namespace &lt;key&gt; &lt;value&gt;
@@ -876,6 +892,8 @@ public class ProgramType
         }
 
         /**
+         * Adds a mapping to the <code>namespaces</code> map.
+         * <p>
          * Map of language to laguage dependent namespace identifier.
          * <p>
          * namespace &lt;key&gt; &lt;value&gt;
@@ -893,9 +911,7 @@ public class ProgramType
         }
 
         /**
-         * Map of language to laguage dependent namespace identifier.
-         * <p>
-         * namespace &lt;key&gt; &lt;value&gt;
+         * Checks for presence of the <code>namespaces</code> field.
          *
          * @return True if namespaces has been set.
          */
@@ -904,9 +920,8 @@ public class ProgramType
         }
 
         /**
-         * Map of language to laguage dependent namespace identifier.
-         * <p>
-         * namespace &lt;key&gt; &lt;value&gt;
+         * Checks if the <code>namespaces</code> field has been modified since the
+         * builder was created.
          *
          * @return True if namespaces has been modified.
          */
@@ -915,9 +930,7 @@ public class ProgramType
         }
 
         /**
-         * Map of language to laguage dependent namespace identifier.
-         * <p>
-         * namespace &lt;key&gt; &lt;value&gt;
+         * Clear the <code>namespaces</code> field.
          *
          * @return The builder
          */
@@ -930,13 +943,22 @@ public class ProgramType
         }
 
         /**
+         * Get the builder for the contained <code>namespaces</code> message field.
+         * <p>
          * Map of language to laguage dependent namespace identifier.
          * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @return The mutable <code>namespaces</code> container
+         */
         public java.util.Map<String,String> mutableNamespaces() {
             optionals.set(3);
             modified.set(3);
@@ -950,6 +972,8 @@ public class ProgramType
         }
 
         /**
+         * Set the <code>decl</code> field value.
+         * <p>
          * List of declarations in the program file. Same order as in the thrift file.
          *
          * @param value The new value
@@ -968,6 +992,8 @@ public class ProgramType
         }
 
         /**
+         * Adds entries to the <code>decl</code> list.
+         * <p>
          * List of declarations in the program file. Same order as in the thrift file.
          *
          * @param values The added value
@@ -985,7 +1011,7 @@ public class ProgramType
         }
 
         /**
-         * List of declarations in the program file. Same order as in the thrift file.
+         * Checks for presence of the <code>decl</code> field.
          *
          * @return True if decl has been set.
          */
@@ -994,7 +1020,8 @@ public class ProgramType
         }
 
         /**
-         * List of declarations in the program file. Same order as in the thrift file.
+         * Checks if the <code>decl</code> field has been modified since the
+         * builder was created.
          *
          * @return True if decl has been modified.
          */
@@ -1003,7 +1030,7 @@ public class ProgramType
         }
 
         /**
-         * List of declarations in the program file. Same order as in the thrift file.
+         * Clear the <code>decl</code> field.
          *
          * @return The builder
          */
@@ -1016,11 +1043,18 @@ public class ProgramType
         }
 
         /**
+         * Get the builder for the contained <code>decl</code> message field.
+         * <p>
          * List of declarations in the program file. Same order as in the thrift file.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * List of declarations in the program file. Same order as in the thrift file.
+         *
+         * @return The mutable <code>decl</code> container
+         */
         public java.util.List<net.morimekta.providence.model.Declaration> mutableDecl() {
             optionals.set(4);
             modified.set(4);

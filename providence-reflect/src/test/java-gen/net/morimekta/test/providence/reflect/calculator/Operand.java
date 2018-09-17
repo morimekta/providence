@@ -80,14 +80,14 @@ public class Operand
     }
 
     /**
-     * @return The field value
+     * @return The <code>operation</code> value
      */
     public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
         return mOperation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>operation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operation> optionalOperation() {
@@ -99,14 +99,14 @@ public class Operand
     }
 
     /**
-     * @return The field value
+     * @return The <code>number</code> value
      */
     public double getNumber() {
         return hasNumber() ? mNumber : kDefaultNumber;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>number</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.OptionalDouble optionalNumber() {
@@ -118,14 +118,14 @@ public class Operand
     }
 
     /**
-     * @return The field value
+     * @return The <code>imaginary</code> value
      */
     public net.morimekta.test.providence.reflect.number.Imaginary getImaginary() {
         return mImaginary;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>imaginary</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.reflect.number.Imaginary> optionalImaginary() {
@@ -439,7 +439,7 @@ public class Operand
     }
 
     /**
-     * Make a calculator.Operand builder.
+     * Make a <code>calculator.Operand</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -460,7 +460,7 @@ public class Operand
         private net.morimekta.test.providence.reflect.number.Imaginary._Builder mImaginary_builder;
 
         /**
-         * Make a calculator.Operand builder.
+         * Make a calculator.Operand builder instance.
          */
         public _Builder() {
             modified = false;
@@ -514,7 +514,7 @@ public class Operand
         }
 
         /**
-         * Sets the value of operation.
+         * Set the <code>operation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -533,7 +533,7 @@ public class Operand
         }
 
         /**
-         * Sets the value of operation.
+         * Set the <code>operation</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -544,7 +544,7 @@ public class Operand
         }
 
         /**
-         * Checks for presence of the operation field.
+         * Checks for presence of the <code>operation</code> field.
          *
          * @return True if operation has been set.
          */
@@ -553,7 +553,7 @@ public class Operand
         }
 
         /**
-         * Clears the operation field.
+         * Clear the <code>operation</code> field.
          *
          * @return The builder
          */
@@ -567,9 +567,9 @@ public class Operand
         }
 
         /**
-         * Gets the builder for the contained operation.
+         * Get the builder for the contained <code>operation</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.reflect.calculator.Operation._Builder mutableOperation() {
@@ -589,8 +589,6 @@ public class Operand
         }
 
         /**
-         * Gets the value for the contained operation.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.reflect.calculator.Operation getOperation() {
@@ -605,7 +603,7 @@ public class Operand
         }
 
         /**
-         * Sets the value of number.
+         * Set the <code>number</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -619,7 +617,7 @@ public class Operand
         }
 
         /**
-         * Checks for presence of the number field.
+         * Checks for presence of the <code>number</code> field.
          *
          * @return True if number has been set.
          */
@@ -628,7 +626,7 @@ public class Operand
         }
 
         /**
-         * Clears the number field.
+         * Clear the <code>number</code> field.
          *
          * @return The builder
          */
@@ -641,16 +639,14 @@ public class Operand
         }
 
         /**
-         * Gets the value of the contained number.
-         *
-         * @return The field value
+         * @return The <code>number</code> field value
          */
         public double getNumber() {
             return isSetNumber() ? mNumber : kDefaultNumber;
         }
 
         /**
-         * Sets the value of imaginary.
+         * Set the <code>imaginary</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -669,7 +665,7 @@ public class Operand
         }
 
         /**
-         * Sets the value of imaginary.
+         * Set the <code>imaginary</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -680,7 +676,7 @@ public class Operand
         }
 
         /**
-         * Checks for presence of the imaginary field.
+         * Checks for presence of the <code>imaginary</code> field.
          *
          * @return True if imaginary has been set.
          */
@@ -689,7 +685,7 @@ public class Operand
         }
 
         /**
-         * Clears the imaginary field.
+         * Clear the <code>imaginary</code> field.
          *
          * @return The builder
          */
@@ -703,9 +699,9 @@ public class Operand
         }
 
         /**
-         * Gets the builder for the contained imaginary.
+         * Get the builder for the contained <code>imaginary</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.reflect.number.Imaginary._Builder mutableImaginary() {
@@ -725,8 +721,6 @@ public class Operand
         }
 
         /**
-         * Gets the value for the contained imaginary.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.reflect.number.Imaginary getImaginary() {
@@ -741,7 +735,8 @@ public class Operand
         }
 
         /**
-         * Checks if Operand has been modified since the _Builder was created.
+         * Checks if the <code>Operand</code> union has been modified since the
+         * builder was created.
          *
          * @return True if Operand has been modified.
          */

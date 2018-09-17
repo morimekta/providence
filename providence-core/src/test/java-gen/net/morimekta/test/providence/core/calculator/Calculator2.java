@@ -524,7 +524,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         /**
-         * Make a calculator.Calculator2.extra.request builder.
+         * Make a <code>calculator.Calculator2.extra.request</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -538,7 +538,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             private java.util.BitSet modified;
 
             /**
-             * Make a calculator.Calculator2.extra.request builder.
+             * Make a calculator.Calculator2.extra.request builder instance.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
@@ -702,14 +702,14 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         /**
-         * @return The field value
+         * @return The <code>success</code> value
          */
         public String getSuccess() {
             return mSuccess;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>success</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<String> optionalSuccess() {
@@ -985,7 +985,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
         }
 
         /**
-         * Make a calculator.Calculator2.extra.response builder.
+         * Make a <code>calculator.Calculator2.extra.response</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -1002,7 +1002,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             private String mSuccess;
 
             /**
-             * Make a calculator.Calculator2.extra.response builder.
+             * Make a calculator.Calculator2.extra.response builder instance.
              */
             public _Builder() {
                 modified = false;
@@ -1038,7 +1038,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -1056,7 +1056,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             }
 
             /**
-             * Checks for presence of the success field.
+             * Checks for presence of the <code>success</code> field.
              *
              * @return True if success has been set.
              */
@@ -1065,7 +1065,7 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             }
 
             /**
-             * Clears the success field.
+             * Clear the <code>success</code> field.
              *
              * @return The builder
              */
@@ -1078,16 +1078,15 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
             }
 
             /**
-             * Gets the value of the contained success.
-             *
-             * @return The field value
+             * @return The <code>success</code> field value
              */
             public String getSuccess() {
                 return mSuccess;
             }
 
             /**
-             * Checks if Calculator2.extra.response has been modified since the _Builder was created.
+             * Checks if the <code>Calculator2.extra.response</code> union has been modified since the
+             * builder was created.
              *
              * @return True if Calculator2.extra.response has been modified.
              */

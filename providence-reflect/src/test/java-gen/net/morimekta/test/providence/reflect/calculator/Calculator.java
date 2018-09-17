@@ -285,14 +285,14 @@ public class Calculator {
         }
 
         /**
-         * @return The field value
+         * @return The <code>op</code> value
          */
         public net.morimekta.test.providence.reflect.calculator.Operation getOp() {
             return mOp;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>op</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operation> optionalOp() {
@@ -546,7 +546,7 @@ public class Calculator {
         }
 
         /**
-         * Make a calculator.Calculator.calculate.request builder.
+         * Make a <code>calculator.Calculator.calculate.request</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -563,7 +563,7 @@ public class Calculator {
             private net.morimekta.test.providence.reflect.calculator.Operation._Builder mOp_builder;
 
             /**
-             * Make a calculator.Calculator.calculate.request builder.
+             * Make a calculator.Calculator.calculate.request builder instance.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(1);
@@ -603,7 +603,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of op.
+             * Set the <code>op</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -622,7 +622,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of op.
+             * Set the <code>op</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -633,7 +633,7 @@ public class Calculator {
             }
 
             /**
-             * Checks for presence of the op field.
+             * Checks for presence of the <code>op</code> field.
              *
              * @return True if op has been set.
              */
@@ -642,7 +642,8 @@ public class Calculator {
             }
 
             /**
-             * Checks if op has been modified since the _Builder was created.
+             * Checks if the <code>op</code> field has been modified since the
+             * builder was created.
              *
              * @return True if op has been modified.
              */
@@ -651,7 +652,7 @@ public class Calculator {
             }
 
             /**
-             * Clears the op field.
+             * Clear the <code>op</code> field.
              *
              * @return The builder
              */
@@ -665,9 +666,9 @@ public class Calculator {
             }
 
             /**
-             * Gets the builder for the contained op.
+             * Get the builder for the contained <code>op</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.reflect.calculator.Operation._Builder mutableOp() {
@@ -684,8 +685,6 @@ public class Calculator {
             }
 
             /**
-             * Gets the value for the contained op.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.reflect.calculator.Operation getOp() {
@@ -884,14 +883,14 @@ public class Calculator {
         }
 
         /**
-         * @return The field value
+         * @return The <code>success</code> value
          */
         public net.morimekta.test.providence.reflect.calculator.Operand getSuccess() {
             return mSuccess;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>success</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.reflect.calculator.Operand> optionalSuccess() {
@@ -903,14 +902,14 @@ public class Calculator {
         }
 
         /**
-         * @return The field value
+         * @return The <code>ce</code> value
          */
         public net.morimekta.test.providence.reflect.calculator.CalculateException getCe() {
             return mCe;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>ce</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.reflect.calculator.CalculateException> optionalCe() {
@@ -1204,7 +1203,7 @@ public class Calculator {
         }
 
         /**
-         * Make a calculator.Calculator.calculate.response builder.
+         * Make a <code>calculator.Calculator.calculate.response</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -1224,7 +1223,7 @@ public class Calculator {
             private net.morimekta.test.providence.reflect.calculator.CalculateException._Builder mCe_builder;
 
             /**
-             * Make a calculator.Calculator.calculate.response builder.
+             * Make a calculator.Calculator.calculate.response builder instance.
              */
             public _Builder() {
                 modified = false;
@@ -1273,7 +1272,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -1292,7 +1291,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -1303,7 +1302,7 @@ public class Calculator {
             }
 
             /**
-             * Checks for presence of the success field.
+             * Checks for presence of the <code>success</code> field.
              *
              * @return True if success has been set.
              */
@@ -1312,7 +1311,7 @@ public class Calculator {
             }
 
             /**
-             * Clears the success field.
+             * Clear the <code>success</code> field.
              *
              * @return The builder
              */
@@ -1326,9 +1325,9 @@ public class Calculator {
             }
 
             /**
-             * Gets the builder for the contained success.
+             * Get the builder for the contained <code>success</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.reflect.calculator.Operand._Builder mutableSuccess() {
@@ -1348,8 +1347,6 @@ public class Calculator {
             }
 
             /**
-             * Gets the value for the contained success.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.reflect.calculator.Operand getSuccess() {
@@ -1364,7 +1361,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of ce.
+             * Set the <code>ce</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -1383,7 +1380,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of ce.
+             * Set the <code>ce</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -1394,7 +1391,7 @@ public class Calculator {
             }
 
             /**
-             * Checks for presence of the ce field.
+             * Checks for presence of the <code>ce</code> field.
              *
              * @return True if ce has been set.
              */
@@ -1403,7 +1400,7 @@ public class Calculator {
             }
 
             /**
-             * Clears the ce field.
+             * Clear the <code>ce</code> field.
              *
              * @return The builder
              */
@@ -1417,9 +1414,9 @@ public class Calculator {
             }
 
             /**
-             * Gets the builder for the contained ce.
+             * Get the builder for the contained <code>ce</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.reflect.calculator.CalculateException._Builder mutableCe() {
@@ -1439,8 +1436,6 @@ public class Calculator {
             }
 
             /**
-             * Gets the value for the contained ce.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.reflect.calculator.CalculateException getCe() {
@@ -1455,7 +1450,8 @@ public class Calculator {
             }
 
             /**
-             * Checks if Calculator.calculate.response has been modified since the _Builder was created.
+             * Checks if the <code>Calculator.calculate.response</code> union has been modified since the
+             * builder was created.
              *
              * @return True if Calculator.calculate.response has been modified.
              */
@@ -1847,7 +1843,7 @@ public class Calculator {
         }
 
         /**
-         * Make a calculator.Calculator.iamalive.request builder.
+         * Make a <code>calculator.Calculator.iamalive.request</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -1861,7 +1857,7 @@ public class Calculator {
             private java.util.BitSet modified;
 
             /**
-             * Make a calculator.Calculator.iamalive.request builder.
+             * Make a calculator.Calculator.iamalive.request builder instance.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
@@ -2229,7 +2225,7 @@ public class Calculator {
         }
 
         /**
-         * Make a calculator.Calculator.ping.request builder.
+         * Make a <code>calculator.Calculator.ping.request</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -2243,7 +2239,7 @@ public class Calculator {
             private java.util.BitSet modified;
 
             /**
-             * Make a calculator.Calculator.ping.request builder.
+             * Make a calculator.Calculator.ping.request builder instance.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
@@ -2666,7 +2662,7 @@ public class Calculator {
         }
 
         /**
-         * Make a calculator.Calculator.ping.response builder.
+         * Make a <code>calculator.Calculator.ping.response</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -2682,7 +2678,7 @@ public class Calculator {
 
 
             /**
-             * Make a calculator.Calculator.ping.response builder.
+             * Make a calculator.Calculator.ping.response builder instance.
              */
             public _Builder() {
                 modified = false;
@@ -2717,7 +2713,7 @@ public class Calculator {
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @return The builder
              */
@@ -2729,7 +2725,7 @@ public class Calculator {
             }
 
             /**
-             * Checks for presence of the success field.
+             * Checks for presence of the <code>success</code> field.
              *
              * @return True if success has been set.
              */
@@ -2738,7 +2734,7 @@ public class Calculator {
             }
 
             /**
-             * Clears the success field.
+             * Clear the <code>success</code> field.
              *
              * @return The builder
              */
@@ -2750,7 +2746,8 @@ public class Calculator {
             }
 
             /**
-             * Checks if Calculator.ping.response has been modified since the _Builder was created.
+             * Checks if the <code>Calculator.ping.response</code> union has been modified since the
+             * builder was created.
              *
              * @return True if Calculator.ping.response has been modified.
              */

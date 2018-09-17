@@ -131,14 +131,14 @@ public class Declaration
     }
 
     /**
-     * @return The field value
+     * @return The <code>decl_enum</code> value
      */
     public net.morimekta.providence.model.EnumType getDeclEnum() {
         return mDeclEnum;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>decl_enum</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.EnumType> optionalDeclEnum() {
@@ -150,14 +150,14 @@ public class Declaration
     }
 
     /**
-     * @return The field value
+     * @return The <code>decl_typedef</code> value
      */
     public net.morimekta.providence.model.TypedefType getDeclTypedef() {
         return mDeclTypedef;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>decl_typedef</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.TypedefType> optionalDeclTypedef() {
@@ -169,14 +169,14 @@ public class Declaration
     }
 
     /**
-     * @return The field value
+     * @return The <code>decl_message</code> value
      */
     public net.morimekta.providence.model.MessageType getDeclMessage() {
         return mDeclMessage;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>decl_message</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.MessageType> optionalDeclMessage() {
@@ -188,14 +188,14 @@ public class Declaration
     }
 
     /**
-     * @return The field value
+     * @return The <code>decl_service</code> value
      */
     public net.morimekta.providence.model.ServiceType getDeclService() {
         return mDeclService;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>decl_service</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.ServiceType> optionalDeclService() {
@@ -207,14 +207,14 @@ public class Declaration
     }
 
     /**
-     * @return The field value
+     * @return The <code>decl_const</code> value
      */
     public net.morimekta.providence.model.ConstType getDeclConst() {
         return mDeclConst;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>decl_const</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.ConstType> optionalDeclConst() {
@@ -568,7 +568,7 @@ public class Declaration
     }
 
     /**
-     * Make a pmodel.Declaration builder.
+     * Make a <code>pmodel.Declaration</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -597,7 +597,7 @@ public class Declaration
         private net.morimekta.providence.model.ConstType._Builder mDeclConst_builder;
 
         /**
-         * Make a pmodel.Declaration builder.
+         * Make a pmodel.Declaration builder instance.
          */
         public _Builder() {
             modified = false;
@@ -673,7 +673,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_enum.
+         * Set the <code>decl_enum</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -692,7 +692,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_enum.
+         * Set the <code>decl_enum</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -703,7 +703,7 @@ public class Declaration
         }
 
         /**
-         * Checks for presence of the decl_enum field.
+         * Checks for presence of the <code>decl_enum</code> field.
          *
          * @return True if decl_enum has been set.
          */
@@ -712,7 +712,7 @@ public class Declaration
         }
 
         /**
-         * Clears the decl_enum field.
+         * Clear the <code>decl_enum</code> field.
          *
          * @return The builder
          */
@@ -726,9 +726,9 @@ public class Declaration
         }
 
         /**
-         * Gets the builder for the contained decl_enum.
+         * Get the builder for the contained <code>decl_enum</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.EnumType._Builder mutableDeclEnum() {
@@ -748,8 +748,6 @@ public class Declaration
         }
 
         /**
-         * Gets the value for the contained decl_enum.
-         *
          * @return The field value
          */
         public net.morimekta.providence.model.EnumType getDeclEnum() {
@@ -764,7 +762,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_typedef.
+         * Set the <code>decl_typedef</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -783,7 +781,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_typedef.
+         * Set the <code>decl_typedef</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -794,7 +792,7 @@ public class Declaration
         }
 
         /**
-         * Checks for presence of the decl_typedef field.
+         * Checks for presence of the <code>decl_typedef</code> field.
          *
          * @return True if decl_typedef has been set.
          */
@@ -803,7 +801,7 @@ public class Declaration
         }
 
         /**
-         * Clears the decl_typedef field.
+         * Clear the <code>decl_typedef</code> field.
          *
          * @return The builder
          */
@@ -817,9 +815,9 @@ public class Declaration
         }
 
         /**
-         * Gets the builder for the contained decl_typedef.
+         * Get the builder for the contained <code>decl_typedef</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.TypedefType._Builder mutableDeclTypedef() {
@@ -839,8 +837,6 @@ public class Declaration
         }
 
         /**
-         * Gets the value for the contained decl_typedef.
-         *
          * @return The field value
          */
         public net.morimekta.providence.model.TypedefType getDeclTypedef() {
@@ -855,7 +851,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_message.
+         * Set the <code>decl_message</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -874,7 +870,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_message.
+         * Set the <code>decl_message</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -885,7 +881,7 @@ public class Declaration
         }
 
         /**
-         * Checks for presence of the decl_message field.
+         * Checks for presence of the <code>decl_message</code> field.
          *
          * @return True if decl_message has been set.
          */
@@ -894,7 +890,7 @@ public class Declaration
         }
 
         /**
-         * Clears the decl_message field.
+         * Clear the <code>decl_message</code> field.
          *
          * @return The builder
          */
@@ -908,9 +904,9 @@ public class Declaration
         }
 
         /**
-         * Gets the builder for the contained decl_message.
+         * Get the builder for the contained <code>decl_message</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.MessageType._Builder mutableDeclMessage() {
@@ -930,8 +926,6 @@ public class Declaration
         }
 
         /**
-         * Gets the value for the contained decl_message.
-         *
          * @return The field value
          */
         public net.morimekta.providence.model.MessageType getDeclMessage() {
@@ -946,7 +940,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_service.
+         * Set the <code>decl_service</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -965,7 +959,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_service.
+         * Set the <code>decl_service</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -976,7 +970,7 @@ public class Declaration
         }
 
         /**
-         * Checks for presence of the decl_service field.
+         * Checks for presence of the <code>decl_service</code> field.
          *
          * @return True if decl_service has been set.
          */
@@ -985,7 +979,7 @@ public class Declaration
         }
 
         /**
-         * Clears the decl_service field.
+         * Clear the <code>decl_service</code> field.
          *
          * @return The builder
          */
@@ -999,9 +993,9 @@ public class Declaration
         }
 
         /**
-         * Gets the builder for the contained decl_service.
+         * Get the builder for the contained <code>decl_service</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.ServiceType._Builder mutableDeclService() {
@@ -1021,8 +1015,6 @@ public class Declaration
         }
 
         /**
-         * Gets the value for the contained decl_service.
-         *
          * @return The field value
          */
         public net.morimekta.providence.model.ServiceType getDeclService() {
@@ -1037,7 +1029,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_const.
+         * Set the <code>decl_const</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1056,7 +1048,7 @@ public class Declaration
         }
 
         /**
-         * Sets the value of decl_const.
+         * Set the <code>decl_const</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -1067,7 +1059,7 @@ public class Declaration
         }
 
         /**
-         * Checks for presence of the decl_const field.
+         * Checks for presence of the <code>decl_const</code> field.
          *
          * @return True if decl_const has been set.
          */
@@ -1076,7 +1068,7 @@ public class Declaration
         }
 
         /**
-         * Clears the decl_const field.
+         * Clear the <code>decl_const</code> field.
          *
          * @return The builder
          */
@@ -1090,9 +1082,9 @@ public class Declaration
         }
 
         /**
-         * Gets the builder for the contained decl_const.
+         * Get the builder for the contained <code>decl_const</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.ConstType._Builder mutableDeclConst() {
@@ -1112,8 +1104,6 @@ public class Declaration
         }
 
         /**
-         * Gets the value for the contained decl_const.
-         *
          * @return The field value
          */
         public net.morimekta.providence.model.ConstType getDeclConst() {
@@ -1128,7 +1118,8 @@ public class Declaration
         }
 
         /**
-         * Checks if Declaration has been modified since the _Builder was created.
+         * Checks if the <code>Declaration</code> union has been modified since the
+         * builder was created.
          *
          * @return True if Declaration has been modified.
          */

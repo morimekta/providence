@@ -48,14 +48,14 @@ public class TypedefType
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -67,7 +67,7 @@ public class TypedefType
     }
 
     /**
-     * @return The field value
+     * @return The <code>type</code> value
      */
     @javax.annotation.Nonnull
     public String getType() {
@@ -79,7 +79,7 @@ public class TypedefType
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -93,7 +93,7 @@ public class TypedefType
     /**
      * The start of the definition (position of &#39;typedef&#39;)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -102,7 +102,7 @@ public class TypedefType
     /**
      * The start of the definition (position of &#39;typedef&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -116,7 +116,7 @@ public class TypedefType
     /**
      * The end of the definition
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -125,7 +125,7 @@ public class TypedefType
     /**
      * The end of the definition
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -477,7 +477,7 @@ public class TypedefType
     }
 
     /**
-     * Make a pmodel.TypedefType builder.
+     * Make a <code>pmodel.TypedefType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -502,7 +502,7 @@ public class TypedefType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.TypedefType builder.
+         * Make a pmodel.TypedefType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
@@ -583,7 +583,7 @@ public class TypedefType
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -601,7 +601,7 @@ public class TypedefType
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -610,7 +610,8 @@ public class TypedefType
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -619,7 +620,7 @@ public class TypedefType
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -632,16 +633,14 @@ public class TypedefType
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of type.
+         * Set the <code>type</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -659,7 +658,7 @@ public class TypedefType
         }
 
         /**
-         * Checks for presence of the type field.
+         * Checks for presence of the <code>type</code> field.
          *
          * @return True if type has been set.
          */
@@ -668,7 +667,8 @@ public class TypedefType
         }
 
         /**
-         * Checks if type has been modified since the _Builder was created.
+         * Checks if the <code>type</code> field has been modified since the
+         * builder was created.
          *
          * @return True if type has been modified.
          */
@@ -677,7 +677,7 @@ public class TypedefType
         }
 
         /**
-         * Clears the type field.
+         * Clear the <code>type</code> field.
          *
          * @return The builder
          */
@@ -690,16 +690,14 @@ public class TypedefType
         }
 
         /**
-         * Gets the value of the contained type.
-         *
-         * @return The field value
+         * @return The <code>type</code> field value
          */
         public String getType() {
             return mType;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -717,7 +715,7 @@ public class TypedefType
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -726,7 +724,8 @@ public class TypedefType
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -735,7 +734,7 @@ public class TypedefType
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -748,15 +747,15 @@ public class TypedefType
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;typedef&#39;)
          *
          * @param value The new value
@@ -776,6 +775,8 @@ public class TypedefType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;typedef&#39;)
          *
          * @param builder builder for the new value
@@ -787,7 +788,7 @@ public class TypedefType
         }
 
         /**
-         * The start of the definition (position of &#39;typedef&#39;)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -796,7 +797,8 @@ public class TypedefType
         }
 
         /**
-         * The start of the definition (position of &#39;typedef&#39;)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -805,7 +807,7 @@ public class TypedefType
         }
 
         /**
-         * The start of the definition (position of &#39;typedef&#39;)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -819,9 +821,11 @@ public class TypedefType
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of &#39;typedef&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -851,6 +855,8 @@ public class TypedefType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition
          *
          * @param value The new value
@@ -870,6 +876,8 @@ public class TypedefType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition
          *
          * @param builder builder for the new value
@@ -881,7 +889,7 @@ public class TypedefType
         }
 
         /**
-         * The end of the definition
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -890,7 +898,8 @@ public class TypedefType
         }
 
         /**
-         * The end of the definition
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -899,7 +908,7 @@ public class TypedefType
         }
 
         /**
-         * The end of the definition
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -913,9 +922,11 @@ public class TypedefType
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

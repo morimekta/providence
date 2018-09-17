@@ -250,18 +250,14 @@ public class Containers
     }
 
     /**
-     * all types as list&lt;x&gt;.
-     *
-     * @return The field value
+     * @return The <code>booleanList</code> value
      */
     public java.util.List<Boolean> getBooleanList() {
         return mBooleanList;
     }
 
     /**
-     * all types as list&lt;x&gt;.
-     *
-     * @return Optional field value
+     * @return Optional of the <code>booleanList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Boolean>> optionalBooleanList() {
@@ -277,14 +273,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>byteList</code> value
      */
     public java.util.List<Byte> getByteList() {
         return mByteList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>byteList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Byte>> optionalByteList() {
@@ -300,14 +296,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>shortList</code> value
      */
     public java.util.List<Short> getShortList() {
         return mShortList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>shortList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Short>> optionalShortList() {
@@ -323,14 +319,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>integerList</code> value
      */
     public java.util.List<Integer> getIntegerList() {
         return mIntegerList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>integerList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Integer>> optionalIntegerList() {
@@ -346,14 +342,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>longList</code> value
      */
     public java.util.List<Long> getLongList() {
         return mLongList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>longList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Long>> optionalLongList() {
@@ -369,14 +365,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>doubleList</code> value
      */
     public java.util.List<Double> getDoubleList() {
         return mDoubleList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>doubleList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<Double>> optionalDoubleList() {
@@ -392,14 +388,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>stringList</code> value
      */
     public java.util.List<String> getStringList() {
         return mStringList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>stringList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<String>> optionalStringList() {
@@ -415,14 +411,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>binaryList</code> value
      */
     public java.util.List<net.morimekta.util.Binary> getBinaryList() {
         return mBinaryList;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>binaryList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.util.Binary>> optionalBinaryList() {
@@ -438,18 +434,14 @@ public class Containers
     }
 
     /**
-     * all types as set&lt;x&gt;.
-     *
-     * @return The field value
+     * @return The <code>booleanSet</code> value
      */
     public java.util.Set<Boolean> getBooleanSet() {
         return mBooleanSet;
     }
 
     /**
-     * all types as set&lt;x&gt;.
-     *
-     * @return Optional field value
+     * @return Optional of the <code>booleanSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Boolean>> optionalBooleanSet() {
@@ -465,14 +457,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>byteSet</code> value
      */
     public java.util.Set<Byte> getByteSet() {
         return mByteSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>byteSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Byte>> optionalByteSet() {
@@ -488,14 +480,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>shortSet</code> value
      */
     public java.util.Set<Short> getShortSet() {
         return mShortSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>shortSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Short>> optionalShortSet() {
@@ -511,14 +503,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>integerSet</code> value
      */
     public java.util.Set<Integer> getIntegerSet() {
         return mIntegerSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>integerSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Integer>> optionalIntegerSet() {
@@ -534,14 +526,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>longSet</code> value
      */
     public java.util.Set<Long> getLongSet() {
         return mLongSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>longSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Long>> optionalLongSet() {
@@ -557,14 +549,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>doubleSet</code> value
      */
     public java.util.Set<Double> getDoubleSet() {
         return mDoubleSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>doubleSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<Double>> optionalDoubleSet() {
@@ -580,14 +572,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>stringSet</code> value
      */
     public java.util.Set<String> getStringSet() {
         return mStringSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>stringSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<String>> optionalStringSet() {
@@ -603,14 +595,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>binarySet</code> value
      */
     public java.util.Set<net.morimekta.util.Binary> getBinarySet() {
         return mBinarySet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>binarySet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<net.morimekta.util.Binary>> optionalBinarySet() {
@@ -626,18 +618,14 @@ public class Containers
     }
 
     /**
-     * all types as map&lt;x,x&gt;.
-     *
-     * @return The field value
+     * @return The <code>booleanMap</code> value
      */
     public java.util.Map<Boolean,Boolean> getBooleanMap() {
         return mBooleanMap;
     }
 
     /**
-     * all types as map&lt;x,x&gt;.
-     *
-     * @return Optional field value
+     * @return Optional of the <code>booleanMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Boolean,Boolean>> optionalBooleanMap() {
@@ -653,14 +641,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>byteMap</code> value
      */
     public java.util.Map<Byte,Byte> getByteMap() {
         return mByteMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>byteMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Byte,Byte>> optionalByteMap() {
@@ -676,14 +664,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>shortMap</code> value
      */
     public java.util.Map<Short,Short> getShortMap() {
         return mShortMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>shortMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Short,Short>> optionalShortMap() {
@@ -699,14 +687,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>integerMap</code> value
      */
     public java.util.Map<Integer,Integer> getIntegerMap() {
         return mIntegerMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>integerMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Integer,Integer>> optionalIntegerMap() {
@@ -722,14 +710,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>longMap</code> value
      */
     public java.util.Map<Long,Long> getLongMap() {
         return mLongMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>longMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Long,Long>> optionalLongMap() {
@@ -745,14 +733,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>doubleMap</code> value
      */
     public java.util.Map<Double,Double> getDoubleMap() {
         return mDoubleMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>doubleMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Double,Double>> optionalDoubleMap() {
@@ -768,14 +756,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>stringMap</code> value
      */
     public java.util.Map<String,String> getStringMap() {
         return mStringMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>stringMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalStringMap() {
@@ -791,14 +779,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>binaryMap</code> value
      */
     public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> getBinaryMap() {
         return mBinaryMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>binaryMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary>> optionalBinaryMap() {
@@ -814,18 +802,14 @@ public class Containers
     }
 
     /**
-     * Using enum as key and value in containers.
-     *
-     * @return The field value
+     * @return The <code>enumList</code> value
      */
     public java.util.List<net.morimekta.test.providence.core.Value> getEnumList() {
         return mEnumList;
     }
 
     /**
-     * Using enum as key and value in containers.
-     *
-     * @return Optional field value
+     * @return Optional of the <code>enumList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.test.providence.core.Value>> optionalEnumList() {
@@ -841,14 +825,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>enumSet</code> value
      */
     public java.util.Set<net.morimekta.test.providence.core.Value> getEnumSet() {
         return mEnumSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>enumSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<net.morimekta.test.providence.core.Value>> optionalEnumSet() {
@@ -864,14 +848,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>enumMap</code> value
      */
     public java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> getEnumMap() {
         return mEnumMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>enumMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value>> optionalEnumMap() {
@@ -887,18 +871,14 @@ public class Containers
     }
 
     /**
-     * Using struct as key and value in containers.
-     *
-     * @return The field value
+     * @return The <code>messageList</code> value
      */
     public java.util.List<net.morimekta.test.providence.core.DefaultFields> getMessageList() {
         return mMessageList;
     }
 
     /**
-     * Using struct as key and value in containers.
-     *
-     * @return Optional field value
+     * @return Optional of the <code>messageList</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.test.providence.core.DefaultFields>> optionalMessageList() {
@@ -914,14 +894,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>messageSet</code> value
      */
     public java.util.Set<net.morimekta.test.providence.core.DefaultFields> getMessageSet() {
         return mMessageSet;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>messageSet</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<net.morimekta.test.providence.core.DefaultFields>> optionalMessageSet() {
@@ -937,14 +917,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>messageMap</code> value
      */
     public java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> getMessageMap() {
         return mMessageMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>messageMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,net.morimekta.test.providence.core.DefaultFields>> optionalMessageMap() {
@@ -960,14 +940,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>messageKeyMap</code> value
      */
     public java.util.Map<net.morimekta.test.providence.core.CompactFields,String> getMessageKeyMap() {
         return mMessageKeyMap;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>messageKeyMap</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<net.morimekta.test.providence.core.CompactFields,String>> optionalMessageKeyMap() {
@@ -979,14 +959,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>requiredFields</code> value
      */
     public net.morimekta.test.providence.core.RequiredFields getRequiredFields() {
         return mRequiredFields;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>requiredFields</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.RequiredFields> optionalRequiredFields() {
@@ -998,14 +978,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>defaultFields</code> value
      */
     public net.morimekta.test.providence.core.DefaultFields getDefaultFields() {
         return mDefaultFields;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>defaultFields</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.DefaultFields> optionalDefaultFields() {
@@ -1017,14 +997,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>optionalFields</code> value
      */
     public net.morimekta.test.providence.core.OptionalFields getOptionalFields() {
         return mOptionalFields;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>optionalFields</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.OptionalFields> optionalOptionalFields() {
@@ -1036,14 +1016,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>unionFields</code> value
      */
     public net.morimekta.test.providence.core.UnionFields getUnionFields() {
         return mUnionFields;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>unionFields</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.UnionFields> optionalUnionFields() {
@@ -1055,14 +1035,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>exceptionFields</code> value
      */
     public net.morimekta.test.providence.core.ExceptionFields getExceptionFields() {
         return mExceptionFields;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>exceptionFields</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.ExceptionFields> optionalExceptionFields() {
@@ -1074,14 +1054,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>defaultValues</code> value
      */
     public net.morimekta.test.providence.core.DefaultValues getDefaultValues() {
         return mDefaultValues;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>defaultValues</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.DefaultValues> optionalDefaultValues() {
@@ -1097,14 +1077,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>map_list_compact</code> value
      */
     public java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> getMapListCompact() {
         return mMapListCompact;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>map_list_compact</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>>> optionalMapListCompact() {
@@ -1120,14 +1100,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>list_map_numbers</code> value
      */
     public java.util.List<java.util.Map<Integer,Integer>> getListMapNumbers() {
         return mListMapNumbers;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>list_map_numbers</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<java.util.Map<Integer,Integer>>> optionalListMapNumbers() {
@@ -1143,14 +1123,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>set_list_numbers</code> value
      */
     public java.util.Set<java.util.List<Integer>> getSetListNumbers() {
         return mSetListNumbers;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>set_list_numbers</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Set<java.util.List<Integer>>> optionalSetListNumbers() {
@@ -1166,14 +1146,14 @@ public class Containers
     }
 
     /**
-     * @return The field value
+     * @return The <code>list_list_numbers</code> value
      */
     public java.util.List<java.util.List<Integer>> getListListNumbers() {
         return mListListNumbers;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>list_list_numbers</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<java.util.List<Integer>>> optionalListListNumbers() {
@@ -2666,7 +2646,7 @@ public class Containers
     }
 
     /**
-     * Make a providence.Containers builder.
+     * Make a <code>providence.Containers</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -2728,7 +2708,7 @@ public class Containers
         private java.util.List<java.util.List<Integer>> mListListNumbers;
 
         /**
-         * Make a providence.Containers builder.
+         * Make a providence.Containers builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(41);
@@ -3203,7 +3183,7 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Set the <code>booleanList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3221,7 +3201,7 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Adds entries to the <code>booleanList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3238,7 +3218,7 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Checks for presence of the <code>booleanList</code> field.
          *
          * @return True if booleanList has been set.
          */
@@ -3247,7 +3227,8 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Checks if the <code>booleanList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if booleanList has been modified.
          */
@@ -3256,7 +3237,7 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Clear the <code>booleanList</code> field.
          *
          * @return The builder
          */
@@ -3269,11 +3250,14 @@ public class Containers
         }
 
         /**
-         * all types as list&lt;x&gt;.
+         * Get the builder for the contained <code>booleanList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>booleanList</code> container
+         */
         public java.util.List<Boolean> mutableBooleanList() {
             optionals.set(0);
             modified.set(0);
@@ -3287,7 +3271,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of byteList.
+         * Set the <code>byteList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3305,7 +3289,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to byteList.
+         * Adds entries to the <code>byteList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3322,7 +3306,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the byteList field.
+         * Checks for presence of the <code>byteList</code> field.
          *
          * @return True if byteList has been set.
          */
@@ -3331,7 +3315,8 @@ public class Containers
         }
 
         /**
-         * Checks if byteList has been modified since the _Builder was created.
+         * Checks if the <code>byteList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if byteList has been modified.
          */
@@ -3340,7 +3325,7 @@ public class Containers
         }
 
         /**
-         * Clears the byteList field.
+         * Clear the <code>byteList</code> field.
          *
          * @return The builder
          */
@@ -3353,11 +3338,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained byteList.
+         * Get the builder for the contained <code>byteList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>byteList</code> container
+         */
         public java.util.List<Byte> mutableByteList() {
             optionals.set(1);
             modified.set(1);
@@ -3371,7 +3359,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of shortList.
+         * Set the <code>shortList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3389,7 +3377,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to shortList.
+         * Adds entries to the <code>shortList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3406,7 +3394,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the shortList field.
+         * Checks for presence of the <code>shortList</code> field.
          *
          * @return True if shortList has been set.
          */
@@ -3415,7 +3403,8 @@ public class Containers
         }
 
         /**
-         * Checks if shortList has been modified since the _Builder was created.
+         * Checks if the <code>shortList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if shortList has been modified.
          */
@@ -3424,7 +3413,7 @@ public class Containers
         }
 
         /**
-         * Clears the shortList field.
+         * Clear the <code>shortList</code> field.
          *
          * @return The builder
          */
@@ -3437,11 +3426,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained shortList.
+         * Get the builder for the contained <code>shortList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>shortList</code> container
+         */
         public java.util.List<Short> mutableShortList() {
             optionals.set(2);
             modified.set(2);
@@ -3455,7 +3447,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of integerList.
+         * Set the <code>integerList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3473,7 +3465,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to integerList.
+         * Adds entries to the <code>integerList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3490,7 +3482,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the integerList field.
+         * Checks for presence of the <code>integerList</code> field.
          *
          * @return True if integerList has been set.
          */
@@ -3499,7 +3491,8 @@ public class Containers
         }
 
         /**
-         * Checks if integerList has been modified since the _Builder was created.
+         * Checks if the <code>integerList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if integerList has been modified.
          */
@@ -3508,7 +3501,7 @@ public class Containers
         }
 
         /**
-         * Clears the integerList field.
+         * Clear the <code>integerList</code> field.
          *
          * @return The builder
          */
@@ -3521,11 +3514,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained integerList.
+         * Get the builder for the contained <code>integerList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>integerList</code> container
+         */
         public java.util.List<Integer> mutableIntegerList() {
             optionals.set(3);
             modified.set(3);
@@ -3539,7 +3535,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of longList.
+         * Set the <code>longList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3557,7 +3553,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to longList.
+         * Adds entries to the <code>longList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3574,7 +3570,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the longList field.
+         * Checks for presence of the <code>longList</code> field.
          *
          * @return True if longList has been set.
          */
@@ -3583,7 +3579,8 @@ public class Containers
         }
 
         /**
-         * Checks if longList has been modified since the _Builder was created.
+         * Checks if the <code>longList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if longList has been modified.
          */
@@ -3592,7 +3589,7 @@ public class Containers
         }
 
         /**
-         * Clears the longList field.
+         * Clear the <code>longList</code> field.
          *
          * @return The builder
          */
@@ -3605,11 +3602,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained longList.
+         * Get the builder for the contained <code>longList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>longList</code> container
+         */
         public java.util.List<Long> mutableLongList() {
             optionals.set(4);
             modified.set(4);
@@ -3623,7 +3623,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of doubleList.
+         * Set the <code>doubleList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3641,7 +3641,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to doubleList.
+         * Adds entries to the <code>doubleList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3658,7 +3658,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the doubleList field.
+         * Checks for presence of the <code>doubleList</code> field.
          *
          * @return True if doubleList has been set.
          */
@@ -3667,7 +3667,8 @@ public class Containers
         }
 
         /**
-         * Checks if doubleList has been modified since the _Builder was created.
+         * Checks if the <code>doubleList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if doubleList has been modified.
          */
@@ -3676,7 +3677,7 @@ public class Containers
         }
 
         /**
-         * Clears the doubleList field.
+         * Clear the <code>doubleList</code> field.
          *
          * @return The builder
          */
@@ -3689,11 +3690,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained doubleList.
+         * Get the builder for the contained <code>doubleList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>doubleList</code> container
+         */
         public java.util.List<Double> mutableDoubleList() {
             optionals.set(5);
             modified.set(5);
@@ -3707,7 +3711,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of stringList.
+         * Set the <code>stringList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3725,7 +3729,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to stringList.
+         * Adds entries to the <code>stringList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3742,7 +3746,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the stringList field.
+         * Checks for presence of the <code>stringList</code> field.
          *
          * @return True if stringList has been set.
          */
@@ -3751,7 +3755,8 @@ public class Containers
         }
 
         /**
-         * Checks if stringList has been modified since the _Builder was created.
+         * Checks if the <code>stringList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if stringList has been modified.
          */
@@ -3760,7 +3765,7 @@ public class Containers
         }
 
         /**
-         * Clears the stringList field.
+         * Clear the <code>stringList</code> field.
          *
          * @return The builder
          */
@@ -3773,11 +3778,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained stringList.
+         * Get the builder for the contained <code>stringList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>stringList</code> container
+         */
         public java.util.List<String> mutableStringList() {
             optionals.set(6);
             modified.set(6);
@@ -3791,7 +3799,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of binaryList.
+         * Set the <code>binaryList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3809,7 +3817,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to binaryList.
+         * Adds entries to the <code>binaryList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -3826,7 +3834,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the binaryList field.
+         * Checks for presence of the <code>binaryList</code> field.
          *
          * @return True if binaryList has been set.
          */
@@ -3835,7 +3843,8 @@ public class Containers
         }
 
         /**
-         * Checks if binaryList has been modified since the _Builder was created.
+         * Checks if the <code>binaryList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if binaryList has been modified.
          */
@@ -3844,7 +3853,7 @@ public class Containers
         }
 
         /**
-         * Clears the binaryList field.
+         * Clear the <code>binaryList</code> field.
          *
          * @return The builder
          */
@@ -3857,11 +3866,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained binaryList.
+         * Get the builder for the contained <code>binaryList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>binaryList</code> container
+         */
         public java.util.List<net.morimekta.util.Binary> mutableBinaryList() {
             optionals.set(7);
             modified.set(7);
@@ -3875,7 +3887,7 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Set the <code>booleanSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3893,7 +3905,7 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Adds entries to the <code>booleanSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -3910,7 +3922,7 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Checks for presence of the <code>booleanSet</code> field.
          *
          * @return True if booleanSet has been set.
          */
@@ -3919,7 +3931,8 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Checks if the <code>booleanSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if booleanSet has been modified.
          */
@@ -3928,7 +3941,7 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Clear the <code>booleanSet</code> field.
          *
          * @return The builder
          */
@@ -3941,11 +3954,14 @@ public class Containers
         }
 
         /**
-         * all types as set&lt;x&gt;.
+         * Get the builder for the contained <code>booleanSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>booleanSet</code> container
+         */
         public java.util.Set<Boolean> mutableBooleanSet() {
             optionals.set(8);
             modified.set(8);
@@ -3959,7 +3975,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of byteSet.
+         * Set the <code>byteSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -3977,7 +3993,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to byteSet.
+         * Adds entries to the <code>byteSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -3994,7 +4010,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the byteSet field.
+         * Checks for presence of the <code>byteSet</code> field.
          *
          * @return True if byteSet has been set.
          */
@@ -4003,7 +4019,8 @@ public class Containers
         }
 
         /**
-         * Checks if byteSet has been modified since the _Builder was created.
+         * Checks if the <code>byteSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if byteSet has been modified.
          */
@@ -4012,7 +4029,7 @@ public class Containers
         }
 
         /**
-         * Clears the byteSet field.
+         * Clear the <code>byteSet</code> field.
          *
          * @return The builder
          */
@@ -4025,11 +4042,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained byteSet.
+         * Get the builder for the contained <code>byteSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>byteSet</code> container
+         */
         public java.util.Set<Byte> mutableByteSet() {
             optionals.set(9);
             modified.set(9);
@@ -4043,7 +4063,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of shortSet.
+         * Set the <code>shortSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4061,7 +4081,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to shortSet.
+         * Adds entries to the <code>shortSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4078,7 +4098,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the shortSet field.
+         * Checks for presence of the <code>shortSet</code> field.
          *
          * @return True if shortSet has been set.
          */
@@ -4087,7 +4107,8 @@ public class Containers
         }
 
         /**
-         * Checks if shortSet has been modified since the _Builder was created.
+         * Checks if the <code>shortSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if shortSet has been modified.
          */
@@ -4096,7 +4117,7 @@ public class Containers
         }
 
         /**
-         * Clears the shortSet field.
+         * Clear the <code>shortSet</code> field.
          *
          * @return The builder
          */
@@ -4109,11 +4130,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained shortSet.
+         * Get the builder for the contained <code>shortSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>shortSet</code> container
+         */
         public java.util.Set<Short> mutableShortSet() {
             optionals.set(10);
             modified.set(10);
@@ -4127,7 +4151,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of integerSet.
+         * Set the <code>integerSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4145,7 +4169,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to integerSet.
+         * Adds entries to the <code>integerSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4162,7 +4186,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the integerSet field.
+         * Checks for presence of the <code>integerSet</code> field.
          *
          * @return True if integerSet has been set.
          */
@@ -4171,7 +4195,8 @@ public class Containers
         }
 
         /**
-         * Checks if integerSet has been modified since the _Builder was created.
+         * Checks if the <code>integerSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if integerSet has been modified.
          */
@@ -4180,7 +4205,7 @@ public class Containers
         }
 
         /**
-         * Clears the integerSet field.
+         * Clear the <code>integerSet</code> field.
          *
          * @return The builder
          */
@@ -4193,11 +4218,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained integerSet.
+         * Get the builder for the contained <code>integerSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>integerSet</code> container
+         */
         public java.util.Set<Integer> mutableIntegerSet() {
             optionals.set(11);
             modified.set(11);
@@ -4211,7 +4239,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of longSet.
+         * Set the <code>longSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4229,7 +4257,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to longSet.
+         * Adds entries to the <code>longSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4246,7 +4274,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the longSet field.
+         * Checks for presence of the <code>longSet</code> field.
          *
          * @return True if longSet has been set.
          */
@@ -4255,7 +4283,8 @@ public class Containers
         }
 
         /**
-         * Checks if longSet has been modified since the _Builder was created.
+         * Checks if the <code>longSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if longSet has been modified.
          */
@@ -4264,7 +4293,7 @@ public class Containers
         }
 
         /**
-         * Clears the longSet field.
+         * Clear the <code>longSet</code> field.
          *
          * @return The builder
          */
@@ -4277,11 +4306,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained longSet.
+         * Get the builder for the contained <code>longSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>longSet</code> container
+         */
         public java.util.Set<Long> mutableLongSet() {
             optionals.set(12);
             modified.set(12);
@@ -4295,7 +4327,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of doubleSet.
+         * Set the <code>doubleSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4313,7 +4345,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to doubleSet.
+         * Adds entries to the <code>doubleSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4330,7 +4362,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the doubleSet field.
+         * Checks for presence of the <code>doubleSet</code> field.
          *
          * @return True if doubleSet has been set.
          */
@@ -4339,7 +4371,8 @@ public class Containers
         }
 
         /**
-         * Checks if doubleSet has been modified since the _Builder was created.
+         * Checks if the <code>doubleSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if doubleSet has been modified.
          */
@@ -4348,7 +4381,7 @@ public class Containers
         }
 
         /**
-         * Clears the doubleSet field.
+         * Clear the <code>doubleSet</code> field.
          *
          * @return The builder
          */
@@ -4361,11 +4394,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained doubleSet.
+         * Get the builder for the contained <code>doubleSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>doubleSet</code> container
+         */
         public java.util.Set<Double> mutableDoubleSet() {
             optionals.set(13);
             modified.set(13);
@@ -4379,7 +4415,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of stringSet.
+         * Set the <code>stringSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4397,7 +4433,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to stringSet.
+         * Adds entries to the <code>stringSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4414,7 +4450,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the stringSet field.
+         * Checks for presence of the <code>stringSet</code> field.
          *
          * @return True if stringSet has been set.
          */
@@ -4423,7 +4459,8 @@ public class Containers
         }
 
         /**
-         * Checks if stringSet has been modified since the _Builder was created.
+         * Checks if the <code>stringSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if stringSet has been modified.
          */
@@ -4432,7 +4469,7 @@ public class Containers
         }
 
         /**
-         * Clears the stringSet field.
+         * Clear the <code>stringSet</code> field.
          *
          * @return The builder
          */
@@ -4445,11 +4482,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained stringSet.
+         * Get the builder for the contained <code>stringSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>stringSet</code> container
+         */
         public java.util.Set<String> mutableStringSet() {
             optionals.set(14);
             modified.set(14);
@@ -4463,7 +4503,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of binarySet.
+         * Set the <code>binarySet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4481,7 +4521,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to binarySet.
+         * Adds entries to the <code>binarySet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -4498,7 +4538,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the binarySet field.
+         * Checks for presence of the <code>binarySet</code> field.
          *
          * @return True if binarySet has been set.
          */
@@ -4507,7 +4547,8 @@ public class Containers
         }
 
         /**
-         * Checks if binarySet has been modified since the _Builder was created.
+         * Checks if the <code>binarySet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if binarySet has been modified.
          */
@@ -4516,7 +4557,7 @@ public class Containers
         }
 
         /**
-         * Clears the binarySet field.
+         * Clear the <code>binarySet</code> field.
          *
          * @return The builder
          */
@@ -4529,11 +4570,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained binarySet.
+         * Get the builder for the contained <code>binarySet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>binarySet</code> container
+         */
         public java.util.Set<net.morimekta.util.Binary> mutableBinarySet() {
             optionals.set(15);
             modified.set(15);
@@ -4547,7 +4591,7 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Set the <code>booleanMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4565,7 +4609,7 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Adds a mapping to the <code>booleanMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4580,7 +4624,7 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Checks for presence of the <code>booleanMap</code> field.
          *
          * @return True if booleanMap has been set.
          */
@@ -4589,7 +4633,8 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Checks if the <code>booleanMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if booleanMap has been modified.
          */
@@ -4598,7 +4643,7 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Clear the <code>booleanMap</code> field.
          *
          * @return The builder
          */
@@ -4611,11 +4656,14 @@ public class Containers
         }
 
         /**
-         * all types as map&lt;x,x&gt;.
+         * Get the builder for the contained <code>booleanMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>booleanMap</code> container
+         */
         public java.util.Map<Boolean,Boolean> mutableBooleanMap() {
             optionals.set(16);
             modified.set(16);
@@ -4629,7 +4677,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of byteMap.
+         * Set the <code>byteMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4647,7 +4695,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to byteMap.
+         * Adds a mapping to the <code>byteMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4662,7 +4710,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the byteMap field.
+         * Checks for presence of the <code>byteMap</code> field.
          *
          * @return True if byteMap has been set.
          */
@@ -4671,7 +4719,8 @@ public class Containers
         }
 
         /**
-         * Checks if byteMap has been modified since the _Builder was created.
+         * Checks if the <code>byteMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if byteMap has been modified.
          */
@@ -4680,7 +4729,7 @@ public class Containers
         }
 
         /**
-         * Clears the byteMap field.
+         * Clear the <code>byteMap</code> field.
          *
          * @return The builder
          */
@@ -4693,11 +4742,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained byteMap.
+         * Get the builder for the contained <code>byteMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>byteMap</code> container
+         */
         public java.util.Map<Byte,Byte> mutableByteMap() {
             optionals.set(17);
             modified.set(17);
@@ -4711,7 +4763,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of shortMap.
+         * Set the <code>shortMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4729,7 +4781,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to shortMap.
+         * Adds a mapping to the <code>shortMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4744,7 +4796,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the shortMap field.
+         * Checks for presence of the <code>shortMap</code> field.
          *
          * @return True if shortMap has been set.
          */
@@ -4753,7 +4805,8 @@ public class Containers
         }
 
         /**
-         * Checks if shortMap has been modified since the _Builder was created.
+         * Checks if the <code>shortMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if shortMap has been modified.
          */
@@ -4762,7 +4815,7 @@ public class Containers
         }
 
         /**
-         * Clears the shortMap field.
+         * Clear the <code>shortMap</code> field.
          *
          * @return The builder
          */
@@ -4775,11 +4828,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained shortMap.
+         * Get the builder for the contained <code>shortMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>shortMap</code> container
+         */
         public java.util.Map<Short,Short> mutableShortMap() {
             optionals.set(18);
             modified.set(18);
@@ -4793,7 +4849,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of integerMap.
+         * Set the <code>integerMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4811,7 +4867,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to integerMap.
+         * Adds a mapping to the <code>integerMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4826,7 +4882,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the integerMap field.
+         * Checks for presence of the <code>integerMap</code> field.
          *
          * @return True if integerMap has been set.
          */
@@ -4835,7 +4891,8 @@ public class Containers
         }
 
         /**
-         * Checks if integerMap has been modified since the _Builder was created.
+         * Checks if the <code>integerMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if integerMap has been modified.
          */
@@ -4844,7 +4901,7 @@ public class Containers
         }
 
         /**
-         * Clears the integerMap field.
+         * Clear the <code>integerMap</code> field.
          *
          * @return The builder
          */
@@ -4857,11 +4914,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained integerMap.
+         * Get the builder for the contained <code>integerMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>integerMap</code> container
+         */
         public java.util.Map<Integer,Integer> mutableIntegerMap() {
             optionals.set(19);
             modified.set(19);
@@ -4875,7 +4935,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of longMap.
+         * Set the <code>longMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4893,7 +4953,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to longMap.
+         * Adds a mapping to the <code>longMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4908,7 +4968,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the longMap field.
+         * Checks for presence of the <code>longMap</code> field.
          *
          * @return True if longMap has been set.
          */
@@ -4917,7 +4977,8 @@ public class Containers
         }
 
         /**
-         * Checks if longMap has been modified since the _Builder was created.
+         * Checks if the <code>longMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if longMap has been modified.
          */
@@ -4926,7 +4987,7 @@ public class Containers
         }
 
         /**
-         * Clears the longMap field.
+         * Clear the <code>longMap</code> field.
          *
          * @return The builder
          */
@@ -4939,11 +5000,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained longMap.
+         * Get the builder for the contained <code>longMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>longMap</code> container
+         */
         public java.util.Map<Long,Long> mutableLongMap() {
             optionals.set(20);
             modified.set(20);
@@ -4957,7 +5021,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of doubleMap.
+         * Set the <code>doubleMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -4975,7 +5039,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to doubleMap.
+         * Adds a mapping to the <code>doubleMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -4990,7 +5054,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the doubleMap field.
+         * Checks for presence of the <code>doubleMap</code> field.
          *
          * @return True if doubleMap has been set.
          */
@@ -4999,7 +5063,8 @@ public class Containers
         }
 
         /**
-         * Checks if doubleMap has been modified since the _Builder was created.
+         * Checks if the <code>doubleMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if doubleMap has been modified.
          */
@@ -5008,7 +5073,7 @@ public class Containers
         }
 
         /**
-         * Clears the doubleMap field.
+         * Clear the <code>doubleMap</code> field.
          *
          * @return The builder
          */
@@ -5021,11 +5086,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained doubleMap.
+         * Get the builder for the contained <code>doubleMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>doubleMap</code> container
+         */
         public java.util.Map<Double,Double> mutableDoubleMap() {
             optionals.set(21);
             modified.set(21);
@@ -5039,7 +5107,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of stringMap.
+         * Set the <code>stringMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5057,7 +5125,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to stringMap.
+         * Adds a mapping to the <code>stringMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -5072,7 +5140,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the stringMap field.
+         * Checks for presence of the <code>stringMap</code> field.
          *
          * @return True if stringMap has been set.
          */
@@ -5081,7 +5149,8 @@ public class Containers
         }
 
         /**
-         * Checks if stringMap has been modified since the _Builder was created.
+         * Checks if the <code>stringMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if stringMap has been modified.
          */
@@ -5090,7 +5159,7 @@ public class Containers
         }
 
         /**
-         * Clears the stringMap field.
+         * Clear the <code>stringMap</code> field.
          *
          * @return The builder
          */
@@ -5103,11 +5172,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained stringMap.
+         * Get the builder for the contained <code>stringMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>stringMap</code> container
+         */
         public java.util.Map<String,String> mutableStringMap() {
             optionals.set(22);
             modified.set(22);
@@ -5121,7 +5193,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of binaryMap.
+         * Set the <code>binaryMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5139,7 +5211,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to binaryMap.
+         * Adds a mapping to the <code>binaryMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -5154,7 +5226,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the binaryMap field.
+         * Checks for presence of the <code>binaryMap</code> field.
          *
          * @return True if binaryMap has been set.
          */
@@ -5163,7 +5235,8 @@ public class Containers
         }
 
         /**
-         * Checks if binaryMap has been modified since the _Builder was created.
+         * Checks if the <code>binaryMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if binaryMap has been modified.
          */
@@ -5172,7 +5245,7 @@ public class Containers
         }
 
         /**
-         * Clears the binaryMap field.
+         * Clear the <code>binaryMap</code> field.
          *
          * @return The builder
          */
@@ -5185,11 +5258,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained binaryMap.
+         * Get the builder for the contained <code>binaryMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>binaryMap</code> container
+         */
         public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
             optionals.set(23);
             modified.set(23);
@@ -5203,7 +5279,7 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Set the <code>enumList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5221,7 +5297,7 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Adds entries to the <code>enumList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -5238,7 +5314,7 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Checks for presence of the <code>enumList</code> field.
          *
          * @return True if enumList has been set.
          */
@@ -5247,7 +5323,8 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Checks if the <code>enumList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if enumList has been modified.
          */
@@ -5256,7 +5333,7 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Clear the <code>enumList</code> field.
          *
          * @return The builder
          */
@@ -5269,11 +5346,14 @@ public class Containers
         }
 
         /**
-         * Using enum as key and value in containers.
+         * Get the builder for the contained <code>enumList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>enumList</code> container
+         */
         public java.util.List<net.morimekta.test.providence.core.Value> mutableEnumList() {
             optionals.set(24);
             modified.set(24);
@@ -5287,7 +5367,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of enumSet.
+         * Set the <code>enumSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5305,7 +5385,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to enumSet.
+         * Adds entries to the <code>enumSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -5322,7 +5402,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the enumSet field.
+         * Checks for presence of the <code>enumSet</code> field.
          *
          * @return True if enumSet has been set.
          */
@@ -5331,7 +5411,8 @@ public class Containers
         }
 
         /**
-         * Checks if enumSet has been modified since the _Builder was created.
+         * Checks if the <code>enumSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if enumSet has been modified.
          */
@@ -5340,7 +5421,7 @@ public class Containers
         }
 
         /**
-         * Clears the enumSet field.
+         * Clear the <code>enumSet</code> field.
          *
          * @return The builder
          */
@@ -5353,11 +5434,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained enumSet.
+         * Get the builder for the contained <code>enumSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>enumSet</code> container
+         */
         public java.util.Set<net.morimekta.test.providence.core.Value> mutableEnumSet() {
             optionals.set(25);
             modified.set(25);
@@ -5371,7 +5455,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of enumMap.
+         * Set the <code>enumMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5389,7 +5473,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to enumMap.
+         * Adds a mapping to the <code>enumMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -5404,7 +5488,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the enumMap field.
+         * Checks for presence of the <code>enumMap</code> field.
          *
          * @return True if enumMap has been set.
          */
@@ -5413,7 +5497,8 @@ public class Containers
         }
 
         /**
-         * Checks if enumMap has been modified since the _Builder was created.
+         * Checks if the <code>enumMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if enumMap has been modified.
          */
@@ -5422,7 +5507,7 @@ public class Containers
         }
 
         /**
-         * Clears the enumMap field.
+         * Clear the <code>enumMap</code> field.
          *
          * @return The builder
          */
@@ -5435,11 +5520,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained enumMap.
+         * Get the builder for the contained <code>enumMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>enumMap</code> container
+         */
         public java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mutableEnumMap() {
             optionals.set(26);
             modified.set(26);
@@ -5453,7 +5541,7 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Set the <code>messageList</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5471,7 +5559,7 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Adds entries to the <code>messageList</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -5488,7 +5576,7 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Checks for presence of the <code>messageList</code> field.
          *
          * @return True if messageList has been set.
          */
@@ -5497,7 +5585,8 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Checks if the <code>messageList</code> field has been modified since the
+         * builder was created.
          *
          * @return True if messageList has been modified.
          */
@@ -5506,7 +5595,7 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Clear the <code>messageList</code> field.
          *
          * @return The builder
          */
@@ -5519,11 +5608,14 @@ public class Containers
         }
 
         /**
-         * Using struct as key and value in containers.
+         * Get the builder for the contained <code>messageList</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>messageList</code> container
+         */
         public java.util.List<net.morimekta.test.providence.core.DefaultFields> mutableMessageList() {
             optionals.set(27);
             modified.set(27);
@@ -5537,7 +5629,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of messageSet.
+         * Set the <code>messageSet</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5555,7 +5647,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to messageSet.
+         * Adds entries to the <code>messageSet</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -5572,7 +5664,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the messageSet field.
+         * Checks for presence of the <code>messageSet</code> field.
          *
          * @return True if messageSet has been set.
          */
@@ -5581,7 +5673,8 @@ public class Containers
         }
 
         /**
-         * Checks if messageSet has been modified since the _Builder was created.
+         * Checks if the <code>messageSet</code> field has been modified since the
+         * builder was created.
          *
          * @return True if messageSet has been modified.
          */
@@ -5590,7 +5683,7 @@ public class Containers
         }
 
         /**
-         * Clears the messageSet field.
+         * Clear the <code>messageSet</code> field.
          *
          * @return The builder
          */
@@ -5603,11 +5696,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained messageSet.
+         * Get the builder for the contained <code>messageSet</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>messageSet</code> container
+         */
         public java.util.Set<net.morimekta.test.providence.core.DefaultFields> mutableMessageSet() {
             optionals.set(28);
             modified.set(28);
@@ -5621,7 +5717,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of messageMap.
+         * Set the <code>messageMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5639,7 +5735,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to messageMap.
+         * Adds a mapping to the <code>messageMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -5654,7 +5750,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the messageMap field.
+         * Checks for presence of the <code>messageMap</code> field.
          *
          * @return True if messageMap has been set.
          */
@@ -5663,7 +5759,8 @@ public class Containers
         }
 
         /**
-         * Checks if messageMap has been modified since the _Builder was created.
+         * Checks if the <code>messageMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if messageMap has been modified.
          */
@@ -5672,7 +5769,7 @@ public class Containers
         }
 
         /**
-         * Clears the messageMap field.
+         * Clear the <code>messageMap</code> field.
          *
          * @return The builder
          */
@@ -5685,11 +5782,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained messageMap.
+         * Get the builder for the contained <code>messageMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>messageMap</code> container
+         */
         public java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mutableMessageMap() {
             optionals.set(29);
             modified.set(29);
@@ -5703,7 +5803,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of messageKeyMap.
+         * Set the <code>messageKeyMap</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5721,7 +5821,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to messageKeyMap.
+         * Adds a mapping to the <code>messageKeyMap</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -5736,7 +5836,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the messageKeyMap field.
+         * Checks for presence of the <code>messageKeyMap</code> field.
          *
          * @return True if messageKeyMap has been set.
          */
@@ -5745,7 +5845,8 @@ public class Containers
         }
 
         /**
-         * Checks if messageKeyMap has been modified since the _Builder was created.
+         * Checks if the <code>messageKeyMap</code> field has been modified since the
+         * builder was created.
          *
          * @return True if messageKeyMap has been modified.
          */
@@ -5754,7 +5855,7 @@ public class Containers
         }
 
         /**
-         * Clears the messageKeyMap field.
+         * Clear the <code>messageKeyMap</code> field.
          *
          * @return The builder
          */
@@ -5767,11 +5868,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained messageKeyMap.
+         * Get the builder for the contained <code>messageKeyMap</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>messageKeyMap</code> container
+         */
         public java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mutableMessageKeyMap() {
             optionals.set(30);
             modified.set(30);
@@ -5785,7 +5889,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of requiredFields.
+         * Set the <code>requiredFields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5804,7 +5908,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of requiredFields.
+         * Set the <code>requiredFields</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -5815,7 +5919,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the requiredFields field.
+         * Checks for presence of the <code>requiredFields</code> field.
          *
          * @return True if requiredFields has been set.
          */
@@ -5824,7 +5928,8 @@ public class Containers
         }
 
         /**
-         * Checks if requiredFields has been modified since the _Builder was created.
+         * Checks if the <code>requiredFields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if requiredFields has been modified.
          */
@@ -5833,7 +5938,7 @@ public class Containers
         }
 
         /**
-         * Clears the requiredFields field.
+         * Clear the <code>requiredFields</code> field.
          *
          * @return The builder
          */
@@ -5847,9 +5952,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained requiredFields.
+         * Get the builder for the contained <code>requiredFields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.RequiredFields._Builder mutableRequiredFields() {
@@ -5866,8 +5971,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained requiredFields.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.RequiredFields getRequiredFields() {
@@ -5879,7 +5982,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of defaultFields.
+         * Set the <code>defaultFields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5898,7 +6001,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of defaultFields.
+         * Set the <code>defaultFields</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -5909,7 +6012,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the defaultFields field.
+         * Checks for presence of the <code>defaultFields</code> field.
          *
          * @return True if defaultFields has been set.
          */
@@ -5918,7 +6021,8 @@ public class Containers
         }
 
         /**
-         * Checks if defaultFields has been modified since the _Builder was created.
+         * Checks if the <code>defaultFields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if defaultFields has been modified.
          */
@@ -5927,7 +6031,7 @@ public class Containers
         }
 
         /**
-         * Clears the defaultFields field.
+         * Clear the <code>defaultFields</code> field.
          *
          * @return The builder
          */
@@ -5941,9 +6045,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained defaultFields.
+         * Get the builder for the contained <code>defaultFields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.DefaultFields._Builder mutableDefaultFields() {
@@ -5960,8 +6064,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained defaultFields.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.DefaultFields getDefaultFields() {
@@ -5973,7 +6075,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of optionalFields.
+         * Set the <code>optionalFields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -5992,7 +6094,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of optionalFields.
+         * Set the <code>optionalFields</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -6003,7 +6105,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the optionalFields field.
+         * Checks for presence of the <code>optionalFields</code> field.
          *
          * @return True if optionalFields has been set.
          */
@@ -6012,7 +6114,8 @@ public class Containers
         }
 
         /**
-         * Checks if optionalFields has been modified since the _Builder was created.
+         * Checks if the <code>optionalFields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if optionalFields has been modified.
          */
@@ -6021,7 +6124,7 @@ public class Containers
         }
 
         /**
-         * Clears the optionalFields field.
+         * Clear the <code>optionalFields</code> field.
          *
          * @return The builder
          */
@@ -6035,9 +6138,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained optionalFields.
+         * Get the builder for the contained <code>optionalFields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.OptionalFields._Builder mutableOptionalFields() {
@@ -6054,8 +6157,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained optionalFields.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.OptionalFields getOptionalFields() {
@@ -6067,7 +6168,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of unionFields.
+         * Set the <code>unionFields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6086,7 +6187,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of unionFields.
+         * Set the <code>unionFields</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -6097,7 +6198,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the unionFields field.
+         * Checks for presence of the <code>unionFields</code> field.
          *
          * @return True if unionFields has been set.
          */
@@ -6106,7 +6207,8 @@ public class Containers
         }
 
         /**
-         * Checks if unionFields has been modified since the _Builder was created.
+         * Checks if the <code>unionFields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if unionFields has been modified.
          */
@@ -6115,7 +6217,7 @@ public class Containers
         }
 
         /**
-         * Clears the unionFields field.
+         * Clear the <code>unionFields</code> field.
          *
          * @return The builder
          */
@@ -6129,9 +6231,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained unionFields.
+         * Get the builder for the contained <code>unionFields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.UnionFields._Builder mutableUnionFields() {
@@ -6148,8 +6250,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained unionFields.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.UnionFields getUnionFields() {
@@ -6161,7 +6261,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of exceptionFields.
+         * Set the <code>exceptionFields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6180,7 +6280,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of exceptionFields.
+         * Set the <code>exceptionFields</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -6191,7 +6291,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the exceptionFields field.
+         * Checks for presence of the <code>exceptionFields</code> field.
          *
          * @return True if exceptionFields has been set.
          */
@@ -6200,7 +6300,8 @@ public class Containers
         }
 
         /**
-         * Checks if exceptionFields has been modified since the _Builder was created.
+         * Checks if the <code>exceptionFields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if exceptionFields has been modified.
          */
@@ -6209,7 +6310,7 @@ public class Containers
         }
 
         /**
-         * Clears the exceptionFields field.
+         * Clear the <code>exceptionFields</code> field.
          *
          * @return The builder
          */
@@ -6223,9 +6324,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained exceptionFields.
+         * Get the builder for the contained <code>exceptionFields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.ExceptionFields._Builder mutableExceptionFields() {
@@ -6242,8 +6343,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained exceptionFields.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.ExceptionFields getExceptionFields() {
@@ -6255,7 +6354,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of defaultValues.
+         * Set the <code>defaultValues</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6274,7 +6373,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of defaultValues.
+         * Set the <code>defaultValues</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -6285,7 +6384,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the defaultValues field.
+         * Checks for presence of the <code>defaultValues</code> field.
          *
          * @return True if defaultValues has been set.
          */
@@ -6294,7 +6393,8 @@ public class Containers
         }
 
         /**
-         * Checks if defaultValues has been modified since the _Builder was created.
+         * Checks if the <code>defaultValues</code> field has been modified since the
+         * builder was created.
          *
          * @return True if defaultValues has been modified.
          */
@@ -6303,7 +6403,7 @@ public class Containers
         }
 
         /**
-         * Clears the defaultValues field.
+         * Clear the <code>defaultValues</code> field.
          *
          * @return The builder
          */
@@ -6317,9 +6417,9 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained defaultValues.
+         * Get the builder for the contained <code>defaultValues</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.DefaultValues._Builder mutableDefaultValues() {
@@ -6336,8 +6436,6 @@ public class Containers
         }
 
         /**
-         * Gets the value for the contained defaultValues.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.DefaultValues getDefaultValues() {
@@ -6349,7 +6447,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of map_list_compact.
+         * Set the <code>map_list_compact</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6367,7 +6465,7 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to map_list_compact.
+         * Adds a mapping to the <code>map_list_compact</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -6382,7 +6480,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the map_list_compact field.
+         * Checks for presence of the <code>map_list_compact</code> field.
          *
          * @return True if map_list_compact has been set.
          */
@@ -6391,7 +6489,8 @@ public class Containers
         }
 
         /**
-         * Checks if map_list_compact has been modified since the _Builder was created.
+         * Checks if the <code>map_list_compact</code> field has been modified since the
+         * builder was created.
          *
          * @return True if map_list_compact has been modified.
          */
@@ -6400,7 +6499,7 @@ public class Containers
         }
 
         /**
-         * Clears the map_list_compact field.
+         * Clear the <code>map_list_compact</code> field.
          *
          * @return The builder
          */
@@ -6413,11 +6512,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained map_list_compact.
+         * Get the builder for the contained <code>map_list_compact</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>map_list_compact</code> container
+         */
         public java.util.Map<Integer,java.util.List<net.morimekta.test.providence.core.CompactFields>> mutableMapListCompact() {
             optionals.set(37);
             modified.set(37);
@@ -6431,7 +6533,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of list_map_numbers.
+         * Set the <code>list_map_numbers</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6449,7 +6551,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to list_map_numbers.
+         * Adds entries to the <code>list_map_numbers</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -6466,7 +6568,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the list_map_numbers field.
+         * Checks for presence of the <code>list_map_numbers</code> field.
          *
          * @return True if list_map_numbers has been set.
          */
@@ -6475,7 +6577,8 @@ public class Containers
         }
 
         /**
-         * Checks if list_map_numbers has been modified since the _Builder was created.
+         * Checks if the <code>list_map_numbers</code> field has been modified since the
+         * builder was created.
          *
          * @return True if list_map_numbers has been modified.
          */
@@ -6484,7 +6587,7 @@ public class Containers
         }
 
         /**
-         * Clears the list_map_numbers field.
+         * Clear the <code>list_map_numbers</code> field.
          *
          * @return The builder
          */
@@ -6497,11 +6600,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained list_map_numbers.
+         * Get the builder for the contained <code>list_map_numbers</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>list_map_numbers</code> container
+         */
         public java.util.List<java.util.Map<Integer,Integer>> mutableListMapNumbers() {
             optionals.set(38);
             modified.set(38);
@@ -6515,7 +6621,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of set_list_numbers.
+         * Set the <code>set_list_numbers</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6533,7 +6639,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to set_list_numbers.
+         * Adds entries to the <code>set_list_numbers</code> set.
          *
          * @param values The added value
          * @return The builder
@@ -6550,7 +6656,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the set_list_numbers field.
+         * Checks for presence of the <code>set_list_numbers</code> field.
          *
          * @return True if set_list_numbers has been set.
          */
@@ -6559,7 +6665,8 @@ public class Containers
         }
 
         /**
-         * Checks if set_list_numbers has been modified since the _Builder was created.
+         * Checks if the <code>set_list_numbers</code> field has been modified since the
+         * builder was created.
          *
          * @return True if set_list_numbers has been modified.
          */
@@ -6568,7 +6675,7 @@ public class Containers
         }
 
         /**
-         * Clears the set_list_numbers field.
+         * Clear the <code>set_list_numbers</code> field.
          *
          * @return The builder
          */
@@ -6581,11 +6688,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained set_list_numbers.
+         * Get the builder for the contained <code>set_list_numbers</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>set_list_numbers</code> container
+         */
         public java.util.Set<java.util.List<Integer>> mutableSetListNumbers() {
             optionals.set(39);
             modified.set(39);
@@ -6599,7 +6709,7 @@ public class Containers
         }
 
         /**
-         * Sets the value of list_list_numbers.
+         * Set the <code>list_list_numbers</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -6617,7 +6727,7 @@ public class Containers
         }
 
         /**
-         * Adds entries to list_list_numbers.
+         * Adds entries to the <code>list_list_numbers</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -6634,7 +6744,7 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the list_list_numbers field.
+         * Checks for presence of the <code>list_list_numbers</code> field.
          *
          * @return True if list_list_numbers has been set.
          */
@@ -6643,7 +6753,8 @@ public class Containers
         }
 
         /**
-         * Checks if list_list_numbers has been modified since the _Builder was created.
+         * Checks if the <code>list_list_numbers</code> field has been modified since the
+         * builder was created.
          *
          * @return True if list_list_numbers has been modified.
          */
@@ -6652,7 +6763,7 @@ public class Containers
         }
 
         /**
-         * Clears the list_list_numbers field.
+         * Clear the <code>list_list_numbers</code> field.
          *
          * @return The builder
          */
@@ -6665,11 +6776,14 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained list_list_numbers.
+         * Get the builder for the contained <code>list_list_numbers</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>list_list_numbers</code> container
+         */
         public java.util.List<java.util.List<Integer>> mutableListListNumbers() {
             optionals.set(40);
             modified.set(40);

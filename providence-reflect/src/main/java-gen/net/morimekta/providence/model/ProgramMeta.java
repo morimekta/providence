@@ -47,7 +47,7 @@ public class ProgramMeta
     /**
      * Full absolute path to the file.
      *
-     * @return The field value
+     * @return The <code>file_path</code> value
      */
     public String getFilePath() {
         return mFilePath;
@@ -56,7 +56,7 @@ public class ProgramMeta
     /**
      * Full absolute path to the file.
      *
-     * @return Optional field value
+     * @return Optional of the <code>file_path</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalFilePath() {
@@ -74,7 +74,7 @@ public class ProgramMeta
     /**
      * The lines of the program file
      *
-     * @return The field value
+     * @return The <code>file_lines</code> value
      */
     public java.util.List<String> getFileLines() {
         return mFileLines;
@@ -83,7 +83,7 @@ public class ProgramMeta
     /**
      * The lines of the program file
      *
-     * @return Optional field value
+     * @return Optional of the <code>file_lines</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<String>> optionalFileLines() {
@@ -97,7 +97,7 @@ public class ProgramMeta
     /**
      * The program type definition
      *
-     * @return The field value
+     * @return The <code>program</code> value
      */
     public net.morimekta.providence.model.ProgramType getProgram() {
         return mProgram;
@@ -106,7 +106,7 @@ public class ProgramMeta
     /**
      * The program type definition
      *
-     * @return Optional field value
+     * @return Optional of the <code>program</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.ProgramType> optionalProgram() {
@@ -124,7 +124,7 @@ public class ProgramMeta
     /**
      * Map of program name to meta of included programs
      *
-     * @return The field value
+     * @return The <code>includes</code> value
      */
     public java.util.Map<String,net.morimekta.providence.model.ProgramMeta> getIncludes() {
         return mIncludes;
@@ -133,7 +133,7 @@ public class ProgramMeta
     /**
      * Map of program name to meta of included programs
      *
-     * @return Optional field value
+     * @return Optional of the <code>includes</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,net.morimekta.providence.model.ProgramMeta>> optionalIncludes() {
@@ -484,7 +484,7 @@ public class ProgramMeta
     }
 
     /**
-     * Make a pmodel.ProgramMeta builder.
+     * Make a <code>pmodel.ProgramMeta</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -509,7 +509,7 @@ public class ProgramMeta
         private java.util.Map<String,net.morimekta.providence.model.ProgramMeta> mIncludes;
 
         /**
-         * Make a pmodel.ProgramMeta builder.
+         * Make a pmodel.ProgramMeta builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(4);
@@ -579,6 +579,8 @@ public class ProgramMeta
         }
 
         /**
+         * Set the <code>file_path</code> field value.
+         * <p>
          * Full absolute path to the file.
          *
          * @param value The new value
@@ -597,7 +599,7 @@ public class ProgramMeta
         }
 
         /**
-         * Full absolute path to the file.
+         * Checks for presence of the <code>file_path</code> field.
          *
          * @return True if file_path has been set.
          */
@@ -606,7 +608,8 @@ public class ProgramMeta
         }
 
         /**
-         * Full absolute path to the file.
+         * Checks if the <code>file_path</code> field has been modified since the
+         * builder was created.
          *
          * @return True if file_path has been modified.
          */
@@ -615,7 +618,7 @@ public class ProgramMeta
         }
 
         /**
-         * Full absolute path to the file.
+         * Clear the <code>file_path</code> field.
          *
          * @return The builder
          */
@@ -630,13 +633,15 @@ public class ProgramMeta
         /**
          * Full absolute path to the file.
          *
-         * @return The field value
+         * @return The <code>file_path</code> field value
          */
         public String getFilePath() {
             return mFilePath;
         }
 
         /**
+         * Set the <code>file_lines</code> field value.
+         * <p>
          * The lines of the program file
          *
          * @param value The new value
@@ -655,6 +660,8 @@ public class ProgramMeta
         }
 
         /**
+         * Adds entries to the <code>file_lines</code> list.
+         * <p>
          * The lines of the program file
          *
          * @param values The added value
@@ -672,7 +679,7 @@ public class ProgramMeta
         }
 
         /**
-         * The lines of the program file
+         * Checks for presence of the <code>file_lines</code> field.
          *
          * @return True if file_lines has been set.
          */
@@ -681,7 +688,8 @@ public class ProgramMeta
         }
 
         /**
-         * The lines of the program file
+         * Checks if the <code>file_lines</code> field has been modified since the
+         * builder was created.
          *
          * @return True if file_lines has been modified.
          */
@@ -690,7 +698,7 @@ public class ProgramMeta
         }
 
         /**
-         * The lines of the program file
+         * Clear the <code>file_lines</code> field.
          *
          * @return The builder
          */
@@ -703,11 +711,18 @@ public class ProgramMeta
         }
 
         /**
+         * Get the builder for the contained <code>file_lines</code> message field.
+         * <p>
          * The lines of the program file
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * The lines of the program file
+         *
+         * @return The mutable <code>file_lines</code> container
+         */
         public java.util.List<String> mutableFileLines() {
             optionals.set(1);
             modified.set(1);
@@ -721,6 +736,8 @@ public class ProgramMeta
         }
 
         /**
+         * Set the <code>program</code> field value.
+         * <p>
          * The program type definition
          *
          * @param value The new value
@@ -740,6 +757,8 @@ public class ProgramMeta
         }
 
         /**
+         * Set the <code>program</code> field value.
+         * <p>
          * The program type definition
          *
          * @param builder builder for the new value
@@ -751,7 +770,7 @@ public class ProgramMeta
         }
 
         /**
-         * The program type definition
+         * Checks for presence of the <code>program</code> field.
          *
          * @return True if program has been set.
          */
@@ -760,7 +779,8 @@ public class ProgramMeta
         }
 
         /**
-         * The program type definition
+         * Checks if the <code>program</code> field has been modified since the
+         * builder was created.
          *
          * @return True if program has been modified.
          */
@@ -769,7 +789,7 @@ public class ProgramMeta
         }
 
         /**
-         * The program type definition
+         * Clear the <code>program</code> field.
          *
          * @return The builder
          */
@@ -783,9 +803,11 @@ public class ProgramMeta
         }
 
         /**
+         * Get the builder for the contained <code>program</code> message field.
+         * <p>
          * The program type definition
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.ProgramType._Builder mutableProgram() {
@@ -815,6 +837,8 @@ public class ProgramMeta
         }
 
         /**
+         * Set the <code>includes</code> field value.
+         * <p>
          * Map of program name to meta of included programs
          *
          * @param value The new value
@@ -833,6 +857,8 @@ public class ProgramMeta
         }
 
         /**
+         * Adds a mapping to the <code>includes</code> map.
+         * <p>
          * Map of program name to meta of included programs
          *
          * @param key The inserted key
@@ -848,7 +874,7 @@ public class ProgramMeta
         }
 
         /**
-         * Map of program name to meta of included programs
+         * Checks for presence of the <code>includes</code> field.
          *
          * @return True if includes has been set.
          */
@@ -857,7 +883,8 @@ public class ProgramMeta
         }
 
         /**
-         * Map of program name to meta of included programs
+         * Checks if the <code>includes</code> field has been modified since the
+         * builder was created.
          *
          * @return True if includes has been modified.
          */
@@ -866,7 +893,7 @@ public class ProgramMeta
         }
 
         /**
-         * Map of program name to meta of included programs
+         * Clear the <code>includes</code> field.
          *
          * @return The builder
          */
@@ -879,11 +906,18 @@ public class ProgramMeta
         }
 
         /**
+         * Get the builder for the contained <code>includes</code> message field.
+         * <p>
          * Map of program name to meta of included programs
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * Map of program name to meta of included programs
+         *
+         * @return The mutable <code>includes</code> container
+         */
         public java.util.Map<String,net.morimekta.providence.model.ProgramMeta> mutableIncludes() {
             optionals.set(3);
             modified.set(3);

@@ -218,14 +218,14 @@ public class ContainerService {
         }
 
         /**
-         * @return The field value
+         * @return The <code>c</code> value
          */
         public net.morimekta.test.providence.core.no_rw_binary.Containers getC() {
             return mC;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>c</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.Containers> optionalC() {
@@ -465,7 +465,7 @@ public class ContainerService {
         }
 
         /**
-         * Make a providence.ContainerService.load.request builder.
+         * Make a <code>providence.ContainerService.load.request</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -481,7 +481,7 @@ public class ContainerService {
             private net.morimekta.test.providence.core.no_rw_binary.Containers._Builder mC_builder;
 
             /**
-             * Make a providence.ContainerService.load.request builder.
+             * Make a providence.ContainerService.load.request builder instance.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(1);
@@ -521,7 +521,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of c.
+             * Set the <code>c</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -540,7 +540,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of c.
+             * Set the <code>c</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -551,7 +551,7 @@ public class ContainerService {
             }
 
             /**
-             * Checks for presence of the c field.
+             * Checks for presence of the <code>c</code> field.
              *
              * @return True if c has been set.
              */
@@ -560,7 +560,8 @@ public class ContainerService {
             }
 
             /**
-             * Checks if c has been modified since the _Builder was created.
+             * Checks if the <code>c</code> field has been modified since the
+             * builder was created.
              *
              * @return True if c has been modified.
              */
@@ -569,7 +570,7 @@ public class ContainerService {
             }
 
             /**
-             * Clears the c field.
+             * Clear the <code>c</code> field.
              *
              * @return The builder
              */
@@ -583,9 +584,9 @@ public class ContainerService {
             }
 
             /**
-             * Gets the builder for the contained c.
+             * Get the builder for the contained <code>c</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.no_rw_binary.Containers._Builder mutableC() {
@@ -602,8 +603,6 @@ public class ContainerService {
             }
 
             /**
-             * Gets the value for the contained c.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.core.no_rw_binary.Containers getC() {
@@ -777,14 +776,14 @@ public class ContainerService {
         }
 
         /**
-         * @return The field value
+         * @return The <code>success</code> value
          */
         public net.morimekta.test.providence.core.no_rw_binary.CompactFields getSuccess() {
             return mSuccess;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>success</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.CompactFields> optionalSuccess() {
@@ -796,14 +795,14 @@ public class ContainerService {
         }
 
         /**
-         * @return The field value
+         * @return The <code>ef</code> value
          */
         public net.morimekta.test.providence.core.no_rw_binary.ExceptionFields getEf() {
             return mEf;
         }
 
         /**
-         * @return Optional field value
+         * @return Optional of the <code>ef</code> field value.
          */
         @javax.annotation.Nonnull
         public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.ExceptionFields> optionalEf() {
@@ -1072,7 +1071,7 @@ public class ContainerService {
         }
 
         /**
-         * Make a providence.ContainerService.load.response builder.
+         * Make a <code>providence.ContainerService.load.response</code> builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -1091,7 +1090,7 @@ public class ContainerService {
             private net.morimekta.test.providence.core.no_rw_binary.ExceptionFields._Builder mEf_builder;
 
             /**
-             * Make a providence.ContainerService.load.response builder.
+             * Make a providence.ContainerService.load.response builder instance.
              */
             public _Builder() {
                 modified = false;
@@ -1140,7 +1139,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -1159,7 +1158,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of success.
+             * Set the <code>success</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -1170,7 +1169,7 @@ public class ContainerService {
             }
 
             /**
-             * Checks for presence of the success field.
+             * Checks for presence of the <code>success</code> field.
              *
              * @return True if success has been set.
              */
@@ -1179,7 +1178,7 @@ public class ContainerService {
             }
 
             /**
-             * Clears the success field.
+             * Clear the <code>success</code> field.
              *
              * @return The builder
              */
@@ -1193,9 +1192,9 @@ public class ContainerService {
             }
 
             /**
-             * Gets the builder for the contained success.
+             * Get the builder for the contained <code>success</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mutableSuccess() {
@@ -1215,8 +1214,6 @@ public class ContainerService {
             }
 
             /**
-             * Gets the value for the contained success.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.core.no_rw_binary.CompactFields getSuccess() {
@@ -1231,7 +1228,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of ef.
+             * Set the <code>ef</code> field value.
              *
              * @param value The new value
              * @return The builder
@@ -1250,7 +1247,7 @@ public class ContainerService {
             }
 
             /**
-             * Sets the value of ef.
+             * Set the <code>ef</code> field value.
              *
              * @param builder builder for the new value
              * @return The builder
@@ -1261,7 +1258,7 @@ public class ContainerService {
             }
 
             /**
-             * Checks for presence of the ef field.
+             * Checks for presence of the <code>ef</code> field.
              *
              * @return True if ef has been set.
              */
@@ -1270,7 +1267,7 @@ public class ContainerService {
             }
 
             /**
-             * Clears the ef field.
+             * Clear the <code>ef</code> field.
              *
              * @return The builder
              */
@@ -1284,9 +1281,9 @@ public class ContainerService {
             }
 
             /**
-             * Gets the builder for the contained ef.
+             * Get the builder for the contained <code>ef</code> message field.
              *
-             * @return The field builder
+             * @return The field message builder
              */
             @javax.annotation.Nonnull
             public net.morimekta.test.providence.core.no_rw_binary.ExceptionFields._Builder mutableEf() {
@@ -1306,8 +1303,6 @@ public class ContainerService {
             }
 
             /**
-             * Gets the value for the contained ef.
-             *
              * @return The field value
              */
             public net.morimekta.test.providence.core.no_rw_binary.ExceptionFields getEf() {
@@ -1322,7 +1317,8 @@ public class ContainerService {
             }
 
             /**
-             * Checks if ContainerService.load.response has been modified since the _Builder was created.
+             * Checks if the <code>ContainerService.load.response</code> union has been modified since the
+             * builder was created.
              *
              * @return True if ContainerService.load.response has been modified.
              */

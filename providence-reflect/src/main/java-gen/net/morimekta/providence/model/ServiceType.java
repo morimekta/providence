@@ -61,14 +61,14 @@ public class ServiceType
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -80,7 +80,7 @@ public class ServiceType
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -92,14 +92,14 @@ public class ServiceType
     }
 
     /**
-     * @return The field value
+     * @return The <code>extend</code> value
      */
     public String getExtend() {
         return mExtend;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>extend</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalExtend() {
@@ -115,7 +115,7 @@ public class ServiceType
     }
 
     /**
-     * @return The field value
+     * @return The <code>methods</code> value
      */
     @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FunctionType> getMethods() {
@@ -131,14 +131,14 @@ public class ServiceType
     }
 
     /**
-     * @return The field value
+     * @return The <code>annotations</code> value
      */
     public java.util.Map<String,String> getAnnotations() {
         return hasAnnotations() ? mAnnotations : kDefaultAnnotations;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>annotations</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
@@ -152,7 +152,7 @@ public class ServiceType
     /**
      * The start of the definition (position of &#39;service&#39;)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -161,7 +161,7 @@ public class ServiceType
     /**
      * The start of the definition (position of &#39;service&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -175,7 +175,7 @@ public class ServiceType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -184,7 +184,7 @@ public class ServiceType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -600,7 +600,7 @@ public class ServiceType
     }
 
     /**
-     * Make a pmodel.ServiceType builder.
+     * Make a <code>pmodel.ServiceType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -629,7 +629,7 @@ public class ServiceType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.ServiceType builder.
+         * Make a pmodel.ServiceType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
@@ -730,7 +730,7 @@ public class ServiceType
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -748,7 +748,7 @@ public class ServiceType
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -757,7 +757,8 @@ public class ServiceType
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -766,7 +767,7 @@ public class ServiceType
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -779,16 +780,14 @@ public class ServiceType
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -806,7 +805,7 @@ public class ServiceType
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -815,7 +814,8 @@ public class ServiceType
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -824,7 +824,7 @@ public class ServiceType
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -837,16 +837,14 @@ public class ServiceType
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of extend.
+         * Set the <code>extend</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -864,7 +862,7 @@ public class ServiceType
         }
 
         /**
-         * Checks for presence of the extend field.
+         * Checks for presence of the <code>extend</code> field.
          *
          * @return True if extend has been set.
          */
@@ -873,7 +871,8 @@ public class ServiceType
         }
 
         /**
-         * Checks if extend has been modified since the _Builder was created.
+         * Checks if the <code>extend</code> field has been modified since the
+         * builder was created.
          *
          * @return True if extend has been modified.
          */
@@ -882,7 +881,7 @@ public class ServiceType
         }
 
         /**
-         * Clears the extend field.
+         * Clear the <code>extend</code> field.
          *
          * @return The builder
          */
@@ -895,16 +894,14 @@ public class ServiceType
         }
 
         /**
-         * Gets the value of the contained extend.
-         *
-         * @return The field value
+         * @return The <code>extend</code> field value
          */
         public String getExtend() {
             return mExtend;
         }
 
         /**
-         * Sets the value of methods.
+         * Set the <code>methods</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -922,7 +919,7 @@ public class ServiceType
         }
 
         /**
-         * Adds entries to methods.
+         * Adds entries to the <code>methods</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -939,7 +936,7 @@ public class ServiceType
         }
 
         /**
-         * Checks for presence of the methods field.
+         * Checks for presence of the <code>methods</code> field.
          *
          * @return True if methods has been set.
          */
@@ -948,7 +945,8 @@ public class ServiceType
         }
 
         /**
-         * Checks if methods has been modified since the _Builder was created.
+         * Checks if the <code>methods</code> field has been modified since the
+         * builder was created.
          *
          * @return True if methods has been modified.
          */
@@ -957,7 +955,7 @@ public class ServiceType
         }
 
         /**
-         * Clears the methods field.
+         * Clear the <code>methods</code> field.
          *
          * @return The builder
          */
@@ -970,11 +968,14 @@ public class ServiceType
         }
 
         /**
-         * Gets the builder for the contained methods.
+         * Get the builder for the contained <code>methods</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>methods</code> container
+         */
         public java.util.List<net.morimekta.providence.model.FunctionType> mutableMethods() {
             optionals.set(3);
             modified.set(3);
@@ -988,7 +989,7 @@ public class ServiceType
         }
 
         /**
-         * Sets the value of annotations.
+         * Set the <code>annotations</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1006,7 +1007,7 @@ public class ServiceType
         }
 
         /**
-         * Adds a mapping to annotations.
+         * Adds a mapping to the <code>annotations</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -1021,7 +1022,7 @@ public class ServiceType
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * Checks for presence of the <code>annotations</code> field.
          *
          * @return True if annotations has been set.
          */
@@ -1030,7 +1031,8 @@ public class ServiceType
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * Checks if the <code>annotations</code> field has been modified since the
+         * builder was created.
          *
          * @return True if annotations has been modified.
          */
@@ -1039,7 +1041,7 @@ public class ServiceType
         }
 
         /**
-         * Clears the annotations field.
+         * Clear the <code>annotations</code> field.
          *
          * @return The builder
          */
@@ -1052,11 +1054,14 @@ public class ServiceType
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * Get the builder for the contained <code>annotations</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>annotations</code> container
+         */
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
@@ -1070,6 +1075,8 @@ public class ServiceType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;service&#39;)
          *
          * @param value The new value
@@ -1089,6 +1096,8 @@ public class ServiceType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;service&#39;)
          *
          * @param builder builder for the new value
@@ -1100,7 +1109,7 @@ public class ServiceType
         }
 
         /**
-         * The start of the definition (position of &#39;service&#39;)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -1109,7 +1118,8 @@ public class ServiceType
         }
 
         /**
-         * The start of the definition (position of &#39;service&#39;)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -1118,7 +1128,7 @@ public class ServiceType
         }
 
         /**
-         * The start of the definition (position of &#39;service&#39;)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -1132,9 +1142,11 @@ public class ServiceType
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of &#39;service&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -1164,6 +1176,8 @@ public class ServiceType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param value The new value
@@ -1183,6 +1197,8 @@ public class ServiceType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param builder builder for the new value
@@ -1194,7 +1210,7 @@ public class ServiceType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -1203,7 +1219,8 @@ public class ServiceType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -1212,7 +1229,7 @@ public class ServiceType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -1226,9 +1243,11 @@ public class ServiceType
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

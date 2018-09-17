@@ -60,14 +60,14 @@ public class MessageType
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -79,14 +79,14 @@ public class MessageType
     }
 
     /**
-     * @return The field value
+     * @return The <code>variant</code> value
      */
     public net.morimekta.providence.model.MessageVariant getVariant() {
         return hasVariant() ? mVariant : kDefaultVariant;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>variant</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.MessageVariant> optionalVariant() {
@@ -98,7 +98,7 @@ public class MessageType
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -114,7 +114,7 @@ public class MessageType
     }
 
     /**
-     * @return The field value
+     * @return The <code>fields</code> value
      */
     @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FieldType> getFields() {
@@ -130,14 +130,14 @@ public class MessageType
     }
 
     /**
-     * @return The field value
+     * @return The <code>annotations</code> value
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>annotations</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
@@ -151,7 +151,7 @@ public class MessageType
     /**
      * The start of the definition (position of &#39;struct&#39; / message type)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -160,7 +160,7 @@ public class MessageType
     /**
      * The start of the definition (position of &#39;struct&#39; / message type)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -174,7 +174,7 @@ public class MessageType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -183,7 +183,7 @@ public class MessageType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -596,7 +596,7 @@ public class MessageType
     }
 
     /**
-     * Make a pmodel.MessageType builder.
+     * Make a <code>pmodel.MessageType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -625,7 +625,7 @@ public class MessageType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.MessageType builder.
+         * Make a pmodel.MessageType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
@@ -726,7 +726,7 @@ public class MessageType
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -744,7 +744,7 @@ public class MessageType
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -753,7 +753,8 @@ public class MessageType
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -762,7 +763,7 @@ public class MessageType
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -775,16 +776,14 @@ public class MessageType
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of variant.
+         * Set the <code>variant</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -802,7 +801,7 @@ public class MessageType
         }
 
         /**
-         * Checks for presence of the variant field.
+         * Checks for presence of the <code>variant</code> field.
          *
          * @return True if variant has been set.
          */
@@ -811,7 +810,8 @@ public class MessageType
         }
 
         /**
-         * Checks if variant has been modified since the _Builder was created.
+         * Checks if the <code>variant</code> field has been modified since the
+         * builder was created.
          *
          * @return True if variant has been modified.
          */
@@ -820,7 +820,7 @@ public class MessageType
         }
 
         /**
-         * Clears the variant field.
+         * Clear the <code>variant</code> field.
          *
          * @return The builder
          */
@@ -833,16 +833,14 @@ public class MessageType
         }
 
         /**
-         * Gets the value of the contained variant.
-         *
-         * @return The field value
+         * @return The <code>variant</code> field value
          */
         public net.morimekta.providence.model.MessageVariant getVariant() {
             return isSetVariant() ? mVariant : kDefaultVariant;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -860,7 +858,7 @@ public class MessageType
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -869,7 +867,8 @@ public class MessageType
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -878,7 +877,7 @@ public class MessageType
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -891,16 +890,14 @@ public class MessageType
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of fields.
+         * Set the <code>fields</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -918,7 +915,7 @@ public class MessageType
         }
 
         /**
-         * Adds entries to fields.
+         * Adds entries to the <code>fields</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -935,7 +932,7 @@ public class MessageType
         }
 
         /**
-         * Checks for presence of the fields field.
+         * Checks for presence of the <code>fields</code> field.
          *
          * @return True if fields has been set.
          */
@@ -944,7 +941,8 @@ public class MessageType
         }
 
         /**
-         * Checks if fields has been modified since the _Builder was created.
+         * Checks if the <code>fields</code> field has been modified since the
+         * builder was created.
          *
          * @return True if fields has been modified.
          */
@@ -953,7 +951,7 @@ public class MessageType
         }
 
         /**
-         * Clears the fields field.
+         * Clear the <code>fields</code> field.
          *
          * @return The builder
          */
@@ -966,11 +964,14 @@ public class MessageType
         }
 
         /**
-         * Gets the builder for the contained fields.
+         * Get the builder for the contained <code>fields</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>fields</code> container
+         */
         public java.util.List<net.morimekta.providence.model.FieldType> mutableFields() {
             optionals.set(3);
             modified.set(3);
@@ -984,7 +985,7 @@ public class MessageType
         }
 
         /**
-         * Sets the value of annotations.
+         * Set the <code>annotations</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1002,7 +1003,7 @@ public class MessageType
         }
 
         /**
-         * Adds a mapping to annotations.
+         * Adds a mapping to the <code>annotations</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -1017,7 +1018,7 @@ public class MessageType
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * Checks for presence of the <code>annotations</code> field.
          *
          * @return True if annotations has been set.
          */
@@ -1026,7 +1027,8 @@ public class MessageType
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * Checks if the <code>annotations</code> field has been modified since the
+         * builder was created.
          *
          * @return True if annotations has been modified.
          */
@@ -1035,7 +1037,7 @@ public class MessageType
         }
 
         /**
-         * Clears the annotations field.
+         * Clear the <code>annotations</code> field.
          *
          * @return The builder
          */
@@ -1048,11 +1050,14 @@ public class MessageType
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * Get the builder for the contained <code>annotations</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>annotations</code> container
+         */
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
@@ -1066,6 +1071,8 @@ public class MessageType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;struct&#39; / message type)
          *
          * @param value The new value
@@ -1085,6 +1092,8 @@ public class MessageType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;struct&#39; / message type)
          *
          * @param builder builder for the new value
@@ -1096,7 +1105,7 @@ public class MessageType
         }
 
         /**
-         * The start of the definition (position of &#39;struct&#39; / message type)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -1105,7 +1114,8 @@ public class MessageType
         }
 
         /**
-         * The start of the definition (position of &#39;struct&#39; / message type)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -1114,7 +1124,7 @@ public class MessageType
         }
 
         /**
-         * The start of the definition (position of &#39;struct&#39; / message type)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -1128,9 +1138,11 @@ public class MessageType
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of &#39;struct&#39; / message type)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -1160,6 +1172,8 @@ public class MessageType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param value The new value
@@ -1179,6 +1193,8 @@ public class MessageType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param builder builder for the new value
@@ -1190,7 +1206,7 @@ public class MessageType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -1199,7 +1215,8 @@ public class MessageType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -1208,7 +1225,7 @@ public class MessageType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -1222,9 +1239,11 @@ public class MessageType
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

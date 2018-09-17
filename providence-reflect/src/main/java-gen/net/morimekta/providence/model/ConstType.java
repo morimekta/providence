@@ -65,14 +65,14 @@ public class ConstType
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -84,7 +84,7 @@ public class ConstType
     }
 
     /**
-     * @return The field value
+     * @return The <code>type</code> value
      */
     @javax.annotation.Nonnull
     public String getType() {
@@ -96,7 +96,7 @@ public class ConstType
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -108,7 +108,7 @@ public class ConstType
     }
 
     /**
-     * @return The field value
+     * @return The <code>value</code> value
      */
     @javax.annotation.Nonnull
     public String getValue() {
@@ -124,14 +124,14 @@ public class ConstType
     }
 
     /**
-     * @return The field value
+     * @return The <code>annotations</code> value
      */
     public java.util.Map<String,String> getAnnotations() {
         return hasAnnotations() ? mAnnotations : kDefaultAnnotations;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>annotations</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
@@ -146,7 +146,7 @@ public class ConstType
      * Note the start of the const in the parsed thrift file, this can be used
      * for making more accurate exception / parse data from the const parser.
      *
-     * @return The field value
+     * @return The <code>value_start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getValueStartPos() {
         return mValueStartPos;
@@ -156,7 +156,7 @@ public class ConstType
      * Note the start of the const in the parsed thrift file, this can be used
      * for making more accurate exception / parse data from the const parser.
      *
-     * @return Optional field value
+     * @return Optional of the <code>value_start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalValueStartPos() {
@@ -170,7 +170,7 @@ public class ConstType
     /**
      * The start of the definition (position of &#39;enum&#39;)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -179,7 +179,7 @@ public class ConstType
     /**
      * The start of the definition (position of &#39;enum&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -193,7 +193,7 @@ public class ConstType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -202,7 +202,7 @@ public class ConstType
     /**
      * The end of the definition (position of &#39;}&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -635,7 +635,7 @@ public class ConstType
     }
 
     /**
-     * Make a pmodel.ConstType builder.
+     * Make a <code>pmodel.ConstType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -664,7 +664,7 @@ public class ConstType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.ConstType builder.
+         * Make a pmodel.ConstType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(8);
@@ -779,7 +779,7 @@ public class ConstType
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -797,7 +797,7 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -806,7 +806,8 @@ public class ConstType
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -815,7 +816,7 @@ public class ConstType
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -828,16 +829,14 @@ public class ConstType
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of type.
+         * Set the <code>type</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -855,7 +854,7 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the type field.
+         * Checks for presence of the <code>type</code> field.
          *
          * @return True if type has been set.
          */
@@ -864,7 +863,8 @@ public class ConstType
         }
 
         /**
-         * Checks if type has been modified since the _Builder was created.
+         * Checks if the <code>type</code> field has been modified since the
+         * builder was created.
          *
          * @return True if type has been modified.
          */
@@ -873,7 +873,7 @@ public class ConstType
         }
 
         /**
-         * Clears the type field.
+         * Clear the <code>type</code> field.
          *
          * @return The builder
          */
@@ -886,16 +886,14 @@ public class ConstType
         }
 
         /**
-         * Gets the value of the contained type.
-         *
-         * @return The field value
+         * @return The <code>type</code> field value
          */
         public String getType() {
             return mType;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -913,7 +911,7 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -922,7 +920,8 @@ public class ConstType
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -931,7 +930,7 @@ public class ConstType
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -944,16 +943,14 @@ public class ConstType
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of value.
+         * Set the <code>value</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -971,7 +968,7 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the value field.
+         * Checks for presence of the <code>value</code> field.
          *
          * @return True if value has been set.
          */
@@ -980,7 +977,8 @@ public class ConstType
         }
 
         /**
-         * Checks if value has been modified since the _Builder was created.
+         * Checks if the <code>value</code> field has been modified since the
+         * builder was created.
          *
          * @return True if value has been modified.
          */
@@ -989,7 +987,7 @@ public class ConstType
         }
 
         /**
-         * Clears the value field.
+         * Clear the <code>value</code> field.
          *
          * @return The builder
          */
@@ -1002,16 +1000,14 @@ public class ConstType
         }
 
         /**
-         * Gets the value of the contained value.
-         *
-         * @return The field value
+         * @return The <code>value</code> field value
          */
         public String getValue() {
             return mValue;
         }
 
         /**
-         * Sets the value of annotations.
+         * Set the <code>annotations</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1029,7 +1025,7 @@ public class ConstType
         }
 
         /**
-         * Adds a mapping to annotations.
+         * Adds a mapping to the <code>annotations</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -1044,7 +1040,7 @@ public class ConstType
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * Checks for presence of the <code>annotations</code> field.
          *
          * @return True if annotations has been set.
          */
@@ -1053,7 +1049,8 @@ public class ConstType
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * Checks if the <code>annotations</code> field has been modified since the
+         * builder was created.
          *
          * @return True if annotations has been modified.
          */
@@ -1062,7 +1059,7 @@ public class ConstType
         }
 
         /**
-         * Clears the annotations field.
+         * Clear the <code>annotations</code> field.
          *
          * @return The builder
          */
@@ -1075,11 +1072,14 @@ public class ConstType
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * Get the builder for the contained <code>annotations</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>annotations</code> container
+         */
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(4);
             modified.set(4);
@@ -1093,6 +1093,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>value_start_pos</code> field value.
+         * <p>
          * Note the start of the const in the parsed thrift file, this can be used
          * for making more accurate exception / parse data from the const parser.
          *
@@ -1113,6 +1115,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>value_start_pos</code> field value.
+         * <p>
          * Note the start of the const in the parsed thrift file, this can be used
          * for making more accurate exception / parse data from the const parser.
          *
@@ -1125,8 +1129,7 @@ public class ConstType
         }
 
         /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
+         * Checks for presence of the <code>value_start_pos</code> field.
          *
          * @return True if value_start_pos has been set.
          */
@@ -1135,8 +1138,8 @@ public class ConstType
         }
 
         /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
+         * Checks if the <code>value_start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if value_start_pos has been modified.
          */
@@ -1145,8 +1148,7 @@ public class ConstType
         }
 
         /**
-         * Note the start of the const in the parsed thrift file, this can be used
-         * for making more accurate exception / parse data from the const parser.
+         * Clear the <code>value_start_pos</code> field.
          *
          * @return The builder
          */
@@ -1160,10 +1162,12 @@ public class ConstType
         }
 
         /**
+         * Get the builder for the contained <code>value_start_pos</code> message field.
+         * <p>
          * Note the start of the const in the parsed thrift file, this can be used
          * for making more accurate exception / parse data from the const parser.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableValueStartPos() {
@@ -1194,6 +1198,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;enum&#39;)
          *
          * @param value The new value
@@ -1213,6 +1219,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;enum&#39;)
          *
          * @param builder builder for the new value
@@ -1224,7 +1232,7 @@ public class ConstType
         }
 
         /**
-         * The start of the definition (position of &#39;enum&#39;)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -1233,7 +1241,8 @@ public class ConstType
         }
 
         /**
-         * The start of the definition (position of &#39;enum&#39;)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -1242,7 +1251,7 @@ public class ConstType
         }
 
         /**
-         * The start of the definition (position of &#39;enum&#39;)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -1256,9 +1265,11 @@ public class ConstType
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of &#39;enum&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -1288,6 +1299,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param value The new value
@@ -1307,6 +1320,8 @@ public class ConstType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
          * @param builder builder for the new value
@@ -1318,7 +1333,7 @@ public class ConstType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -1327,7 +1342,8 @@ public class ConstType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -1336,7 +1352,7 @@ public class ConstType
         }
 
         /**
-         * The end of the definition (position of &#39;}&#39;)
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -1350,9 +1366,11 @@ public class ConstType
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition (position of &#39;}&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

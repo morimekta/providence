@@ -32,14 +32,14 @@ public class Operation
     }
 
     /**
-     * @return The field value
+     * @return The <code>operator</code> value
      */
     public net.morimekta.test.providence.core.calculator.Operator getOperator() {
         return mOperator;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>operator</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.calculator.Operator> optionalOperator() {
@@ -55,14 +55,14 @@ public class Operation
     }
 
     /**
-     * @return The field value
+     * @return The <code>operands</code> value
      */
     public java.util.List<net.morimekta.test.providence.core.calculator.Operand> getOperands() {
         return mOperands;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>operands</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.test.providence.core.calculator.Operand>> optionalOperands() {
@@ -347,7 +347,7 @@ public class Operation
     }
 
     /**
-     * Make a calculator.Operation builder.
+     * Make a <code>calculator.Operation</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -364,7 +364,7 @@ public class Operation
         private java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
 
         /**
-         * Make a calculator.Operation builder.
+         * Make a calculator.Operation builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -407,7 +407,7 @@ public class Operation
         }
 
         /**
-         * Sets the value of operator.
+         * Set the <code>operator</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -425,7 +425,7 @@ public class Operation
         }
 
         /**
-         * Checks for presence of the operator field.
+         * Checks for presence of the <code>operator</code> field.
          *
          * @return True if operator has been set.
          */
@@ -434,7 +434,8 @@ public class Operation
         }
 
         /**
-         * Checks if operator has been modified since the _Builder was created.
+         * Checks if the <code>operator</code> field has been modified since the
+         * builder was created.
          *
          * @return True if operator has been modified.
          */
@@ -443,7 +444,7 @@ public class Operation
         }
 
         /**
-         * Clears the operator field.
+         * Clear the <code>operator</code> field.
          *
          * @return The builder
          */
@@ -456,16 +457,14 @@ public class Operation
         }
 
         /**
-         * Gets the value of the contained operator.
-         *
-         * @return The field value
+         * @return The <code>operator</code> field value
          */
         public net.morimekta.test.providence.core.calculator.Operator getOperator() {
             return mOperator;
         }
 
         /**
-         * Sets the value of operands.
+         * Set the <code>operands</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -483,7 +482,7 @@ public class Operation
         }
 
         /**
-         * Adds entries to operands.
+         * Adds entries to the <code>operands</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -500,7 +499,7 @@ public class Operation
         }
 
         /**
-         * Checks for presence of the operands field.
+         * Checks for presence of the <code>operands</code> field.
          *
          * @return True if operands has been set.
          */
@@ -509,7 +508,8 @@ public class Operation
         }
 
         /**
-         * Checks if operands has been modified since the _Builder was created.
+         * Checks if the <code>operands</code> field has been modified since the
+         * builder was created.
          *
          * @return True if operands has been modified.
          */
@@ -518,7 +518,7 @@ public class Operation
         }
 
         /**
-         * Clears the operands field.
+         * Clear the <code>operands</code> field.
          *
          * @return The builder
          */
@@ -531,11 +531,14 @@ public class Operation
         }
 
         /**
-         * Gets the builder for the contained operands.
+         * Get the builder for the contained <code>operands</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>operands</code> container
+         */
         public java.util.List<net.morimekta.test.providence.core.calculator.Operand> mutableOperands() {
             optionals.set(1);
             modified.set(1);

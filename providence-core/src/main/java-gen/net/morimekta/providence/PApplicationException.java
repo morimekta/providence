@@ -47,7 +47,7 @@ public class PApplicationException
     /**
      * Exception message.
      *
-     * @return The field value
+     * @return The <code>message</code> value
      */
     public String getMessage() {
         return mMessage;
@@ -56,7 +56,7 @@ public class PApplicationException
     /**
      * Exception message.
      *
-     * @return Optional field value
+     * @return Optional of the <code>message</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalMessage() {
@@ -70,7 +70,7 @@ public class PApplicationException
     /**
      * The application exception type.
      *
-     * @return The field value
+     * @return The <code>id</code> value
      */
     public net.morimekta.providence.PApplicationExceptionType getId() {
         return hasId() ? mId : kDefaultId;
@@ -79,7 +79,7 @@ public class PApplicationException
     /**
      * The application exception type.
      *
-     * @return Optional field value
+     * @return Optional of the <code>id</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.PApplicationExceptionType> optionalId() {
@@ -388,7 +388,7 @@ public class PApplicationException
     }
 
     /**
-     * Make a pservice.PApplicationException builder.
+     * Make a <code>pservice.PApplicationException</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -410,7 +410,7 @@ public class PApplicationException
         private net.morimekta.providence.PApplicationExceptionType mId;
 
         /**
-         * Make a pservice.PApplicationException builder.
+         * Make a pservice.PApplicationException builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -453,6 +453,8 @@ public class PApplicationException
         }
 
         /**
+         * Set the <code>message</code> field value.
+         * <p>
          * Exception message.
          *
          * @param value The new value
@@ -471,7 +473,7 @@ public class PApplicationException
         }
 
         /**
-         * Exception message.
+         * Checks for presence of the <code>message</code> field.
          *
          * @return True if message has been set.
          */
@@ -480,7 +482,8 @@ public class PApplicationException
         }
 
         /**
-         * Exception message.
+         * Checks if the <code>message</code> field has been modified since the
+         * builder was created.
          *
          * @return True if message has been modified.
          */
@@ -489,7 +492,7 @@ public class PApplicationException
         }
 
         /**
-         * Exception message.
+         * Clear the <code>message</code> field.
          *
          * @return The builder
          */
@@ -504,13 +507,15 @@ public class PApplicationException
         /**
          * Exception message.
          *
-         * @return The field value
+         * @return The <code>message</code> field value
          */
         public String getMessage() {
             return mMessage;
         }
 
         /**
+         * Set the <code>id</code> field value.
+         * <p>
          * The application exception type.
          *
          * @param value The new value
@@ -529,7 +534,7 @@ public class PApplicationException
         }
 
         /**
-         * The application exception type.
+         * Checks for presence of the <code>id</code> field.
          *
          * @return True if id has been set.
          */
@@ -538,7 +543,8 @@ public class PApplicationException
         }
 
         /**
-         * The application exception type.
+         * Checks if the <code>id</code> field has been modified since the
+         * builder was created.
          *
          * @return True if id has been modified.
          */
@@ -547,7 +553,7 @@ public class PApplicationException
         }
 
         /**
-         * The application exception type.
+         * Clear the <code>id</code> field.
          *
          * @return The builder
          */
@@ -562,7 +568,7 @@ public class PApplicationException
         /**
          * The application exception type.
          *
-         * @return The field value
+         * @return The <code>id</code> field value
          */
         public net.morimekta.providence.PApplicationExceptionType getId() {
             return isSetId() ? mId : kDefaultId;

@@ -31,7 +31,7 @@ public class Imaginary
     }
 
     /**
-     * @return The field value
+     * @return The <code>v</code> value
      */
     public double getV() {
         return mV;
@@ -42,7 +42,7 @@ public class Imaginary
     }
 
     /**
-     * @return The field value
+     * @return The <code>i</code> value
      */
     public double getI() {
         return mI;
@@ -304,7 +304,7 @@ public class Imaginary
     }
 
     /**
-     * Make a number.Imaginary builder.
+     * Make a <code>number.Imaginary</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -321,7 +321,7 @@ public class Imaginary
         private double mI;
 
         /**
-         * Make a number.Imaginary builder.
+         * Make a number.Imaginary builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -358,7 +358,7 @@ public class Imaginary
         }
 
         /**
-         * Sets the value of v.
+         * Set the <code>v</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -372,7 +372,7 @@ public class Imaginary
         }
 
         /**
-         * Checks for presence of the v field.
+         * Checks for presence of the <code>v</code> field.
          *
          * @return True if v has been set.
          */
@@ -381,7 +381,8 @@ public class Imaginary
         }
 
         /**
-         * Checks if v has been modified since the _Builder was created.
+         * Checks if the <code>v</code> field has been modified since the
+         * builder was created.
          *
          * @return True if v has been modified.
          */
@@ -390,7 +391,7 @@ public class Imaginary
         }
 
         /**
-         * Clears the v field.
+         * Clear the <code>v</code> field.
          *
          * @return The builder
          */
@@ -403,16 +404,14 @@ public class Imaginary
         }
 
         /**
-         * Gets the value of the contained v.
-         *
-         * @return The field value
+         * @return The <code>v</code> field value
          */
         public double getV() {
             return mV;
         }
 
         /**
-         * Sets the value of i.
+         * Set the <code>i</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -426,7 +425,7 @@ public class Imaginary
         }
 
         /**
-         * Checks for presence of the i field.
+         * Checks for presence of the <code>i</code> field.
          *
          * @return True if i has been set.
          */
@@ -435,7 +434,8 @@ public class Imaginary
         }
 
         /**
-         * Checks if i has been modified since the _Builder was created.
+         * Checks if the <code>i</code> field has been modified since the
+         * builder was created.
          *
          * @return True if i has been modified.
          */
@@ -444,7 +444,7 @@ public class Imaginary
         }
 
         /**
-         * Clears the i field.
+         * Clear the <code>i</code> field.
          *
          * @return The builder
          */
@@ -457,9 +457,7 @@ public class Imaginary
         }
 
         /**
-         * Gets the value of the contained i.
-         *
-         * @return The field value
+         * @return The <code>i</code> field value
          */
         public double getI() {
             return mI;

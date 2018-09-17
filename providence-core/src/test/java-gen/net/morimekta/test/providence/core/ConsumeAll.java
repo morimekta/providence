@@ -242,7 +242,7 @@ public class ConsumeAll
     }
 
     /**
-     * Make a providence.ConsumeAll builder.
+     * Make a <code>providence.ConsumeAll</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -256,7 +256,7 @@ public class ConsumeAll
         private java.util.BitSet modified;
 
         /**
-         * Make a providence.ConsumeAll builder.
+         * Make a providence.ConsumeAll builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(0);

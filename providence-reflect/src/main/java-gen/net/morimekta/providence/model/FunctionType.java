@@ -68,14 +68,14 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -87,14 +87,14 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>one_way</code> value
      */
     public boolean isOneWay() {
         return hasOneWay() ? mOneWay : kDefaultOneWay;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>one_way</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<Boolean> optionalOneWay() {
@@ -106,14 +106,14 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>return_type</code> value
      */
     public String getReturnType() {
         return mReturnType;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>return_type</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalReturnType() {
@@ -125,7 +125,7 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -141,7 +141,7 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>params</code> value
      */
     @javax.annotation.Nonnull
     public java.util.List<net.morimekta.providence.model.FieldType> getParams() {
@@ -157,14 +157,14 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>exceptions</code> value
      */
     public java.util.List<net.morimekta.providence.model.FieldType> getExceptions() {
         return hasExceptions() ? mExceptions : kDefaultExceptions;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>exceptions</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.List<net.morimekta.providence.model.FieldType>> optionalExceptions() {
@@ -180,14 +180,14 @@ public class FunctionType
     }
 
     /**
-     * @return The field value
+     * @return The <code>annotations</code> value
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>annotations</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
@@ -201,7 +201,7 @@ public class FunctionType
     /**
      * The start of the definition (position of return type)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -210,7 +210,7 @@ public class FunctionType
     /**
      * The start of the definition (position of return type)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -224,7 +224,7 @@ public class FunctionType
     /**
      * The end of the definition
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -233,7 +233,7 @@ public class FunctionType
     /**
      * The end of the definition
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -705,7 +705,7 @@ public class FunctionType
     }
 
     /**
-     * Make a pmodel.FunctionType builder.
+     * Make a <code>pmodel.FunctionType</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -734,7 +734,7 @@ public class FunctionType
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.FunctionType builder.
+         * Make a pmodel.FunctionType builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(9);
@@ -855,7 +855,7 @@ public class FunctionType
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -873,7 +873,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -882,7 +882,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -891,7 +892,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -904,16 +905,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of one_way.
+         * Set the <code>one_way</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -927,7 +926,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the one_way field.
+         * Checks for presence of the <code>one_way</code> field.
          *
          * @return True if one_way has been set.
          */
@@ -936,7 +935,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if one_way has been modified since the _Builder was created.
+         * Checks if the <code>one_way</code> field has been modified since the
+         * builder was created.
          *
          * @return True if one_way has been modified.
          */
@@ -945,7 +945,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the one_way field.
+         * Clear the <code>one_way</code> field.
          *
          * @return The builder
          */
@@ -958,16 +958,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the value of the contained one_way.
-         *
-         * @return The field value
+         * @return The <code>one_way</code> field value
          */
         public boolean getOneWay() {
             return isSetOneWay() ? mOneWay : kDefaultOneWay;
         }
 
         /**
-         * Sets the value of return_type.
+         * Set the <code>return_type</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -985,7 +983,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the return_type field.
+         * Checks for presence of the <code>return_type</code> field.
          *
          * @return True if return_type has been set.
          */
@@ -994,7 +992,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if return_type has been modified since the _Builder was created.
+         * Checks if the <code>return_type</code> field has been modified since the
+         * builder was created.
          *
          * @return True if return_type has been modified.
          */
@@ -1003,7 +1002,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the return_type field.
+         * Clear the <code>return_type</code> field.
          *
          * @return The builder
          */
@@ -1016,16 +1015,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the value of the contained return_type.
-         *
-         * @return The field value
+         * @return The <code>return_type</code> field value
          */
         public String getReturnType() {
             return mReturnType;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1043,7 +1040,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -1052,7 +1049,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -1061,7 +1059,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -1074,16 +1072,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of params.
+         * Set the <code>params</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1101,7 +1097,7 @@ public class FunctionType
         }
 
         /**
-         * Adds entries to params.
+         * Adds entries to the <code>params</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -1118,7 +1114,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the params field.
+         * Checks for presence of the <code>params</code> field.
          *
          * @return True if params has been set.
          */
@@ -1127,7 +1123,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if params has been modified since the _Builder was created.
+         * Checks if the <code>params</code> field has been modified since the
+         * builder was created.
          *
          * @return True if params has been modified.
          */
@@ -1136,7 +1133,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the params field.
+         * Clear the <code>params</code> field.
          *
          * @return The builder
          */
@@ -1149,11 +1146,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the builder for the contained params.
+         * Get the builder for the contained <code>params</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>params</code> container
+         */
         public java.util.List<net.morimekta.providence.model.FieldType> mutableParams() {
             optionals.set(4);
             modified.set(4);
@@ -1167,7 +1167,7 @@ public class FunctionType
         }
 
         /**
-         * Sets the value of exceptions.
+         * Set the <code>exceptions</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1185,7 +1185,7 @@ public class FunctionType
         }
 
         /**
-         * Adds entries to exceptions.
+         * Adds entries to the <code>exceptions</code> list.
          *
          * @param values The added value
          * @return The builder
@@ -1202,7 +1202,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the exceptions field.
+         * Checks for presence of the <code>exceptions</code> field.
          *
          * @return True if exceptions has been set.
          */
@@ -1211,7 +1211,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if exceptions has been modified since the _Builder was created.
+         * Checks if the <code>exceptions</code> field has been modified since the
+         * builder was created.
          *
          * @return True if exceptions has been modified.
          */
@@ -1220,7 +1221,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the exceptions field.
+         * Clear the <code>exceptions</code> field.
          *
          * @return The builder
          */
@@ -1233,11 +1234,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the builder for the contained exceptions.
+         * Get the builder for the contained <code>exceptions</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>exceptions</code> container
+         */
         public java.util.List<net.morimekta.providence.model.FieldType> mutableExceptions() {
             optionals.set(5);
             modified.set(5);
@@ -1251,7 +1255,7 @@ public class FunctionType
         }
 
         /**
-         * Sets the value of annotations.
+         * Set the <code>annotations</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1269,7 +1273,7 @@ public class FunctionType
         }
 
         /**
-         * Adds a mapping to annotations.
+         * Adds a mapping to the <code>annotations</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -1284,7 +1288,7 @@ public class FunctionType
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * Checks for presence of the <code>annotations</code> field.
          *
          * @return True if annotations has been set.
          */
@@ -1293,7 +1297,8 @@ public class FunctionType
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * Checks if the <code>annotations</code> field has been modified since the
+         * builder was created.
          *
          * @return True if annotations has been modified.
          */
@@ -1302,7 +1307,7 @@ public class FunctionType
         }
 
         /**
-         * Clears the annotations field.
+         * Clear the <code>annotations</code> field.
          *
          * @return The builder
          */
@@ -1315,11 +1320,14 @@ public class FunctionType
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * Get the builder for the contained <code>annotations</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>annotations</code> container
+         */
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(6);
             modified.set(6);
@@ -1333,6 +1341,8 @@ public class FunctionType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of return type)
          *
          * @param value The new value
@@ -1352,6 +1362,8 @@ public class FunctionType
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of return type)
          *
          * @param builder builder for the new value
@@ -1363,7 +1375,7 @@ public class FunctionType
         }
 
         /**
-         * The start of the definition (position of return type)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -1372,7 +1384,8 @@ public class FunctionType
         }
 
         /**
-         * The start of the definition (position of return type)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -1381,7 +1394,7 @@ public class FunctionType
         }
 
         /**
-         * The start of the definition (position of return type)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -1395,9 +1408,11 @@ public class FunctionType
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of return type)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -1427,6 +1442,8 @@ public class FunctionType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition
          *
          * @param value The new value
@@ -1446,6 +1463,8 @@ public class FunctionType
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition
          *
          * @param builder builder for the new value
@@ -1457,7 +1476,7 @@ public class FunctionType
         }
 
         /**
-         * The end of the definition
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -1466,7 +1485,8 @@ public class FunctionType
         }
 
         /**
-         * The end of the definition
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -1475,7 +1495,7 @@ public class FunctionType
         }
 
         /**
-         * The end of the definition
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -1489,9 +1509,11 @@ public class FunctionType
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

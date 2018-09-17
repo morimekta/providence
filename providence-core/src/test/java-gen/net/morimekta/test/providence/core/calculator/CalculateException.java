@@ -37,7 +37,7 @@ public class CalculateException
     }
 
     /**
-     * @return The field value
+     * @return The <code>message</code> value
      */
     @javax.annotation.Nonnull
     public String getMessage() {
@@ -49,14 +49,14 @@ public class CalculateException
     }
 
     /**
-     * @return The field value
+     * @return The <code>operation</code> value
      */
     public net.morimekta.test.providence.core.calculator.Operation getOperation() {
         return mOperation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>operation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.calculator.Operation> optionalOperation() {
@@ -355,7 +355,7 @@ public class CalculateException
     }
 
     /**
-     * Make a calculator.CalculateException builder.
+     * Make a <code>calculator.CalculateException</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -374,7 +374,7 @@ public class CalculateException
         private net.morimekta.test.providence.core.calculator.Operation._Builder mOperation_builder;
 
         /**
-         * Make a calculator.CalculateException builder.
+         * Make a calculator.CalculateException builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -421,7 +421,7 @@ public class CalculateException
         }
 
         /**
-         * Sets the value of message.
+         * Set the <code>message</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -439,7 +439,7 @@ public class CalculateException
         }
 
         /**
-         * Checks for presence of the message field.
+         * Checks for presence of the <code>message</code> field.
          *
          * @return True if message has been set.
          */
@@ -448,7 +448,8 @@ public class CalculateException
         }
 
         /**
-         * Checks if message has been modified since the _Builder was created.
+         * Checks if the <code>message</code> field has been modified since the
+         * builder was created.
          *
          * @return True if message has been modified.
          */
@@ -457,7 +458,7 @@ public class CalculateException
         }
 
         /**
-         * Clears the message field.
+         * Clear the <code>message</code> field.
          *
          * @return The builder
          */
@@ -470,16 +471,14 @@ public class CalculateException
         }
 
         /**
-         * Gets the value of the contained message.
-         *
-         * @return The field value
+         * @return The <code>message</code> field value
          */
         public String getMessage() {
             return mMessage;
         }
 
         /**
-         * Sets the value of operation.
+         * Set the <code>operation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -498,7 +497,7 @@ public class CalculateException
         }
 
         /**
-         * Sets the value of operation.
+         * Set the <code>operation</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -509,7 +508,7 @@ public class CalculateException
         }
 
         /**
-         * Checks for presence of the operation field.
+         * Checks for presence of the <code>operation</code> field.
          *
          * @return True if operation has been set.
          */
@@ -518,7 +517,8 @@ public class CalculateException
         }
 
         /**
-         * Checks if operation has been modified since the _Builder was created.
+         * Checks if the <code>operation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if operation has been modified.
          */
@@ -527,7 +527,7 @@ public class CalculateException
         }
 
         /**
-         * Clears the operation field.
+         * Clear the <code>operation</code> field.
          *
          * @return The builder
          */
@@ -541,9 +541,9 @@ public class CalculateException
         }
 
         /**
-         * Gets the builder for the contained operation.
+         * Get the builder for the contained <code>operation</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.calculator.Operation._Builder mutableOperation() {
@@ -560,8 +560,6 @@ public class CalculateException
         }
 
         /**
-         * Gets the value for the contained operation.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.calculator.Operation getOperation() {

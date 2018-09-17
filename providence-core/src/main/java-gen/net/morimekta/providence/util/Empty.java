@@ -245,7 +245,7 @@ public class Empty
     }
 
     /**
-     * Make a putil.Empty builder.
+     * Make a <code>putil.Empty</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -262,7 +262,7 @@ public class Empty
         private java.util.BitSet modified;
 
         /**
-         * Make a putil.Empty builder.
+         * Make a putil.Empty builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(0);

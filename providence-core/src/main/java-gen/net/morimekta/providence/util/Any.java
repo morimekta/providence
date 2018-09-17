@@ -45,7 +45,7 @@ public class Any
      * The thrift / providence program + message type name. This should refer to a
      * message type. Enums will need to be wrapped in a message to be contained.
      *
-     * @return The field value
+     * @return The <code>type</code> value
      */
     @javax.annotation.Nonnull
     public String getType() {
@@ -61,7 +61,7 @@ public class Any
      * registered for this. If the media type is not set, it is assumed to be
      * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
      *
-     * @return The field value
+     * @return The <code>media_type</code> value
      */
     public String getMediaType() {
         return hasMediaType() ? mMediaType : kDefaultMediaType;
@@ -72,7 +72,7 @@ public class Any
      * registered for this. If the media type is not set, it is assumed to be
      * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
      *
-     * @return Optional field value
+     * @return Optional of the <code>media_type</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalMediaType() {
@@ -86,7 +86,7 @@ public class Any
     /**
      * The actual content binary data.
      *
-     * @return The field value
+     * @return The <code>data</code> value
      */
     public net.morimekta.util.Binary getData() {
         return mData;
@@ -95,7 +95,7 @@ public class Any
     /**
      * The actual content binary data.
      *
-     * @return Optional field value
+     * @return Optional of the <code>data</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.util.Binary> optionalData() {
@@ -110,7 +110,7 @@ public class Any
      * Optional string encoded content for non-binary media types. If this is filled
      * in, then the &#39;bin&#39; field is not needed.
      *
-     * @return The field value
+     * @return The <code>text</code> value
      */
     public String getText() {
         return mText;
@@ -120,7 +120,7 @@ public class Any
      * Optional string encoded content for non-binary media types. If this is filled
      * in, then the &#39;bin&#39; field is not needed.
      *
-     * @return Optional field value
+     * @return Optional of the <code>text</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalText() {
@@ -456,7 +456,7 @@ public class Any
     }
 
     /**
-     * Make a putil.Any builder.
+     * Make a <code>putil.Any</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -478,7 +478,7 @@ public class Any
         private String mText;
 
         /**
-         * Make a putil.Any builder.
+         * Make a putil.Any builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(4);
@@ -538,6 +538,8 @@ public class Any
         }
 
         /**
+         * Set the <code>type</code> field value.
+         * <p>
          * The thrift / providence program + message type name. This should refer to a
          * message type. Enums will need to be wrapped in a message to be contained.
          *
@@ -557,8 +559,7 @@ public class Any
         }
 
         /**
-         * The thrift / providence program + message type name. This should refer to a
-         * message type. Enums will need to be wrapped in a message to be contained.
+         * Checks for presence of the <code>type</code> field.
          *
          * @return True if type has been set.
          */
@@ -567,8 +568,8 @@ public class Any
         }
 
         /**
-         * The thrift / providence program + message type name. This should refer to a
-         * message type. Enums will need to be wrapped in a message to be contained.
+         * Checks if the <code>type</code> field has been modified since the
+         * builder was created.
          *
          * @return True if type has been modified.
          */
@@ -577,8 +578,7 @@ public class Any
         }
 
         /**
-         * The thrift / providence program + message type name. This should refer to a
-         * message type. Enums will need to be wrapped in a message to be contained.
+         * Clear the <code>type</code> field.
          *
          * @return The builder
          */
@@ -594,13 +594,15 @@ public class Any
          * The thrift / providence program + message type name. This should refer to a
          * message type. Enums will need to be wrapped in a message to be contained.
          *
-         * @return The field value
+         * @return The <code>type</code> field value
          */
         public String getType() {
             return mType;
         }
 
         /**
+         * Set the <code>media_type</code> field value.
+         * <p>
          * The media type used for encoding. There will need to exist a serializer
          * registered for this. If the media type is not set, it is assumed to be
          * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
@@ -621,9 +623,7 @@ public class Any
         }
 
         /**
-         * The media type used for encoding. There will need to exist a serializer
-         * registered for this. If the media type is not set, it is assumed to be
-         * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
+         * Checks for presence of the <code>media_type</code> field.
          *
          * @return True if media_type has been set.
          */
@@ -632,9 +632,8 @@ public class Any
         }
 
         /**
-         * The media type used for encoding. There will need to exist a serializer
-         * registered for this. If the media type is not set, it is assumed to be
-         * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
+         * Checks if the <code>media_type</code> field has been modified since the
+         * builder was created.
          *
          * @return True if media_type has been modified.
          */
@@ -643,9 +642,7 @@ public class Any
         }
 
         /**
-         * The media type used for encoding. There will need to exist a serializer
-         * registered for this. If the media type is not set, it is assumed to be
-         * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
+         * Clear the <code>media_type</code> field.
          *
          * @return The builder
          */
@@ -662,13 +659,15 @@ public class Any
          * registered for this. If the media type is not set, it is assumed to be
          * &#39;application/vnd.apache.thrift.binary&#39;, the default thrift serialization.
          *
-         * @return The field value
+         * @return The <code>media_type</code> field value
          */
         public String getMediaType() {
             return isSetMediaType() ? mMediaType : kDefaultMediaType;
         }
 
         /**
+         * Set the <code>data</code> field value.
+         * <p>
          * The actual content binary data.
          *
          * @param value The new value
@@ -687,7 +686,7 @@ public class Any
         }
 
         /**
-         * The actual content binary data.
+         * Checks for presence of the <code>data</code> field.
          *
          * @return True if data has been set.
          */
@@ -696,7 +695,8 @@ public class Any
         }
 
         /**
-         * The actual content binary data.
+         * Checks if the <code>data</code> field has been modified since the
+         * builder was created.
          *
          * @return True if data has been modified.
          */
@@ -705,7 +705,7 @@ public class Any
         }
 
         /**
-         * The actual content binary data.
+         * Clear the <code>data</code> field.
          *
          * @return The builder
          */
@@ -720,13 +720,15 @@ public class Any
         /**
          * The actual content binary data.
          *
-         * @return The field value
+         * @return The <code>data</code> field value
          */
         public net.morimekta.util.Binary getData() {
             return mData;
         }
 
         /**
+         * Set the <code>text</code> field value.
+         * <p>
          * Optional string encoded content for non-binary media types. If this is filled
          * in, then the &#39;bin&#39; field is not needed.
          *
@@ -746,8 +748,7 @@ public class Any
         }
 
         /**
-         * Optional string encoded content for non-binary media types. If this is filled
-         * in, then the &#39;bin&#39; field is not needed.
+         * Checks for presence of the <code>text</code> field.
          *
          * @return True if text has been set.
          */
@@ -756,8 +757,8 @@ public class Any
         }
 
         /**
-         * Optional string encoded content for non-binary media types. If this is filled
-         * in, then the &#39;bin&#39; field is not needed.
+         * Checks if the <code>text</code> field has been modified since the
+         * builder was created.
          *
          * @return True if text has been modified.
          */
@@ -766,8 +767,7 @@ public class Any
         }
 
         /**
-         * Optional string encoded content for non-binary media types. If this is filled
-         * in, then the &#39;bin&#39; field is not needed.
+         * Clear the <code>text</code> field.
          *
          * @return The builder
          */
@@ -783,7 +783,7 @@ public class Any
          * Optional string encoded content for non-binary media types. If this is filled
          * in, then the &#39;bin&#39; field is not needed.
          *
-         * @return The field value
+         * @return The <code>text</code> field value
          */
         public String getText() {
             return mText;

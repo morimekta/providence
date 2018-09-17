@@ -42,7 +42,7 @@ public class FilePos
     /**
      * The line no in the file. The first line is 1
      *
-     * @return The field value
+     * @return The <code>line_no</code> value
      */
     public int getLineNo() {
         return mLineNo;
@@ -55,7 +55,7 @@ public class FilePos
     /**
      * The character porisiotn in the line. The first char is 0.
      *
-     * @return The field value
+     * @return The <code>line_pos</code> value
      */
     public int getLinePos() {
         return mLinePos;
@@ -317,7 +317,7 @@ public class FilePos
     }
 
     /**
-     * Make a pmodel.FilePos builder.
+     * Make a <code>pmodel.FilePos</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -337,7 +337,7 @@ public class FilePos
         private int mLinePos;
 
         /**
-         * Make a pmodel.FilePos builder.
+         * Make a pmodel.FilePos builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
@@ -374,6 +374,8 @@ public class FilePos
         }
 
         /**
+         * Set the <code>line_no</code> field value.
+         * <p>
          * The line no in the file. The first line is 1
          *
          * @param value The new value
@@ -388,7 +390,7 @@ public class FilePos
         }
 
         /**
-         * The line no in the file. The first line is 1
+         * Checks for presence of the <code>line_no</code> field.
          *
          * @return True if line_no has been set.
          */
@@ -397,7 +399,8 @@ public class FilePos
         }
 
         /**
-         * The line no in the file. The first line is 1
+         * Checks if the <code>line_no</code> field has been modified since the
+         * builder was created.
          *
          * @return True if line_no has been modified.
          */
@@ -406,7 +409,7 @@ public class FilePos
         }
 
         /**
-         * The line no in the file. The first line is 1
+         * Clear the <code>line_no</code> field.
          *
          * @return The builder
          */
@@ -421,13 +424,15 @@ public class FilePos
         /**
          * The line no in the file. The first line is 1
          *
-         * @return The field value
+         * @return The <code>line_no</code> field value
          */
         public int getLineNo() {
             return mLineNo;
         }
 
         /**
+         * Set the <code>line_pos</code> field value.
+         * <p>
          * The character porisiotn in the line. The first char is 0.
          *
          * @param value The new value
@@ -442,7 +447,7 @@ public class FilePos
         }
 
         /**
-         * The character porisiotn in the line. The first char is 0.
+         * Checks for presence of the <code>line_pos</code> field.
          *
          * @return True if line_pos has been set.
          */
@@ -451,7 +456,8 @@ public class FilePos
         }
 
         /**
-         * The character porisiotn in the line. The first char is 0.
+         * Checks if the <code>line_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if line_pos has been modified.
          */
@@ -460,7 +466,7 @@ public class FilePos
         }
 
         /**
-         * The character porisiotn in the line. The first char is 0.
+         * Clear the <code>line_pos</code> field.
          *
          * @return The builder
          */
@@ -475,7 +481,7 @@ public class FilePos
         /**
          * The character porisiotn in the line. The first char is 0.
          *
-         * @return The field value
+         * @return The <code>line_pos</code> field value
          */
         public int getLinePos() {
             return mLinePos;

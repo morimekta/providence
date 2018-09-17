@@ -10,7 +10,7 @@ public class Calculator_Constants {
             .build();
 
     public static final java.util.Set<net.morimekta.test.providence.reflect.calculator.Operator> kComplexOperands = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.test.providence.reflect.calculator.Operator>()
-            .add(net.morimekta.test.providence.reflect.calculator.Operator.MULTIPLY)
             .add(net.morimekta.test.providence.reflect.calculator.Operator.DIVIDE)
+            .add(net.morimekta.test.providence.reflect.calculator.Operator.MULTIPLY)
             .build();
 }

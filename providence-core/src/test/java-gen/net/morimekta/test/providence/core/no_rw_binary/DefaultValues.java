@@ -52,14 +52,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>booleanValue</code> value
      */
     public boolean isBooleanValue() {
         return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>booleanValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<Boolean> optionalBooleanValue() {
@@ -71,14 +71,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>byteValue</code> value
      */
     public byte getByteValue() {
         return hasByteValue() ? mByteValue : kDefaultByteValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>byteValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<Byte> optionalByteValue() {
@@ -90,14 +90,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>shortValue</code> value
      */
     public short getShortValue() {
         return hasShortValue() ? mShortValue : kDefaultShortValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>shortValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<Short> optionalShortValue() {
@@ -109,14 +109,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>integerValue</code> value
      */
     public int getIntegerValue() {
         return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>integerValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.OptionalInt optionalIntegerValue() {
@@ -128,14 +128,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>longValue</code> value
      */
     public long getLongValue() {
         return hasLongValue() ? mLongValue : kDefaultLongValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>longValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.OptionalLong optionalLongValue() {
@@ -147,14 +147,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>doubleValue</code> value
      */
     public double getDoubleValue() {
         return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>doubleValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.OptionalDouble optionalDoubleValue() {
@@ -166,14 +166,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>stringValue</code> value
      */
     public String getStringValue() {
         return hasStringValue() ? mStringValue : kDefaultStringValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>stringValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalStringValue() {
@@ -185,14 +185,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>binaryValue</code> value
      */
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>binaryValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.util.Binary> optionalBinaryValue() {
@@ -204,14 +204,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>enumValue</code> value
      */
     public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
         return hasEnumValue() ? mEnumValue : kDefaultEnumValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>enumValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.Value> optionalEnumValue() {
@@ -223,14 +223,14 @@ public class DefaultValues
     }
 
     /**
-     * @return The field value
+     * @return The <code>compactValue</code> value
      */
     public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {
         return mCompactValue;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>compactValue</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.test.providence.core.no_rw_binary.CompactFields> optionalCompactValue() {
@@ -655,7 +655,7 @@ public class DefaultValues
     }
 
     /**
-     * Make a providence.DefaultValues builder.
+     * Make a <code>providence.DefaultValues</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -680,7 +680,7 @@ public class DefaultValues
         private net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mCompactValue_builder;
 
         /**
-         * Make a providence.DefaultValues builder.
+         * Make a providence.DefaultValues builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(10);
@@ -810,7 +810,7 @@ public class DefaultValues
         }
 
         /**
-         * Sets the value of booleanValue.
+         * Set the <code>booleanValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -824,7 +824,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the booleanValue field.
+         * Checks for presence of the <code>booleanValue</code> field.
          *
          * @return True if booleanValue has been set.
          */
@@ -833,7 +833,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if booleanValue has been modified since the _Builder was created.
+         * Checks if the <code>booleanValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if booleanValue has been modified.
          */
@@ -842,7 +843,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the booleanValue field.
+         * Clear the <code>booleanValue</code> field.
          *
          * @return The builder
          */
@@ -855,16 +856,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained booleanValue.
-         *
-         * @return The field value
+         * @return The <code>booleanValue</code> field value
          */
         public boolean getBooleanValue() {
             return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
         }
 
         /**
-         * Sets the value of byteValue.
+         * Set the <code>byteValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -878,7 +877,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the byteValue field.
+         * Checks for presence of the <code>byteValue</code> field.
          *
          * @return True if byteValue has been set.
          */
@@ -887,7 +886,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if byteValue has been modified since the _Builder was created.
+         * Checks if the <code>byteValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if byteValue has been modified.
          */
@@ -896,7 +896,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the byteValue field.
+         * Clear the <code>byteValue</code> field.
          *
          * @return The builder
          */
@@ -909,16 +909,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained byteValue.
-         *
-         * @return The field value
+         * @return The <code>byteValue</code> field value
          */
         public byte getByteValue() {
             return isSetByteValue() ? mByteValue : kDefaultByteValue;
         }
 
         /**
-         * Sets the value of shortValue.
+         * Set the <code>shortValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -932,7 +930,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the shortValue field.
+         * Checks for presence of the <code>shortValue</code> field.
          *
          * @return True if shortValue has been set.
          */
@@ -941,7 +939,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if shortValue has been modified since the _Builder was created.
+         * Checks if the <code>shortValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if shortValue has been modified.
          */
@@ -950,7 +949,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the shortValue field.
+         * Clear the <code>shortValue</code> field.
          *
          * @return The builder
          */
@@ -963,16 +962,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained shortValue.
-         *
-         * @return The field value
+         * @return The <code>shortValue</code> field value
          */
         public short getShortValue() {
             return isSetShortValue() ? mShortValue : kDefaultShortValue;
         }
 
         /**
-         * Sets the value of integerValue.
+         * Set the <code>integerValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -986,7 +983,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the integerValue field.
+         * Checks for presence of the <code>integerValue</code> field.
          *
          * @return True if integerValue has been set.
          */
@@ -995,7 +992,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if integerValue has been modified since the _Builder was created.
+         * Checks if the <code>integerValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if integerValue has been modified.
          */
@@ -1004,7 +1002,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the integerValue field.
+         * Clear the <code>integerValue</code> field.
          *
          * @return The builder
          */
@@ -1017,16 +1015,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained integerValue.
-         *
-         * @return The field value
+         * @return The <code>integerValue</code> field value
          */
         public int getIntegerValue() {
             return isSetIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
         }
 
         /**
-         * Sets the value of longValue.
+         * Set the <code>longValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1040,7 +1036,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the longValue field.
+         * Checks for presence of the <code>longValue</code> field.
          *
          * @return True if longValue has been set.
          */
@@ -1049,7 +1045,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if longValue has been modified since the _Builder was created.
+         * Checks if the <code>longValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if longValue has been modified.
          */
@@ -1058,7 +1055,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the longValue field.
+         * Clear the <code>longValue</code> field.
          *
          * @return The builder
          */
@@ -1071,16 +1068,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained longValue.
-         *
-         * @return The field value
+         * @return The <code>longValue</code> field value
          */
         public long getLongValue() {
             return isSetLongValue() ? mLongValue : kDefaultLongValue;
         }
 
         /**
-         * Sets the value of doubleValue.
+         * Set the <code>doubleValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1094,7 +1089,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the doubleValue field.
+         * Checks for presence of the <code>doubleValue</code> field.
          *
          * @return True if doubleValue has been set.
          */
@@ -1103,7 +1098,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if doubleValue has been modified since the _Builder was created.
+         * Checks if the <code>doubleValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if doubleValue has been modified.
          */
@@ -1112,7 +1108,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the doubleValue field.
+         * Clear the <code>doubleValue</code> field.
          *
          * @return The builder
          */
@@ -1125,16 +1121,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained doubleValue.
-         *
-         * @return The field value
+         * @return The <code>doubleValue</code> field value
          */
         public double getDoubleValue() {
             return isSetDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
         }
 
         /**
-         * Sets the value of stringValue.
+         * Set the <code>stringValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1152,7 +1146,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the stringValue field.
+         * Checks for presence of the <code>stringValue</code> field.
          *
          * @return True if stringValue has been set.
          */
@@ -1161,7 +1155,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if stringValue has been modified since the _Builder was created.
+         * Checks if the <code>stringValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if stringValue has been modified.
          */
@@ -1170,7 +1165,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the stringValue field.
+         * Clear the <code>stringValue</code> field.
          *
          * @return The builder
          */
@@ -1183,16 +1178,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained stringValue.
-         *
-         * @return The field value
+         * @return The <code>stringValue</code> field value
          */
         public String getStringValue() {
             return isSetStringValue() ? mStringValue : kDefaultStringValue;
         }
 
         /**
-         * Sets the value of binaryValue.
+         * Set the <code>binaryValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1210,7 +1203,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the binaryValue field.
+         * Checks for presence of the <code>binaryValue</code> field.
          *
          * @return True if binaryValue has been set.
          */
@@ -1219,7 +1212,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if binaryValue has been modified since the _Builder was created.
+         * Checks if the <code>binaryValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if binaryValue has been modified.
          */
@@ -1228,7 +1222,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the binaryValue field.
+         * Clear the <code>binaryValue</code> field.
          *
          * @return The builder
          */
@@ -1241,16 +1235,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained binaryValue.
-         *
-         * @return The field value
+         * @return The <code>binaryValue</code> field value
          */
         public net.morimekta.util.Binary getBinaryValue() {
             return mBinaryValue;
         }
 
         /**
-         * Sets the value of enumValue.
+         * Set the <code>enumValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1268,7 +1260,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the enumValue field.
+         * Checks for presence of the <code>enumValue</code> field.
          *
          * @return True if enumValue has been set.
          */
@@ -1277,7 +1269,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if enumValue has been modified since the _Builder was created.
+         * Checks if the <code>enumValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if enumValue has been modified.
          */
@@ -1286,7 +1279,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the enumValue field.
+         * Clear the <code>enumValue</code> field.
          *
          * @return The builder
          */
@@ -1299,16 +1292,14 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value of the contained enumValue.
-         *
-         * @return The field value
+         * @return The <code>enumValue</code> field value
          */
         public net.morimekta.test.providence.core.no_rw_binary.Value getEnumValue() {
             return isSetEnumValue() ? mEnumValue : kDefaultEnumValue;
         }
 
         /**
-         * Sets the value of compactValue.
+         * Set the <code>compactValue</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -1327,7 +1318,7 @@ public class DefaultValues
         }
 
         /**
-         * Sets the value of compactValue.
+         * Set the <code>compactValue</code> field value.
          *
          * @param builder builder for the new value
          * @return The builder
@@ -1338,7 +1329,7 @@ public class DefaultValues
         }
 
         /**
-         * Checks for presence of the compactValue field.
+         * Checks for presence of the <code>compactValue</code> field.
          *
          * @return True if compactValue has been set.
          */
@@ -1347,7 +1338,8 @@ public class DefaultValues
         }
 
         /**
-         * Checks if compactValue has been modified since the _Builder was created.
+         * Checks if the <code>compactValue</code> field has been modified since the
+         * builder was created.
          *
          * @return True if compactValue has been modified.
          */
@@ -1356,7 +1348,7 @@ public class DefaultValues
         }
 
         /**
-         * Clears the compactValue field.
+         * Clear the <code>compactValue</code> field.
          *
          * @return The builder
          */
@@ -1370,9 +1362,9 @@ public class DefaultValues
         }
 
         /**
-         * Gets the builder for the contained compactValue.
+         * Get the builder for the contained <code>compactValue</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.test.providence.core.no_rw_binary.CompactFields._Builder mutableCompactValue() {
@@ -1389,8 +1381,6 @@ public class DefaultValues
         }
 
         /**
-         * Gets the value for the contained compactValue.
-         *
          * @return The field value
          */
         public net.morimekta.test.providence.core.no_rw_binary.CompactFields getCompactValue() {

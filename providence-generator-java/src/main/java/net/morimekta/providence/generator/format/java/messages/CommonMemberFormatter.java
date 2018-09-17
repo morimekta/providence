@@ -240,6 +240,20 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 }
 
                 if (enumType != null) {
+                    BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+                    if (field.hasComment()) {
+                        comment.comment(field.comment())
+                               .newline();
+                    }
+                    comment.return_("The <code>" + enumType.getName() + "</code> ref for the " +
+                                    "<code>" + field.name() + "</code> field, if it has a known value.");
+                    if (JAnnotation.isDeprecated(field)) {
+                        String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
+                        if (reason != null && reason.trim().length() > 0) {
+                            comment.deprecated_(reason);
+                        }
+                    }
+                    comment.finish();
                     writer.appendln(JAnnotation.NULLABLE);
                     if (field.alwaysPresent()) {
                         writer.formatln("public %s %s() {", helper.getValueType(enumType), field.ref())
@@ -265,13 +279,11 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
 
             if (!field.alwaysPresent()) {
                 BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-                comment.commentRaw("Optional <code>" + field.name() + "</code> value.");
                 if (field.hasComment()) {
-                    comment.paragraph()
-                           .comment(field.comment());
+                    comment.comment(field.comment())
+                           .newline();
                 }
-                comment.newline()
-                       .return_("Optional field value");
+                comment.return_("Optional of the <code>" + field.name() + "</code> field value.");
                 if (JAnnotation.isDeprecated(field)) {
                     String reason = field.field().getAnnotationValue(ThriftAnnotation.DEPRECATED);
                     if (reason != null && reason.trim().length() > 0) {

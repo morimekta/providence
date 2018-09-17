@@ -50,14 +50,14 @@ public class EnumValue
     }
 
     /**
-     * @return The field value
+     * @return The <code>documentation</code> value
      */
     public String getDocumentation() {
         return mDocumentation;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>documentation</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalDocumentation() {
@@ -69,7 +69,7 @@ public class EnumValue
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -81,14 +81,14 @@ public class EnumValue
     }
 
     /**
-     * @return The field value
+     * @return The <code>id</code> value
      */
     public int getId() {
         return hasId() ? mId : kDefaultId;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>id</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.OptionalInt optionalId() {
@@ -104,14 +104,14 @@ public class EnumValue
     }
 
     /**
-     * @return The field value
+     * @return The <code>annotations</code> value
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>annotations</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<java.util.Map<String,String>> optionalAnnotations() {
@@ -125,7 +125,7 @@ public class EnumValue
     /**
      * The start of the definition (position of &#39;name&#39;)
      *
-     * @return The field value
+     * @return The <code>start_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getStartPos() {
         return mStartPos;
@@ -134,7 +134,7 @@ public class EnumValue
     /**
      * The start of the definition (position of &#39;name&#39;)
      *
-     * @return Optional field value
+     * @return Optional of the <code>start_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalStartPos() {
@@ -148,7 +148,7 @@ public class EnumValue
     /**
      * The end of the definition (position of &#39;;&#39; or last pos of value)
      *
-     * @return The field value
+     * @return The <code>end_pos</code> value
      */
     public net.morimekta.providence.model.FilePos getEndPos() {
         return mEndPos;
@@ -157,7 +157,7 @@ public class EnumValue
     /**
      * The end of the definition (position of &#39;;&#39; or last pos of value)
      *
-     * @return Optional field value
+     * @return Optional of the <code>end_pos</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<net.morimekta.providence.model.FilePos> optionalEndPos() {
@@ -548,7 +548,7 @@ public class EnumValue
     }
 
     /**
-     * Make a pmodel.EnumValue builder.
+     * Make a <code>pmodel.EnumValue</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -574,7 +574,7 @@ public class EnumValue
         private net.morimekta.providence.model.FilePos._Builder mEndPos_builder;
 
         /**
-         * Make a pmodel.EnumValue builder.
+         * Make a pmodel.EnumValue builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(6);
@@ -668,7 +668,7 @@ public class EnumValue
         }
 
         /**
-         * Sets the value of documentation.
+         * Set the <code>documentation</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -686,7 +686,7 @@ public class EnumValue
         }
 
         /**
-         * Checks for presence of the documentation field.
+         * Checks for presence of the <code>documentation</code> field.
          *
          * @return True if documentation has been set.
          */
@@ -695,7 +695,8 @@ public class EnumValue
         }
 
         /**
-         * Checks if documentation has been modified since the _Builder was created.
+         * Checks if the <code>documentation</code> field has been modified since the
+         * builder was created.
          *
          * @return True if documentation has been modified.
          */
@@ -704,7 +705,7 @@ public class EnumValue
         }
 
         /**
-         * Clears the documentation field.
+         * Clear the <code>documentation</code> field.
          *
          * @return The builder
          */
@@ -717,16 +718,14 @@ public class EnumValue
         }
 
         /**
-         * Gets the value of the contained documentation.
-         *
-         * @return The field value
+         * @return The <code>documentation</code> field value
          */
         public String getDocumentation() {
             return mDocumentation;
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -744,7 +743,7 @@ public class EnumValue
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -753,7 +752,8 @@ public class EnumValue
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -762,7 +762,7 @@ public class EnumValue
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -775,16 +775,14 @@ public class EnumValue
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of id.
+         * Set the <code>id</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -798,7 +796,7 @@ public class EnumValue
         }
 
         /**
-         * Checks for presence of the id field.
+         * Checks for presence of the <code>id</code> field.
          *
          * @return True if id has been set.
          */
@@ -807,7 +805,8 @@ public class EnumValue
         }
 
         /**
-         * Checks if id has been modified since the _Builder was created.
+         * Checks if the <code>id</code> field has been modified since the
+         * builder was created.
          *
          * @return True if id has been modified.
          */
@@ -816,7 +815,7 @@ public class EnumValue
         }
 
         /**
-         * Clears the id field.
+         * Clear the <code>id</code> field.
          *
          * @return The builder
          */
@@ -829,16 +828,14 @@ public class EnumValue
         }
 
         /**
-         * Gets the value of the contained id.
-         *
-         * @return The field value
+         * @return The <code>id</code> field value
          */
         public int getId() {
             return isSetId() ? mId : kDefaultId;
         }
 
         /**
-         * Sets the value of annotations.
+         * Set the <code>annotations</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -856,7 +853,7 @@ public class EnumValue
         }
 
         /**
-         * Adds a mapping to annotations.
+         * Adds a mapping to the <code>annotations</code> map.
          *
          * @param key The inserted key
          * @param value The inserted value
@@ -871,7 +868,7 @@ public class EnumValue
         }
 
         /**
-         * Checks for presence of the annotations field.
+         * Checks for presence of the <code>annotations</code> field.
          *
          * @return True if annotations has been set.
          */
@@ -880,7 +877,8 @@ public class EnumValue
         }
 
         /**
-         * Checks if annotations has been modified since the _Builder was created.
+         * Checks if the <code>annotations</code> field has been modified since the
+         * builder was created.
          *
          * @return True if annotations has been modified.
          */
@@ -889,7 +887,7 @@ public class EnumValue
         }
 
         /**
-         * Clears the annotations field.
+         * Clear the <code>annotations</code> field.
          *
          * @return The builder
          */
@@ -902,11 +900,14 @@ public class EnumValue
         }
 
         /**
-         * Gets the builder for the contained annotations.
+         * Get the builder for the contained <code>annotations</code> message field.
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
+        /**
+         * @return The mutable <code>annotations</code> container
+         */
         public java.util.Map<String,String> mutableAnnotations() {
             optionals.set(3);
             modified.set(3);
@@ -920,6 +921,8 @@ public class EnumValue
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;name&#39;)
          *
          * @param value The new value
@@ -939,6 +942,8 @@ public class EnumValue
         }
 
         /**
+         * Set the <code>start_pos</code> field value.
+         * <p>
          * The start of the definition (position of &#39;name&#39;)
          *
          * @param builder builder for the new value
@@ -950,7 +955,7 @@ public class EnumValue
         }
 
         /**
-         * The start of the definition (position of &#39;name&#39;)
+         * Checks for presence of the <code>start_pos</code> field.
          *
          * @return True if start_pos has been set.
          */
@@ -959,7 +964,8 @@ public class EnumValue
         }
 
         /**
-         * The start of the definition (position of &#39;name&#39;)
+         * Checks if the <code>start_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if start_pos has been modified.
          */
@@ -968,7 +974,7 @@ public class EnumValue
         }
 
         /**
-         * The start of the definition (position of &#39;name&#39;)
+         * Clear the <code>start_pos</code> field.
          *
          * @return The builder
          */
@@ -982,9 +988,11 @@ public class EnumValue
         }
 
         /**
+         * Get the builder for the contained <code>start_pos</code> message field.
+         * <p>
          * The start of the definition (position of &#39;name&#39;)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableStartPos() {
@@ -1014,6 +1022,8 @@ public class EnumValue
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;;&#39; or last pos of value)
          *
          * @param value The new value
@@ -1033,6 +1043,8 @@ public class EnumValue
         }
 
         /**
+         * Set the <code>end_pos</code> field value.
+         * <p>
          * The end of the definition (position of &#39;;&#39; or last pos of value)
          *
          * @param builder builder for the new value
@@ -1044,7 +1056,7 @@ public class EnumValue
         }
 
         /**
-         * The end of the definition (position of &#39;;&#39; or last pos of value)
+         * Checks for presence of the <code>end_pos</code> field.
          *
          * @return True if end_pos has been set.
          */
@@ -1053,7 +1065,8 @@ public class EnumValue
         }
 
         /**
-         * The end of the definition (position of &#39;;&#39; or last pos of value)
+         * Checks if the <code>end_pos</code> field has been modified since the
+         * builder was created.
          *
          * @return True if end_pos has been modified.
          */
@@ -1062,7 +1075,7 @@ public class EnumValue
         }
 
         /**
-         * The end of the definition (position of &#39;;&#39; or last pos of value)
+         * Clear the <code>end_pos</code> field.
          *
          * @return The builder
          */
@@ -1076,9 +1089,11 @@ public class EnumValue
         }
 
         /**
+         * Get the builder for the contained <code>end_pos</code> message field.
+         * <p>
          * The end of the definition (position of &#39;;&#39; or last pos of value)
          *
-         * @return The field builder
+         * @return The field message builder
          */
         @javax.annotation.Nonnull
         public net.morimekta.providence.model.FilePos._Builder mutableEndPos() {

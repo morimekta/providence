@@ -50,7 +50,7 @@ public class CompactFields
     }
 
     /**
-     * @return The field value
+     * @return The <code>name</code> value
      */
     @javax.annotation.Nonnull
     public String getName() {
@@ -62,7 +62,7 @@ public class CompactFields
     }
 
     /**
-     * @return The field value
+     * @return The <code>id</code> value
      */
     public int getId() {
         return mId;
@@ -73,14 +73,14 @@ public class CompactFields
     }
 
     /**
-     * @return The field value
+     * @return The <code>label</code> value
      */
     public String getLabel() {
         return mLabel;
     }
 
     /**
-     * @return Optional field value
+     * @return Optional of the <code>label</code> field value.
      */
     @javax.annotation.Nonnull
     public java.util.Optional<String> optionalLabel() {
@@ -387,7 +387,7 @@ public class CompactFields
     }
 
     /**
-     * Make a providence.CompactFields builder.
+     * Make a <code>providence.CompactFields</code> builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -405,7 +405,7 @@ public class CompactFields
         private String mLabel;
 
         /**
-         * Make a providence.CompactFields builder.
+         * Make a providence.CompactFields builder instance.
          */
         public _Builder() {
             optionals = new java.util.BitSet(3);
@@ -452,7 +452,7 @@ public class CompactFields
         }
 
         /**
-         * Sets the value of name.
+         * Set the <code>name</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -470,7 +470,7 @@ public class CompactFields
         }
 
         /**
-         * Checks for presence of the name field.
+         * Checks for presence of the <code>name</code> field.
          *
          * @return True if name has been set.
          */
@@ -479,7 +479,8 @@ public class CompactFields
         }
 
         /**
-         * Checks if name has been modified since the _Builder was created.
+         * Checks if the <code>name</code> field has been modified since the
+         * builder was created.
          *
          * @return True if name has been modified.
          */
@@ -488,7 +489,7 @@ public class CompactFields
         }
 
         /**
-         * Clears the name field.
+         * Clear the <code>name</code> field.
          *
          * @return The builder
          */
@@ -501,16 +502,14 @@ public class CompactFields
         }
 
         /**
-         * Gets the value of the contained name.
-         *
-         * @return The field value
+         * @return The <code>name</code> field value
          */
         public String getName() {
             return mName;
         }
 
         /**
-         * Sets the value of id.
+         * Set the <code>id</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -524,7 +523,7 @@ public class CompactFields
         }
 
         /**
-         * Checks for presence of the id field.
+         * Checks for presence of the <code>id</code> field.
          *
          * @return True if id has been set.
          */
@@ -533,7 +532,8 @@ public class CompactFields
         }
 
         /**
-         * Checks if id has been modified since the _Builder was created.
+         * Checks if the <code>id</code> field has been modified since the
+         * builder was created.
          *
          * @return True if id has been modified.
          */
@@ -542,7 +542,7 @@ public class CompactFields
         }
 
         /**
-         * Clears the id field.
+         * Clear the <code>id</code> field.
          *
          * @return The builder
          */
@@ -555,16 +555,14 @@ public class CompactFields
         }
 
         /**
-         * Gets the value of the contained id.
-         *
-         * @return The field value
+         * @return The <code>id</code> field value
          */
         public int getId() {
             return mId;
         }
 
         /**
-         * Sets the value of label.
+         * Set the <code>label</code> field value.
          *
          * @param value The new value
          * @return The builder
@@ -582,7 +580,7 @@ public class CompactFields
         }
 
         /**
-         * Checks for presence of the label field.
+         * Checks for presence of the <code>label</code> field.
          *
          * @return True if label has been set.
          */
@@ -591,7 +589,8 @@ public class CompactFields
         }
 
         /**
-         * Checks if label has been modified since the _Builder was created.
+         * Checks if the <code>label</code> field has been modified since the
+         * builder was created.
          *
          * @return True if label has been modified.
          */
@@ -600,7 +599,7 @@ public class CompactFields
         }
 
         /**
-         * Clears the label field.
+         * Clear the <code>label</code> field.
          *
          * @return The builder
          */
@@ -613,9 +612,7 @@ public class CompactFields
         }
 
         /**
-         * Gets the value of the contained label.
-         *
-         * @return The field value
+         * @return The <code>label</code> field value
          */
         public String getLabel() {
             return mLabel;

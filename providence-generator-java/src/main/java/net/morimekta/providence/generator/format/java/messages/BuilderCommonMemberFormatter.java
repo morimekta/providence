@@ -261,7 +261,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder instance.")
+        comment.commentRaw("Make a " + message.descriptor().getQualifiedName() + " builder instance.")
                .finish();
         writer.appendln("public _Builder() {")
               .begin();
@@ -290,7 +290,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendMutateConstructor(JMessage<?> message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a mutating builder off a base " + message.descriptor().getQualifiedName() + ".")
+        comment.commentRaw("Make a mutating builder off a base " + message.descriptor().getQualifiedName() + ".")
                .newline()
                .param_("base", "The base " + message.descriptor().getName())
                .finish();
@@ -327,7 +327,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendSetterBuilderOverload(JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.commentRaw("Sets the <code>" + field.name() + "</code> field value.");
+        comment.commentRaw("Set the <code>" + field.name() + "</code> field value.");
         if (field.hasComment()) {
             comment.paragraph()
                    .comment(field.comment());
@@ -356,7 +356,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.commentRaw("Sets the <code>" + field.name() + "</code> field value.");
+        comment.commentRaw("Set the <code>" + field.name() + "</code> field value.");
         if (field.hasComment()) {
             comment.paragraph()
                    .comment(field.comment());
@@ -455,10 +455,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
             if (enumType != null) {
                 comment = new BlockCommentBuilder(writer);
+                comment.commentRaw("Set the value of the <code>" + field.name() + "</code> field.");
                 if (field.hasComment()) {
-                    comment.comment(field.comment());
-                } else {
-                    comment.comment("Sets the value of " + field.name() + ".");
+                    comment.paragraph()
+                           .comment(field.comment());
                 }
                 comment.newline();
                 if (!field.isVoid()) {
@@ -629,7 +629,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendResetter(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Clears the <code>" + field.name() + "</code> field.");
+        comment.commentRaw("Clear the <code>" + field.name() + "</code> field.");
         comment.newline()
                .return_("The builder");
         if (JAnnotation.isDeprecated(field)) {
@@ -686,7 +686,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Gets the builder for the contained <code>" + field.name() + "</code> message field.");
+        comment.commentRaw("Get the builder for the contained <code>" + field.name() + "</code> message field.");
         if (field.hasComment()) {
             comment.paragraph()
                    .comment(field.comment());
@@ -867,7 +867,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendInitCause(JMessage<?> message) {
         new BlockCommentBuilder(writer)
-                .comment("Initializes the cause of the " + message.descriptor().getQualifiedName())
+                .commentRaw("Initializes the cause of the " + message.descriptor().getQualifiedName())
                 .newline()
                 .param_("cause", "The cause")
                 .return_("Builder instance")
