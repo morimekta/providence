@@ -24,25 +24,13 @@ after_script:
 .test: &test
   stage: testing
   except:
-    refs:
-    - master
     variables:
     - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
     - $CI_COMMIT_MESSAGE =~ /\[maven-release-plugin\]/
   script:
   - mvn ${MAVEN_CLI_OPTS} ${MAVEN_NO_PACKAGING} verify -Plib,cli
-  - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print int(100*covered/instructions), "% covered" }' */target/site/jacoco-ut/jacoco.csv
-  - /bin/true
-  coverage: /([0-9]{1,3}) % covered/
-
-.verify: &verify
-  <<: *test
-  only:
-  - master
-  except:
-    variables:
-    - $CI_COMMIT_MESSAGE =~ /\[silent-ignore\]/
-    - $CI_COMMIT_MESSAGE =~ /\[maven-release-plugin\]/
+  - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { OFMT = "%.2f"; print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' target/site/jacoco-ut/jacoco.csv
+  coverage: /([0-9]{1,3}[.][0-9][0-9]) % covered/
 
 test:jdk8:
   <<: *test
@@ -64,28 +52,6 @@ test:jdk8:
 
 test:jdk11:
   <<: *test
-  image: maven:3.5-jdk-11-slim
-
-verify:jdk8:
-  <<: *verify
-  image:
-    name: maven:3.5-jdk-8-alpine
-    entrypoint: ["/bin/bash", "-c"]
-  after_script:
-  # Never cache itself.
-  - rm -rf .m2/repository/net/morimekta/providence/ || true
-  - apk add --no-cache git
-  - |
-    # Report coverage only chen a java file has changed.
-    NUM_JAVA=$(git diff ${CI_COMMIT_BEFORE_SHA}..HEAD --name-only | grep '.java$' | wc -l)
-    if [[ $NUM_JAVA -gt 0 ]]
-    then
-      echo "Sending jacoco coverage report to codecov.io"
-      curl -s https://codecov.io/bash | bash -s
-    fi
-
-verify:jdk11:
-  <<: *verify
   image: maven:3.5-jdk-11-slim
 
 packaging:
