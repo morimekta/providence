@@ -2,7 +2,6 @@ package net.morimekta.providence.tools.rpc;
 
 import net.morimekta.providence.tools.common.Utils;
 import net.morimekta.testing.rules.ConsoleWatcher;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,12 +30,12 @@ public class RPCFlagsTest {
     private RPC rpc;
     private String version;
 
-    public String endpoint() {
+    private String endpoint() {
         return "http://localhost:8080/test";
     }
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         version = Utils.getVersionString();
         copyResourceTo("/test.thrift", temp.getRoot());
 
@@ -162,8 +161,7 @@ public class RPCFlagsTest {
 
     @Test
     public void testFlag_Includes_NoSuchDirectory() throws IOException {
-        File dir = temp.newFolder();
-        dir.delete();
+        File dir = new File(temp.getRoot(), "does-not-exists");
 
         rpc.run("-I", dir.getCanonicalFile().getAbsolutePath(), "-s", "test.MyService", endpoint());
 
