@@ -29,7 +29,7 @@ cache:
     - rm -rf .m2/repository/net/morimekta/providence/ || true
     - |
       # Code Coverage Calculation
-      NUM_JACOCO=$((ls */target/site/jacoco-ut/jacoco.csv -1 2>/dev/null || /bin/true) | wc -l)
+      NUM_JACOCO=$( (ls */target/site/jacoco-ut/jacoco.csv -1 2>/dev/null || /bin/true) | wc -l)
       if [[ $NUM_JACOCO -gt 0 ]]
       then
         awk -F"," '{ instructions += $4 + $5; covered += $5 } END { OFMT = "%.2f"; print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' \
