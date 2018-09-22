@@ -20,19 +20,10 @@
             <artifactId>providence-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-reflect</artifactId>
-            <scope>test</scope>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>testing-util</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -50,9 +41,21 @@
             <artifactId>jfairy</artifactId>
         </dependency>
 
+        <!-- Testing Dependencies -->
         <dependency>
-            <groupId>net.morimekta.utils</groupId>
-            <artifactId>testing-util</artifactId>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-reflect</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
