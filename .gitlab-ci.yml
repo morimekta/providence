@@ -27,12 +27,15 @@ cache:
   after_script:
     # Never cache itself.
     - rm -rf .m2/repository/net/morimekta/providence/ || true
-    - NUM_JACOCO=$(ls */target/site/jacoco-ut/jacoco.csv -1 2>/dev/null | wc -l || /bin/true)
     - |
+      # Code Coverage Calculation
+      NUM_JACOCO=$(ls */target/site/jacoco-ut/jacoco.csv -1 2>/dev/null || /bin/true | wc -l)
       if [[ $NUM_JACOCO -gt 0 ]]
       then
         awk -F"," '{ instructions += $4 + $5; covered += $5 } END { OFMT = "%.2f"; print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' \
-            */target/site/jacoco-ut/jacoco.csv
+            */target/site/jacoco-ut/jacoco.csv || /bin/true
+      else
+        echo "No jacoco report files available."
       fi
   coverage: /([0-9]{1,3}[.][0-9][0-9]) % covered/
 
@@ -51,6 +54,8 @@ test:jdk8:
       then
         echo "Sending jacoco coverage report to codecov.io"
         curl -s https://codecov.io/bash | bash -s
+      else
+        echo "No java changes; Skipping codecov.io report."
       fi
 
 test:jdk11:
