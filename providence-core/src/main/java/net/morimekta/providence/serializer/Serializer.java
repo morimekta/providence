@@ -125,6 +125,11 @@ public abstract class Serializer {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", getClass().getSimpleName().replaceAll("Serializer", ""), mediaType());
+    }
+
     /**
      * Default value for the "strict" serializer settings.
      */
