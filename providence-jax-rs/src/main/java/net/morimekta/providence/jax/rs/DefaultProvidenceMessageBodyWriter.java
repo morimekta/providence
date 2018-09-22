@@ -35,7 +35,7 @@ import javax.ws.rs.Produces;
                   BinarySerializer.ALT_MEDIA_TYPE,
                   FastBinarySerializer.MEDIA_TYPE,
                   JsonSerializer.MEDIA_TYPE,
-                  JsonSerializer.MEDIA_TYPE
+                  JsonSerializer.JSON_MEDIA_TYPE
           })
 public class DefaultProvidenceMessageBodyWriter extends ProvidenceMessageBodyWriter {
     public DefaultProvidenceMessageBodyWriter() {

@@ -9,7 +9,7 @@ import net.morimekta.test.providence.jax.rs.number.Imaginary;
 import java.util.List;
 
 /**
- * Test service implementation for dropwizard testing.
+ * Test service implementation for jersey test app.
  */
 public class TestCalculator implements Calculator.Iface {
     @Override

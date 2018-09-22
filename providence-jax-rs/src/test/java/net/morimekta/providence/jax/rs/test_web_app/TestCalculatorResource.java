@@ -2,13 +2,11 @@ package net.morimekta.providence.jax.rs.test_web_app;
 
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
-import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.test.providence.jax.rs.calculator.CalculateException;
 import net.morimekta.test.providence.jax.rs.calculator.Calculator;
 import net.morimekta.test.providence.jax.rs.calculator.Operation;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,16 +15,14 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 /**
- * Test service implementation for dropwizard testing.
+ * Test service implementation for jersey test app.
  */
 @Path("/calculator")
-@Consumes({JsonSerializer.MEDIA_TYPE, BinarySerializer.MEDIA_TYPE})
-@Produces({JsonSerializer.MEDIA_TYPE, BinarySerializer.MEDIA_TYPE})
 public class TestCalculatorResource {
-    Calculator.Iface impl;
+    private final Calculator.Iface impl;
 
-    public TestCalculatorResource(Calculator.Iface impl) {
-        this.impl = impl;
+    public TestCalculatorResource() {
+        this.impl = new TestCalculator();
     }
 
     @GET

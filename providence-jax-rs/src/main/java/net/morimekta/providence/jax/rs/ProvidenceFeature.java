@@ -18,22 +18,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.jax.rs.test_web_app;
+package net.morimekta.providence.jax.rs;
 
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 
 /**
- * Networking utility for testing.
+ * Javax.WS.RS feature for registering default providence handling for
+ * jax.rs.
  */
-public class TestNetUtil {
-    public static HttpRequestFactory factory(String accept) {
-        return transport().createRequestFactory(request -> {
-            request.getHeaders().setAccept(accept);
-        });
-    }
-    private static HttpTransport transport() {
-        return new NetHttpTransport();
+public class ProvidenceFeature implements Feature {
+    @Override
+    public boolean configure(FeatureContext context) {
+        if (!context.getConfiguration().isRegistered(DefaultProvidenceMessageBodyWriter.class)) {
+            context.register(DefaultProvidenceMessageBodyReader.class);
+            context.register(DefaultProvidenceMessageBodyWriter.class);
+        }
+        return true;
     }
 }

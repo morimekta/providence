@@ -13,6 +13,9 @@
         <version>1.7.3-SNAPSHOT</version>
     </parent>
     <artifactId>providence-jax-rs</artifactId>
+    <properties>
+        <jersey.version>2.27</jersey.version>
+    </properties>
 
     <dependencies>
         <!-- internal dependencies -->
@@ -51,23 +54,54 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.tngtech.java</groupId>
+            <artifactId>junit-dataprovider</artifactId>
+            <version>1.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-core</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-client</artifactId>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-jetty-servlet</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-jetty-http</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
