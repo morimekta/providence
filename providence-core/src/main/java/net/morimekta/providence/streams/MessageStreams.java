@@ -39,8 +39,6 @@ import java.util.stream.StreamSupport;
  * Helper class to create streams that read providence messages.
  */
 public class MessageStreams {
-    public static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
-
     /**
      * Read a file containing entries of a given type. Tries to detect the
      * entry format of the file based on file magic. If not detected will try

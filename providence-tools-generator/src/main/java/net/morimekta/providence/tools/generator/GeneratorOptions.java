@@ -106,7 +106,6 @@ public class GeneratorOptions extends CommonOptions {
     public File currentJarDirectory() {
         try {
             ProvidenceTools config = getConfig();
-            List<File> paths = new ArrayList<>();
             URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
 
             if ("file".equals(url.getProtocol())) {

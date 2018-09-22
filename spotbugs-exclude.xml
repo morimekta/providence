@@ -9,6 +9,11 @@
         <Bug pattern="NP_NULL_PARAM_DEREF" />
     </Match>
     <Match>
+        <Class name="net.morimekta.providence.util.Empty$_Builder" />
+        <!-- Expected. Generated empty message. -->
+        <Bug pattern="URF_UNREAD_FIELD" />
+    </Match>
+    <Match>
         <Class name="net.morimekta.providence.generator.GeneratorOptions" />
         <!-- Expected. Fields are just not used in same module. -->
         <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" />

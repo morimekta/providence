@@ -85,7 +85,7 @@ public class MessageCollectors {
                 synchronized (mutex) {
                     result.addAndGet(serializer.serialize(outputStream, t));
                     if (!serializer.binaryProtocol()) {
-                        result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                        result.addAndGet(writeReadableSep(outputStream));
                     }
                 }
             } catch (SerializerException e) {
@@ -140,7 +140,7 @@ public class MessageCollectors {
                 synchronized (out) {
                     counter.addAndGet(serializer.serialize(out, t));
                     if (!serializer.binaryProtocol()) {
-                        counter.addAndGet(maybeWriteBytes(out, MessageStreams.READABLE_ENTRY_SEP));
+                        counter.addAndGet(writeReadableSep(out));
                     }
                 }
             } catch (IOException e) {
@@ -162,11 +162,9 @@ public class MessageCollectors {
         });
     }
 
-    private static int maybeWriteBytes(OutputStream out, byte[] bytes) throws IOException {
-        if(bytes.length > 0) {
-            out.write(bytes);
-        }
-        return bytes.length;
+    private static int writeReadableSep(OutputStream out) throws IOException {
+        out.write('\n');
+        return 1;
     }
 
     private MessageCollectors() {}

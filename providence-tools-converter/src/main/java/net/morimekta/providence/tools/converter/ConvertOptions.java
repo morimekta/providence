@@ -176,8 +176,9 @@ public class ConvertOptions extends CommonOptions {
 
     public PService getServiceDefinition() throws ParseException, IOException {
         ProgramRegistry registry = getProgramRegistry();
-        PService srv = registry.getService(type, null);
-        if (srv == null) {
+        try {
+            return registry.getService(type, null);
+        } catch (Exception e) {
             String programName = type.substring(0, type.lastIndexOf("."));
             programName = programName.replaceAll("[-.]", "_");
             Map<String, File> includeMap = FormatUtils.getIncludeMap(getRc(), includes);
@@ -194,8 +195,6 @@ public class ConvertOptions extends CommonOptions {
                     "Found %s", type, ReflectionUtils.programNameFromPath(type),
                     services.size() == 0 ? "none" : Strings.join(", ", services));
         }
-
-        return srv;
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>

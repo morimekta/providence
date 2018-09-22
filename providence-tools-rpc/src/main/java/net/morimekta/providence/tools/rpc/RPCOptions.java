@@ -21,6 +21,10 @@
 
 package net.morimekta.providence.tools.rpc;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
@@ -48,11 +52,6 @@ import net.morimekta.providence.tools.common.formats.Format;
 import net.morimekta.providence.tools.common.formats.FormatUtils;
 import net.morimekta.providence.tools.rpc.utils.SetHeadersInitializer;
 import net.morimekta.util.Strings;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,10 +201,10 @@ public class RPCOptions extends CommonOptions {
             throw new ArgumentException(e.getLocalizedMessage());
         }
 
-        String filePath = includeMap.get(programName).getCanonicalFile().getAbsolutePath();
-
-        PService srv = loader.getProgramRegistry().getService(service, null);
-        if (srv == null) {
+        try {
+            return loader.getProgramRegistry().getService(service, null);
+        } catch (Exception e) {
+            String filePath = includeMap.get(programName).getCanonicalFile().getAbsolutePath();
             CProgram document = loader.getProgramRegistry().registryForPath(filePath).getProgram();
             Set<String> services = new TreeSet<>(
                     document.getServices()
@@ -218,8 +217,6 @@ public class RPCOptions extends CommonOptions {
                          service, programName,
                          services.size() == 0 ? "none" : Strings.join(", ", services));
         }
-
-        return srv;
     }
 
     public MessageReader getInput() throws IOException {

@@ -20,14 +20,13 @@
  */
 package net.morimekta.providence.streams;
 
+import com.google.common.collect.ImmutableList;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.providence.core.CompactFields;
-
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -130,7 +129,7 @@ public class MessageStreamsTest {
         Collector<CompactFields, OutputStream, Integer> collector = MessageCollectors.toFile(file, new PrettySerializer().config());
 
         OutputStream out = mock(OutputStream.class);
-        doThrow(new IOException("oops")).when(out).write(MessageStreams.READABLE_ENTRY_SEP);
+        doThrow(new IOException("oops")).when(out).write('\n');
         doThrow(new IOException("close")).when(out).close();
 
         assertThat(collector.combiner().apply(out, out), is(sameInstance(out)));
@@ -191,7 +190,7 @@ public class MessageStreamsTest {
         Collector<CompactFields,AtomicInteger,Integer> collector = MessageCollectors.toStream(out, serializer);
 
         doReturn(false).when(serializer).binaryProtocol();
-        doThrow(new IOException("write")).when(out).write(MessageStreams.READABLE_ENTRY_SEP);
+        doThrow(new IOException("write")).when(out).write('\n');
 
         i.set(5);
         AtomicInteger j = new AtomicInteger(6);
