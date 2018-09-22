@@ -33,6 +33,8 @@ public/
 vendor/
 .bundle/
 
+.attach_*
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
