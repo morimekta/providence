@@ -1,5 +1,9 @@
 package net.morimekta.providence.server;
 
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.server.internal.NoLogging;
 import net.morimekta.test.providence.service.Failure;
@@ -7,11 +11,6 @@ import net.morimekta.test.providence.service.OtherFailure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
 import net.morimekta.util.io.IOUtils;
-
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Server;
@@ -43,7 +42,7 @@ public class ProvidenceHttpServletTest {
 
         @Nonnull
         @Override
-        protected Response handle(HttpServletRequest httpRequest, Request request) throws Failure, ExecutionException {
+        protected Response handle(@Nonnull HttpServletRequest httpRequest, @Nonnull Request request) throws Failure, ExecutionException {
             if (request.getText().startsWith("fail ")) {
                 throw Failure.builder()
                              .setText(request.getText().substring(5))
@@ -73,8 +72,8 @@ public class ProvidenceHttpServletTest {
         }
     }
 
-    private int                        port;
-    private Server                     server;
+    private int    port;
+    private Server server;
 
     private static final String ENDPOINT = "test";
 
