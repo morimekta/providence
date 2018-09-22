@@ -90,7 +90,6 @@ public class JerseyServerTest {
 
     private GenericUrl uri(String service) {
         GenericUrl url = new GenericUrl(String.format(Locale.US, "http://localhost:%d/%s", port, service));;
-        System.err.println(url);
         return url;
     }
 
@@ -109,8 +108,6 @@ public class JerseyServerTest {
                 .setParser(new ProvidenceObjectParser(serializer))
                 .setThrowExceptionOnExecuteError(false)
                 .execute();
-
-        System.err.println(response.getStatusMessage());
 
         assertThat(response.getStatusCode(), is(equalTo(200)));
         assertThat(response.getHeaders().getContentType(), is(equalTo(serializer.mediaType())));
